@@ -3,6 +3,7 @@ mkdir build
 cd build
 cmake .. -DRAKNET_ENABLE_DLL=OFF -DRAKNET_ENABLE_SAMPLES=OFF -DCMAKE_BUILD_TYPE=Release
 make -j2
+make install
 mkdir -p deb/usr/lib
 mkdir -p deb/usr/share/raknet
 mkdir -p deb/DEBIAN
@@ -11,6 +12,7 @@ Package: libraknet-dev
 Version: 4.081-1
 Section: libdevel
 Architecture: amd64
+Priority: optional
 Build-Depends: cmake
 Origin: https://github.com/TES3MP/RakNet
 Maintainer: Koncord < stas5978@gmail.com>
@@ -24,6 +26,9 @@ cp -r ../include deb/usr
 cp ../LICENSE deb/usr/share/raknet ; chmod 0644 deb/usr/share/raknet/LICENSE
 cp ../PATENTS deb/usr/share/raknet ; chmod 0644 deb/usr/share/raknet/PATENTS
 cp -r ../Help deb/usr/share/raknet
+chmod 0644 deb/usr/share/raknet/Help/*.*
+chmod 0644 deb/usr/share/raknet/Help/Doxygen/*.*
+chmod 0644 deb/usr/share/raknet/Help/Doxygen/html/*.*
 chmod 0755 $(find deb/usr -type d)
 cd deb
 md5sum $(find ./ -type f | awk '!/^\.\/DEBIAN/ { print substr($0, 3) }') > DEBIAN/md5sums ; chmod 0644 DEBIAN/md5sums
