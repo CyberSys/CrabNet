@@ -35,8 +35,8 @@
 #pragma warning( push )
 #endif
 
-// MSWin uses _copysign, others use copysign...
-#ifndef _WIN32
+// Visual Studio uses _copysign, others use copysign...
+#if !defined(_MSC_VER)
 #define _copysign copysign
 #endif
 
