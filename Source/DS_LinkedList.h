@@ -960,6 +960,7 @@ namespace DataStructures
 		if ( this->list_size == 0 )
 			return ;
 		else
+		{
 			if ( this->list_size == 1 )  // {RakNet::OP_DELETE(root->item); RakNet::OP_DELETE(root, _FILE_AND_LINE_);}
 			{
 				RakNet::OP_DELETE(this->root, _FILE_AND_LINE_);
@@ -986,6 +987,7 @@ namespace DataStructures
 			this->list_size = 0;
 			this->root = 0;
 			this->position = 0;
+		}
 	}
 
 	template <class CircularLinkedListType>
