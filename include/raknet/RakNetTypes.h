@@ -16,21 +16,12 @@
 #ifndef __NETWORK_TYPES_H
 #define __NETWORK_TYPES_H
 
-
-
-
-
 #include "RakNetDefines.h"
 #include "NativeTypes.h"
 #include "RakNetTime.h"
 #include "Export.h"
 #include "WindowsIncludes.h"
-#include "XBox360Includes.h"
 #include "SocketIncludes.h"
-
-
-
-
 
 namespace RakNet {
 /// Forward declarations
@@ -164,14 +155,6 @@ struct RAK_DLL_EXPORT SocketDescriptor
 	/// \pre RAKNET_SUPPORT_IPV6 must be set to 1 in RakNetDefines.h for AF_INET6
 	short socketFamily;
 
-
-
-
-
-
-
-
-
 	unsigned short remotePortRakNetWasStartedOn_PS3_PSP2;
 
 	// Required for Google chrome
@@ -198,15 +181,6 @@ struct RAK_DLL_EXPORT SystemAddress
 	SystemAddress(const char *str);
 	SystemAddress(const char *str, unsigned short port);
 
-
-
-
-
-
-
-
-
-
 	/// SystemAddress, with RAKNET_SUPPORT_IPV6 defined, holds both an sockaddr_in6 and a sockaddr_in
 	union// In6OrIn4
 	{
@@ -214,7 +188,6 @@ struct RAK_DLL_EXPORT SystemAddress
 		struct sockaddr_storage sa_stor;
 		sockaddr_in6 addr6;
 #endif
-
 		sockaddr_in addr4;
 	} address;
 

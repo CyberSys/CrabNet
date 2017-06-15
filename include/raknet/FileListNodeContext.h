@@ -39,6 +39,7 @@ inline RakNet::BitStream& operator<<(RakNet::BitStream& out, FileListNodeContext
 	out.Write(in.flnc_extraData3);
 	return out;
 }
+
 inline RakNet::BitStream& operator>>(RakNet::BitStream& in, FileListNodeContext& out)
 {
 	in.Read(out.op);

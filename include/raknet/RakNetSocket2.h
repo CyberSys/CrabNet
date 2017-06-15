@@ -76,9 +76,6 @@ struct RNS2_SendParameters
 
 struct RNS2RecvStruct
 {
-
-
-
 	char data[MAXIMUM_MTU_SIZE];
 
 	int bytesRead;
@@ -327,21 +324,6 @@ protected:
 
 	static RAK_THREAD_DECLARATION(RecvFromLoop);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #if defined(_WIN32) || defined(__GNUC__)  || defined(__GCCXML__) || defined(__S3E__)

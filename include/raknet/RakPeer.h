@@ -1015,12 +1015,6 @@ protected:
 	cat::CookieJar *_cookie_jar;
 	bool InitializeClientSecurity(RequestedConnectionStruct *rcs, const char *public_key);
 #endif
-
-
-
-
-
-
 	virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct);
 	void FillIPList(void);
 } 

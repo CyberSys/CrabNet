@@ -9,25 +9,6 @@
 #define _PP_Instance_ int
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if   defined(WINDOWS_STORE_RT)
 	#include <windows.h>
 	#include "WinRTSockAddr.h"

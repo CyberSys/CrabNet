@@ -14,8 +14,6 @@ IF(MSVC)
     ELSE()
         set_target_properties(RakNetLibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:&quot;LIBCD.lib LIBCMTD.lib MSVCRT.lib&quot;" )
     ENDIF()
-ELSE(MSVC)
-    INSTALL(TARGETS RakNetLibStatic DESTINATION ${RakNet_SOURCE_DIR}/Lib/RakNetLibStatic)
 ENDIF(MSVC)
 
 
