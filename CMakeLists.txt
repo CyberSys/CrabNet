@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.1)
 
 project(RakNet)
 
+set(CMAKE_CXX_STANDARD 11)
+
 if( NOT APPLE )
 # check 64 bit
 if( CMAKE_SIZEOF_VOID_P MATCHES "4" )
