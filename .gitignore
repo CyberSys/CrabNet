@@ -1,4 +1,3 @@
-include/
 *.a
 *.so
 *.dll
