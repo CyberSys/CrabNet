@@ -48,3 +48,5 @@ set(RAKNET_COMMON_LIBS RakNetLibStatic)
 if( RAKNET_GENERATE_SAMPLES )
     add_subdirectory(Samples)
 endif()
+
+file(COPY include DESTINATION .)
