@@ -50,7 +50,7 @@ if(MSVC)
 endif(MSVC)
 
 
-add_subdirectory(Lib)
+add_subdirectory(lib)
 
 
 set(RAKNET_COMMON_LIBS RakNetLibStatic)
