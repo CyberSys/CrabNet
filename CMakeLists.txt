@@ -31,7 +31,7 @@ option( RAKNET_ENABLE_DLL "Generate the DLL project if true." TRUE)
 option( RAKNET_ENABLE_STATIC "Generate the static library project if true." TRUE)
 option( RAKNET_GENERATE_INCLUDE_ONLY_DIR "Setup a include/RakNet/ directory in which all the headers are copied." FALSE)
 
-include(./CmakeIncludes/CmakeMacros.txt)
+include(CmakeIncludes/CmakeMacros.cmake)
 
 if(MSVC)
     FIXLINKOPTIONS()
