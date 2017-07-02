@@ -19,7 +19,6 @@
 #ifndef __SIMPLE_TCP_SERVER
 #define __SIMPLE_TCP_SERVER
 
-#include "RakMemoryOverride.h"
 #include "DS_List.h"
 #include "RakNetTypes.h"
 #include "Export.h"

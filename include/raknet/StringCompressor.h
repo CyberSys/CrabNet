@@ -19,7 +19,6 @@
 
 #include "Export.h"
 #include "DS_Map.h"
-#include "RakMemoryOverride.h"
 #include "NativeTypes.h"
 
 #ifdef _STD_STRING_COMPRESSOR

@@ -18,7 +18,6 @@
 #ifndef __RAKNET_HEAP_H
 #define __RAKNET_HEAP_H
 
-#include "RakMemoryOverride.h"
 #include "DS_List.h"
 #include "Export.h"
 #include "RakAssert.h"

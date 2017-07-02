@@ -21,7 +21,6 @@
 #include "Export.h"
 #include "DS_List.h"
 #include "DS_Queue.h"
-#include "RakMemoryOverride.h"
 
 /// The namespace DataStructures was only added to avoid compiler errors for commonly named data structures
 /// As these data structures are stand-alone, you can use them outside of RakNet for your own projects if you wish.
@@ -82,7 +81,7 @@ namespace DataStructures
 	template <class TreeType>
 	void Tree<TreeType>::AddChild(TreeType &newData)
 	{
-		children.Insert(RakNet::OP_NEW<Tree>(newData, _FILE_AND_LINE_));
+		children.Insert(new Tree);
 	}
 
 	template <class TreeType>
@@ -93,13 +92,13 @@ namespace DataStructures
 		LevelOrderTraversal(output);
 		unsigned i;
 		for (i=0; i < output.Size(); i++)
-			RakNet::OP_DELETE(output[i], _FILE_AND_LINE_);
+			delete output[i];
 */
 
 		// Already recursive to do this
 		unsigned int i;
 		for (i=0; i < children.Size(); i++)
-			RakNet::OP_DELETE(children[i], _FILE_AND_LINE_);
+			delete children[i];
 	}
 }
 

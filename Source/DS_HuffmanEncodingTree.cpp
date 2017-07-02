@@ -51,7 +51,7 @@ void HuffmanEncodingTree::FreeMemory( void )
 		if ( node->right )
 			nodeQueue.Push( node->right, _FILE_AND_LINE_  );
 
-		RakNet::OP_DELETE(node, _FILE_AND_LINE_);
+		delete node;
 	}
 
 	// Delete the encoding table
@@ -77,7 +77,7 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable( unsigned int frequencyTabl
 
 	for ( counter = 0; counter < 256; counter++ )
 	{
-		node = RakNet::OP_NEW<HuffmanEncodingTreeNode>( _FILE_AND_LINE_ );
+		node =new HuffmanEncodingTreeNode;
 		node->left = 0;
 		node->right = 0;
 		node->value = (unsigned char) counter;
@@ -103,7 +103,7 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable( unsigned int frequencyTabl
 		HuffmanEncodingTreeNode *lesser, *greater;
 		lesser = huffmanEncodingTreeNodeList.Pop();
 		greater = huffmanEncodingTreeNodeList.Pop();
-		node = RakNet::OP_NEW<HuffmanEncodingTreeNode>( _FILE_AND_LINE_ );
+		node =new HuffmanEncodingTreeNode;
 		node->left = lesser;
 		node->right = greater;
 		node->weight = lesser->weight + greater->weight;

@@ -108,7 +108,7 @@ Packet *PluginInterface2::AllocatePacketUnified(unsigned dataSize)
 	}
 #endif
 
-	Packet *packet = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
+	Packet *packet =new Packet;
 	packet->data = (unsigned char*) malloc(dataSize);
 	packet->bitSize=BYTES_TO_BITS(dataSize);
 	packet->deleteData=true;
@@ -151,7 +151,7 @@ void PluginInterface2::DeallocPacketUnified(Packet *packet)
 #endif
 
 	free(packet->data);
-	RakNet::OP_DELETE(packet, _FILE_AND_LINE_);
+	delete packet;
 }
 bool PluginInterface2::SendListUnified( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast )
 {

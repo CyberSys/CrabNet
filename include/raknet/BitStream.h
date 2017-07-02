@@ -16,7 +16,6 @@
 #ifndef __BITSTREAM_H
 #define __BITSTREAM_H
 
-#include "RakMemoryOverride.h"
 #include "RakNetDefines.h"
 #include "Export.h"
 #include "RakNetTypes.h"

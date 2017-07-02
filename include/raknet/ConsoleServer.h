@@ -19,7 +19,6 @@
 #ifndef __CONSOLE_SERVER_H
 #define __CONSOLE_SERVER_H
 
-#include "RakMemoryOverride.h"
 #include "DS_List.h"
 #include "RakNetTypes.h"
 #include "Export.h"

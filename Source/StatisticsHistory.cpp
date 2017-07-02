@@ -75,7 +75,7 @@ bool StatisticsHistory::AddObject(TrackedObjectData tod)
 	unsigned int idx = objects.GetIndexFromKey(tod.objectId, &objectExists);
 	if (objectExists)
 		return false;
-	TrackedObject *to = RakNet::OP_NEW<TrackedObject>(_FILE_AND_LINE_);
+	TrackedObject *to =new TrackedObject;
 	to->trackedObjectData=tod;
 	objects.InsertAtIndex(to,idx,_FILE_AND_LINE_);
 	return true;
@@ -94,13 +94,13 @@ void StatisticsHistory::RemoveObjectAtIndex(unsigned int index)
 {
 	TrackedObject *to = objects[index];
 	objects.RemoveAtIndex(index);
-	RakNet::OP_DELETE(to, _FILE_AND_LINE_);
+	delete to;
 }
 void StatisticsHistory::Clear(void)
 {
 	for (unsigned int idx=0; idx < objects.Size(); idx++)
 	{
-		RakNet::OP_DELETE(objects[idx], _FILE_AND_LINE_);
+		delete objects[idx];
 	}
 	objects.Clear(false, _FILE_AND_LINE_);
 }
@@ -121,7 +121,7 @@ void StatisticsHistory::AddValueByIndex(unsigned int index, RakString key, SHVal
 	DataStructures::HashIndex hi = to->dataQueues.GetIndexOf(key);
 	if (hi.IsInvalid())
 	{
-		queue = RakNet::OP_NEW<TimeAndValueQueue>(_FILE_AND_LINE_);
+		queue =new TimeAndValueQueue;
 		queue->key=key;
 		queue->timeToTrackValues = timeToTrack;
 		to->dataQueues.Push(key, queue, _FILE_AND_LINE_);
@@ -690,7 +690,7 @@ StatisticsHistory::TrackedObject::~TrackedObject()
 	DataStructures::List<StatisticsHistory::TimeAndValueQueue*> itemList;
 	DataStructures::List<RakString> keyList;
 	for (unsigned int idx=0; idx < itemList.Size(); idx++)
-		RakNet::OP_DELETE(itemList[idx], _FILE_AND_LINE_);
+		delete itemList[idx];
 }
 unsigned int StatisticsHistory::GetObjectIndex(uint64_t objectId) const
 {

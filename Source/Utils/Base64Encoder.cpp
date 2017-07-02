@@ -9,7 +9,7 @@
  */
 
 #include "Base64Encoder.h"
-#include "RakMemoryOverride.h"
+#include <cstdlib>
 
 const char *Base64Map(void) {return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";}
 const char *base64Map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";

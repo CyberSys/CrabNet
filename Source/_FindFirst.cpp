@@ -13,7 +13,6 @@
 
 static DataStructures::List< _findinfo_t* > fileInfo;
 	
-#include "RakMemoryOverride.h"
 #include "RakAssert.h"
 
 /**
@@ -44,7 +43,7 @@ long _findfirst(const char *name, _finddata_t *f)
         
 	if(!dir) return -1;
 
-	_findinfo_t* fi = RakNet::OP_NEW<_findinfo_t>( _FILE_AND_LINE_ );
+	_findinfo_t* fi =new _findinfo_t;
 	fi->filter    = filter;
 	fi->dirName   = nameCopy;  // we need to remember this for stat()
 	fi->openedDir = dir;
@@ -153,7 +152,7 @@ int _findclose(long h)
     _findinfo_t* fi = fileInfo[h];
     closedir(fi->openedDir);
     fileInfo.RemoveAtIndex(h);
-    RakNet::OP_DELETE(fi, _FILE_AND_LINE_);
+    delete fi;
     return 0;   
 }
 #endif

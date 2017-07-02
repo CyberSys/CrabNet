@@ -9,7 +9,6 @@
  */
 
 #include "RakNetSocket2.h"
-#include "RakMemoryOverride.h"
 #include "RakAssert.h"
 #include "RakSleep.h"
 #include "SocketDefines.h"
@@ -52,7 +51,7 @@ using namespace RakNet;
 #define INVALID_SOCKET -1
 #endif
 
-void RakNetSocket2Allocator::DeallocRNS2(RakNetSocket2 *s) {RakNet::OP_DELETE(s,_FILE_AND_LINE_);}
+void RakNetSocket2Allocator::DeallocRNS2(RakNetSocket2 *s) {delete s;}
 RakNetSocket2::RakNetSocket2() {eventHandler=0;}
 RakNetSocket2::~RakNetSocket2() {}
 void RakNetSocket2::SetRecvEventHandler(RNS2EventHandler *_eventHandler) {eventHandler=_eventHandler;}
@@ -67,7 +66,7 @@ RakNetSocket2* RakNetSocket2Allocator::AllocRNS2(void)
 {
 	RakNetSocket2* s2;
 #if defined(WINDOWS_STORE_RT)
-	s2 = RakNet::OP_NEW<RNS2_WindowsStore8>(_FILE_AND_LINE_);
+	s2 =new RNS2_WindowsStore8;
 	s2->SetSocketType(RNS2T_WINDOWS_STORE_8);
 
 
@@ -76,7 +75,7 @@ RakNetSocket2* RakNetSocket2Allocator::AllocRNS2(void)
 
 
 #elif defined(__native_client__)
-	s2 = RakNet::OP_NEW<RNS2_NativeClient>(_FILE_AND_LINE_);
+	s2 =new RNS2_NativeClient;
 	s2->SetSocketType(RNS2T_CHROME);
 
 
@@ -88,10 +87,10 @@ RakNetSocket2* RakNetSocket2Allocator::AllocRNS2(void)
 
 
 #elif defined(_WIN32)
-	s2 = RakNet::OP_NEW<RNS2_Windows>(_FILE_AND_LINE_);
+	s2 =new RNS2_Windows;
 	s2->SetSocketType(RNS2T_WINDOWS);
 #else
-	s2 = RakNet::OP_NEW<RNS2_Linux>(_FILE_AND_LINE_);
+	s2 =new RNS2_Linux;
 	s2->SetSocketType(RNS2T_LINUX);
 #endif
 	return s2;
@@ -142,7 +141,7 @@ RNS2_NativeClient::~RNS2_NativeClient()
 {
 	bufferedSendsMutex.Lock();
 	while (bufferedSends.Size())
-		RakNet::OP_DELETE(bufferedSends.Pop(), _FILE_AND_LINE_);
+		delete bufferedSends.Pop();
 	bufferedSendsMutex.Unlock();
 }
 void RNS2_NativeClient::onSocketBound(void* pData, int32_t dataSize)
@@ -199,11 +198,11 @@ void RNS2_NativeClient::ProcessBufferedSend(void)
 void RNS2_NativeClient::DeallocSP(RNS2_SendParameters_NativeClient *sp)
 {
 	free(sp->data);
-	RakNet::OP_DELETE(sp, _FILE_AND_LINE_);
+	delete sp;
 }
 RNS2_SendParameters_NativeClient* RNS2_NativeClient::CloneSP(RNS2_SendParameters *sp, RNS2_NativeClient *socket2, const char *file, unsigned int line)
 {
-	RNS2_SendParameters_NativeClient *spNew = RakNet::OP_NEW<RNS2_SendParameters_NativeClient>(file, line);
+	RNS2_SendParameters_NativeClient *spNew =new RNS2_SendParameters_NativeClient;
 	spNew->data=(char*) rakMalloc(sp->length);
 	memcpy(spNew->data,sp->data,sp->length);
 	spNew->length = sp->length;

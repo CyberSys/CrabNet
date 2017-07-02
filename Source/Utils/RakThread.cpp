@@ -12,7 +12,6 @@
 #include "RakAssert.h"
 #include "RakNetDefines.h"
 #include "RakSleep.h"
-#include "RakMemoryOverride.h"
 
 using namespace RakNet;
 

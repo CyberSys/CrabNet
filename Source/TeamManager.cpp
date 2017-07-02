@@ -1833,7 +1833,7 @@ TM_World* TeamManager::AddWorld(WorldId worldId)
 {
 	RakAssert(worldsArray[worldId]==0 && "World already in use");
 
-	TM_World *newWorld = RakNet::OP_NEW<TM_World>(_FILE_AND_LINE_);
+	TM_World *newWorld =new TM_World;
 	newWorld->worldId=worldId;
 	newWorld->teamManager=this;
 	newWorld->hostGuid=GetMyGUIDUnified();
@@ -1851,7 +1851,7 @@ void TeamManager::RemoveWorld(WorldId worldId)
 	{
 		if (worldsList[i]==worldsArray[worldId])
 		{
-			RakNet::OP_DELETE(worldsList[i],_FILE_AND_LINE_);
+			delete worldsList[i];
 			worldsList.RemoveAtIndexFast(i);
 			break;
 		}

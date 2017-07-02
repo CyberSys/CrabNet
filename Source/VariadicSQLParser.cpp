@@ -73,8 +73,8 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 		return;
 
 	unsigned int i;
-	*argumentBinary=RakNet::OP_NEW_ARRAY<char *>(indices.Size(), _FILE_AND_LINE_);
-	*argumentLengths=RakNet::OP_NEW_ARRAY<int>(indices.Size(), _FILE_AND_LINE_);
+	*argumentBinary= new char *[indices.Size()];
+	*argumentLengths= new int[indices.Size(), _FILE_AND_LINE_];
 
 	char **paramData=*argumentBinary;
 	int *paramLength=*argumentLengths;
@@ -155,6 +155,6 @@ void VariadicSQLParser::FreeArguments(const DataStructures::List<IndexAndType> &
 	unsigned int i;
 	for (i=0; i < indices.Size(); i++)
 		free(argumentBinary[i]);
-	RakNet::OP_DELETE_ARRAY(argumentBinary,_FILE_AND_LINE_);
-	RakNet::OP_DELETE_ARRAY(argumentLengths,_FILE_AND_LINE_);
+	delete[] argumentBinary;
+	delete[] argumentLengths;
 }

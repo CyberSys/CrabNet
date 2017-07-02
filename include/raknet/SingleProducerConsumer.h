@@ -21,7 +21,6 @@
 
 static const int MINIMUM_LIST_SIZE=8;
 
-#include "RakMemoryOverride.h"
 #include "Export.h"
 
 /// The namespace DataStructures was only added to avoid compiler errors for commonly named data structures
@@ -100,9 +99,9 @@ namespace DataStructures
 		SingleProducerConsumer<SingleProducerConsumerType>::SingleProducerConsumer()
 	{
 		// Preallocate
-		readPointer = RakNet::OP_NEW<DataPlusPtr>( _FILE_AND_LINE_ );
+		readPointer = new DataPlusPtr;
 		writePointer=readPointer;
-		readPointer->next = RakNet::OP_NEW<DataPlusPtr>( _FILE_AND_LINE_ );
+		readPointer->next = new DataPlusPtr;
 		int listSize;
 #ifdef _DEBUG
 		RakAssert(MINIMUM_LIST_SIZE>=3);
@@ -110,7 +109,7 @@ namespace DataStructures
 		for (listSize=2; listSize < MINIMUM_LIST_SIZE; listSize++)
 		{
 			readPointer=readPointer->next;
-			readPointer->next = RakNet::OP_NEW<DataPlusPtr>( _FILE_AND_LINE_ );
+			readPointer->next = new DataPlusPtr;
 		}
 		readPointer->next->next=writePointer; // last to next = start
 		readPointer=writePointer;
@@ -127,10 +126,10 @@ namespace DataStructures
 		while (readPointer!=writeAheadPointer)
 		{
 			next=readPointer->next;
-			RakNet::OP_DELETE((char*) readPointer, _FILE_AND_LINE_);
+			delete (char*) readPointer;
 			readPointer=next;
 		}
-		RakNet::OP_DELETE((char*) readPointer, _FILE_AND_LINE_);
+		delete (char*) readPointer;
 	}
 
 	template <class SingleProducerConsumerType>
@@ -140,7 +139,7 @@ namespace DataStructures
 			writeAheadPointer->next->readyToRead==true)
 		{
 			volatile DataPlusPtr *originalNext=writeAheadPointer->next;
-			writeAheadPointer->next=RakNet::OP_NEW<DataPlusPtr>(_FILE_AND_LINE_);
+			writeAheadPointer->next=new DataPlusPtr;;
 			RakAssert(writeAheadPointer->next);
 			writeAheadPointer->next->next=originalNext;
 		}
@@ -233,7 +232,7 @@ namespace DataStructures
 #ifdef _DEBUG
 			RakAssert(writePointer!=readPointer);
 #endif
-			RakNet::OP_DELETE((char*) writePointer, _FILE_AND_LINE_);
+			delete (char*) writePointer;
 			writePointer=next;
 		}
 

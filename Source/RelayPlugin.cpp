@@ -32,9 +32,9 @@ RelayPlugin::~RelayPlugin()
 	strToGuidHash.GetAsList(itemList, keyList, _FILE_AND_LINE_);
 	guidToStrHash.Clear(_FILE_AND_LINE_);
 	for (unsigned int i=0; i < itemList.Size(); i++)
-		RakNet::OP_DELETE(itemList[i], _FILE_AND_LINE_);
+		delete itemList[i];
 	for (unsigned int i=0; i < chatRooms.Size(); i++)
-		RakNet::OP_DELETE(chatRooms[i], _FILE_AND_LINE_);
+		delete chatRooms[i];
 }
 
 RelayPluginEnums RelayPlugin::AddParticipantOnServer(const RakString &key, const RakNetGUID &guid)
@@ -51,10 +51,10 @@ RelayPluginEnums RelayPlugin::AddParticipantOnServer(const RakString &key, const
 	if (guidToStrHash.Pop(strAndGuidExisting, guid, _FILE_AND_LINE_))
 	{
 		strToGuidHash.Remove(strAndGuidExisting->str, _FILE_AND_LINE_);
-		RakNet::OP_DELETE(strAndGuidExisting, _FILE_AND_LINE_);
+		delete strAndGuidExisting;
 	}
 
-	StrAndGuidAndRoom *strAndGuid = RakNet::OP_NEW<StrAndGuidAndRoom>(_FILE_AND_LINE_);
+	StrAndGuidAndRoom *strAndGuid =new StrAndGuidAndRoom;
 	strAndGuid->guid=guid;
 	strAndGuid->str=key;
 
@@ -70,7 +70,7 @@ void RelayPlugin::RemoveParticipantOnServer(const RakNetGUID &guid)
 	{
 		LeaveGroup(&strAndGuid);
 		strToGuidHash.Remove(strAndGuid->str, _FILE_AND_LINE_);
-		RakNet::OP_DELETE(strAndGuid, _FILE_AND_LINE_);
+		delete strAndGuid;
 	}
 }
 
@@ -276,7 +276,7 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(RakNetGUID userGuid, RakString roo
 		}
 
 		// Create new room
-		RP_Group *room = RakNet::OP_NEW<RP_Group>(_FILE_AND_LINE_);
+		RP_Group *room =new RP_Group;
 		room->roomName=roomName;
 		chatRooms.Push(room, _FILE_AND_LINE_);
 		return JoinGroup(room,strAndGuidSender);
@@ -305,7 +305,7 @@ void RelayPlugin::LeaveGroup(StrAndGuidAndRoom **strAndGuidSender)
 
 					if (room->usersInRoom.Size()==0)
 					{
-						RakNet::OP_DELETE(room, _FILE_AND_LINE_);
+						delete room;
 						chatRooms.RemoveAtIndexFast(i);
 						return;
 					}

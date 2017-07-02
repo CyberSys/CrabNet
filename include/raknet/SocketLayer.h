@@ -18,7 +18,6 @@
 #ifndef __SOCKET_LAYER_H
 #define __SOCKET_LAYER_H
 
-#include "RakMemoryOverride.h"
 #include "RakNetTypes.h"
 #include "RakNetSmartPtr.h"
 //#include "RakNetSocket.h"

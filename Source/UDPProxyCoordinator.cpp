@@ -102,7 +102,7 @@ void UDPProxyCoordinator::Update(void)
 			curTime > fw->timeoutAfterSuccess)
 		{
 			// Forwarding request succeeded, we waited a bit to prevent duplicates. Can forget about the entry now.
-			RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
+			delete fw;
 			forwardingRequestList.RemoveAtIndex(idx);
 		}
 		else
@@ -144,7 +144,7 @@ void UDPProxyCoordinator::OnClosedConnection(const SystemAddress &systemAddress,
 		if (forwardingRequestList[idx]->requestingAddress==systemAddress)
 		{
 			// Guy disconnected before the attempt completed
-			RakNet::OP_DELETE(forwardingRequestList[idx], _FILE_AND_LINE_);
+			delete forwardingRequestList[idx];
 			forwardingRequestList.RemoveAtIndex(idx );
 		}
 		else
@@ -192,7 +192,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		incomingBs.Read(targetGuid);
 		targetAddress=rakPeerInterface->GetSystemAddressFromGuid(targetGuid);
 	}
-	ForwardingRequest *fw = RakNet::OP_NEW<ForwardingRequest>(_FILE_AND_LINE_);
+	ForwardingRequest *fw =new ForwardingRequest;
 	fw->timeoutAfterSuccess=0;
 	incomingBs.Read(fw->timeoutOnNoDataMS);
 	bool hasServerSelectionBitstream=false;
@@ -230,7 +230,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		outgoingBs.Write(serverPublicIp);
 		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-		RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
+		delete fw;
 		return;
 	}
 
@@ -242,7 +242,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		outgoingBs.Write(targetAddress);
 		outgoingBs.Write(targetGuid);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-		RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
+		delete fw;
 		return;
 	}
 
@@ -254,7 +254,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
 		outgoingBs.Write(targetAddress);
 		outgoingBs.Write(targetGuid);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-		RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
+		delete fw;
 		return;
 	}
 
@@ -404,7 +404,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		// 05/18/09 Keep the entry around for some time after success, so duplicates are reported if attempting forwarding from the target system before notification of success
 		fw->timeoutAfterSuccess=RakNet::GetTimeMS()+fw->timeoutOnNoDataMS;
 		// forwardingRequestList.RemoveAtIndex(index);
-		// RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
+		// delete fw;
 
 		return;
 	}
@@ -427,7 +427,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, fw->requestingAddress, false);
 		forwardingRequestList.RemoveAtIndex(index);
-		RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
+		delete fw;
 	}
 }
 void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(Packet *packet)
@@ -508,7 +508,7 @@ void UDPProxyCoordinator::TryNextServer(SenderAndTargetAddress sata, ForwardingR
 	{
 		SendAllBusy(sata.senderClientAddress, sata.targetClientAddress, sata.targetClientGuid, fw->requestingAddress);
 		forwardingRequestList.Remove(sata);
-		RakNet::OP_DELETE(fw,_FILE_AND_LINE_);
+		delete fw;
 		return;
 	}
 
@@ -529,7 +529,7 @@ void UDPProxyCoordinator::Clear(void)
 	serverList.Clear(true, _FILE_AND_LINE_);
 	for (unsigned int i=0; i < forwardingRequestList.Size(); i++)
 	{
-		RakNet::OP_DELETE(forwardingRequestList[i],_FILE_AND_LINE_);
+		delete forwardingRequestList[i];
 	}
 	forwardingRequestList.Clear(false, _FILE_AND_LINE_);
 }

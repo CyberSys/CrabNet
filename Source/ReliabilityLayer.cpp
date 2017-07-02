@@ -486,7 +486,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 			ReleaseToInternalPacketPool( splitPacketChannelList[i]->returnedPacket );
 		}
 #endif
-		RakNet::OP_DELETE(splitPacketChannelList[i], __FILE__, __LINE__);
+		delete splitPacketChannelList[i];
 	}
 	splitPacketChannelList.Clear(false, _FILE_AND_LINE_);
 
@@ -515,7 +515,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 					ReleaseToInternalPacketPool( internalPacket );
 				}
 
-				RakNet::OP_DELETE(theList, _FILE_AND_LINE_);
+				delete theList;
 			}
 		}
 	}
@@ -577,7 +577,7 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 
 #ifdef _DEBUG
 	for (unsigned i = 0; i < delayList.Size(); i++ )
-		RakNet::OP_DELETE(delayList[ i ], __FILE__, __LINE__);
+		delete delayList[ i ];
 	delayList.Clear(__FILE__, __LINE__);
 #endif
 
@@ -1664,7 +1664,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 		//sendPacketSet[priority].CancelWriteLock(internalPacket);
 		//SplitPacket( &packetCopy, MTUSize );
 		SplitPacket( internalPacket );
-		//RakNet::OP_DELETE_ARRAY(packetCopy.data, _FILE_AND_LINE_);
+		//delete[] packetCopy.data;
 		return true;
 	}
 
@@ -1715,7 +1715,7 @@ void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, i
 			bsp.systemAddress = systemAddress;
 			dat->s->Send(&bsp, _FILE_AND_LINE_);
 
-			RakNet::OP_DELETE(dat,__FILE__,__LINE__);
+			delete dat;
 		}
 		else
 		{
@@ -2253,7 +2253,7 @@ void ReliabilityLayer::SendBitStream( RakNetSocket2 *s, SystemAddress &systemAdd
 	{
 #ifdef FLIP_SEND_ORDER_TEST
 		// Flip order of sends without delaying them for testing
-		DataAndTime *dat = RakNet::OP_NEW<DataAndTime>(__FILE__,__LINE__);
+		DataAndTime *dat =new DataAndTime;
 		memcpy(dat->data, ( char* ) bitStream->GetData(), length );
 		dat->s=s;
 		dat->length=length;
@@ -2267,7 +2267,7 @@ void ReliabilityLayer::SendBitStream( RakNetSocket2 *s, SystemAddress &systemAdd
 			delay += (randomMT() % extraPingVariance);
 		if (delay > 0)
 		{
-			DataAndTime *dat = RakNet::OP_NEW<DataAndTime>(__FILE__,__LINE__);
+			DataAndTime *dat =new DataAndTime;
 			memcpy(dat->data, ( char* ) bitStream->GetData(), length );
 			dat->s=s;
 			dat->length=length;
@@ -2930,7 +2930,7 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket )
 	internalPacket->splitPacketCount = ( ( dataByteLength - 1 ) / ( maximumSendBlockBytes ) + 1 );
 
 	// Optimization
-	// internalPacketArray = RakNet::OP_NEW<InternalPacket*>(internalPacket->splitPacketCount, _FILE_AND_LINE_ );
+	// internalPacketArray =new InternalPacket*;
 	bool usedAlloca=false;
 #if USE_ALLOCA==1
 	if (sizeof( InternalPacket* ) * internalPacket->splitPacketCount < MAX_ALLOCA_STACK_ALLOCATION)
@@ -3031,7 +3031,7 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 	index=splitPacketChannelList.GetIndexFromKey(internalPacket->splitPacketId, &objectExists);
 	if (objectExists==false)
 	{
-		SplitPacketChannel *newChannel = RakNet::OP_NEW<SplitPacketChannel>( __FILE__, __LINE__ );
+		SplitPacketChannel *newChannel =new SplitPacketChannel;
 #if PREALLOCATE_LARGE_MESSAGES==1
 		index=splitPacketChannelList.Insert(internalPacket->splitPacketId, newChannel, true, __FILE__,__LINE__);
 		newChannel->returnedPacket=CreateInternalPacketCopy( internalPacket, 0, 0, time );
@@ -3173,7 +3173,7 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketCh
 {
 #if PREALLOCATE_LARGE_MESSAGES==1
 	InternalPacket *returnedPacket=splitPacketChannel->returnedPacket;
-	RakNet::OP_DELETE(splitPacketChannel, __FILE__, __LINE__);
+	delete splitPacketChannel;
 	(void) time;
 	return returnedPacket;
 #else
@@ -3204,7 +3204,7 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketCh
 		FreeInternalPacketData(splitPacketChannel->splitPacketList[j], _FILE_AND_LINE_ );
 		ReleaseToInternalPacketPool(splitPacketChannel->splitPacketList[j]);
 	}
-	RakNet::OP_DELETE(splitPacketChannel, __FILE__, __LINE__);
+	delete splitPacketChannel;
 
 	return internalPacket;
 #endif
@@ -3258,10 +3258,10 @@ if (time > splitPacketChannelList[i]->lastUpdateTime + (CCTimeType)timeoutTime*(
 {
 for (j=0; j < splitPacketChannelList[i]->splitPacketList.Size(); j++)
 {
-RakNet::OP_DELETE_ARRAY(splitPacketChannelList[i]->splitPacketList[j]->data, _FILE_AND_LINE_);
+delete[] splitPacketChannelList[i]->splitPacketList[j]->data;
 ReleaseToInternalPacketPool(splitPacketChannelList[i]->splitPacketList[j]);
 }
-RakNet::OP_DELETE(splitPacketChannelList[i], _FILE_AND_LINE_);
+delete splitPacketChannelList[i];
 splitPacketChannelList.RemoveAtIndex(i);
 }
 else
@@ -3830,7 +3830,7 @@ void ReliabilityLayer::AllocInternalPacketData(InternalPacket *internalPacket, I
 	if (*refCounter==0)
 	{
 		*refCounter = refCountedDataPool.Allocate(_FILE_AND_LINE_);
-		// *refCounter = RakNet::OP_NEW<InternalPacketRefCountedData>(_FILE_AND_LINE_);
+		// *refCounter =new InternalPacketRefCountedData;
 		(*refCounter)->refCount=1;
 		(*refCounter)->sharedDataBlock=externallyAllocatedPtr;
 	}
@@ -3874,7 +3874,7 @@ void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, co
 		{
 			free(internalPacket->refCountedData->sharedDataBlock);
 			internalPacket->refCountedData->sharedDataBlock=0;
-			// RakNet::OP_DELETE(internalPacket->refCountedData,file, line);
+			// delete internalPacket->refCountedData;
 			refCountedDataPool.Release(internalPacket->refCountedData,file, line);
 			internalPacket->refCountedData=0;
 		}

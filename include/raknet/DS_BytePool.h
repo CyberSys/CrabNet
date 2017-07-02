@@ -15,7 +15,6 @@
 #ifndef __BYTE_POOL_H
 #define __BYTE_POOL_H
 
-#include "RakMemoryOverride.h"
 #include "DS_MemoryPool.h"
 #include "Export.h"
 #include "SimpleMutex.h"

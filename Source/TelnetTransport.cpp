@@ -57,9 +57,9 @@ void TelnetTransport::Stop(void)
 	tcpInterface->Stop();
 	unsigned i;
 	for (i=0; i < remoteClients.Size(); i++)
-		RakNet::OP_DELETE(remoteClients[i], _FILE_AND_LINE_);
+		delete remoteClients[i];
 	remoteClients.Clear(false, _FILE_AND_LINE_);
-	RakNet::OP_DELETE(tcpInterface, _FILE_AND_LINE_);
+	delete tcpInterface;
 	tcpInterface=0;
 }
 void TelnetTransport::Send(  SystemAddress systemAddress, const char *data,... )
@@ -290,7 +290,7 @@ SystemAddress TelnetTransport::HasLostConnection(void)
 		{
 			if (remoteClients[i]->systemAddress==systemAddress)
 			{
-				RakNet::OP_DELETE(remoteClients[i], _FILE_AND_LINE_);
+				delete remoteClients[i];
 				remoteClients[i]=remoteClients[remoteClients.Size()-1];
 				remoteClients.RemoveFromEnd();
 			}

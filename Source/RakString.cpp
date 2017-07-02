@@ -10,7 +10,6 @@
 
 #include "RakString.h"
 #include "RakAssert.h"
-#include "RakMemoryOverride.h"
 #include "BitStream.h"
 #include <stdarg.h>
 #include <string.h>
@@ -325,7 +324,7 @@ const RakNet::RakString operator+(const RakNet::RakString &lhs, const RakNet::Ra
 		//	RakString::freeList.Insert(RakString::sharedStringFreeList+i+RakString::sharedStringFreeListAllocationCount);
 			RakString::SharedString *ss;
 			ss = (RakString::SharedString*) malloc(sizeof(RakString::SharedString));
-			ss->refCountMutex=RakNet::OP_NEW<SimpleMutex>(_FILE_AND_LINE_);
+			ss->refCountMutex=new SimpleMutex;
 			RakString::freeList.Insert(ss, _FILE_AND_LINE_);
 
 		}
@@ -511,7 +510,7 @@ WCHAR * RakString::ToWideChar(void)
 }
 void RakString::DeallocWideChar(WCHAR * w)
 {
-	RakNet::OP_DELETE_ARRAY(w,__FILE__,__LINE__);
+	delete[] w;
 }
 void RakString::FromWideChar(const wchar_t *source)
 {
@@ -1209,7 +1208,7 @@ void RakString::FreeMemoryNoMutex(void)
 {
 	for (unsigned int i=0; i < freeList.Size(); i++)
 	{
-		RakNet::OP_DELETE(freeList[i]->refCountMutex,_FILE_AND_LINE_);
+		delete freeList[i]->refCountMutex;
 		free(freeList[i]);
 	}
 	freeList.Clear(false, _FILE_AND_LINE_);
@@ -1333,7 +1332,7 @@ void RakString::Allocate(size_t len)
 
 			RakString::SharedString *ss;
 			ss = (RakString::SharedString*) malloc(sizeof(RakString::SharedString));
-			ss->refCountMutex=RakNet::OP_NEW<SimpleMutex>(_FILE_AND_LINE_);
+			ss->refCountMutex=new SimpleMutex;
 			RakString::freeList.Insert(ss, _FILE_AND_LINE_);
 		}
 		//RakString::sharedStringFreeListAllocationCount+=1024;
@@ -1637,7 +1636,7 @@ int main(void)
 		beforeReferenceList=RakNet::GetTimeMS();
 		for (i=0; i < repeatCount; i++)
 		{
-			RakNet::OP_DELETE_ARRAY(referenceStringList[0], _FILE_AND_LINE_);
+			delete[] referenceStringList[0];
 			referenceStringList.RemoveAtIndex(0);
 		}
 		beforeRakString=RakNet::GetTimeMS();
@@ -1668,7 +1667,7 @@ int main(void)
 		beforeReferenceList=RakNet::GetTimeMS();
 		for (i=0; i < repeatCount; i++)
 		{
-			RakNet::OP_DELETE_ARRAY(referenceStringList[referenceStringList.Size()-1], _FILE_AND_LINE_);
+			delete[] referenceStringList[referenceStringList.Size()-1];
 			referenceStringList.RemoveAtIndex(referenceStringList.Size()-1);
 		}
 		beforeRakString=RakNet::GetTimeMS();

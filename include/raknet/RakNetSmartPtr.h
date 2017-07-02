@@ -14,7 +14,6 @@
 // From http://www.codeproject.com/KB/cpp/SmartPointers.aspx
 // with bugs fixed
 
-#include "RakMemoryOverride.h"
 #include "Export.h"
 
 //static int allocCount=0;
@@ -50,7 +49,7 @@ public:
 
 	RakNetSmartPtr(T* pValue) : ptr(pValue)
 	{
-		reference = RakNet::OP_NEW<ReferenceCounter>(_FILE_AND_LINE_);
+		reference = new ReferenceCounter;
 		reference->AddRef();
 
 //		allocCount+=2;
@@ -67,8 +66,8 @@ public:
 	{
 		if(reference && reference->Release() == 0)
 		{
-			RakNet::OP_DELETE(ptr, _FILE_AND_LINE_);
-			RakNet::OP_DELETE(reference, _FILE_AND_LINE_);
+			delete ptr;
+			delete reference;
 
 //			deallocCount+=2;
 //			printf("allocCount=%i deallocCount=%i Line=%i\n",allocCount, deallocCount, __LINE__);
@@ -84,8 +83,8 @@ public:
 	{
 		if(reference && reference->Release() == 0)
 		{
-			RakNet::OP_DELETE(ptr, _FILE_AND_LINE_);
-			RakNet::OP_DELETE(reference, _FILE_AND_LINE_);
+			delete ptr;
+			delete reference;
 
 //			deallocCount+=2;
 //			printf("allocCount=%i deallocCount=%i Line=%i\n",allocCount, deallocCount, __LINE__);
@@ -106,10 +105,10 @@ public:
 		{
 			reference->Release();
 
-			reference = RakNet::OP_NEW<ReferenceCounter>(_FILE_AND_LINE_);
+			reference = new ReferenceCounter;;
 			reference->AddRef();
 			T* oldPtr=ptr;
-			ptr=RakNet::OP_NEW<T>(_FILE_AND_LINE_);
+			ptr=new T;;
 			if (copyContents)
 				*ptr=*oldPtr;
 		}
@@ -160,8 +159,8 @@ public:
 		{
 			if(reference && reference->Release() == 0)
 			{
-				RakNet::OP_DELETE(ptr, _FILE_AND_LINE_);
-				RakNet::OP_DELETE(reference, _FILE_AND_LINE_);
+				delete ptr;
+				delete reference;
 
 //				deallocCount+=2;
 //				printf("allocCount=%i deallocCount=%i Line=%i\n",allocCount, deallocCount, __LINE__);

@@ -103,7 +103,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 			return response;
 		if (password==0)
 			return "Password needed";
-		char *outputData = RakNet::OP_NEW_ARRAY<char >((const int) (strlen(sender)+strlen(password)+2)*3, _FILE_AND_LINE_ );
+		char *outputData = new char[(strlen(sender)+strlen(password)+2)*3];
 		RakNet::BitStream bs;
 		char zero=0;
 		bs.Write(&zero,1);

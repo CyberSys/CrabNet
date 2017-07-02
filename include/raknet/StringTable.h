@@ -19,7 +19,6 @@
 
 #include "DS_OrderedList.h"
 #include "Export.h"
-#include "RakMemoryOverride.h"
 
 /// Forward declaration
 namespace RakNet

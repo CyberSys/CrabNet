@@ -31,7 +31,7 @@ void StringCompressor::AddReference(void)
 {
 	if (++referenceCount==1)
 	{
-		instance = RakNet::OP_NEW<StringCompressor>( _FILE_AND_LINE_ );
+		instance =new StringCompressor;
 	}
 }
 void StringCompressor::RemoveReference(void)
@@ -42,7 +42,7 @@ void StringCompressor::RemoveReference(void)
 	{
 		if (--referenceCount==0)
 		{
-			RakNet::OP_DELETE(instance, _FILE_AND_LINE_);
+			delete instance;
 			instance=0;
 		}
 	}
@@ -318,7 +318,7 @@ StringCompressor::StringCompressor()
 	DataStructures::Map<int, HuffmanEncodingTree *>::IMPLEMENT_DEFAULT_COMPARISON();
 
 	// Make a default tree immediately, since this is used for RPC possibly from multiple threads at the same time
-	HuffmanEncodingTree *huffmanEncodingTree = RakNet::OP_NEW<HuffmanEncodingTree>( _FILE_AND_LINE_ );
+	HuffmanEncodingTree *huffmanEncodingTree =new HuffmanEncodingTree;
 	huffmanEncodingTree->GenerateFromFrequencyTable( englishCharacterFrequencies );
 
 	huffmanEncodingTrees.Set(0, huffmanEncodingTree);
@@ -329,7 +329,7 @@ void StringCompressor::GenerateTreeFromStrings( unsigned char *input, unsigned i
 	if (huffmanEncodingTrees.Has(languageId))
 	{
 		huffmanEncodingTree = huffmanEncodingTrees.Get(languageId);
-		RakNet::OP_DELETE(huffmanEncodingTree, _FILE_AND_LINE_);
+		delete huffmanEncodingTree;
 	}
 
 	unsigned index;
@@ -346,7 +346,7 @@ void StringCompressor::GenerateTreeFromStrings( unsigned char *input, unsigned i
 		frequencyTable[ input[ index ] ] ++;
 
 	// Build the tree
-	huffmanEncodingTree = RakNet::OP_NEW<HuffmanEncodingTree>( _FILE_AND_LINE_ );
+	huffmanEncodingTree =new HuffmanEncodingTree;
 	huffmanEncodingTree->GenerateFromFrequencyTable( frequencyTable );
 	huffmanEncodingTrees.Set(languageId, huffmanEncodingTree);
 }
@@ -354,7 +354,7 @@ void StringCompressor::GenerateTreeFromStrings( unsigned char *input, unsigned i
 StringCompressor::~StringCompressor()
 {
 	for (unsigned i=0; i < huffmanEncodingTrees.Size(); i++)
-		RakNet::OP_DELETE(huffmanEncodingTrees[i], _FILE_AND_LINE_);
+		delete huffmanEncodingTrees[i];
 }
 
 void StringCompressor::EncodeString( const char *input, int maxCharsToWrite, RakNet::BitStream *output, uint8_t languageId )

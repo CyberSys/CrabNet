@@ -21,12 +21,12 @@
 #define __CLOUD_SERVER_H
 
 #include "PluginInterface2.h"
-#include "RakMemoryOverride.h"
 #include "NativeTypes.h"
 #include "RakString.h"
 #include "DS_Hash.h"
 #include "CloudCommon.h"
 #include "DS_OrderedList.h"
+#include <cstdlib>
 
 /// If the data is smaller than this value, an allocation is avoid. However, this value exists for every row
 #define CLOUD_SERVER_DATA_STACK_SIZE 32

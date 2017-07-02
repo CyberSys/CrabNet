@@ -41,7 +41,7 @@ TwoWayAuthentication::NonceGenerator::~NonceGenerator()
 }
 void TwoWayAuthentication::NonceGenerator::GetNonce(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], unsigned short *requestId, RakNet::AddressOrGUID remoteSystem)
 {
-	TwoWayAuthentication::NonceAndRemoteSystemRequest *narsr = RakNet::OP_NEW<TwoWayAuthentication::NonceAndRemoteSystemRequest>(_FILE_AND_LINE_);
+	TwoWayAuthentication::NonceAndRemoteSystemRequest *narsr =new TwoWayAuthentication::NonceAndRemoteSystemRequest;
 	narsr->remoteSystem=remoteSystem;
 	GenerateNonce(narsr->nonce);
 	narsr->requestId=nextRequestId++;
@@ -66,7 +66,7 @@ bool TwoWayAuthentication::NonceGenerator::GetNonceById(char nonce[TWO_WAY_AUTHE
 				memcpy(nonce,generatedNonces[i]->nonce,TWO_WAY_AUTHENTICATION_NONCE_LENGTH);
 				if (popIfFound)
 				{
-					RakNet::OP_DELETE(generatedNonces[i],_FILE_AND_LINE_);
+					delete generatedNonces[i];
 					generatedNonces.RemoveAtIndex(i);
 				}
 				return true;
@@ -83,7 +83,7 @@ void TwoWayAuthentication::NonceGenerator::Clear(void)
 {
 	unsigned int i;
 	for (i=0; i < generatedNonces.Size(); i++)
-		RakNet::OP_DELETE(generatedNonces[i],_FILE_AND_LINE_);
+		delete generatedNonces[i];
 	generatedNonces.Clear(true,_FILE_AND_LINE_);
 }
 void TwoWayAuthentication::NonceGenerator::ClearByAddress(RakNet::AddressOrGUID remoteSystem)
@@ -93,7 +93,7 @@ void TwoWayAuthentication::NonceGenerator::ClearByAddress(RakNet::AddressOrGUID 
 	{
 		if (generatedNonces[i]->remoteSystem==remoteSystem)
 		{
-			RakNet::OP_DELETE(generatedNonces[i],_FILE_AND_LINE_);
+			delete generatedNonces[i];
 			generatedNonces.RemoveAtIndex(i);
 		}
 		else
@@ -106,7 +106,7 @@ void TwoWayAuthentication::NonceGenerator::Update(RakNet::Time curTime)
 {
 	if (generatedNonces.Size()>0 && GreaterThan(curTime-5000, generatedNonces[0]->whenGenerated))
 	{
-		RakNet::OP_DELETE(generatedNonces[0], _FILE_AND_LINE_);
+		delete generatedNonces[0];
 		generatedNonces.RemoveAtIndex(0);
 	}
 }

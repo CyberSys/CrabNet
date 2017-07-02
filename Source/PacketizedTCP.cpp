@@ -180,7 +180,7 @@ Packet* PacketizedTCP::Receive( void )
 					do 
 					{
 						bq->IncrementReadOffset(sizeof(PTCPHeader));
-						outgoingPacket = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
+						outgoingPacket =new Packet;
 						outgoingPacket->length=dataLength;
 						outgoingPacket->bitSize=BYTES_TO_BITS(dataLength);
 						outgoingPacket->guid=UNASSIGNED_RAKNET_GUID;
@@ -190,7 +190,7 @@ Packet* PacketizedTCP::Receive( void )
 						if (outgoingPacket->data==0)
 						{
 							RakAssert(0)
-							RakNet::OP_DELETE(outgoingPacket,_FILE_AND_LINE_);
+							delete outgoingPacket;
 							return 0;
 						}
 						bq->ReadBytes((char*) outgoingPacket->data,dataLength,false);
@@ -216,7 +216,7 @@ Packet* PacketizedTCP::Receive( void )
 					// Return ID_DOWNLOAD_PROGRESS
 					if (newWritten/65536!=oldWritten/65536)
 					{
-						outgoingPacket = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
+						outgoingPacket =new Packet;
 						outgoingPacket->length=sizeof(MessageID) +
 							sizeof(unsigned int)*2 +
 							sizeof(unsigned int) +
@@ -229,7 +229,7 @@ Packet* PacketizedTCP::Receive( void )
 						if (outgoingPacket->data==0)
 						{
 							RakAssert(0)
-							RakNet::OP_DELETE(outgoingPacket,_FILE_AND_LINE_);
+							delete outgoingPacket;
 							return 0;
 						}
 
@@ -302,7 +302,7 @@ void PacketizedTCP::RemoveFromConnectionList(const SystemAddress &sa)
 		unsigned int index = connections.GetIndexAtKey(sa);
 		if (index!=(unsigned int)-1)
 		{
-			RakNet::OP_DELETE(connections[index],_FILE_AND_LINE_);
+			delete connections[index];
 			connections.RemoveAtIndex(index);
 		}
 	}
@@ -311,13 +311,13 @@ void PacketizedTCP::AddToConnectionList(const SystemAddress &sa)
 {
 	if (sa==UNASSIGNED_SYSTEM_ADDRESS)
 		return;
-	connections.SetNew(sa, RakNet::OP_NEW<DataStructures::ByteQueue>(_FILE_AND_LINE_));
+	connections.SetNew(sa,new DataStructures::ByteQueue);
 }
 void PacketizedTCP::ClearAllConnections(void)
 {
 	unsigned int i;
 	for (i=0; i < connections.Size(); i++)
-		RakNet::OP_DELETE(connections[i],_FILE_AND_LINE_);
+		delete connections[i];
 	connections.Clear();
 }
 SystemAddress PacketizedTCP::HasCompletedConnectionAttempt(void)

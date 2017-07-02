@@ -68,8 +68,7 @@
 		typedef PP_Resource __UDPSOCKET__;
 		typedef PP_Resource __TCPSOCKET__;
 	#else
-		//#include "RakMemoryOverride.h"
-		/// Unix/Linux uses ints for sockets
+		//		/// Unix/Linux uses ints for sockets
 		typedef int __UDPSOCKET__;
 		typedef int __TCPSOCKET__;
 #endif

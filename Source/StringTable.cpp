@@ -44,7 +44,7 @@ void StringTable::AddReference(void)
 {
 	if (++referenceCount==1)
 	{
-		instance = RakNet::OP_NEW<StringTable>( _FILE_AND_LINE_ );
+		instance =new StringTable;
 	}
 }
 void StringTable::RemoveReference(void)
@@ -55,7 +55,7 @@ void StringTable::RemoveReference(void)
 	{
 		if (--referenceCount==0)
 		{
-			RakNet::OP_DELETE(instance, _FILE_AND_LINE_);
+			delete instance;
 			instance=0;
 		}
 	}

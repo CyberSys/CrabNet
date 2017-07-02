@@ -17,7 +17,6 @@
 #ifndef __HUFFMAN_ENCODING_TREE_FACTORY
 #define __HUFFMAN_ENCODING_TREE_FACTORY
 
-#include "RakMemoryOverride.h"
 
 namespace RakNet {
 /// Forward declarations

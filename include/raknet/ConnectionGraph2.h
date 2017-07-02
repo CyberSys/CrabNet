@@ -19,7 +19,6 @@
 #ifndef __CONNECTION_GRAPH_2_H
 #define __CONNECTION_GRAPH_2_H
 
-#include "RakMemoryOverride.h"
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "DS_List.h"

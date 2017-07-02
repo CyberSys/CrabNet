@@ -20,7 +20,6 @@
 #ifndef __DIRECTORY_DELTA_TRANSFER_H
 #define __DIRECTORY_DELTA_TRANSFER_H
 
-#include "RakMemoryOverride.h"
 #include "RakNetTypes.h"
 #include "Export.h"
 #include "PluginInterface2.h"

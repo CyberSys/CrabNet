@@ -14,7 +14,6 @@
 ///
 
 #include "DS_List.h"
-#include "RakMemoryOverride.h"
 #include "Export.h"
 
 #ifndef __ORDERED_LIST_H

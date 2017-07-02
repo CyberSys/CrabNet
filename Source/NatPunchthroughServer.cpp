@@ -41,7 +41,7 @@ void NatPunchthroughServer::User::DeleteConnectionAttempt(NatPunchthroughServer:
 	unsigned int index = connectionAttempts.GetIndexOf(ca);
 	if ((unsigned int)index!=(unsigned int)-1)
 	{
-		RakNet::OP_DELETE(ca,_FILE_AND_LINE_);
+		delete ca;
 		connectionAttempts.RemoveAtIndex(index);
 	}
 }
@@ -140,7 +140,7 @@ NatPunchthroughServer::~NatPunchthroughServer()
 				otherUser=connectionAttempt->sender;
 			otherUser->DeleteConnectionAttempt(connectionAttempt);
 		}
-		RakNet::OP_DELETE(user,_FILE_AND_LINE_);
+		delete user;
 		users[0]=users[users.Size()-1];
 		users.RemoveAtIndex(users.Size()-1);
 	}
@@ -330,7 +330,7 @@ void NatPunchthroughServer::OnClosedConnection(const SystemAddress &systemAddres
 			otherUser->DeleteConnectionAttempt(connectionAttempt);
 		}
 
-		RakNet::OP_DELETE(users[i], _FILE_AND_LINE_);
+		delete users[i];
 		users.RemoveAtIndex(i);
 
 		for (i=0; i < freedUpInProgressUsers.Size(); i++)
@@ -366,7 +366,7 @@ void NatPunchthroughServer::OnNewConnection(const SystemAddress &systemAddress, 
 	(void) systemAddress;
 	(void) isIncoming;
 
-	User *user = RakNet::OP_NEW<User>(_FILE_AND_LINE_);
+	User *user =new User;
 	user->guid=rakNetGUID;
 	user->mostRecentPort=0;
 	user->systemAddress=systemAddress;
@@ -389,7 +389,7 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 	i = users.GetIndexFromKey(senderGuid, &objectExists);
 	RakAssert(objectExists);
 
-	ConnectionAttempt *ca = RakNet::OP_NEW<ConnectionAttempt>(_FILE_AND_LINE_);
+	ConnectionAttempt *ca =new ConnectionAttempt;
 	ca->sender=users[i];
 	ca->sessionId=sessionId++;
 	i = users.GetIndexFromKey(recipientGuid, &objectExists);
@@ -402,7 +402,7 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 		outgoingBs.Write((MessageID)ID_NAT_TARGET_NOT_CONNECTED);
 		outgoingBs.Write(recipientGuid);
 		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
-		RakNet::OP_DELETE(ca,_FILE_AND_LINE_);
+		delete ca;
 		return;
 	}
 	ca->recipient=users[i];
@@ -411,7 +411,7 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 		outgoingBs.Write((MessageID)ID_NAT_ALREADY_IN_PROGRESS);
 		outgoingBs.Write(recipientGuid);
 		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
-		RakNet::OP_DELETE(ca,_FILE_AND_LINE_);
+		delete ca;
 		return;
 	}
 

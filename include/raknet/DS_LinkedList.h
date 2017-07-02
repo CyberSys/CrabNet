@@ -18,7 +18,6 @@
 #define __LINKED_LIST_H 
 
 #include "Export.h"
-#include "RakMemoryOverride.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -272,8 +271,8 @@ namespace DataStructures
 			else
 				if ( original_copy.list_size == 1 )
 				{
-					this->root = RakNet::OP_NEW<typename LinkedList::node>( _FILE_AND_LINE_ );
-					// root->item = RakNet::OP_NEW<LinkedListType>( _FILE_AND_LINE_ );
+					this->root = new typename LinkedList::node;
+					// root->item = new LinkedListType;
 					this->root->next = this->root;
 					this->root->previous = this->root;
 					this->list_size = 1;
@@ -286,8 +285,8 @@ namespace DataStructures
 				{
 					// Setup the first part of the root node
 					original_copy_pointer = original_copy.root;
-					this->root = RakNet::OP_NEW<typename LinkedList::node>( _FILE_AND_LINE_ );
-					// root->item = RakNet::OP_NEW<LinkedListType>( _FILE_AND_LINE_ );
+					this->root = new typename LinkedList::node;
+					// root->item = new LinkedListType;
 					this->position = this->root;
 					// *(root->item)=*((original_copy.root)->item);
 					this->root->item = original_copy.root->item;
@@ -306,8 +305,8 @@ namespace DataStructures
 						original_copy_pointer = original_copy_pointer->next;
 
 						// Create a new node and point position to it
-						this->position = RakNet::OP_NEW<typename LinkedList::node>( _FILE_AND_LINE_ );
-						// position->item = RakNet::OP_NEW<LinkedListType>( _FILE_AND_LINE_ );
+						this->position = new typename LinkedList::node;
+						// position->item = new LinkedListType;
 
 						// Copy the item to the new node
 						// *(position->item)=*(original_copy_pointer->item);
@@ -378,8 +377,8 @@ namespace DataStructures
 		else
 			if ( original_copy.list_size == 1 )
 			{
-				this->root = RakNet::OP_NEW<typename LinkedList::node>( _FILE_AND_LINE_ );
-				// root->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+				this->root = new typename LinkedList::node;
+				// root->item = new CircularLinkedListType;
 				this->root->next = this->root;
 				this->root->previous = this->root;
 				this->list_size = 1;
@@ -392,8 +391,8 @@ namespace DataStructures
 			{
 				// Setup the first part of the root node
 				original_copy_pointer = original_copy.root;
-				this->root = RakNet::OP_NEW<typename LinkedList::node>( _FILE_AND_LINE_ );
-				// root->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+				this->root = new typename LinkedList::node;
+				// root->item = new CircularLinkedListType;
 				this->position = this->root;
 				// *(root->item)=*((original_copy.root)->item);
 				this->root->item = original_copy.root->item;
@@ -410,8 +409,8 @@ namespace DataStructures
 					original_copy_pointer = original_copy_pointer->next;
 
 					// Create a new node and point position to it
-					this->position = RakNet::OP_NEW<typename LinkedList::node>( _FILE_AND_LINE_ );
-					// position->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+					this->position = new typename LinkedList::node;
+					// position->item = new CircularLinkedListType;
 
 					// Copy the item to the new node
 					// *(position->item)=*(original_copy_pointer->item);
@@ -462,8 +461,8 @@ namespace DataStructures
 		else
 			if ( original_copy.list_size == 1 )
 			{
-				this->root = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-				// root->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+				this->root = new typename CircularLinkedList::node;
+				// root->item = new CircularLinkedListType;
 				this->root->next = this->root;
 				this->root->previous = this->root;
 				this->list_size = 1;
@@ -476,8 +475,8 @@ namespace DataStructures
 			{
 				// Setup the first part of the root node
 				original_copy_pointer = original_copy.root;
-				this->root = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-				// root->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+				this->root = new typename CircularLinkedList::node;
+				// root->item = new CircularLinkedListType;
 				this->position = this->root;
 				// *(root->item)=*((original_copy.root)->item);
 				this->root->item = original_copy.root->item;
@@ -496,8 +495,8 @@ namespace DataStructures
 					original_copy_pointer = original_copy_pointer->next;
 
 					// Create a new node and point position to it
-					this->position = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-					// position->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+					this->position = new typename CircularLinkedList::node;
+					// position->item = new CircularLinkedListType;
 
 					// Copy the item to the new node
 					// *(position->item)=*(original_copy_pointer->item);
@@ -553,8 +552,8 @@ namespace DataStructures
 			else
 				if ( original_copy.list_size == 1 )
 				{
-					this->root = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-					// root->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+					this->root = new typename CircularLinkedList::node;
+					// root->item = new CircularLinkedListType;
 					this->root->next = this->root;
 					this->root->previous = this->root;
 					this->list_size = 1;
@@ -567,8 +566,8 @@ namespace DataStructures
 				{
 					// Setup the first part of the root node
 					original_copy_pointer = original_copy.root;
-					this->root = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-					// root->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+					this->root = new typename CircularLinkedList::node;
+					// root->item = new CircularLinkedListType;
 					this->position = this->root;
 					// *(root->item)=*((original_copy.root)->item);
 					this->root->item = original_copy.root->item;
@@ -585,8 +584,8 @@ namespace DataStructures
 						original_copy_pointer = original_copy_pointer->next;
 
 						// Create a new node and point position to it
-						this->position = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-						// position->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+						this->position = new typename CircularLinkedList::node;
+						// position->item = new CircularLinkedListType;
 
 						// Copy the item to the new node
 						// *(position->item)=*(original_copy_pointer->item);
@@ -626,8 +625,8 @@ namespace DataStructures
 
 		if ( list_size == 0 )
 		{
-			this->root = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-			// root->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+			this->root = new typename CircularLinkedList::node;
+			// root->item = new CircularLinkedListType;
 			//*(root->item)=input;
 			this->root->item = input;
 			this->root->next = this->root;
@@ -639,8 +638,8 @@ namespace DataStructures
 		else
 			if ( list_size == 1 )
 			{
-				this->position = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-				// position->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+				this->position = new typename CircularLinkedList::node;
+				// position->item = new CircularLinkedListType;
 				this->root->next = this->position;
 				this->root->previous = this->position;
 				this->position->previous = this->root;
@@ -665,8 +664,8 @@ namespace DataStructures
 
 				Note that the order of the following statements is important  */
 
-				new_node = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-				// new_node->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+				new_node = new typename CircularLinkedList::node;
+				// new_node->item = new CircularLinkedListType;
 
 				// *(new_node->item)=input;
 				new_node->item = input;
@@ -703,8 +702,8 @@ namespace DataStructures
 
 		if ( this->list_size == 0 )
 		{
-			this->root = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-			// root->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+			this->root = new typename CircularLinkedList::node;
+			// root->item = new CircularLinkedListType;
 			// *(root->item)=input;
 			this->root->item = input;
 			this->root->next = this->root;
@@ -718,8 +717,8 @@ namespace DataStructures
 		else
 			if ( list_size == 1 )
 			{
-				this->position = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-				// position->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+				this->position = new typename CircularLinkedList::node;
+				// position->item = new CircularLinkedListType;
 				this->root->next = this->position;
 				this->root->previous = this->position;
 				this->position->previous = this->root;
@@ -746,8 +745,8 @@ namespace DataStructures
 
 				Note that the order of the following statements is important  */
 
-				new_node = RakNet::OP_NEW<typename CircularLinkedList::node>( _FILE_AND_LINE_ );
-				// new_node->item = RakNet::OP_NEW<CircularLinkedListType>( _FILE_AND_LINE_ );
+				new_node = new typename CircularLinkedList::node;
+				// new_node->item = new CircularLinkedListType;
 
 				// *(new_node->item)=input;
 				new_node->item = input;
@@ -791,8 +790,8 @@ namespace DataStructures
 		else
 			if ( this->list_size == 1 )
 			{
-				// RakNet::OP_DELETE(root->item, _FILE_AND_LINE_);
-				RakNet::OP_DELETE(this->root, _FILE_AND_LINE_);
+				// delete root->item;
+				delete this->root;
 				this->root = this->position = 0;
 				this->list_size = 0;
 			}
@@ -806,8 +805,8 @@ namespace DataStructures
 				if ( this->position == this->root )
 					this->root = new_position;
 
-				// RakNet::OP_DELETE(position->item, _FILE_AND_LINE_);
-				RakNet::OP_DELETE(this->position, _FILE_AND_LINE_);
+				// delete position->item;
+				delete this->position;
 
 				this->position = new_position;
 
@@ -961,9 +960,9 @@ namespace DataStructures
 			return ;
 		else
 		{
-			if ( this->list_size == 1 )  // {RakNet::OP_DELETE(root->item); RakNet::OP_DELETE(root, _FILE_AND_LINE_);}
+			if ( this->list_size == 1 )  // {delete root->item); RakNet::OP_DELETE(root;}
 			{
-				RakNet::OP_DELETE(this->root, _FILE_AND_LINE_);
+				delete this->root;
 			}
 
 			else
@@ -977,8 +976,8 @@ namespace DataStructures
 				{
 					temp = current;
 					current = current->next;
-					// RakNet::OP_DELETE(temp->item, _FILE_AND_LINE_);
-					RakNet::OP_DELETE(temp, _FILE_AND_LINE_);
+					// delete temp->item;
+					delete temp;
 				}
 
 				while ( current != this->root );

@@ -16,7 +16,6 @@
 #ifndef __HUFFMAN_ENCODING_TREE
 #define __HUFFMAN_ENCODING_TREE
 
-#include "RakMemoryOverride.h"
 #include "DS_HuffmanEncodingTreeNode.h"
 #include "BitStream.h"
 #include "Export.h"

@@ -80,14 +80,14 @@ DirectoryDeltaTransfer::DirectoryDeltaTransfer()
 {
 	applicationDirectory[0]=0;
 	fileListTransfer=0;
-	availableUploads = RakNet::OP_NEW<FileList>( _FILE_AND_LINE_ );
+	availableUploads =new FileList;
 	priority=HIGH_PRIORITY;
 	orderingChannel=0;
 	incrementalReadInterface=0;
 }
 DirectoryDeltaTransfer::~DirectoryDeltaTransfer()
 {
-	RakNet::OP_DELETE(availableUploads, _FILE_AND_LINE_);
+	delete availableUploads;
 }
 void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer *flt)
 {
@@ -145,7 +145,7 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(FileList &localF
 	localFiles.AddCallback(cb);
 
 	// Prepare the callback data
-	transferCallback = RakNet::OP_NEW<DDTCallback>( _FILE_AND_LINE_ );
+	transferCallback =new DDTCallback;
 	if (subdir && subdir[0])
 	{
 		transferCallback->subdirLen=(unsigned int)strlen(subdir);

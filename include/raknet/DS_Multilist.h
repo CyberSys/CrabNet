@@ -19,7 +19,6 @@
 #include "RakAssert.h"
 #include <string.h> // memmove
 #include "Export.h"
-#include "RakMemoryOverride.h"
 #include "NativeTypes.h"
 
 
@@ -51,7 +50,7 @@ namespace DataStructures
 	/// Can be used with Multilist::ForEach
 	/// Assuming the Multilist holds pointers, will delete those pointers
 	template <class templateType>
-	void DeletePtr_RakNet(templateType &ptr, const char *file, unsigned int line ) {RakNet::OP_DELETE(ptr, file, line);}
+	void DeletePtr_RakNet(templateType &ptr, const char *file, unsigned int line ) {delete ptr;}
 
 	/// Can be used with Multilist::ForEach
 	/// Assuming the Multilist holds pointers, will delete those pointers
@@ -282,7 +281,7 @@ namespace DataStructures
 	Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::~Multilist()
 	{
 		if (data!=0)
-			RakNet::OP_DELETE_ARRAY(data, _FILE_AND_LINE_);
+			delete[] data;
 	}
 
 	template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
@@ -791,7 +790,7 @@ namespace DataStructures
 
 		if (deallocateSmallBlocks && allocationSize < 128 && data)
 		{
-			RakNet::OP_DELETE_ARRAY(data,file,line);
+			delete[] data;
 			data=0;
 			allocationSize=0;
 		}
@@ -802,7 +801,7 @@ namespace DataStructures
 	{
 		_IndexType i;
 		for (i=0; i < dataSize; i++)
-			RakNet::OP_DELETE(operator[](i), file, line);
+			delete operator[](i);
 		Clear(deallocateSmallBlocks, file, line);
 	}
 
@@ -813,7 +812,7 @@ namespace DataStructures
 		i = GetIndexOf(key);
 		if (i!=-1)
 		{
-			RakNet::OP_DELETE(operator[](i), file, line);
+			delete operator[](i);
 			RemoveAtIndex(i);
 		}
 	}
@@ -1184,7 +1183,7 @@ namespace DataStructures
 			newData[i]=operator[](i);
 		if (dataSize>0)
 		{
-			RakNet::OP_DELETE_ARRAY(data,file,line);
+			delete[] data;
 			if (GetMultilistType()==ML_QUEUE)
 			{
 				queueHead=0;

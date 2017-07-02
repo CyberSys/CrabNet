@@ -19,7 +19,6 @@
 
 #include "PacketPriority.h"
 #include "RakNetTypes.h"
-#include "RakMemoryOverride.h"
 #include "Export.h"
 #include "DS_List.h"
 #include "RakNetSmartPtr.h"

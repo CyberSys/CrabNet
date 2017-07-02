@@ -15,7 +15,6 @@
 #ifndef __FILE_LIST_TRANSFER_CALLBACK_INTERFACE_H
 #define __FILE_LIST_TRANSFER_CALLBACK_INTERFACE_H
 
-#include "RakMemoryOverride.h"
 #include "FileListNodeContext.h"
 
 #ifdef _MSC_VER

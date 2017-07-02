@@ -20,7 +20,6 @@
 // Template classes have to have all the code in the header file
 #include "RakAssert.h"
 #include "Export.h"
-#include "RakMemoryOverride.h"
 
 /// The namespace DataStructures was only added to avoid compiler errors for commonly named data structures
 /// As these data structures are stand-alone, you can use them outside of RakNet for your own projects if you wish.
@@ -97,7 +96,7 @@ namespace DataStructures
 		Queue<queue_type>::~Queue()
 	{
 		if (allocation_size>0)
-			RakNet::OP_DELETE_ARRAY(array, _FILE_AND_LINE_);
+			delete[] array;
 	}
 
 	template <class queue_type>
@@ -224,7 +223,7 @@ namespace DataStructures
 	{
 		if ( allocation_size == 0 )
 		{
-			array = RakNet::OP_NEW_ARRAY<queue_type>(16, file, line );
+			array = new queue_type[16];
 			head = 0;
 			tail = 1;
 			array[ 0 ] = input;
@@ -243,7 +242,7 @@ namespace DataStructures
 
 			// Need to allocate more memory.
 			queue_type * new_array;
-			new_array = RakNet::OP_NEW_ARRAY<queue_type>((int)allocation_size * 2, file, line );
+			new_array = new queue_type[(int)allocation_size * 2];
 #ifdef _DEBUG
 			RakAssert( new_array );
 #endif
@@ -260,7 +259,7 @@ namespace DataStructures
 			allocation_size *= 2;
 
 			// Delete the old array and move the pointer to the new array
-			RakNet::OP_DELETE_ARRAY(array, file, line);
+			delete[] array;
 
 			array = new_array;
 		}
@@ -279,7 +278,7 @@ namespace DataStructures
 
 		else
 		{
-			array = RakNet::OP_NEW_ARRAY<queue_type >( original_copy.Size() + 1 , _FILE_AND_LINE_ );
+			array = new queue_type[original_copy.Size() + 1];
 
 			for ( unsigned int counter = 0; counter < original_copy.Size(); ++counter )
 				array[ counter ] = original_copy.array[ ( original_copy.head + counter ) % ( original_copy.allocation_size ) ];
@@ -308,7 +307,7 @@ namespace DataStructures
 
 		else
 		{
-			array = RakNet::OP_NEW_ARRAY<queue_type >( original_copy.Size() + 1 , _FILE_AND_LINE_ );
+			array = new queue_type[original_copy.Size() + 1];
 
 			for ( unsigned int counter = 0; counter < original_copy.Size(); ++counter )
 				array[ counter ] = original_copy.array[ ( original_copy.head + counter ) % ( original_copy.allocation_size ) ];
@@ -331,7 +330,7 @@ namespace DataStructures
 
 		if (allocation_size > 32)
 		{
-			RakNet::OP_DELETE_ARRAY(array, file, line);
+			delete[] array;
 			allocation_size = 0;
 		}
 
@@ -351,7 +350,7 @@ namespace DataStructures
 		while (newAllocationSize <= Size())
 			newAllocationSize<<=1; // Must be a better way to do this but I'm too dumb to figure it out quickly :)
 
-		new_array = RakNet::OP_NEW_ARRAY<queue_type >(newAllocationSize, file, line );
+		new_array = new queue_type[newAllocationSize];
 
 		for (unsigned int counter=0; counter < Size(); ++counter)
 			new_array[counter] = array[(head + counter)%(allocation_size)];
@@ -361,7 +360,7 @@ namespace DataStructures
 		head=0;
 
 		// Delete the old array and move the pointer to the new array
-		RakNet::OP_DELETE_ARRAY(array, file, line);
+		delete[] array;
 		array=new_array;
 	}
 
@@ -387,9 +386,9 @@ namespace DataStructures
 	template <class queue_type>
 	void Queue<queue_type>::ClearAndForceAllocation( int size, const char *file, unsigned int line )
 	{
-		RakNet::OP_DELETE_ARRAY(array, file, line);
+		delete[] array;
 		if (size>0)
-			array = RakNet::OP_NEW_ARRAY<queue_type>(size, file, line );
+			array = new queue_type[size];
 		else
 			array=0;
 		allocation_size = size;

@@ -10,7 +10,6 @@
 
 #include "FileOperations.h"
 #if _RAKNET_SUPPORT_FileOperations==1
-#include "RakMemoryOverride.h"
 #include "_FindFirst.h" // For linux
 #include <stdio.h>
 #include <string.h>

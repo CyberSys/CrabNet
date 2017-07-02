@@ -332,8 +332,8 @@ RakPeer::~RakPeer()
 #if LIBCAT_SECURITY==1
 	// Encryption and security
 	CAT_AUDIT_PRINTF("AUDIT: Deleting RakPeer security objects, handshake = %x, cookie jar = %x\n", _server_handshake, _cookie_jar);
-	if (_server_handshake) RakNet::OP_DELETE(_server_handshake,_FILE_AND_LINE_);
-	if (_cookie_jar) RakNet::OP_DELETE(_cookie_jar,_FILE_AND_LINE_);
+	if (_server_handshake) delete _server_handshake;
+	if (_cookie_jar) delete _cookie_jar;
 #endif
 
 
@@ -612,12 +612,12 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 		//remoteSystemListSize = maxConnections;// * 11 / 10 + 1;
 
 		// remoteSystemList in Single thread
-		//remoteSystemList = RakNet::OP_NEW<RemoteSystemStruct[ remoteSystemListSize ]>( _FILE_AND_LINE_ );
-		remoteSystemList = RakNet::OP_NEW_ARRAY<RemoteSystemStruct>(maximumNumberOfPeers, _FILE_AND_LINE_ );
+		//remoteSystemList =new RemoteSystemStruct[ remoteSystemListSize ];
+		remoteSystemList = new RemoteSystemStruct[maximumNumberOfPeers];
 
-		remoteSystemLookup = RakNet::OP_NEW_ARRAY<RemoteSystemIndex*>((unsigned int) maximumNumberOfPeers * REMOTE_SYSTEM_LOOKUP_HASH_MULTIPLE, _FILE_AND_LINE_ );
+		remoteSystemLookup = new RemoteSystemIndex*[maximumNumberOfPeers * REMOTE_SYSTEM_LOOKUP_HASH_MULTIPLE];
 
-		activeSystemList = RakNet::OP_NEW_ARRAY<RemoteSystemStruct*>(maximumNumberOfPeers, _FILE_AND_LINE_ );
+		activeSystemList = new RemoteSystemStruct*[maximumNumberOfPeers];
 
 		for ( i = 0; i < maximumNumberOfPeers; i++ )
 		//for ( i = 0; i < remoteSystemListSize; i++ )
@@ -663,28 +663,19 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 #if RAKPEER_USER_THREADED!=1
 
 			int errorCode;
-
-
-
-
-
-
-
-					errorCode = RakNet::RakThread::Create(UpdateNetworkLoop, this, threadPriority);
-
-
-					if ( errorCode != 0 )
-					{
-						Shutdown( 0, 0 );
-						return FAILED_TO_CREATE_NETWORK_THREAD;
-					}
+			errorCode = RakNet::RakThread::Create(UpdateNetworkLoop, this, threadPriority);
+			if ( errorCode != 0 )
+			{
+				Shutdown( 0, 0 );
+				return FAILED_TO_CREATE_NETWORK_THREAD;
+			}
 //					RakAssert(isRecvFromLoopThreadActive.GetValue()==0);
 #endif // RAKPEER_USER_THREADED!=1
 
 					/*
 			for (i=0; i<socketDescriptorCount; i++)
 			{
-				RakPeerAndIndex *rpai = RakNet::OP_NEW<RakPeerAndIndex>(_FILE_AND_LINE_);
+				RakPeerAndIndex *rpai =new RakPeerAndIndex;
 				rpai->s=socketList[i];
 				rpai->rakPeer=this;
 
@@ -771,16 +762,16 @@ bool RakPeer::InitializeSecurity(const char *public_key, const char *private_key
 	if (_server_handshake)
 	{
 		CAT_AUDIT_PRINTF("AUDIT: Deleting old server_handshake %x\n", _server_handshake);
-		RakNet::OP_DELETE(_server_handshake,_FILE_AND_LINE_);
+		delete _server_handshake;
 	}
 	if (_cookie_jar)
 	{
 		CAT_AUDIT_PRINTF("AUDIT: Deleting old cookie jar %x\n", _cookie_jar);
-		RakNet::OP_DELETE(_cookie_jar,_FILE_AND_LINE_);
+		delete _cookie_jar;
 	}
 
-	_server_handshake = RakNet::OP_NEW<cat::ServerEasyHandshake>(_FILE_AND_LINE_);
-	_cookie_jar = RakNet::OP_NEW<cat::CookieJar>(_FILE_AND_LINE_);
+	_server_handshake =new cat::ServerEasyHandshake;
+	_cookie_jar =new cat::CookieJar;
 
 	CAT_AUDIT_PRINTF("AUDIT: Created new server_handshake %x\n", _server_handshake);
 	CAT_AUDIT_PRINTF("AUDIT: Created new cookie jar %x\n", _cookie_jar);
@@ -800,9 +791,9 @@ bool RakPeer::InitializeSecurity(const char *public_key, const char *private_key
 
 	CAT_AUDIT_PRINTF("AUDIT: Failure to initialize so deleting server handshake and cookie jar; also setting using_security flag = false\n");
 
-	RakNet::OP_DELETE(_server_handshake,_FILE_AND_LINE_);
+	delete _server_handshake;
 	_server_handshake=0;
-	RakNet::OP_DELETE(_cookie_jar,_FILE_AND_LINE_);
+	delete _cookie_jar;
 	_cookie_jar=0;
 	_using_security = false;
 	return false;
@@ -824,9 +815,9 @@ void RakPeer::DisableSecurity( void )
 {
 #if LIBCAT_SECURITY==1
 	CAT_AUDIT_PRINTF("AUDIT: DisableSecurity() called, so deleting _server_handshake %x and cookie_jar %x\n", _server_handshake, _cookie_jar);
-	RakNet::OP_DELETE(_server_handshake,_FILE_AND_LINE_);
+	delete _server_handshake;
 	_server_handshake=0;
-	RakNet::OP_DELETE(_cookie_jar,_FILE_AND_LINE_);
+	delete _cookie_jar;
 	_cookie_jar=0;
 
 	_using_security = false;
@@ -1207,8 +1198,8 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 	// Clear out the reliability layer list in case we want to reallocate it in a successive call to Init.
 	RemoteSystemStruct * temp = remoteSystemList;
 	remoteSystemList = 0;
-	RakNet::OP_DELETE_ARRAY(temp, _FILE_AND_LINE_);
-	RakNet::OP_DELETE_ARRAY(activeSystemList, _FILE_AND_LINE_);
+	delete[] temp;
+	delete[] activeSystemList;
 	activeSystemList=0;
 
 	ClearRemoteSystemLookup();
@@ -1696,9 +1687,9 @@ void RakPeer::CancelConnectionAttempt( const SystemAddress target )
 		{
 #if LIBCAT_SECURITY==1
 			CAT_AUDIT_PRINTF("AUDIT: Deleting requestedConnectionQueue %i client_handshake %x\n", i, requestedConnectionQueue[ i ]->client_handshake);
-			RakNet::OP_DELETE(requestedConnectionQueue[i]->client_handshake, _FILE_AND_LINE_ );
+			delete requestedConnectionQueue[i]->client_handshake;
 #endif
-			RakNet::OP_DELETE(requestedConnectionQueue[i], _FILE_AND_LINE_ );
+			delete requestedConnectionQueue[i];
 			requestedConnectionQueue.RemoveAtIndex(i);
 			break;
 		}
@@ -1887,7 +1878,7 @@ void RakPeer::AddToBanList( const char *IP, RakNet::TimeMS milliseconds )
 
 	banListMutex.Unlock();
 
-	BanStruct *banStruct = RakNet::OP_NEW<BanStruct>( _FILE_AND_LINE_ );
+	BanStruct *banStruct =new BanStruct;
 	banStruct->IP = (char*) malloc(16);
 	if (milliseconds==0)
 		banStruct->timeout=0; // Infinite
@@ -1936,7 +1927,7 @@ void RakPeer::RemoveFromBanList( const char *IP )
 	if (temp)
 	{
 		free(temp->IP);
-		RakNet::OP_DELETE(temp, _FILE_AND_LINE_);
+		delete temp;
 	}
 
 }
@@ -1954,7 +1945,7 @@ void RakPeer::ClearBanList( void )
 	for ( ; index < banList.Size(); index++ )
 	{
 		free(banList[ index ]->IP);
-		RakNet::OP_DELETE(banList[ index ], _FILE_AND_LINE_);
+		delete banList[ index ];
 	}
 
 	banList.Clear(false, _FILE_AND_LINE_);
@@ -2005,7 +1996,7 @@ bool RakPeer::IsBanned( const char *IP )
 			banList[ banListIndex ] = banList[ banList.Size() - 1 ];
 			banList.RemoveAtIndex( banList.Size() - 1 );
 			free(temp->IP);
-			RakNet::OP_DELETE(temp, _FILE_AND_LINE_);
+			delete temp;
 		}
 		else
 		{
@@ -3211,7 +3202,7 @@ bool RakPeer::GenerateConnectionRequestChallenge(RequestedConnectionStruct *rcs,
 
 	case PKM_ACCEPT_ANY_PUBLIC_KEY:
 		CAT_OBJCLR(rcs->remote_public_key);
-		rcs->client_handshake = RakNet::OP_NEW<cat::ClientEasyHandshake>(_FILE_AND_LINE_);
+		rcs->client_handshake =new cat::ClientEasyHandshake;
 
 		rcs->publicKeyMode = PKM_ACCEPT_ANY_PUBLIC_KEY;
 		break;
@@ -3223,7 +3214,7 @@ bool RakPeer::GenerateConnectionRequestChallenge(RequestedConnectionStruct *rcs,
 			return false;
 		}
 
-		rcs->client_handshake = RakNet::OP_NEW<cat::ClientEasyHandshake>(_FILE_AND_LINE_);
+		rcs->client_handshake =new cat::ClientEasyHandshake;
 		memcpy(rcs->remote_public_key, publicKey->remoteServerPublicKey, cat::EasyHandshake::PUBLIC_KEY_BYTES);
 
 		if (!rcs->client_handshake->Initialize(publicKey->remoteServerPublicKey) ||
@@ -3231,7 +3222,7 @@ bool RakPeer::GenerateConnectionRequestChallenge(RequestedConnectionStruct *rcs,
 			!rcs->client_handshake->GenerateChallenge(rcs->handshakeChallenge))
 		{
 			CAT_AUDIT_PRINTF("AUDIT: Failure initializing new client_handshake object with identity for this RequestedConnectionStruct\n");
-			RakNet::OP_DELETE(rcs->client_handshake,_FILE_AND_LINE_);
+			delete rcs->client_handshake;
 			rcs->client_handshake=0;
 			return false;
 		}
@@ -3245,14 +3236,14 @@ bool RakPeer::GenerateConnectionRequestChallenge(RequestedConnectionStruct *rcs,
 		if (publicKey->remoteServerPublicKey == 0)
 			return false;
 
-		rcs->client_handshake = RakNet::OP_NEW<cat::ClientEasyHandshake>(_FILE_AND_LINE_);
+		rcs->client_handshake =new cat::ClientEasyHandshake;
 		memcpy(rcs->remote_public_key, publicKey->remoteServerPublicKey, cat::EasyHandshake::PUBLIC_KEY_BYTES);
 
 		if (!rcs->client_handshake->Initialize(publicKey->remoteServerPublicKey) ||
 			!rcs->client_handshake->GenerateChallenge(rcs->handshakeChallenge))
 		{
 			CAT_AUDIT_PRINTF("AUDIT: Failure initializing new client_handshake object for this RequestedConnectionStruct\n");
-			RakNet::OP_DELETE(rcs->client_handshake,_FILE_AND_LINE_);
+			delete rcs->client_handshake;
 			rcs->client_handshake=0;
 			return false;
 		}
@@ -3280,7 +3271,7 @@ ConnectionAttemptResult RakPeer::SendConnectionRequest( const char* host, unsign
 		return ALREADY_CONNECTED_TO_ENDPOINT;
 
 	//RequestedConnectionStruct *rcs = (RequestedConnectionStruct *) malloc(sizeof(RequestedConnectionStruct));
-	RequestedConnectionStruct *rcs = RakNet::OP_NEW<RequestedConnectionStruct>(_FILE_AND_LINE_);
+	RequestedConnectionStruct *rcs =new RequestedConnectionStruct;
 
 	rcs->systemAddress=systemAddress;
 	rcs->nextRequestTime=RakNet::GetTimeMS();
@@ -3313,8 +3304,8 @@ ConnectionAttemptResult RakPeer::SendConnectionRequest( const char* host, unsign
 		{
 			requestedConnectionQueueMutex.Unlock();
 			// Not necessary
-			//RakNet::OP_DELETE(rcs->client_handshake,_FILE_AND_LINE_);
-			RakNet::OP_DELETE(rcs,_FILE_AND_LINE_);
+			//delete rcs->client_handshake;
+			delete rcs;
 			return CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS;
 		}
 	}
@@ -3334,7 +3325,7 @@ ConnectionAttemptResult RakPeer::SendConnectionRequest( const char* host, unsign
 		return ALREADY_CONNECTED_TO_ENDPOINT;
 
 	//RequestedConnectionStruct *rcs = (RequestedConnectionStruct *) malloc(sizeof(RequestedConnectionStruct));
-	RequestedConnectionStruct *rcs = RakNet::OP_NEW<RequestedConnectionStruct>(_FILE_AND_LINE_);
+	RequestedConnectionStruct *rcs =new RequestedConnectionStruct;
 
 	rcs->systemAddress=systemAddress;
 	rcs->nextRequestTime=RakNet::GetTimeMS();
@@ -3367,8 +3358,8 @@ ConnectionAttemptResult RakPeer::SendConnectionRequest( const char* host, unsign
 		{
 			requestedConnectionQueueMutex.Unlock();
 			// Not necessary
-			//RakNet::OP_DELETE(rcs->client_handshake,_FILE_AND_LINE_);
-			RakNet::OP_DELETE(rcs,_FILE_AND_LINE_);
+			//delete rcs->client_handshake;
+			delete rcs;
 			return CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS;
 		}
 	}
@@ -3705,7 +3696,7 @@ RakPeer::RemoteSystemStruct * RakPeer::AssignSystemAddressToRemoteSystemList( co
 						ipList[foundIndex].ToString(false,str);
 
 						// Force binding with new socket
-						RakNetSocket* rns(RakNet::OP_NEW<RakNetSocket>(_FILE_AND_LINE_));
+						RakNetSocket* rns(new RakNetSocket);
 						if (incomingRakNetSocket->GetRemotePortRakNetWasStartedOn()==0)
 							rns = SocketLayer::CreateBoundSocket( this, bindingAddress.GetPort(), incomingRakNetSocket->GetBlockingSocket(), ipListFoundIndexStr, 0, incomingRakNetSocket->GetExtraSocketOptions(), incomingRakNetSocket->GetSocketFamily(), incomingRakNetSocket->GetChromeInstance() );
 						else
@@ -3937,7 +3928,7 @@ RakPeer::RemoteSystemStruct* RakPeer::GetRemoteSystem(const SystemAddress &sa) c
 void RakPeer::ClearRemoteSystemLookup(void)
 {
 	remoteSystemIndexPool.Clear(_FILE_AND_LINE_);
-	RakNet::OP_DELETE_ARRAY(remoteSystemLookup,_FILE_AND_LINE_);
+	delete[] remoteSystemLookup;
 	remoteSystemLookup=0;
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4063,7 +4054,7 @@ RNS2RecvStruct *RakPeer::AllocRNS2RecvStruct(const char *file, unsigned int line
 	else
 	{
 		bufferedPacketsFreePoolMutex.Unlock();
-		return RakNet::OP_NEW<RNS2RecvStruct>(file,line);
+		return new RNS2RecvStruct;
 	}
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4071,12 +4062,12 @@ void RakPeer::ClearBufferedPackets(void)
 {
 	bufferedPacketsFreePoolMutex.Lock();
 	while (bufferedPacketsFreePool.Size()>0)
-		RakNet::OP_DELETE(bufferedPacketsFreePool.Pop(), _FILE_AND_LINE_);
+		delete bufferedPacketsFreePool.Pop();
 	bufferedPacketsFreePoolMutex.Unlock();
 
 	bufferedPacketsQueueMutex.Lock();
 	while (bufferedPacketsQueue.Size()>0)
-		RakNet::OP_DELETE(bufferedPacketsQueue.Pop(), _FILE_AND_LINE_);
+		delete bufferedPacketsQueue.Pop();
 	bufferedPacketsQueueMutex.Unlock();
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -4449,9 +4440,9 @@ void RakPeer::ClearRequestedConnectionList(void)
 	{
 #if LIBCAT_SECURITY==1
 		CAT_AUDIT_PRINTF("AUDIT: In ClearRequestedConnectionList(), Deleting freeQueue index %i client_handshake %x\n", i, freeQueue[i]->client_handshake);
-		RakNet::OP_DELETE(freeQueue[i]->client_handshake,_FILE_AND_LINE_);
+		delete freeQueue[i]->client_handshake;
 #endif
-		RakNet::OP_DELETE(freeQueue[i], _FILE_AND_LINE_ );
+		delete freeQueue[i];
 	}
 }
 inline void RakPeer::AddPacketToProducer(RakNet::Packet *p)
@@ -4996,7 +4987,7 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 								}
 								CAT_AUDIT_PRINTF("AUDIT: Success!\n");
 
-								RakNet::OP_DELETE(rcs->client_handshake,_FILE_AND_LINE_);
+								delete rcs->client_handshake;
 								rcs->client_handshake=0;
 							}
 #endif // LIBCAT_SECURITY
@@ -5061,10 +5052,10 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 
 #if LIBCAT_SECURITY==1
 					CAT_AUDIT_PRINTF("AUDIT: Deleting client_handshake object %x and rcs->client_handshake object %x\n", client_handshake, rcs->client_handshake);
-					RakNet::OP_DELETE(client_handshake,_FILE_AND_LINE_);
-					RakNet::OP_DELETE(rcs->client_handshake,_FILE_AND_LINE_);
+					delete client_handshake;
+					delete rcs->client_handshake;
 #endif // LIBCAT_SECURITY
-					RakNet::OP_DELETE(rcs,_FILE_AND_LINE_);
+					delete rcs;
 
 					break;
 				}
@@ -5108,9 +5099,9 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 
 #if LIBCAT_SECURITY==1
 					CAT_AUDIT_PRINTF("AUDIT: Connection attempt canceled so deleting rcs->client_handshake object %x\n", rcs->client_handshake);
-					RakNet::OP_DELETE(rcs->client_handshake,_FILE_AND_LINE_);
+					delete rcs->client_handshake;
 #endif // LIBCAT_SECURITY
-					RakNet::OP_DELETE(rcs,_FILE_AND_LINE_);
+					delete rcs;
 					break;
 				}
 			}
@@ -5733,9 +5724,9 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 
 #if LIBCAT_SECURITY==1
 					CAT_AUDIT_PRINTF("AUDIT: Connection attempt FAILED so deleting rcs->client_handshake object %x\n", rcs->client_handshake);
-					RakNet::OP_DELETE(rcs->client_handshake,_FILE_AND_LINE_);
+					delete rcs->client_handshake;
 #endif
-					RakNet::OP_DELETE(rcs,_FILE_AND_LINE_);
+					delete rcs;
 
 					requestedConnectionQueueMutex.Lock();
 					for (unsigned int k=0; k < requestedConnectionQueue.Size(); k++)
@@ -6282,7 +6273,7 @@ RAK_THREAD_DECLARATION(RakNet::RecvFromLoop)
 #endif
 	RakPeer * rakPeer = rpai->rakPeer;
 	RakNetSocket *s = rpai->s;
-	RakNet::OP_DELETE(rpai,_FILE_AND_LINE_);
+	delete rpai;
 
 	rakPeer->isRecvFromLoopThreadActive.Increment();
 

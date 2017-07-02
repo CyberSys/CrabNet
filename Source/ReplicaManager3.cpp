@@ -64,13 +64,13 @@ LastSerializationResult::LastSerializationResult()
 LastSerializationResult::~LastSerializationResult()
 {
 	if (lastSerializationResultBS)
-		RakNet::OP_DELETE(lastSerializationResultBS,_FILE_AND_LINE_);
+		delete lastSerializationResultBS;
 }
 void LastSerializationResult::AllocBS(void)
 {
 	if (lastSerializationResultBS==0)
 	{
-		lastSerializationResultBS=RakNet::OP_NEW<LastSerializationResultBS>(_FILE_AND_LINE_);
+		lastSerializationResultBS=new LastSerializationResultBS;
 	}
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -600,7 +600,7 @@ void ReplicaManager3::AddWorld(WorldId worldId)
 {
 	RakAssert(worldsArray[worldId]==0 && "World already in use");
 
-	RM3World *newWorld = RakNet::OP_NEW<RM3World>(_FILE_AND_LINE_);
+	RM3World *newWorld =new RM3World;
 	newWorld->worldId=worldId;
 	worldsArray[worldId]=newWorld;
 	worldsList.Push(newWorld,_FILE_AND_LINE_);
@@ -615,7 +615,7 @@ void ReplicaManager3::RemoveWorld(WorldId worldId)
 	{
 		if (worldsList[i]==worldsArray[worldId])
 		{
-			RakNet::OP_DELETE(worldsList[i],_FILE_AND_LINE_);
+			delete worldsList[i];
 			worldsList.RemoveAtIndexFast(i);
 			break;
 		}
@@ -1466,9 +1466,9 @@ Connection_RM3::~Connection_RM3()
 {
 	unsigned int i;
 	for (i=0; i < constructedReplicaList.Size(); i++)
-		RakNet::OP_DELETE(constructedReplicaList[i], _FILE_AND_LINE_);
+		delete constructedReplicaList[i];
 	for (i=0; i < queryToConstructReplicaList.Size(); i++)
-		RakNet::OP_DELETE(queryToConstructReplicaList[i], _FILE_AND_LINE_);
+		delete queryToConstructReplicaList[i];
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1787,7 +1787,7 @@ void Connection_RM3::OnLocalReference(Replica3* replica3, ReplicaManager3 *repli
 	}
 #endif
 
-	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(_FILE_AND_LINE_);
+	LastSerializationResult* lsr=new LastSerializationResult;
 	lsr->replica=replica3;
 	queryToConstructReplicaList.Push(lsr,_FILE_AND_LINE_);
 }
@@ -1845,7 +1845,7 @@ void Connection_RM3::OnDereference(Replica3* replica3, ReplicaManager3 *replicaM
 	ValidateLists(replicaManager);
 
 	if (lsr)
-		RakNet::OP_DELETE(lsr,_FILE_AND_LINE_);
+		delete lsr;
 
 	ValidateLists(replicaManager);
 }
@@ -1857,7 +1857,7 @@ void Connection_RM3::OnDownloadFromThisSystem(Replica3* replica3, ReplicaManager
 	RakAssert(replica3);
 
 	ValidateLists(replicaManager);
-	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(_FILE_AND_LINE_);
+	LastSerializationResult* lsr=new LastSerializationResult;
 	lsr->replica=replica3;
 
 	ConstructionMode constructionMode = QueryConstructionMode();
@@ -1916,7 +1916,7 @@ void Connection_RM3::OnNeverConstruct(unsigned int queryToConstructIdx, ReplicaM
 	ValidateLists(replicaManager);
 	LastSerializationResult* lsr = queryToConstructReplicaList[queryToConstructIdx];
 	queryToConstructReplicaList.RemoveAtIndex(queryToConstructIdx);
-	RakNet::OP_DELETE(lsr,_FILE_AND_LINE_);
+	delete lsr;
 	ValidateLists(replicaManager);
 }
 
@@ -1948,7 +1948,7 @@ void Connection_RM3::OnConstructToThisConnection(Replica3 *replica, ReplicaManag
 	RakAssert(QueryConstructionMode()==QUERY_CONNECTION_FOR_REPLICA_LIST);
 	(void) replicaManager;
 
-	LastSerializationResult* lsr=RakNet::OP_NEW<LastSerializationResult>(_FILE_AND_LINE_);
+	LastSerializationResult* lsr=new LastSerializationResult;
 	lsr->replica=replica;
 	constructedReplicaList.Insert(replica,lsr,true,_FILE_AND_LINE_);
 	queryToSerializeReplicaList.Push(lsr,_FILE_AND_LINE_);

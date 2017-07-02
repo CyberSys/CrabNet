@@ -31,11 +31,11 @@ int RakNet::CloudKeyComp(const CloudKey &key, const CloudKey &data)
 
 CloudQueryRow* CloudAllocator::AllocateCloudQueryRow(void)
 {
-	return RakNet::OP_NEW<CloudQueryRow>(_FILE_AND_LINE_);
+	return new CloudQueryRow;
 }
 void CloudAllocator::DeallocateCloudQueryRow(CloudQueryRow *row)
 {
-	RakNet::OP_DELETE(row,_FILE_AND_LINE_);
+	delete row;
 }
 unsigned char *CloudAllocator::AllocateRowData(uint32_t bytesNeededForData)
 {

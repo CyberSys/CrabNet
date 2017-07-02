@@ -16,7 +16,6 @@
 #ifndef __RELIABILITY_LAYER_H
 #define __RELIABILITY_LAYER_H
 
-#include "RakMemoryOverride.h"
 #include "MTUSize.h"
 #include "DS_LinkedList.h"
 #include "DS_List.h"

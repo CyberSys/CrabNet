@@ -18,6 +18,7 @@
 #include "DS_Queue.h"
 #include "SimpleMutex.h"
 #include "DS_MemoryPool.h"
+#include <new>
 
 // #if defined(new)
 // #pragma push_macro("new")

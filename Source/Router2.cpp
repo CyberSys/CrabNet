@@ -99,7 +99,7 @@ Router2::~Router2()
 	if (udpForwarder)
 	{
 		udpForwarder->Shutdown();
-		RakNet::OP_DELETE(udpForwarder,_FILE_AND_LINE_);
+		delete udpForwarder;
 	}
 }
 void Router2::ClearMinipunches(void)
@@ -113,7 +113,7 @@ void Router2::ClearConnectionRequests(void)
 	connectionRequestsMutex.Lock();
 	for (unsigned int i=0; i < connectionRequests.Size(); i++)
 	{
-		RakNet::OP_DELETE(connectionRequests[i],_FILE_AND_LINE_);
+		delete connectionRequests[i];
 	}
 	connectionRequests.Clear(false,_FILE_AND_LINE_);
 	connectionRequestsMutex.Unlock();
@@ -143,7 +143,7 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
 	connectionRequestsMutex.Unlock();
 
 	// StoreRequest(endpointGuid, Largest(ping*2), systemsSentTo). Set state REQUEST_STATE_QUERY_FORWARDING
-	Router2::ConnnectRequest *cr = RakNet::OP_NEW<Router2::ConnnectRequest>(_FILE_AND_LINE_);
+	Router2::ConnnectRequest *cr =new Router2::ConnnectRequest;
 	DataStructures::List<SystemAddress> addresses;
 	DataStructures::List<RakNetGUID> guids;
 	rakPeerInterface->GetSystemList(addresses, guids);
@@ -226,13 +226,13 @@ void Router2::SetMaximumForwardingRequests(int max)
 {
 	if (max>0 && maximumForwardingRequests<=0)
 	{
-		udpForwarder = RakNet::OP_NEW<UDPForwarder>(_FILE_AND_LINE_);
+		udpForwarder =new UDPForwarder;
 		udpForwarder->Startup();
 	}
 	else if (max<=0 && maximumForwardingRequests>0)
 	{
 		udpForwarder->Shutdown();
-		RakNet::OP_DELETE(udpForwarder,_FILE_AND_LINE_);
+		delete udpForwarder;
 		udpForwarder=0;
 	}
 
@@ -496,7 +496,7 @@ void Router2::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID 
 			// Lost connection to intermediary. Restart process to connect to endpoint. If failed, push ID_CONNECTION_LOST. Also remove connection request if it already is in the list, to restart it
             connectionRequestsMutex.Lock();
 			unsigned int pos = GetConnectionRequestIndex(forwardedConnectionList[forwardedConnectionIndex].endpointGuid);
-			if((unsigned int)-1 != pos) {RakNet::OP_DELETE(connectionRequests[pos], __FILE__, __LINE__); connectionRequests.RemoveAtIndexFast(pos);}
+			if((unsigned int)-1 != pos) {delete connectionRequests[pos];}
 			connectionRequestsMutex.Unlock();
             
 			ConnectInternal(forwardedConnectionList[forwardedConnectionIndex].endpointGuid, true);
@@ -686,7 +686,7 @@ bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest)
 // connectionRequestsMutex should already be locked
 void Router2::RemoveConnectionRequest(unsigned int connectionRequestIndex)
 {
-	RakNet::OP_DELETE(connectionRequests[connectionRequestIndex],_FILE_AND_LINE_);
+	delete connectionRequests[connectionRequestIndex];
 	connectionRequests.RemoveAtIndexFast(connectionRequestIndex);
 }
 int ConnectionRequestSystemComp( const Router2::ConnectionRequestSystem & key, const Router2::ConnectionRequestSystem &data )

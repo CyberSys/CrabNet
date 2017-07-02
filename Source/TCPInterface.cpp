@@ -89,7 +89,7 @@ TCPInterface::~TCPInterface()
 	WSAStartupSingleton::Deref();
 #endif
 
-	RakNet::OP_DELETE_ARRAY(remoteClients,_FILE_AND_LINE_);
+    delete[] remoteClients;
 
 	StringCompressor::RemoveReference();
 	RakNet::StringTable::RemoveReference();
@@ -209,7 +209,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 	if (maxConnections==0)
 		maxConnections=1;
 	remoteClientsLength=maxConnections;
-	remoteClients=RakNet::OP_NEW_ARRAY<RemoteClient>(maxConnections,_FILE_AND_LINE_);
+	remoteClients = new RemoteClient[maxConnections];
 
 
 	listenSocket=0;
@@ -303,7 +303,7 @@ void TCPInterface::Stop(void)
 #endif
 	}
 	remoteClientsLength=0;
-	RakNet::OP_DELETE_ARRAY(remoteClients,_FILE_AND_LINE_);
+    delete[] remoteClients;
 	remoteClients=0;
 
 	incomingMessages.Clear(_FILE_AND_LINE_);
@@ -390,7 +390,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 	}
 	else
 	{
-		ThisPtrPlusSysAddr *s = RakNet::OP_NEW<ThisPtrPlusSysAddr>( _FILE_AND_LINE_ );
+		ThisPtrPlusSysAddr *s =new ThisPtrPlusSysAddr;
 		s->systemAddress.FromStringExplicitPort(host,remotePort);
 		s->systemAddress.systemIndex=(SystemIndex) newRemoteClientIndex;
 		if (bindAddress)
@@ -410,7 +410,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 
 		if (errorCode!=0)
 		{
-			RakNet::OP_DELETE(s, _FILE_AND_LINE_);
+			delete s;
 			failedConnectionAttempts.Push(s->systemAddress, _FILE_AND_LINE_ );
 		}
 		return UNASSIGNED_SYSTEM_ADDRESS;
@@ -625,12 +625,12 @@ void TCPInterface::DeallocatePacket( Packet *packet )
 	{
 		// Came from userspace AllocatePacket
 		free(packet->data);
-		RakNet::OP_DELETE(packet, _FILE_AND_LINE_);
+		delete packet;
 	}
 }
 Packet* TCPInterface::AllocatePacket(unsigned dataSize)
 {
-	Packet*p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
+	Packet*p =new Packet;
 	p->data=(unsigned char*) malloc(dataSize);
 	p->length=dataSize;
 	p->bitSize=BYTES_TO_BITS(dataSize);
@@ -899,7 +899,7 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 	TCPInterface *tcpInterface = s->tcpInterface;
 	int newRemoteClientIndex=systemAddress.systemIndex;
 	unsigned short socketFamily = s->socketFamily;
-	RakNet::OP_DELETE(s, _FILE_AND_LINE_);
+	delete s;
 
 	char str1[64];
 	systemAddress.ToString(false, str1);

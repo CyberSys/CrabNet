@@ -92,7 +92,7 @@ bool ReadyEvent::DeleteEvent(int eventId)
 	unsigned eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
 	if (objectExists)
 	{
-		RakNet::OP_DELETE(readyEventNodeList[eventIndex], _FILE_AND_LINE_);
+		delete readyEventNodeList[eventIndex];
 		readyEventNodeList.RemoveAtIndex(eventIndex);
 		return true;
 	}
@@ -444,14 +444,14 @@ void ReadyEvent::Clear(void)
 	unsigned i;
 	for (i=0; i < readyEventNodeList.Size(); i++)
 	{
-		RakNet::OP_DELETE(readyEventNodeList[i], _FILE_AND_LINE_);
+		delete readyEventNodeList[i];
 	}
 	readyEventNodeList.Clear(false, _FILE_AND_LINE_);
 }
 
 unsigned ReadyEvent::CreateNewEvent(int eventId, bool isReady)
 {
-	ReadyEventNode *ren = RakNet::OP_NEW<ReadyEventNode>( _FILE_AND_LINE_ );
+	ReadyEventNode *ren =new ReadyEventNode;
 	ren->eventId=eventId;
 	if (isReady==false)
 		ren->eventStatus=ID_READY_EVENT_UNSET;

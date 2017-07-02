@@ -12,7 +12,8 @@
 #if _RAKNET_SUPPORT_PacketLogger==1
 
 #include "ThreadsafePacketLogger.h"
-#include <string.h>
+#include <cstring>
+#include <cstdlib>
 
 using namespace RakNet;
 

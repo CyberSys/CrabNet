@@ -10,7 +10,6 @@
 
 /*
 #include "RakNetSocket.h"
-#include "RakMemoryOverride.h"
 
 using namespace RakNet;
 
@@ -105,7 +104,7 @@ RakNetSocket* RakNetSocket::Create
 	if (sock<0)
 		return 0;
 	#endif
-	RakNetSocket *rns = RakNet::OP_NEW<RakNetSocket>(_FILE_AND_LINE_);
+	RakNetSocket *rns =new RakNetSocket;
 	rns->s = sock;
 	#ifdef __native_client__
 		rns->chromeInstance = _chromeInstance;

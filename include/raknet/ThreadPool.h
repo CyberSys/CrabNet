@@ -11,7 +11,6 @@
 #ifndef __THREAD_POOL_H
 #define __THREAD_POOL_H
 
-#include "RakMemoryOverride.h"
 #include "DS_Queue.h"
 #include "SimpleMutex.h"
 #include "Export.h"

@@ -49,7 +49,7 @@ void RakNetTransport2::Stop(void)
 	for (unsigned int i=0; i < packetQueue.Size(); i++)
 	{
 		free(packetQueue[i]->data);
-		RakNet::OP_DELETE(packetQueue[i],_FILE_AND_LINE_);
+		delete packetQueue[i];
 	}
 	packetQueue.Clear(_FILE_AND_LINE_);
 }
@@ -95,7 +95,7 @@ SystemAddress RakNetTransport2::HasLostConnection(void)
 void RakNetTransport2::DeallocatePacket( Packet *packet )
 {
 	free(packet->data);
-	RakNet::OP_DELETE(packet, _FILE_AND_LINE_ );
+	delete packet;
 }
 PluginReceiveResult RakNetTransport2::OnReceive(Packet *packet)
 {
@@ -106,7 +106,7 @@ PluginReceiveResult RakNetTransport2::OnReceive(Packet *packet)
 			if (packet->length==sizeof(MessageID))
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 
-			Packet *p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
+			Packet *p =new Packet;
 			*p=*packet;
 			p->bitSize-=8;
 			p->length--;

@@ -17,7 +17,6 @@
 #define      __NETWORK_ID_GENERATOR
 
 #include "RakNetTypes.h"
-#include "RakMemoryOverride.h"
 #include "Export.h"
 
 namespace RakNet

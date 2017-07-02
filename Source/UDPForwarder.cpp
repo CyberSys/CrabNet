@@ -98,7 +98,7 @@ void UDPForwarder::Shutdown(void)
 
 	unsigned int j;
 	for (j=0; j < forwardListNotUpdated.Size(); j++)
-		RakNet::OP_DELETE(forwardListNotUpdated[j],_FILE_AND_LINE_);
+		delete forwardListNotUpdated[j];
 	forwardListNotUpdated.Clear(false, _FILE_AND_LINE_);
 }
 void UDPForwarder::SetMaxForwardEntries(unsigned short maxEntries)
@@ -445,7 +445,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
 				int sock_opt;
 				sockaddr_in listenerSocketAddress;
 				listenerSocketAddress.sin_port = 0;
-				ForwardEntry *fe = RakNet::OP_NEW<UDPForwarder::ForwardEntry>(_FILE_AND_LINE_);
+				ForwardEntry *fe =new UDPForwarder::ForwardEntry;
 				fe->addr1Unconfirmed=sfis->source;
 				fe->addr2Unconfirmed=sfis->destination;
 				fe->timeoutOnNoDataMS=sfis->timeoutOnNoDataMS;
@@ -470,7 +470,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
 				int ret = bind__( fe->socket, ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
 				if (ret==-1)
 				{
-					RakNet::OP_DELETE(fe,_FILE_AND_LINE_);
+					delete fe;
 					sfos.result=UDPFORWARDER_BIND_FAILED;
 				}
 				else
@@ -574,7 +574,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
 			{
 				fe = forwardListNotUpdated[i];
 				forwardListNotUpdated.RemoveAtIndexFast(i);
-				RakNet::OP_DELETE(fe, _FILE_AND_LINE_);
+				delete fe;
 				break;
 			}
 		}
@@ -590,7 +590,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
 		if (curTime > forwardListNotUpdated[i]->timeLastDatagramForwarded && // Account for timestamp wrap
 			curTime > forwardListNotUpdated[i]->timeLastDatagramForwarded+forwardListNotUpdated[i]->timeoutOnNoDataMS)
 		{
-			RakNet::OP_DELETE(forwardListNotUpdated[i],_FILE_AND_LINE_);
+			delete forwardListNotUpdated[i];
 			forwardListNotUpdated.RemoveAtIndex(i);
 		}
 		else
