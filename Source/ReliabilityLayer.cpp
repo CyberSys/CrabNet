@@ -1695,10 +1695,10 @@ void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, i
 
 	RakNet::TimeMS timeMs;
 #if CC_TIME_TYPE_BYTES==4
-	time/=1000;
-	timeMs=time;
+	time /= 1000;
+	timeMs = time;
 #else
-	timeMs=(RakNet::TimeMS) (time/(CCTimeType)1000);
+	timeMs = (RakNet::TimeMS) (time/(CCTimeType)1000);
 #endif
 
 #ifdef _DEBUG
@@ -1795,11 +1795,7 @@ void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, i
 
 	// Due to thread vagarities and the way I store the time to avoid slow calls to RakNet::GetTime
 	// time may be less than lastAck
-#if CC_TIME_TYPE_BYTES==4
-	if ( statistics.messagesInResendBuffer!=0 && AckTimeout(time) )
-#else
-	if ( statistics.messagesInResendBuffer!=0 && AckTimeout(RakNet::TimeMS(time/(CCTimeType)1000)) )
-#endif
+	if ( statistics.messagesInResendBuffer!=0 && AckTimeout(timeMs))
 	{
 		// SHOW - dead connection
 		// We've waited a very long time for a reliable packet to get an ack and it never has
@@ -1941,11 +1937,7 @@ void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, i
 
 						for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
 						{
-#if CC_TIME_TYPE_BYTES==4
-							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, (RakNet::TimeMS) time, true);
-#else
-							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, (RakNet::TimeMS)(time/(CCTimeType)1000), true);
-#endif
+							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, timeMs, true);
 						}
 
 						// Put the packet back into the resend list at the correct spot
@@ -2111,11 +2103,7 @@ void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, i
 
 					for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
 					{
-#if CC_TIME_TYPE_BYTES==4
-						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, (RakNet::TimeMS)time, true);
-#else
-						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, (RakNet::TimeMS)(time/(CCTimeType)1000), true);
-#endif
+						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, timeMs, true);
 					}
 					pushedAnything=true;
 
