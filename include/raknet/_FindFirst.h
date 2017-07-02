@@ -9,8 +9,7 @@
 #if (defined(__GNUC__) || defined(__ARMCC_VERSION) || defined(__GCCXML__) || defined(__S3E__) ) && !defined(__WIN32)
 
 #include <dirent.h>
-
-#include "RakString.h"
+#include <string>
 
 #define _A_NORMAL 		0x00 		// Normal file
 #define _A_RDONLY 		0x01 		// Read-only file
@@ -43,8 +42,8 @@ typedef struct _finddata_t
 typedef struct _findinfo_t
 {
 	DIR*	openedDir;
-	RakNet::RakString filter;    
-	RakNet::RakString dirName;
+	std::string filter;
+	std::string dirName;
 } _findinfo;
 
 long _findfirst(const char *name, _finddata_t *f);

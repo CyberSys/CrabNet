@@ -10,7 +10,6 @@
 
 #include <fnmatch.h>
 
-
 static DataStructures::List< _findinfo_t* > fileInfo;
 	
 #include "RakAssert.h"
@@ -20,8 +19,8 @@ static DataStructures::List< _findinfo_t* > fileInfo;
 */
 long _findfirst(const char *name, _finddata_t *f)
 {
-	RakNet::RakString nameCopy = name;
-        RakNet::RakString filter;
+	std::string nameCopy = name;
+    std::string filter;
 
         // This is linux only, so don't bother with '\'
 	const char* lastSep = strrchr(name,'/');
@@ -36,16 +35,16 @@ long _findfirst(const char *name, _finddata_t *f)
             // trailing '/' intact.
             filter = lastSep+1;
             unsigned sepIndex = lastSep - name;
-            nameCopy.Erase(sepIndex+1, nameCopy.GetLength() - sepIndex-1);
+            nameCopy.erase(sepIndex+1, nameCopy.length() - sepIndex-1);
 	}
 
-	DIR* dir = opendir(nameCopy);
+	DIR* dir = opendir(nameCopy.c_str());
         
 	if(!dir) return -1;
 
 	_findinfo_t* fi =new _findinfo_t;
-	fi->filter    = filter;
-	fi->dirName   = nameCopy;  // we need to remember this for stat()
+	fi->filter    = filter.c_str();
+	fi->dirName   = nameCopy.c_str();  // we need to remember this for stat()
 	fi->openedDir = dir;
 	fileInfo.Insert(fi, _FILE_AND_LINE_);
 
@@ -56,36 +55,6 @@ long _findfirst(const char *name, _finddata_t *f)
         if (_findnext(ret, f) == -1) return -1;
         else return ret;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 int _findnext(long h, _finddata_t *f)
 {
@@ -100,16 +69,16 @@ int _findnext(long h, _finddata_t *f)
 		if(entry == 0) return -1;
 
                 // Only report stuff matching our filter
-                if (fnmatch(fi->filter, entry->d_name, FNM_PATHNAME) != 0) continue;
+                if (fnmatch(fi->filter.c_str(), entry->d_name, FNM_PATHNAME) != 0) continue;
 
                 // To reliably determine the entry's type, we must do
                 // a stat...  don't rely on entry->d_type, as this
                 // might be unavailable!
                 struct stat filestat;
-                RakNet::RakString fullPath = fi->dirName + entry->d_name;             
-                if (stat(fullPath, &filestat) != 0)
+                std::string fullPath = fi->dirName + entry->d_name;
+                if (stat(fullPath.c_str(), &filestat) != 0)
                 {
-                    RAKNET_DEBUG_PRINTF("Cannot stat %s\n", fullPath.C_String());
+                    RAKNET_DEBUG_PRINTF("Cannot stat %s\n", fullPath.c_str());
                     continue;
                 }
 
@@ -131,10 +100,6 @@ int _findnext(long h, _finddata_t *f)
 
 	return -1;
 }
-
-
-
-
 
 /**
  * _findclose - equivalent
