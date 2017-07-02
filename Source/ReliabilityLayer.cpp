@@ -2900,25 +2900,21 @@ void ReliabilityLayer::DeleteSequencedPacketsInList( unsigned char orderingChann
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::IsOlderOrderedPacket( OrderingIndexType newPacketOrderingIndex, OrderingIndexType waitingForPacketOrderingIndex )
 {
-	OrderingIndexType maxRange = (OrderingIndexType) (const uint32_t)-1;
+	OrderingIndexType range = (OrderingIndexType) ((const uint32_t) -1) / (OrderingIndexType) 2;
+	const bool a = newPacketOrderingIndex >= waitingForPacketOrderingIndex - range + (OrderingIndexType) 1;
 
-	if ( waitingForPacketOrderingIndex > maxRange/(OrderingIndexType)2 )
+	if (waitingForPacketOrderingIndex > range)
 	{
-		if ( newPacketOrderingIndex >= waitingForPacketOrderingIndex - maxRange/(OrderingIndexType)2+(OrderingIndexType)1 && newPacketOrderingIndex < waitingForPacketOrderingIndex )
-		{
+		if (a && newPacketOrderingIndex < waitingForPacketOrderingIndex)
 			return true;
-		}
 	}
-
 	else
-		if ( newPacketOrderingIndex >= ( OrderingIndexType ) ( waitingForPacketOrderingIndex - (( OrderingIndexType ) maxRange/(OrderingIndexType)2+(OrderingIndexType)1) ) ||
-			newPacketOrderingIndex < waitingForPacketOrderingIndex )
-		{
+	{
+		if (a || newPacketOrderingIndex < waitingForPacketOrderingIndex)
 			return true;
-		}
-
-		// Old packet
-		return false;
+	}
+	// Old packet
+	return false;
 }
 
 //-------------------------------------------------------------------------------------------------------
