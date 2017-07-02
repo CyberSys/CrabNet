@@ -150,7 +150,8 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 		RakAssert(data);
 	}
 
-	fread(data, 1, length, fp);
+	size_t ret = fread(data, 1, length, fp);
+	RakAssert(ret == (size_t)length)
 	AddFile(filename, filepath, data, length, length, context);
 	fclose(fp);
 
@@ -309,7 +310,9 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
 					{
 						fileData= (char*) rakMalloc_Ex( fileInfo.size+HASH_LENGTH, _FILE_AND_LINE_ );
 						RakAssert(fileData);
-						fread(fileData+HASH_LENGTH, fileInfo.size, 1, fp);
+						size_t ret = fread(fileData+HASH_LENGTH, fileInfo.size, 1, fp);
+						RakAssert(ret == fileInfo.size)
+
 						fclose(fp);
 
 						unsigned int hash = SuperFastHash(fileData+HASH_LENGTH, fileInfo.size);
@@ -344,7 +347,8 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
 					fileData= (char*) rakMalloc_Ex( fileInfo.size, _FILE_AND_LINE_ );
 					RakAssert(fileData);
 					fp = fopen(fullPath, "rb");
-					fread(fileData, fileInfo.size, 1, fp);
+					size_t ret = fread(fileData, fileInfo.size, 1, fp);
+					RakAssert(ret == fileInfo.size)
 					fclose(fp);
 
 					// File data only
@@ -629,7 +633,8 @@ void FileList::PopulateDataFromDisk(const char *applicationDirectory, bool write
 						// Hash + data so offset the data by HASH_LENGTH
 						fileList[i].data=(char*) rakMalloc_Ex( fileList[i].fileLengthBytes+HASH_LENGTH, _FILE_AND_LINE_ );
 						RakAssert(fileList[i].data);
-						fread(fileList[i].data+HASH_LENGTH, fileList[i].fileLengthBytes, 1, fp);
+						size_t ret = fread(fileList[i].data+HASH_LENGTH, fileList[i].fileLengthBytes, 1, fp);
+						RakAssert(ret == fileList[i].fileLengthBytes)
 //						sha1.Reset();
 //						sha1.Update((unsigned char*)fileList[i].data+HASH_LENGTH, fileList[i].fileLength);
 //						sha1.Final();
@@ -648,7 +653,8 @@ void FileList::PopulateDataFromDisk(const char *applicationDirectory, bool write
 						else
 							fileList[i].data=(char*) rakMalloc_Ex( fileList[i].fileLengthBytes, _FILE_AND_LINE_ );
 						RakAssert(fileList[i].data);
-						fread(fileList[i].data, fileList[i].fileLengthBytes, 1, fp);
+						size_t ret = fread(fileList[i].data, fileList[i].fileLengthBytes, 1, fp);
+                        RakAssert(ret == fileList[i].fileLengthBytes);
 				//		sha1.Reset();
 				//		sha1.Update((unsigned char*)fileList[i].data, fileList[i].fileLength);
 				//		sha1.Final();
@@ -665,7 +671,8 @@ void FileList::PopulateDataFromDisk(const char *applicationDirectory, bool write
 					fileList[i].dataLengthBytes=fileList[i].fileLengthBytes;
 					fileList[i].data=(char*) rakMalloc_Ex( fileList[i].fileLengthBytes, _FILE_AND_LINE_ );
 					RakAssert(fileList[i].data);
-					fread(fileList[i].data, fileList[i].fileLengthBytes, 1, fp);
+					size_t ret = fread(fileList[i].data, fileList[i].fileLengthBytes, 1, fp);
+                    RakAssert(ret == fileList[i].fileLengthBytes);
 				}
 
 				fclose(fp);

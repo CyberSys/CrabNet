@@ -14,6 +14,8 @@
 
 #if !defined(_WIN32)
 #include <stdint.h>
+#include <RakAssert.h>
+
 #endif
 
 #undef get16bits
@@ -116,13 +118,15 @@ uint32_t SuperFastHashFilePtr (FILE *fp)
 	char readBlock[INCREMENTAL_READ_BLOCK];
 	while (bytesRemaining>=(int) sizeof(readBlock))
 	{
-		fread(readBlock, sizeof(readBlock), 1, fp);
+		size_t ret = fread(readBlock, sizeof(readBlock), 1, fp);
+		RakAssert(ret == sizeof(readBlock));
 		lastHash=SuperFastHashIncremental (readBlock, (int) sizeof(readBlock), lastHash );
 		bytesRemaining-=(int) sizeof(readBlock);
 	}
 	if (bytesRemaining>0)
 	{
-		fread(readBlock, bytesRemaining, 1, fp);
+		size_t ret = fread(readBlock, bytesRemaining, 1, fp);
+		RakAssert(ret == (size_t)bytesRemaining);
 		lastHash=SuperFastHashIncremental (readBlock, bytesRemaining, lastHash );
 	}
 	return lastHash;
