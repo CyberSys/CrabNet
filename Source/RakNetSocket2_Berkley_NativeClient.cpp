@@ -103,8 +103,6 @@ void DomainNameToIP_Berkley( const char *domainName, char ip[65] )
 }
 
 
-
-
 #endif // !defined(WINDOWS_STORE_RT) && !defined(__native_client__)
 
 #endif // file header

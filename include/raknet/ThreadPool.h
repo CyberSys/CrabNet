@@ -300,12 +300,9 @@ void* WorkerThread( void* arguments )
 	else if (threadPool->threadDataInterface)
 		threadPool->threadDataInterface->PerThreadDestructor(perThreadData, threadPool->tdiContext);
 
-
-
-
 	return 0;
-
 }
+
 template <class InputType, class OutputType>
 ThreadPool<InputType, OutputType>::ThreadPool()
 {

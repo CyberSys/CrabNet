@@ -68,24 +68,9 @@ RakNetSocket2* RakNetSocket2Allocator::AllocRNS2(void)
 #if defined(WINDOWS_STORE_RT)
 	s2 =new RNS2_WindowsStore8;
 	s2->SetSocketType(RNS2T_WINDOWS_STORE_8);
-
-
-
-
-
-
 #elif defined(__native_client__)
 	s2 =new RNS2_NativeClient;
 	s2->SetSocketType(RNS2T_CHROME);
-
-
-
-
-
-
-
-
-
 #elif defined(_WIN32)
 	s2 =new RNS2_Windows;
 	s2->SetSocketType(RNS2T_WINDOWS);
@@ -99,18 +84,8 @@ void RakNetSocket2::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_
 {
 #if defined(WINDOWS_STORE_RT)
 	RNS2_WindowsStore8::GetMyIP( addresses );
-
-
-
-
 #elif defined(__native_client__)
 	RNS2_NativeClient::GetMyIP( addresses );
-
-
-
-
-
-
 #elif defined(_WIN32)
 	RNS2_Windows::GetMyIP( addresses );
 #else
@@ -320,9 +295,6 @@ RNS2BindResult RNS2_Berkley::BindShared( RNS2_BerkleyBindParameters *bindParamet
 
 RAK_THREAD_DECLARATION(RNS2_Berkley::RecvFromLoop)
 {
-
-
-
 	RNS2_Berkley *b = ( RNS2_Berkley * ) arguments;
 
 	b->RecvFromLoopInt();
@@ -355,11 +327,7 @@ unsigned RNS2_Berkley::RecvFromLoopInt(void)
 	}
 	isRecvFromLoopThreadActive.Decrement();
 
-
-
-
 	return 0;
-
 }
 RNS2_Berkley::RNS2_Berkley()
 {
@@ -382,11 +350,6 @@ RNS2_Berkley::~RNS2_Berkley()
 int RNS2_Berkley::CreateRecvPollingThread(int threadPriority)
 {
 	endThreads=false;
-
-
-
-
-
 
 	int errorCode = RakNet::RakThread::Create(RecvFromLoop, this, threadPriority);
 

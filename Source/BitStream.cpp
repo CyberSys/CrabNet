@@ -507,8 +507,6 @@ void BitStream::WriteCompressed( const unsigned char* inByteArray,
 
 			WriteBits( inByteArray, ( currentByte + 1 ) << 3, true );
 			//  currentByte--;
-
-
 			return ;
 		}
 
@@ -546,7 +544,6 @@ bool BitStream::ReadBits( unsigned char *inOutByteArray, BitSize_t numberOfBitsT
 	if ( readOffset + numberOfBitsToRead > numberOfBitsUsed )
 		return false;
 
-
 	const BitSize_t readOffsetMod8 = readOffset & 7;
 
 	// If currently aligned and numberOfBits is a multiple of 8, just memcpy for speed
@@ -556,8 +553,6 @@ bool BitStream::ReadBits( unsigned char *inOutByteArray, BitSize_t numberOfBitsT
 		readOffset+=numberOfBitsToRead;
 		return true;
 	}
-
-
 
 	BitSize_t offset = 0;
 
@@ -981,11 +976,6 @@ void BitStream::AssertCopyData( void )
 }
 bool BitStream::IsNetworkOrderInternal(void)
 {
-
-
-
-
-
 	static unsigned long htonlValue = htonl(12345);
 	return htonlValue == 12345;
 

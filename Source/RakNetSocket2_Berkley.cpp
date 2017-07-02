@@ -33,8 +33,6 @@ void RNS2_Berkley::SetSocketOptions(void)
 	r = setsockopt__( rns2Socket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 	// Do not assert, ignore failure
 
-
-
 	// This doesn't make much difference: 10% maybe
 	// Not supported on console 2
 	sock_opt=1024*16;
@@ -91,13 +89,7 @@ void RNS2_Berkley::GetSystemAddressIPV4 ( RNS2Socket rns2Socket, SystemAddress *
 
 	if (systemAddressOut->address.addr4.sin_addr.s_addr == INADDR_ANY)
 	{
-
-
-
-
-
 			systemAddressOut->address.addr4.sin_addr.s_addr=inet_addr__("127.0.0.1");
-
 	}
 }
 void RNS2_Berkley::GetSystemAddressIPV4And6 ( RNS2Socket rns2Socket, SystemAddress *systemAddressOut )
@@ -178,20 +170,10 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindPar
 
 	// Fill in the rest of the address structure
 	boundAddress.address.addr4.sin_family = AF_INET;
-	
-
-
-
 
 	if (bindParameters->hostAddress && bindParameters->hostAddress[0])
 	{
-
-
-
-
-
 		boundAddress.address.addr4.sin_addr.s_addr = inet_addr__( bindParameters->hostAddress );
-
 	}
 	else
 	{
@@ -199,22 +181,11 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindPar
 		boundAddress.address.addr4.sin_addr.s_addr = INADDR_ANY;
 	}
 
-
-
-
-
 	// bind our name to the socket
 	ret = bind__( rns2Socket, ( struct sockaddr * ) &boundAddress.address.addr4, sizeof( boundAddress.address.addr4 ) );
 
 	if ( ret <= -1 )
 	{
-
-
-
-
-
-
-
 
 #if defined(_WIN32)
 		closesocket__(rns2Socket);
@@ -279,7 +250,6 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4And6( RNS2_BerkleyBindParameters *bin
 	char portStr[32];
 	Itoa(bindParameters->port,portStr,10);
 
-
 	// On Ubuntu, "" returns "No address associated with hostname" while 0 works.
 	if (bindParameters->hostAddress && 
 		(_stricmp(bindParameters->hostAddress,"UNASSIGNED_SYSTEM_ADDRESS")==0 || bindParameters->hostAddress[0]==0))
@@ -300,24 +270,6 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4And6( RNS2_BerkleyBindParameters *bin
 
 		if (rns2Socket == -1)
 			return BR_FAILED_TO_BIND_SOCKET;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		ret = bind__(rns2Socket, aip->ai_addr, (int) aip->ai_addrlen );
 		if (ret>=0)
@@ -361,26 +313,12 @@ void RNS2_Berkley::RecvFromBlockingIPV4And6(RNS2RecvStruct *recvFromStruct)
 	int dataOutSize;
 	const int flag=0;
 
-
-
-
-
-
-
-
-
-
-
 	{
 		sockLen=sizeof(their_addr);
 		sockAddrPtr=(sockaddr*) &their_addr;
 	}
 
-
-
-
 	dataOutSize=MAXIMUM_MTU_SIZE;
-
 
 	recvFromStruct->bytesRead = recvfrom__(rns2Socket, recvFromStruct->data, dataOutSize, flag, sockAddrPtr, socketlenPtr );
 
@@ -401,26 +339,9 @@ void RNS2_Berkley::RecvFromBlockingIPV4And6(RNS2RecvStruct *recvFromStruct)
 	}	
 #endif
 
-
-
-
-
-
-
-
-
-
 	if (recvFromStruct->bytesRead<=0)
 		return;
 	recvFromStruct->timeRead=RakNet::GetTimeUS();
-
-
-
-
-
-
-
-
 
 	{
 		if (their_addr.ss_family==AF_INET)
@@ -437,7 +358,6 @@ void RNS2_Berkley::RecvFromBlockingIPV4And6(RNS2RecvStruct *recvFromStruct)
 		}
 	}
 
-
 #else
 	(void) recvFromStruct;
 #endif
@@ -452,26 +372,6 @@ void RNS2_Berkley::RecvFromBlockingIPV4(RNS2RecvStruct *recvFromStruct)
 	memset(&sa,0,sizeof(sockaddr_in));
 	const int flag=0;
 	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	{
 		sockLen=sizeof(sa);
 		sa.sin_family = AF_INET;
@@ -480,14 +380,6 @@ void RNS2_Berkley::RecvFromBlockingIPV4(RNS2RecvStruct *recvFromStruct)
 	}
 
 	recvFromStruct->bytesRead = recvfrom__( GetSocket(), recvFromStruct->data, sizeof(recvFromStruct->data), flag, sockAddrPtr, socketlenPtr );
-
-
-
-
-
-
-
-
 
 	if (recvFromStruct->bytesRead<=0)
 	{
@@ -520,14 +412,6 @@ void RNS2_Berkley::RecvFromBlockingIPV4(RNS2RecvStruct *recvFromStruct)
 		return;
 	}
 	recvFromStruct->timeRead=RakNet::GetTimeUS();
-
-
-
-
-
-
-
-
 
 	{
 		

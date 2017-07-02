@@ -23,11 +23,6 @@
 #include "BitStream.h"
 #include "Base64Encoder.h"
 #include <stdio.h>
-
-
-
-
-
 #include "RakSleep.h"
 
 using namespace RakNet;

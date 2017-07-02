@@ -335,50 +335,6 @@ protected:
 };
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if   defined(_WIN32)
 
 class RAK_DLL_EXPORT SocketLayerOverride

@@ -518,18 +518,13 @@ void RakString::FromWideChar(const wchar_t *source)
 	int bufSize = wcslen(source)*4;
 	Allocate(bufSize);
 	WideCharToMultiByte ( CP_ACP,                // ANSI code page
-
-
-
                           WC_COMPOSITECHECK,     // Check for accented characters
-
                           source,         // Source Unicode string
                           -1,                    // -1 means string is zero-terminated
                           sharedString->c_str,          // Destination char string
                           bufSize,  // Size of buffer
                           NULL,                  // No default character
                           NULL );                // Don't care about this flag
-
 
 }
 RakNet::RakString RakString::FromWideChar_S(const wchar_t *source)

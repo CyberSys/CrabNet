@@ -109,13 +109,7 @@ bool TCPInterface::CreateListenSocket(unsigned short port, unsigned short maxInc
 	serverAddress.sin_family = AF_INET;
 	if ( bindAddress && bindAddress[0] )
 	{
-
-
-
-
-
 		serverAddress.sin_addr.s_addr = inet_addr__(bindAddress );
-
 	}
 	else
 		serverAddress.sin_addr.s_addr = INADDR_ANY;
@@ -192,12 +186,8 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 	if (threadPriority==-99999)
 	{
-
-
 #if   defined(_WIN32)
 		threadPriority=0;
-
-
 #else
 		threadPriority=1000;
 #endif
@@ -224,13 +214,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 
 	// Start the update thread
-	int errorCode;
-
-
-
-
-
-	errorCode = RakNet::RakThread::Create(UpdateTCPInterfaceLoop, this, threadPriority);
+	int errorCode = RakNet::RakThread::Create(UpdateTCPInterfaceLoop, this, threadPriority);
 
 
 	if (errorCode!=0)
@@ -327,10 +311,6 @@ void TCPInterface::Stop(void)
 	activeSSLConnections.Clear(false, _FILE_AND_LINE_);
 #endif
 
-
-
-
-
 #endif  // __native_client__
 }
 SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block, unsigned short socketFamily, const char *bindAddress)
@@ -401,12 +381,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 		s->socketFamily=socketFamily;
 
 		// Start the connection thread
-		int errorCode;
-
-
-
-
-		errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s, threadPriority);
+		int errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s, threadPriority);
 
 		if (errorCode!=0)
 		{
@@ -816,13 +791,7 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char* host, unsigned short remot
 
 	if ( bindAddress && bindAddress[0] )
 	{
-
-
-
-
-
 		serverAddress.sin_addr.s_addr = inet_addr__( bindAddress );
-
 	}
 	else
 		serverAddress.sin_addr.s_addr = INADDR_ANY;
@@ -832,16 +801,6 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char* host, unsigned short remot
 
 
 	memcpy((char *)&serverAddress.sin_addr.s_addr, (char *)server->h_addr, server->h_length);
-
-
-
-
-
-
-
-
-
-
 	blockingSocketListMutex.Lock();
 	blockingSocketList.Insert(sockfd, _FILE_AND_LINE_);
 	blockingSocketListMutex.Unlock();
@@ -850,8 +809,6 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char* host, unsigned short remot
 	connectResult = connect__( sockfd, ( struct sockaddr * ) &serverAddress, sizeof( struct sockaddr ) );
 
 #else
-
-
 	struct addrinfo hints, *res;
 	int sockfd;
 	memset(&hints, 0, sizeof hints);
@@ -888,11 +845,7 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char* host, unsigned short remot
 
 RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 {
-
-
-
 	TCPInterface::ThisPtrPlusSysAddr *s = (TCPInterface::ThisPtrPlusSysAddr *) arguments;
-
 
 
 	SystemAddress systemAddress = s->systemAddress;
@@ -926,19 +879,12 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 		tcpInterface->completedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_ );
 		tcpInterface->completedConnectionAttemptMutex.Unlock();
 	}	
-
-
-
-
 	return 0;
 
 }
 
 RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 {
-
-
-
 	TCPInterface * sts = ( TCPInterface * ) arguments;
 
 
@@ -998,7 +944,6 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 		}
 #endif
 
-
 		__TCPSOCKET__ largestDescriptor=0; // see select__()'s first parameter's documentation under linux
 
 
@@ -1050,11 +995,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #pragma warning( disable : 4244 ) // warning C4127: conditional expression is constant
 #endif
 
-
 			selectResult=(int) select__(largestDescriptor+1, &readFD, &writeFD, &exceptionFD, &tv);		
-
-
-
 
 			if (selectResult<=0)
 				break;
@@ -1255,9 +1196,6 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 	sts->threadRunning.Decrement();
 
 	free(data);
-
-
-
 
 	return 0;
 

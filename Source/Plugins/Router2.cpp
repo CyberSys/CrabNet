@@ -56,8 +56,6 @@ Algorithm:
 #define MIN_MINIPUNCH_TIMEOUT	5000
 
 
-
-
 void Router2DebugInterface::ShowFailure(const char *message)
 {
 	printf("%s", message);
@@ -937,18 +935,6 @@ void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress
 		sendto__( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), 0, ( const sockaddr* ) & sa.address.addr6, sizeof( sockaddr_in6 ) );
 		#endif
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 }
 void Router2::SendOOBMessages(Router2::MiniPunchRequest *mpr)
 {

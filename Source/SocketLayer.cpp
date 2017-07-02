@@ -59,18 +59,6 @@ using namespace pp;
 
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
 #if   defined(_WIN32)
 #include "WSAStartupSingleton.h"
 #include "WindowsIncludes.h"
@@ -179,7 +167,6 @@ void SocketLayer::SetSocketOptions( __UDPSOCKET__ listenSocket, bool blockingSoc
 
 #endif
 }
- 
 
 RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, RakNet::RakString inIpString)
 {
@@ -267,81 +254,6 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, Rak
 #endif
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #if   defined(WINDOWS_STORE_RT)
 void GetMyIP_WinRT( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
@@ -432,15 +344,8 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 
 #endif
 
-
 void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
-
-
-
-
-
-
 #if   defined(WINDOWS_STORE_RT)
 	GetMyIP_WinRT(addresses);
 #elif defined(_WIN32)
@@ -450,7 +355,6 @@ void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_ID
 	GetMyIP_Win32(addresses);
 #endif
 }
-
 
 /*
 unsigned short SocketLayer::GetLocalPort(RakNetSocket *s)
@@ -602,7 +506,6 @@ bool SocketLayer::GetFirstBindableIP(char firstBindable[128], int ipProto)
 	return true;
 
 }
-
 
 #ifdef _MSC_VER
 #pragma warning( pop )

@@ -29,11 +29,6 @@ void WSAStartupSingleton::AddRef(void)
 	
 	if (refCount!=1)
 		return;
-
-
-
-
-
 	WSADATA winsockInfo;
 	if ( WSAStartup( MAKEWORD( 2, 2 ), &winsockInfo ) != 0 )
 	{

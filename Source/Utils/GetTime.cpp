@@ -75,53 +75,6 @@ RakNet::TimeMS RakNet::GetTimeMS( void )
 	return (RakNet::TimeMS)(GetTimeUS()/1000);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if   defined(_WIN32)
 RakNet::TimeUS GetTimeUS_Windows( void )
 {
@@ -191,12 +144,6 @@ RakNet::TimeUS GetTimeUS_Linux( void )
 
 RakNet::TimeUS RakNet::GetTimeUS( void )
 {
-
-
-
-
-
-
 #if   defined(_WIN32)
 	return GetTimeUS_Windows();
 #else

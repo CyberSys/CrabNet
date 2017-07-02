@@ -192,7 +192,6 @@ void NatPunchthroughServer::Update(void)
 						connectionAttempt->recipient->isReady=true;
 						recipient=connectionAttempt->recipient;
 
-
 						if (natPunchthroughServerDebugInterface)
 						{
 							char str[1024];
@@ -206,7 +205,6 @@ void NatPunchthroughServer::Update(void)
 							connectionAttempt->sender->LogConnectionAttempts(log);
 							connectionAttempt->recipient->LogConnectionAttempts(log);
 						}
-
 
 						connectionAttempt->sender->DerefConnectionAttempt(connectionAttempt);
 						connectionAttempt->recipient->DeleteConnectionAttempt(connectionAttempt);

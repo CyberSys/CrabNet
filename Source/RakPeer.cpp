@@ -217,10 +217,6 @@ RakPeer::RakPeer()
 	isMainLoopThreadActive = false;
 	incomingDatagramEventHandler=0;
 
-
-
-
-
 	// isRecvfromThreadActive=false;
 #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
 	occasionalPing = true;
@@ -264,48 +260,6 @@ RakPeer::RakPeer()
 
 	remoteSystemIndexPool.SetPageSize(sizeof(DataStructures::MemoryPool<RemoteSystemIndex>::MemoryWithPage)*32);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	GenerateGUID();
 
 	quitAndDataEvents.InitEvent();
@@ -335,22 +289,6 @@ RakPeer::~RakPeer()
 	if (_server_handshake) delete _server_handshake;
 	if (_cookie_jar) delete _cookie_jar;
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 	for (unsigned int i=0; i < pluginListTS.Size(); i++)
 // 		pluginListTS[i]->SetRakPeerInterface(0);
 // 	for (unsigned int i=0; i < pluginListNTS.Size(); i++)
@@ -385,13 +323,8 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 	if (threadPriority==-99999)
 	{
 
-
 #if   defined(_WIN32)
 		threadPriority=0;
-
-
-
-
 #else
 		threadPriority=1000;
 #endif
@@ -435,14 +368,6 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 		else
 			addrToBind=socketDescriptors[i].hostAddress;
 			*/
-
-
-
-
-
-
-
-
 
 		/*
 #if RAKNET_SUPPORT_IPV6==1
@@ -2588,10 +2513,6 @@ unsigned int RakPeer::GetNumberOfAddresses( void )
 		i++;
 
 	return i;
-
-
-
-
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2613,10 +2534,6 @@ const char* RakPeer::GetLocalIP( unsigned int index )
 	static char str[128];
 	ipList[index].ToString(false,str);
 	return str;
-
-
-
-
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2640,10 +2557,6 @@ bool RakPeer::IsLocalIP( const char *ip )
 		if (strcmp(ip, GetLocalIP(i))==0)
 			return true;
 	}
-
-
-
-
 	return false;
 }
 
@@ -4023,11 +3936,7 @@ bool RakPeer::IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matc
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 SystemAddress RakPeer::GetLoopbackAddress(void) const
 {
-
 	return ipList[0];
-
-
-
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 bool RakPeer::AllowIncomingConnections(void) const
@@ -4460,35 +4369,6 @@ union Buff6AndBuff8
 uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 {
 	// Mac address is a poor solution because you can't have multiple connections from the same system
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #if   defined(_WIN32)
 	uint64_t g=RakNet::GetTimeUS();
@@ -5965,7 +5845,6 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 						systemAddress.ToString(false, str1);
 						AddToBanList(str1, remoteSystem->reliabilityLayer.GetTimeoutTime());
 
-
 						free(data);
 					}
 				}
@@ -6395,12 +6274,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateNetworkLoop)
 #endif
 #endif
 	*/
-
-
-
-
 	return 0;
-
 }
 
 void RakPeer::CallPluginCallbacks(DataStructures::List<PluginInterface2*> &pluginList, Packet *packet)

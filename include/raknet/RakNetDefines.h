@@ -132,16 +132,6 @@
 #define RAKNET_SUPPORT_IPV6 0
 #endif
 
-
-
-
-
-
-
-
-
-
-
 #ifndef RAKSTRING_TYPE
 #if defined(_UNICODE)
 #define RAKSTRING_TYPE RakWString
@@ -184,11 +174,6 @@
 #ifndef USE_ALLOCA
 #define USE_ALLOCA 1
 #endif
-
-
-
-
-
 
 //#define USE_THREADED_SEND
 
