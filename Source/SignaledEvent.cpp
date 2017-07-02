@@ -128,137 +128,72 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
 //		false,
 //		timeoutMs);
 	WaitForSingleObjectEx(eventList,timeoutMs,FALSE);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #else
 
 	// If was previously set signaled, just unset and return
 	isSignaledMutex.Lock();
-	if (isSignaled==true)
+	if (isSignaled)
 	{
-		isSignaled=false;
+		isSignaled = false;
 		isSignaledMutex.Unlock();
 		return;
 	}
 	isSignaledMutex.Unlock();
 
-	
+	struct timespec   ts;
+	struct timeval    tp;
+	gettimeofday(&tp, NULL);
+	ts.tv_sec  = tp.tv_sec;
+	ts.tv_nsec = tp.tv_usec * 1000;
 
-	//struct timespec   ts;
-
-	// Else wait for SetEvent to be called
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		struct timespec   ts;
-
-		int rc;
-		struct timeval    tp;
-		rc =  gettimeofday(&tp, NULL);
-		ts.tv_sec  = tp.tv_sec;
-		ts.tv_nsec = tp.tv_usec * 1000;
-// #endif
-
-		while (timeoutMs > 30)
-		{
-			// Wait 30 milliseconds for the signal, then check again.
-			// This is in case we  missed the signal between the top of this function and pthread_cond_timedwait, or after the end of the loop and pthread_cond_timedwait
-			ts.tv_nsec += 30*1000000;
-			if (ts.tv_nsec >= 1000000000)
-			{
-			        ts.tv_nsec -= 1000000000;
-			        ts.tv_sec++;
-			}
-			
-			// [SBC] added mutex lock/unlock around cond_timedwait.
-            // this prevents airplay from generating a whole much of errors.
-            // not sure how this works on other platforms since according to
-            // the docs you are suppost to hold the lock before you wait
-            // on the cond.
-            pthread_mutex_lock(&hMutex);
-			pthread_cond_timedwait(&eventList, &hMutex, &ts);
-            pthread_mutex_unlock(&hMutex);
-
-			timeoutMs-=30;
-
-			isSignaledMutex.Lock();
-			if (isSignaled==true)
-			{
-				isSignaled=false;
-				isSignaledMutex.Unlock();
-				return;
-			}
-			isSignaledMutex.Unlock();
-		}
-
-		// Wait the remaining time, and turn off the signal in case it was set
-		ts.tv_nsec += timeoutMs*1000000;
+	while (timeoutMs > 30)
+	{
+		// Wait 30 milliseconds for the signal, then check again.
+		// This is in case we  missed the signal between the top of this function and pthread_cond_timedwait,
+		// or after the end of the loop and pthread_cond_timedwait
+		ts.tv_nsec += 30*1000000;
 		if (ts.tv_nsec >= 1000000000)
 		{
-		        ts.tv_nsec -= 1000000000;
-		        ts.tv_sec++;
+				ts.tv_nsec -= 1000000000;
+				ts.tv_sec++;
 		}
 
+		// [SBC] added mutex lock/unlock around cond_timedwait.
+		// this prevents airplay from generating a whole much of errors.
+		// not sure how this works on other platforms since according to
+		// the docs you are suppost to hold the lock before you wait
+		// on the cond.
 		pthread_mutex_lock(&hMutex);
 		pthread_cond_timedwait(&eventList, &hMutex, &ts);
-        pthread_mutex_unlock(&hMutex);
+		pthread_mutex_unlock(&hMutex);
+
+		timeoutMs-=30;
 
 		isSignaledMutex.Lock();
-		isSignaled=false;
+		if (isSignaled==true)
+		{
+			isSignaled=false;
+			isSignaledMutex.Unlock();
+			return;
+		}
 		isSignaledMutex.Unlock();
+	}
+
+	// Wait the remaining time, and turn off the signal in case it was set
+	ts.tv_nsec += timeoutMs*1000000;
+	if (ts.tv_nsec >= 1000000000)
+	{
+			ts.tv_nsec -= 1000000000;
+			ts.tv_sec++;
+	}
+
+	pthread_mutex_lock(&hMutex);
+	pthread_cond_timedwait(&eventList, &hMutex, &ts);
+	pthread_mutex_unlock(&hMutex);
+
+	isSignaledMutex.Lock();
+	isSignaled=false;
+	isSignaledMutex.Unlock();
 
 #endif
 }

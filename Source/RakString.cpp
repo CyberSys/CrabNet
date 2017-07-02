@@ -23,7 +23,7 @@
 using namespace RakNet;
 
 //DataStructures::MemoryPool<RakString::SharedString> RakString::pool;
-RakString::SharedString RakString::emptyString={0,0,0,(char*) "",(char*) ""};
+RakString::SharedString RakString::emptyString={0,0,0,(char*) "",(char*) "", ""};
 //RakString::SharedString *RakString::sharedStringFreeList=0;
 //unsigned int RakString::sharedStringFreeListAllocationCount=0;
 DataStructures::List<RakString::SharedString*> RakString::freeList;

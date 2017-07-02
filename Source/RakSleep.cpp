@@ -10,13 +10,6 @@
 
 #if   defined(_WIN32)
 #include "WindowsIncludes.h" // Sleep
-
-
-
-
-
-
-
 #else
 #include <pthread.h>
 #include <time.h>
@@ -27,7 +20,6 @@ pthread_cond_t fakeCond = PTHREAD_COND_INITIALIZER;
 
 #include "RakSleep.h"
 
-
 #if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
 #include "ThreadEmulation.h"
 using namespace ThreadEmulation;
@@ -37,13 +29,6 @@ void RakSleep(unsigned int ms)
 {
 #ifdef _WIN32
 	Sleep(ms);
-
-
-
-
-
-
-
 #else
 	//Single thread sleep code thanks to Furquan Shaikh, http://somethingswhichidintknow.blogspot.com/2009/09/sleep-in-pthread.html
 	//Modified slightly from the original
@@ -67,5 +52,6 @@ void RakSleep(unsigned int ms)
 	pthread_mutex_lock(&fakeMutex);
 	rt = pthread_cond_timedwait(&fakeCond, &fakeMutex, &timeToWait);
 	pthread_mutex_unlock(&fakeMutex);
+	(void)(rt);
 #endif
 }

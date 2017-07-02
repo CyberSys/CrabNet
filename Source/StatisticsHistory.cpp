@@ -525,20 +525,17 @@ void StatisticsHistory::TimeAndValueQueue::ResizeSampleSet( int maxSamples, Data
 	Time interval = timeRange / maxSamples;
 	if (interval==0)
 		interval=1;
-	unsigned int dataIndex;
-	Time timeBoundary;
+
+	Time currentTime = values[0].time;
+	Time endTime = values[values.Size()-1].time;
 	StatisticsHistory::TimeAndValue currentSum;
-	Time currentTime;
-	SHValueType numSamples;
-	Time endTime;
-	
-	numSamples=0;
-	endTime = values[values.Size()-1].time;
-	dataIndex=0;
-	currentTime=values[0].time;
-	currentSum.val=0;
-	currentSum.time=values[0].time + interval / 2;
-	timeBoundary = values[0].time + interval;
+
+	currentSum.val = 0;
+	currentSum.time = currentTime + interval / 2;
+
+	SHValueType numSamples = 0;
+	unsigned int dataIndex = 0;
+	Time timeBoundary = currentTime + interval;
 	while (timeBoundary <= endTime)
 	{
 		while (dataIndex < values.Size() && values[dataIndex].time <= timeBoundary)
@@ -550,10 +547,8 @@ void StatisticsHistory::TimeAndValueQueue::ResizeSampleSet( int maxSamples, Data
 
 		if (dataCategory==DC_CONTINUOUS)
 		{
-			if (dataIndex > 0 &&
-				dataIndex < values.Size() &&
-				values[dataIndex-1].time < timeBoundary &&
-				values[dataIndex].time > timeBoundary)
+			if (dataIndex > 0 && dataIndex < values.Size() &&
+				values[dataIndex-1].time < timeBoundary && values[dataIndex].time > timeBoundary)
 			{
 				SHValueType interpolatedValue = Interpolate(values[dataIndex-1], values[dataIndex], timeBoundary);
 				currentSum.val+=interpolatedValue;
@@ -561,16 +556,14 @@ void StatisticsHistory::TimeAndValueQueue::ResizeSampleSet( int maxSamples, Data
 			}
 
 			if (numSamples > 1)
-			{
 				currentSum.val /= numSamples;
-			}
 		}
 
 		histogram.Push(currentSum, _FILE_AND_LINE_);
-		currentSum.time=timeBoundary + interval / 2;
+		currentSum.time = timeBoundary + interval / 2;
 		timeBoundary += interval;
-		currentSum.val=0;
-		numSamples=0;
+		currentSum.val = 0;
+		numSamples = 0;
 	}
 
 	
