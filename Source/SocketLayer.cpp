@@ -584,17 +584,17 @@ bool SocketLayer::GetFirstBindableIP(char firstBindable[128], int ipProto)
 
 	// Find the first valid host address
 	unsigned int l;
-	for (l=0; l < MAXIMUM_NUMBER_OF_INTERNAL_IDS; l++)
+	for (l = 0; l < MAXIMUM_NUMBER_OF_INTERNAL_IDS; l++)
 	{
-		if (ipList[l]==UNASSIGNED_SYSTEM_ADDRESS)
+		if (ipList[l] == UNASSIGNED_SYSTEM_ADDRESS)
 			break;
-		if (ipList[l].GetIPVersion()==4 && ipProto==AF_INET)
+		if (ipList[l].GetIPVersion() == 4 && ipProto == AF_INET)
 			break;
-		if (ipList[l].GetIPVersion()==6 && ipProto==AF_INET6)
+		if (ipList[l].GetIPVersion() == 6 && ipProto == AF_INET6)
 			break;
 	}
 
-	if (ipList[l]==UNASSIGNED_SYSTEM_ADDRESS || l==MAXIMUM_NUMBER_OF_INTERNAL_IDS)
+	if (l == MAXIMUM_NUMBER_OF_INTERNAL_IDS || ipList[l] == UNASSIGNED_SYSTEM_ADDRESS)
 		return false;
 // 	RAKNET_DEBUG_PRINTF("%i %i %i %i\n",
 // 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[0],
