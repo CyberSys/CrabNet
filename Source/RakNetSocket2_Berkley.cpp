@@ -74,6 +74,8 @@ void RNS2_Berkley::SetDoNotFragment( int opt )
 		RakAssert(IP_DONTFRAGMENT==14);
 	#endif
 		setsockopt__( rns2Socket, boundAddress.GetIPPROTO(), IP_DONTFRAGMENT, ( char * ) & opt, sizeof ( opt ) );
+    #else
+        (void)(opt);
 	#endif
 }
 

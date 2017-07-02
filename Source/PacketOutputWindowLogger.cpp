@@ -46,6 +46,8 @@ void PacketOutputWindowLogger::WriteLog(const char *str)
 #elif defined(__native_client__)
 	fprintf(stderr, "%s\n", str);
 // /DS_APR
+#else
+	(void)(str);
 #endif
 }
 

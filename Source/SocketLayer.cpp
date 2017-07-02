@@ -214,7 +214,7 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, Rak
 	}
 	return "";
 #else
-
+    (void)(inSock);
 	int fd,fd2;
 	fd2 = socket__(AF_INET, SOCK_DGRAM, 0);
 
