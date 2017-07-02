@@ -2953,6 +2953,10 @@ void RakPeer::ApplyNetworkSimulator( float packetloss, unsigned short minExtraPi
 	_packetloss=packetloss;
 	_minExtraPing=minExtraPing;
 	_extraPingVariance=extraPingVariance;
+#else
+    (void)(packetloss);
+    (void)(minExtraPing);
+    (void)(extraPingVariance);
 #endif
 }
 

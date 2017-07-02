@@ -2360,6 +2360,10 @@ void ReliabilityLayer::ApplyNetworkSimulator( double _packetloss, RakNet::TimeMS
 	extraPingVariance=_extraPingVariance;
 	//	if (ping < (unsigned int)(minExtraPing+extraPingVariance)*2)
 	//		ping=(minExtraPing+extraPingVariance)*2;
+#else
+    (void)(_packetloss);
+    (void)(_minExtraPing);
+    (void)(_extraPingVariance);
 #endif
 }
 //-------------------------------------------------------------------------------------------------------
