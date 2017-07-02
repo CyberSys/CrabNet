@@ -22,12 +22,6 @@
 
 #include <memory.h>
 
-
-
-
-
-
-
 using namespace RakNet;
 
 StringCompressor* StringCompressor::instance=0;

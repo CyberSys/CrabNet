@@ -10,18 +10,9 @@
 
 #include "WSAStartupSingleton.h"
 
-
-
-
-
 #if   defined(_WIN32) && !defined(WINDOWS_STORE_RT)
 #include <winsock2.h>
 #include <ws2tcpip.h>
-
-
-
-
-
 #endif
 #include "RakNetDefines.h"
 #include <stdio.h>
@@ -75,11 +66,6 @@ void WSAStartupSingleton::Deref(void)
 	
 	WSACleanup();
 
-
-
-
-
-	
 	refCount=0;
 #endif
 }

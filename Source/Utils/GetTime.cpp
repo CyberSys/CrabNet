@@ -11,7 +11,6 @@
 /// \file
 ///
 
-
 #if defined(_WIN32)
 #include "WindowsIncludes.h"
 
@@ -24,23 +23,10 @@
 #endif
 
 #include "GetTime.h"
-
-
-
-
 #if defined(_WIN32)
 //DWORD mProcMask;
 //DWORD mSysMask;
 //HANDLE mThread;
-
-
-
-
-
-
-
-
-
 #else
 #include <sys/time.h>
 #include <unistd.h>

@@ -16,12 +16,6 @@
 #include "rdlmalloc.h"
 #endif
 
-
-
-
-
-
-
 using namespace RakNet;
 
 #if _USE_RAK_MEMORY_OVERRIDE==1

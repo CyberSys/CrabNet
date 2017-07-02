@@ -18,18 +18,11 @@
 
 #include "SocketIncludes.h"
 #include "RakNetDefines.h"
-
-
-
 #if   defined(_WIN32)
 #include "WindowsIncludes.h"
 #include <memory.h>
 #include <cmath>
 #include <float.h>
-
-
-
-
 #else
 #include <arpa/inet.h>
 #include <memory.h>

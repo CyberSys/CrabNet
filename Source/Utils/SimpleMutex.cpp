@@ -11,57 +11,13 @@
 /// \file
 ///
 
-
-
 #include "SimpleMutex.h"
 #include "RakAssert.h"
 
 using namespace RakNet;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 SimpleMutex::SimpleMutex() //: isInitialized(false)
 {
-
-
-
-
-
-
-
 	// Prior implementation of Initializing in Lock() was not threadsafe
 	Init();
 }
@@ -73,22 +29,9 @@ SimpleMutex::~SimpleMutex()
 #ifdef _WIN32
 	//	CloseHandle(hMutex);
 	DeleteCriticalSection(&criticalSection);
-
-
-
-
-
-
 #else
 	pthread_mutex_destroy(&hMutex);
 #endif
-
-
-
-
-
-
-
 }
 
 #ifdef _WIN32
@@ -133,12 +76,6 @@ void SimpleMutex::Lock(void)
 	RakAssert(d==WAIT_OBJECT_0);
 	*/
 	EnterCriticalSection(&criticalSection);
-
-
-
-
-
-
 #else
 	int error = pthread_mutex_lock(&hMutex);
 	(void) error;
@@ -153,12 +90,6 @@ void SimpleMutex::Unlock(void)
 #ifdef _WIN32
 	//	ReleaseMutex(hMutex);
 	LeaveCriticalSection(&criticalSection);
-
-
-
-
-
-
 #else
 	int error = pthread_mutex_unlock(&hMutex);
 	(void) error;
@@ -174,14 +105,6 @@ void SimpleMutex::Init(void)
 	//	hMutex = CreateMutex(NULL, FALSE, 0);
 	//	RakAssert(hMutex);
 	InitializeCriticalSection(&criticalSection);
-
-
-
-
-
-
-
-
 #else
 	int error = pthread_mutex_init(&hMutex, 0);
 	(void) error;

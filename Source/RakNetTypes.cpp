@@ -21,8 +21,7 @@
 #include "SocketDefines.h"
 #include "RakNetSocket2.h"
 
-
-#if   defined(_WIN32)
+#if defined(_WIN32)
 // extern __int64 _strtoui64(const char*, char**, int); // needed for Code::Blocks. Does not compile on Visual Studio 2010
 // IP_DONTFRAGMENT is different between winsock 1 and winsock 2.  Therefore, Winsock2.h must be linked againt Ws2_32.lib
 // winsock.h must be linked against WSock32.lib.  If these two are mixed up the flag won't work correctly
@@ -270,26 +269,6 @@ void SystemAddress::ToString_Old(bool writePort, char *dest, char portDelineator
 	char portStr[2];
 	portStr[0]=portDelineator;
 	portStr[1]=0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	in_addr in;
 	in.s_addr = address.addr4.sin_addr.s_addr;
 	const char *ntoaStr = inet_ntoa( in );
@@ -396,43 +375,6 @@ SystemAddress::SystemAddress(const char *str, unsigned short port)
 	FromStringExplicitPort(str,port);
 	systemIndex=(SystemIndex)-1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4996 )  // The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strnicmp. See online help for details.
@@ -552,27 +494,9 @@ bool SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 			portPart[portIndex]=0;
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
 		if (IPPart[0])
 		{
-
-
-
-
-
 			address.addr4.sin_addr.s_addr=inet_addr__(IPPart);
-
 		}
 
 
@@ -792,19 +716,13 @@ bool RakNetGUID::FromString(const char *source)
 {
 	if (source==0)
 		return false;
-
-
-
 #if   defined(WIN32)
 	g=_strtoui64(source, NULL, 10);
-
-
 #else
 	// Changed from g=strtoull(source,0,10); for android
 	g=strtoull(source, (char **)NULL, 10);
 #endif
 	return true;
-
 }
 unsigned long RakNetGUID::ToUint32( const RakNetGUID &g )
 {

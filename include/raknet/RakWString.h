@@ -16,9 +16,6 @@
 #include "RakString.h"
 
 #ifdef _WIN32
-
-
-
 #include "WindowsIncludes.h"
 #endif
 

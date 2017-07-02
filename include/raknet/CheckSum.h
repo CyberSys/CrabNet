@@ -21,7 +21,6 @@
 /// Generates and validates checksums
 class CheckSum
 {
-
 public:
 	
  /// Default constructor

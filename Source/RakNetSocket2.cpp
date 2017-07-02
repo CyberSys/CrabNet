@@ -128,16 +128,6 @@ void RakNetSocket2::DomainNameToIP( const char *domainName, char ip[65] ) {
 	return RNS2_WindowsStore8::DomainNameToIP( domainName, ip );
 #elif defined(__native_client__)
 	return DomainNameToIP_Berkley( domainName, ip );
-
-
-
-
-
-
-
-
-
-
 #elif defined(_WIN32)
 	return DomainNameToIP_Berkley( domainName, ip );
 #else
@@ -431,49 +421,6 @@ void RNS2_Berkley::BlockOnStopRecvPollingThread(void)
 const RNS2_BerkleyBindParameters *RNS2_Berkley::GetBindings(void) const {return &binding;}
 RNS2Socket RNS2_Berkley::GetSocket(void) const {return rns2Socket;}
 // See RakNetSocket2_Berkley.cpp for WriteSharedIPV4, BindSharedIPV4And6 and other implementations
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if   defined(_WIN32)
 RNS2_Windows::RNS2_Windows() {slo=0;}
 RNS2_Windows::~RNS2_Windows() {}

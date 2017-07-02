@@ -18,11 +18,8 @@
 
 char getche()
 {
-
-
-  struct termios oldt,
-                 newt;
-  char            ch;
+  struct termios oldt, newt;
+  char ch;
   tcgetattr( STDIN_FILENO, &oldt );
   newt = oldt;
   newt.c_lflag &= ~( ICANON | ECHO );
