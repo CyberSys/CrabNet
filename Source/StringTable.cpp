@@ -36,7 +36,7 @@ StringTable::~StringTable()
 	for (i=0; i < orderedStringList.Size(); i++)
 	{
 		if (orderedStringList[i].b)
-			rakFree_Ex(orderedStringList[i].str, _FILE_AND_LINE_ );
+			free(orderedStringList[i].str);
 	}
 }
 
@@ -72,7 +72,7 @@ void StringTable::AddString(const char *str, bool copyString)
 	sab.b=copyString;
 	if (copyString)
 	{
-		sab.str = (char*) rakMalloc_Ex( strlen(str)+1, _FILE_AND_LINE_ );
+		sab.str = (char*) malloc( strlen(str)+1);
 		strcpy(sab.str, str);
 	}
 	else

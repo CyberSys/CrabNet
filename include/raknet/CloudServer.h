@@ -147,9 +147,9 @@ protected:
 	struct CloudData
 	{
 		CloudData() {}
-		~CloudData() {if (allocatedData) rakFree_Ex(allocatedData, _FILE_AND_LINE_);}
+		~CloudData() {if (allocatedData) free(allocatedData);}
 		bool IsUnused(void) const {return isUploaded==false && specificSubscribers.Size()==0;}
-		void Clear(void) {if (dataPtr==allocatedData) rakFree_Ex(allocatedData, _FILE_AND_LINE_); allocatedData=0; dataPtr=0; dataLengthBytes=0; isUploaded=false;}
+		void Clear(void) {if (dataPtr==allocatedData) free(allocatedData); allocatedData=0; dataPtr=0; dataLengthBytes=0; isUploaded=false;}
 
 		unsigned char stackData[CLOUD_SERVER_DATA_STACK_SIZE];
 		unsigned char *allocatedData; // Uses allocatedData instead of stackData if length of data exceeds CLOUD_SERVER_DATA_STACK_SIZE

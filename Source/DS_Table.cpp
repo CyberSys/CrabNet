@@ -54,10 +54,10 @@ Table::Cell& Table::Cell::operator = ( const Table::Cell& input )
 	i=input.i;
 	ptr=input.ptr;
 	if (c)
-		rakFree_Ex(c, _FILE_AND_LINE_);
+		free(c);
 	if (input.c)
 	{
-		c = (char*) rakMalloc_Ex( (int) i, _FILE_AND_LINE_ );
+		c = (char*) malloc((int) i);
 		memcpy(c, input.c, (int) i);
 	}
 	else
@@ -72,8 +72,8 @@ Table::Cell::Cell( const Table::Cell & input)
 	if (input.c)
 	{
 		if (c)
-			rakFree_Ex(c, _FILE_AND_LINE_);
-		c =  (char*) rakMalloc_Ex( (int) i, _FILE_AND_LINE_ );
+			free(c);
+		c =  (char*) malloc((int) i);
 		memcpy(c, input.c, (int) i);
 	}
 }
@@ -105,7 +105,7 @@ void Table::Cell::Set(const char *input)
 	if (input)
 	{
 		i=(int)strlen(input)+1;
-		c =  (char*) rakMalloc_Ex( (int) i, _FILE_AND_LINE_ );
+		c =  (char*) malloc((int) i);
 		strcpy(c, input);
 	}
 	else
@@ -121,7 +121,7 @@ void Table::Cell::Set(const char *input, int inputLength)
 	Clear();
 	if (input)
 	{
-		c = (char*) rakMalloc_Ex( inputLength, _FILE_AND_LINE_ );
+		c = (char*) malloc( inputLength);
 		i=inputLength;
 		memcpy(c, input, inputLength);
 	}
@@ -233,7 +233,7 @@ void Table::Cell::Clear(void)
 {
 	if (isEmpty==false && c)
 	{
-		rakFree_Ex(c, _FILE_AND_LINE_);
+		free(c);
 		c=0;
 	}
 	isEmpty=true;

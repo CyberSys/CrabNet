@@ -459,10 +459,10 @@ bool StringCompressor::DecodeString( std::string *output, int maxCharsToWrite, R
 	else
 #endif
 	{
-		destinationBlock = (char*) rakMalloc_Ex( maxCharsToWrite, _FILE_AND_LINE_ );
+		destinationBlock = (char*) malloc(( maxCharsToWrite);
 		out=DecodeString(destinationBlock, maxCharsToWrite, input, languageId);
 		*output=destinationBlock;
-		rakFree_Ex(destinationBlock, _FILE_AND_LINE_ );
+		free(destinationBlock);
 	}
 
 	return out;
@@ -493,10 +493,10 @@ bool StringCompressor::DecodeString( RakString *output, int maxCharsToWrite, Rak
 	else
 #endif
 	{
-		destinationBlock = (char*) rakMalloc_Ex( maxCharsToWrite, _FILE_AND_LINE_ );
+		destinationBlock = (char*) malloc( maxCharsToWrite);
 		out=DecodeString(destinationBlock, maxCharsToWrite, input, languageId);
 		*output=destinationBlock;
-		rakFree_Ex(destinationBlock, _FILE_AND_LINE_ );
+		free(destinationBlock);
 	}
 
 	return out;

@@ -40,9 +40,9 @@ TelnetTransport::~TelnetTransport()
 {
 	Stop();
 	if (sendSuffix)
-		rakFree_Ex(sendSuffix, _FILE_AND_LINE_ );
+		free(sendSuffix);
 	if (sendPrefix)
-		rakFree_Ex(sendPrefix, _FILE_AND_LINE_ );
+		free(sendPrefix);
 }
 bool TelnetTransport::Start(unsigned short port, bool serverMode)
 {
@@ -200,11 +200,11 @@ Packet* TelnetTransport::Receive( void )
 		if (gotLine && remoteClient->textInput[0])
 		{
 
-			Packet *reassembledLine = (Packet*) rakMalloc_Ex(sizeof(Packet), _FILE_AND_LINE_);
+			Packet *reassembledLine = (Packet*) malloc(sizeof(Packet));
 			reassembledLine->length=(unsigned int) strlen(remoteClient->textInput);
 			memcpy(remoteClient->lastSentTextInput, remoteClient->textInput, reassembledLine->length+1);
 			RakAssert(reassembledLine->length < REMOTE_MAX_TEXT_INPUT);
-			reassembledLine->data= (unsigned char*) rakMalloc_Ex( reassembledLine->length+1, _FILE_AND_LINE_ );
+			reassembledLine->data= (unsigned char*) malloc(reassembledLine->length+1);
 			memcpy(reassembledLine->data, remoteClient->textInput, reassembledLine->length);
 #ifdef _PRINTF_DEBUG
 			memset(remoteClient->textInput, 0, REMOTE_MAX_TEXT_INPUT);
@@ -222,8 +222,8 @@ Packet* TelnetTransport::Receive( void )
 void TelnetTransport::DeallocatePacket( Packet *packet )
 {
 	if (tcpInterface==0) return;
-	rakFree_Ex(packet->data, _FILE_AND_LINE_ );
-	rakFree_Ex(packet, _FILE_AND_LINE_ );
+	free(packet->data);
+	free(packet);
 }
 SystemAddress TelnetTransport::HasNewIncomingConnection(void)
 {
@@ -306,12 +306,12 @@ void TelnetTransport::SetSendSuffix(const char *suffix)
 {
 	if (sendSuffix)
 	{
-		rakFree_Ex(sendSuffix, _FILE_AND_LINE_ );
+		free(sendSuffix);
 		sendSuffix=0;
 	}
 	if (suffix)
 	{
-		sendSuffix = (char*) rakMalloc_Ex(strlen(suffix)+1, _FILE_AND_LINE_);
+		sendSuffix = (char*) malloc(strlen(suffix)+1);
 		strcpy(sendSuffix, suffix);
 	}
 }
@@ -319,12 +319,12 @@ void TelnetTransport::SetSendPrefix(const char *prefix)
 {
 	if (sendPrefix)
 	{
-		rakFree_Ex(sendPrefix, _FILE_AND_LINE_ );
+		free(sendPrefix);
 		sendPrefix=0;
 	}
 	if (prefix)
 	{
-		sendPrefix = (char*) rakMalloc_Ex(strlen(prefix)+1, _FILE_AND_LINE_);
+		sendPrefix = (char*) malloc(strlen(prefix)+1);
 		strcpy(sendPrefix, prefix);
 	}
 }

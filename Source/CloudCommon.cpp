@@ -39,11 +39,11 @@ void CloudAllocator::DeallocateCloudQueryRow(CloudQueryRow *row)
 }
 unsigned char *CloudAllocator::AllocateRowData(uint32_t bytesNeededForData)
 {
-	return (unsigned char*) rakMalloc_Ex(bytesNeededForData,_FILE_AND_LINE_);
+	return (unsigned char*) malloc(bytesNeededForData);
 }
 void CloudAllocator::DeallocateRowData(void *data)
 {
-	rakFree_Ex(data, _FILE_AND_LINE_);
+	free(data);
 }
 void CloudKey::Serialize(bool writeToBitstream, BitStream *bitStream)
 {
@@ -106,7 +106,7 @@ void CloudQueryRow::Serialize(bool writeToBitstream, BitStream *bitStream, Cloud
 			}
 			else
 			{
-				notifyOutOfMemory(_FILE_AND_LINE_);
+				RakAssert(0)
 			}
 		}
 		else
@@ -143,7 +143,7 @@ void CloudQueryResult::SerializeCloudQueryRows(bool writeToBitstream, uint32_t &
 				if (cmdr->data==0 && cmdr->length>0)
 				{
 					allocator->DeallocateCloudQueryRow(cmdr);
-					notifyOutOfMemory(_FILE_AND_LINE_);
+					RakAssert(0)
 					numRows=i;
 					return;
 				}
@@ -151,7 +151,7 @@ void CloudQueryResult::SerializeCloudQueryRows(bool writeToBitstream, uint32_t &
 			}
 			else
 			{
-				notifyOutOfMemory(_FILE_AND_LINE_);
+				RakAssert(0)
 				numRows=i;
 				return;
 			}

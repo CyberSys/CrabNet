@@ -25,7 +25,7 @@ ThreadsafePacketLogger::~ThreadsafePacketLogger()
 	char **msg;
 	while ((msg = logMessages.ReadLock()) != 0)
 	{
-		rakFree_Ex((*msg), _FILE_AND_LINE_ );
+		free(*msg);
 	}
 }
 void ThreadsafePacketLogger::Update(void)
@@ -34,13 +34,13 @@ void ThreadsafePacketLogger::Update(void)
 	while ((msg = logMessages.ReadLock()) != 0)
 	{
 		WriteLog(*msg);
-		rakFree_Ex((*msg), _FILE_AND_LINE_ );
+		free(*msg);
 	}
 }
 void ThreadsafePacketLogger::AddToLog(const char *str)
 {
 	char **msg = logMessages.WriteLock();
-	*msg = (char*) rakMalloc_Ex( strlen(str)+1, _FILE_AND_LINE_ );
+	*msg = (char*) malloc(strlen(str)+1);
 	strcpy(*msg, str);
 	logMessages.WriteUnlock();
 }

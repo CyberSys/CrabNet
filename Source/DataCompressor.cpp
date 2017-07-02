@@ -65,7 +65,7 @@ unsigned DataCompressor::DecompressAndAllocate( RakNet::BitStream * input, unsig
 #endif
 		return 0;
 	}
-	*output = (unsigned char*) rakMalloc_Ex(destinationSizeInBytes, _FILE_AND_LINE_);
+	*output = (unsigned char*) malloc(destinationSizeInBytes);
 	tree.GenerateFromFrequencyTable(frequencyTable);
 	decompressedBytes=tree.DecodeArray(input, bitsUsed, destinationSizeInBytes, *output );
 	RakAssert(decompressedBytes==destinationSizeInBytes);

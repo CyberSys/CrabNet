@@ -186,10 +186,10 @@ Packet* PacketizedTCP::Receive( void )
 						outgoingPacket->guid=UNASSIGNED_RAKNET_GUID;
 						outgoingPacket->systemAddress=systemAddressFromPacket;
 						outgoingPacket->deleteData=false; // Did not come from the network
-						outgoingPacket->data=(unsigned char*) rakMalloc_Ex(dataLength, _FILE_AND_LINE_);
+						outgoingPacket->data=(unsigned char*) malloc(dataLength);
 						if (outgoingPacket->data==0)
 						{
-							notifyOutOfMemory(_FILE_AND_LINE_);
+							RakAssert(0)
 							RakNet::OP_DELETE(outgoingPacket,_FILE_AND_LINE_);
 							return 0;
 						}
@@ -225,10 +225,10 @@ Packet* PacketizedTCP::Receive( void )
 						outgoingPacket->guid=UNASSIGNED_RAKNET_GUID;
 						outgoingPacket->systemAddress=incomingPacket->systemAddress;
 						outgoingPacket->deleteData=false;
-						outgoingPacket->data=(unsigned char*) rakMalloc_Ex(outgoingPacket->length, _FILE_AND_LINE_);
+						outgoingPacket->data=(unsigned char*) malloc(outgoingPacket->length);
 						if (outgoingPacket->data==0)
 						{
-							notifyOutOfMemory(_FILE_AND_LINE_);
+							RakAssert(0)
 							RakNet::OP_DELETE(outgoingPacket,_FILE_AND_LINE_);
 							return 0;
 						}

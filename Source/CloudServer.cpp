@@ -257,10 +257,10 @@ void CloudServer::OnPostRequest(Packet *packet)
 	unsigned char *data;
 	if (dataLengthBytes>CLOUD_SERVER_DATA_STACK_SIZE)
 	{
-		data = (unsigned char *) rakMalloc_Ex(dataLengthBytes,_FILE_AND_LINE_);
+		data = (unsigned char *) malloc(dataLengthBytes);
 		if (data==0)
 		{
-			notifyOutOfMemory(_FILE_AND_LINE_);
+			RakAssert(0)
 			return;
 		}
 		bsIn.ReadAlignedBytes(data,dataLengthBytes);
@@ -326,7 +326,7 @@ void CloudServer::OnPostRequest(Packet *packet)
 			}
 
 			if (dataLengthBytes>CLOUD_SERVER_DATA_STACK_SIZE)
-				rakFree_Ex(data, _FILE_AND_LINE_);
+				free(data);
 
 			return;
 		}
@@ -396,7 +396,7 @@ void CloudServer::OnPostRequest(Packet *packet)
 		}
 
 		if (cloudData->allocatedData!=0)
-			rakFree_Ex(cloudData->allocatedData,_FILE_AND_LINE_);
+			free(cloudData->allocatedData);
 	}
 
 	if (dataLengthBytes>CLOUD_SERVER_DATA_STACK_SIZE)

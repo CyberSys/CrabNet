@@ -109,7 +109,7 @@ Packet *PluginInterface2::AllocatePacketUnified(unsigned dataSize)
 #endif
 
 	Packet *packet = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
-	packet->data = (unsigned char*) rakMalloc_Ex(dataSize, _FILE_AND_LINE_);
+	packet->data = (unsigned char*) malloc(dataSize);
 	packet->bitSize=BYTES_TO_BITS(dataSize);
 	packet->deleteData=true;
 	packet->guid=UNASSIGNED_RAKNET_GUID;
@@ -150,7 +150,7 @@ void PluginInterface2::DeallocPacketUnified(Packet *packet)
 	}
 #endif
 
-	rakFree_Ex(packet->data, _FILE_AND_LINE_);
+	free(packet->data);
 	RakNet::OP_DELETE(packet, _FILE_AND_LINE_);
 }
 bool PluginInterface2::SendListUnified( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast )
@@ -181,10 +181,10 @@ bool PluginInterface2::SendListUnified( const char **data, const int *lengths, c
 			return false;
 
 		char *dataAggregate;
-		dataAggregate = (char*) rakMalloc_Ex( (size_t) totalLength, _FILE_AND_LINE_ );
+		dataAggregate = (char*) malloc((size_t) totalLength);
 		if (dataAggregate==0)
 		{
-			notifyOutOfMemory(_FILE_AND_LINE_);
+			RakAssert(0)
 			return false;
 		}
 		for (i=0, lengthOffset=0; i < numParameters; i++)
@@ -197,7 +197,7 @@ bool PluginInterface2::SendListUnified( const char **data, const int *lengths, c
 		}
 
 		SendUnified(dataAggregate, totalLength, priority, reliability,orderingChannel, systemIdentifier, broadcast);
-		rakFree_Ex(dataAggregate, _FILE_AND_LINE_);
+		free(dataAggregate);
 		return true;
 	}
 

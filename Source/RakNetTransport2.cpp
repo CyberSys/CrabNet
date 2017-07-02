@@ -48,7 +48,7 @@ void RakNetTransport2::Stop(void)
 	lostConnections.Clear(_FILE_AND_LINE_);
 	for (unsigned int i=0; i < packetQueue.Size(); i++)
 	{
-		rakFree_Ex(packetQueue[i]->data,_FILE_AND_LINE_);
+		free(packetQueue[i]->data);
 		RakNet::OP_DELETE(packetQueue[i],_FILE_AND_LINE_);
 	}
 	packetQueue.Clear(_FILE_AND_LINE_);
@@ -94,7 +94,7 @@ SystemAddress RakNetTransport2::HasLostConnection(void)
 }
 void RakNetTransport2::DeallocatePacket( Packet *packet )
 {
-	rakFree_Ex(packet->data, _FILE_AND_LINE_ );
+	free(packet->data);
 	RakNet::OP_DELETE(packet, _FILE_AND_LINE_ );
 }
 PluginReceiveResult RakNetTransport2::OnReceive(Packet *packet)
@@ -110,7 +110,7 @@ PluginReceiveResult RakNetTransport2::OnReceive(Packet *packet)
 			*p=*packet;
 			p->bitSize-=8;
 			p->length--;
-			p->data=(unsigned char*) rakMalloc_Ex(p->length,_FILE_AND_LINE_);
+			p->data=(unsigned char*) malloc(p->length);
 			memcpy(p->data, packet->data+1, p->length);
 			packetQueue.Push(p, _FILE_AND_LINE_ );
 

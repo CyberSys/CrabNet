@@ -39,7 +39,7 @@ void ByteQueue::WriteBytes(const char *in, unsigned length, const char *file, un
 		if (newAmountToAllocate<256)
 			newAmountToAllocate=256;
 		lengthAllocated=lengthAllocated + newAmountToAllocate;
-		data=(char*)rakRealloc_Ex(data, lengthAllocated, file, line);
+		data=(char*)realloc(data, lengthAllocated);
 		if (writeOffset < readOffset)
 		{
 			if (writeOffset <= newAmountToAllocate)
@@ -106,7 +106,7 @@ char* ByteQueue::PeekContiguousBytes(unsigned int *outLength) const
 void ByteQueue::Clear(const char *file, unsigned int line)
 {
 	if (lengthAllocated)
-		rakFree_Ex(data, file, line );
+		free(data);
 	readOffset=writeOffset=lengthAllocated=0;
 	data=0;
 }

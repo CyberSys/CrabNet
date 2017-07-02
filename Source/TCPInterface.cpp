@@ -618,20 +618,20 @@ void TCPInterface::DeallocatePacket( Packet *packet )
 		return;
 	if (packet->deleteData)
 	{
-		rakFree_Ex(packet->data, _FILE_AND_LINE_ );
+		free(packet->data);
 		incomingMessages.Deallocate(packet, _FILE_AND_LINE_);
 	}
 	else
 	{
 		// Came from userspace AllocatePacket
-		rakFree_Ex(packet->data, _FILE_AND_LINE_ );
+		free(packet->data);
 		RakNet::OP_DELETE(packet, _FILE_AND_LINE_);
 	}
 }
 Packet* TCPInterface::AllocatePacket(unsigned dataSize)
 {
 	Packet*p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
-	p->data=(unsigned char*) rakMalloc_Ex(dataSize,_FILE_AND_LINE_);
+	p->data=(unsigned char*) malloc(dataSize);
 	p->length=dataSize;
 	p->bitSize=BYTES_TO_BITS(dataSize);
 	p->deleteData=false;
@@ -945,7 +945,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 //	const int BUFF_SIZE=8096;
 	const unsigned int BUFF_SIZE=1048576;
 	//char data[ BUFF_SIZE ];
-	char * data = (char*) rakMalloc_Ex(BUFF_SIZE,_FILE_AND_LINE_);
+	char * data = (char*) malloc(BUFF_SIZE);
 	Packet *incomingMessage;
 	fd_set readFD, exceptionFD, writeFD;
 	sts->threadRunning.Increment();
@@ -1178,7 +1178,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 							if (len>0)
 							{
 								incomingMessage=sts->incomingMessages.Allocate( _FILE_AND_LINE_ );
-								incomingMessage->data = (unsigned char*) rakMalloc_Ex( len+1, _FILE_AND_LINE_ );
+								incomingMessage->data = (unsigned char*) malloc( len+1);
 								memcpy(incomingMessage->data, data, len);
 								incomingMessage->data[len]=0; // Null terminate this so we can print it out as regular strings.  This is different from RakNet which does not do this.
 								// printf("RECV: %s\n",incomingMessage->data);
@@ -1254,7 +1254,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 	}
 	sts->threadRunning.Decrement();
 
-	rakFree_Ex(data,_FILE_AND_LINE_);
+	free(data);
 
 
 

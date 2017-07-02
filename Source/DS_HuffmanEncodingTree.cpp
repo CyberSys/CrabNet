@@ -56,7 +56,7 @@ void HuffmanEncodingTree::FreeMemory( void )
 
 	// Delete the encoding table
 	for ( int i = 0; i < 256; i++ )
-		rakFree_Ex(encodingTable[ i ].encoding, _FILE_AND_LINE_ );
+		free(encodingTable[ i ].encoding);
 
 	root = 0;
 }

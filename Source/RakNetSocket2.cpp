@@ -198,7 +198,7 @@ void RNS2_NativeClient::ProcessBufferedSend(void)
 }
 void RNS2_NativeClient::DeallocSP(RNS2_SendParameters_NativeClient *sp)
 {
-	rakFree_Ex(sp->data, _FILE_AND_LINE_);
+	free(sp->data);
 	RakNet::OP_DELETE(sp, _FILE_AND_LINE_);
 }
 RNS2_SendParameters_NativeClient* RNS2_NativeClient::CloneSP(RNS2_SendParameters *sp, RNS2_NativeClient *socket2, const char *file, unsigned int line)

@@ -67,7 +67,7 @@ FileListReceiver::FileListReceiver() {filesReceived=0; setTotalDownloadedLength=
 FileListReceiver::~FileListReceiver() {
 	unsigned int i=0;
 	for (i=0; i < pushedFiles.Size(); i++)
-		rakFree_Ex(pushedFiles[i].flrMemoryBlock, _FILE_AND_LINE_ );
+		free(pushedFiles[i].flrMemoryBlock);
 }
 
 STATIC_FACTORY_DEFINITIONS(FileListTransfer,FileListTransfer)
@@ -416,7 +416,7 @@ bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFullFile)
 	if (isTheFullFile)
 	{
 		inBitStream.AlignReadToByteBoundary();
-		onFileStruct.fileData = (char*) rakMalloc_Ex( (size_t) onFileStruct.byteLengthOfThisFile, _FILE_AND_LINE_ );
+		onFileStruct.fileData = (char*) malloc( (size_t) onFileStruct.byteLengthOfThisFile);
 		inBitStream.Read((char*)onFileStruct.fileData, onFileStruct.byteLengthOfThisFile);
 
 		FileListTransferCBInterface::FileProgressStruct fps;
@@ -436,7 +436,7 @@ bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFullFile)
 		// Either we are using IncrementalReadInterface and it was a small file or
 		// We are not using IncrementalReadInterface
 		if (fileListReceiver->downloadHandler->OnFile(&onFileStruct))
-			rakFree_Ex(onFileStruct.fileData, _FILE_AND_LINE_ );
+			free(onFileStruct.fileData);
 
 		fileListReceiver->filesReceived++;
 
@@ -759,7 +759,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
 	FLR_MemoryBlock mb;
 	if (fileListReceiver->pushedFiles.Has(onFileStruct.fileIndex)==false)
 	{
-		mb.flrMemoryBlock=(char*) rakMalloc_Ex(onFileStruct.byteLengthOfThisFile, _FILE_AND_LINE_);
+		mb.flrMemoryBlock=(char*) malloc(onFileStruct.byteLengthOfThisFile);
 		fileListReceiver->pushedFiles.SetNew(onFileStruct.fileIndex, mb);
 	}
 	else
@@ -848,7 +848,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
 		// Incremental read interface sent us a file chunk
 		// This is the last file chunk we were waiting for to consider the file done
 		if (fileListReceiver->downloadHandler->OnFile(&onFileStruct))
-			rakFree_Ex(oldFileData, _FILE_AND_LINE_ );
+			free(oldFileData);
 		fileListReceiver->pushedFiles.Delete(onFileStruct.fileIndex);
 
 		fileListReceiver->filesReceived++;
@@ -882,7 +882,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
 
 			if (fps.allocateIrIDataChunkAutomatically==false)
 			{
-				rakFree_Ex(fileListReceiver->pushedFiles.Get(onFileStruct.fileIndex).flrMemoryBlock, _FILE_AND_LINE_ );
+				free(fileListReceiver->pushedFiles.Get(onFileStruct.fileIndex).flrMemoryBlock);
 				fileListReceiver->pushedFiles.Get(onFileStruct.fileIndex).flrMemoryBlock=0;
 			}
 		}
@@ -967,7 +967,7 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
 			////ftpr->filesToPushMutex.Unlock();
 
 			// Read and send chunk. If done, delete at this index
-			void *buff = rakMalloc_Ex(ftp->chunkSize, _FILE_AND_LINE_);
+			void *buff = malloc(ftp->chunkSize);
 			if (buff==0)
 			{
 				////ftpr->filesToPushMutex.Lock();
@@ -975,7 +975,7 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
 				////ftpr->filesToPushMutex.Unlock();
 
 				ftpr->Deref();
-				notifyOutOfMemory(_FILE_AND_LINE_);
+				RakAssert(0)
 				return 0;
 			}
 
@@ -1085,7 +1085,7 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
 			// See http://www.jenkinssoftware.com/forum/index.php?topic=4768.msg19738#msg19738
 			fileListTransfer->SendListUnified(dataBlocks,lengths,2, packetPriority, RELIABLE_ORDERED, orderingChannel, systemAddress, false);
 
-			rakFree_Ex(buff, _FILE_AND_LINE_ );
+			free(buff);
 			return 0;
 		}
 		else

@@ -48,7 +48,7 @@ public:
 
 		if (temp.GetNumberOfBytesUsed()!=variableList[nextWriteIndex].byteLength)
 		{
-			variableList[nextWriteIndex].lastData=(char*) rakRealloc_Ex(variableList[nextWriteIndex].lastData, temp.GetNumberOfBytesUsed(),_FILE_AND_LINE_);
+			variableList[nextWriteIndex].lastData=(char*) realloc(variableList[nextWriteIndex].lastData, temp.GetNumberOfBytesUsed());
 			variableList[nextWriteIndex].byteLength=temp.GetNumberOfBytesUsed();
 			memcpy(variableList[nextWriteIndex].lastData,temp.GetData(),temp.GetNumberOfBytesUsed());
 			nextWriteIndex++;

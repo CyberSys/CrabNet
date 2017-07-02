@@ -164,13 +164,13 @@ void RakString::Realloc(SharedString *sharedString, size_t bytes)
 	newBytes = GetSizeToAllocate(bytes);
 	if (oldBytes <=(size_t) smallStringSize && newBytes > (size_t) smallStringSize)
 	{
-		sharedString->bigString=(char*) rakMalloc_Ex(newBytes, _FILE_AND_LINE_);
+		sharedString->bigString=(char*) malloc(newBytes);
 		strcpy(sharedString->bigString, sharedString->smallString);
 		sharedString->c_str=sharedString->bigString;
 	}
 	else if (oldBytes > smallStringSize)
 	{
-		sharedString->bigString=(char*) rakRealloc_Ex(sharedString->bigString,newBytes, _FILE_AND_LINE_);
+		sharedString->bigString=(char*) realloc(sharedString->bigString, newBytes);
 		sharedString->c_str=sharedString->bigString;
 	}
 	sharedString->bytesUsed=newBytes;
@@ -324,7 +324,7 @@ const RakNet::RakString operator+(const RakNet::RakString &lhs, const RakNet::Ra
 		{
 		//	RakString::freeList.Insert(RakString::sharedStringFreeList+i+RakString::sharedStringFreeListAllocationCount);
 			RakString::SharedString *ss;
-			ss = (RakString::SharedString*) rakMalloc_Ex(sizeof(RakString::SharedString), _FILE_AND_LINE_);
+			ss = (RakString::SharedString*) malloc(sizeof(RakString::SharedString));
 			ss->refCountMutex=RakNet::OP_NEW<SimpleMutex>(_FILE_AND_LINE_);
 			RakString::freeList.Insert(ss, _FILE_AND_LINE_);
 
@@ -344,7 +344,7 @@ const RakNet::RakString operator+(const RakNet::RakString &lhs, const RakNet::Ra
 	}
 	else
 	{
-		sharedString->bigString=(char*)rakMalloc_Ex(sharedString->bytesUsed, _FILE_AND_LINE_);
+		sharedString->bigString=(char*)malloc(sharedString->bytesUsed);
 		sharedString->c_str=sharedString->bigString;
 	}
 
@@ -1210,7 +1210,7 @@ void RakString::FreeMemoryNoMutex(void)
 	for (unsigned int i=0; i < freeList.Size(); i++)
 	{
 		RakNet::OP_DELETE(freeList[i]->refCountMutex,_FILE_AND_LINE_);
-		rakFree_Ex(freeList[i], _FILE_AND_LINE_ );
+		free(freeList[i]);
 	}
 	freeList.Clear(false, _FILE_AND_LINE_);
 }
@@ -1324,15 +1324,15 @@ void RakString::Allocate(size_t len)
 	// sharedString = RakString::pool.Allocate( _FILE_AND_LINE_ );
 	if (RakString::freeList.Size()==0)
 	{
-		//RakString::sharedStringFreeList=(RakString::SharedString*) rakRealloc_Ex(RakString::sharedStringFreeList,(RakString::sharedStringFreeListAllocationCount+1024)*sizeof(RakString::SharedString), _FILE_AND_LINE_);
+		//RakString::sharedStringFreeList=(RakString::SharedString*) realloc(RakString::sharedStringFreeList,(RakString::sharedStringFreeListAllocationCount+1024)*sizeof(RakString::SharedString));
 		unsigned i;
 		for (i=0; i < 128; i++)
 		{
 			//	RakString::freeList.Insert(RakString::sharedStringFreeList+i+RakString::sharedStringFreeListAllocationCount);
-	//		RakString::freeList.Insert((RakString::SharedString*)rakMalloc_Ex(sizeof(RakString::SharedString), _FILE_AND_LINE_), _FILE_AND_LINE_);
+	//		RakString::freeList.Insert((RakString::SharedString*)malloc(sizeof(RakString::SharedString));
 
 			RakString::SharedString *ss;
-			ss = (RakString::SharedString*) rakMalloc_Ex(sizeof(RakString::SharedString), _FILE_AND_LINE_);
+			ss = (RakString::SharedString*) malloc(sizeof(RakString::SharedString));
 			ss->refCountMutex=RakNet::OP_NEW<SimpleMutex>(_FILE_AND_LINE_);
 			RakString::freeList.Insert(ss, _FILE_AND_LINE_);
 		}
@@ -1352,7 +1352,7 @@ void RakString::Allocate(size_t len)
 	else
 	{
 		sharedString->bytesUsed=len<<1;
-		sharedString->bigString=(char*)rakMalloc_Ex(sharedString->bytesUsed, _FILE_AND_LINE_);
+		sharedString->bigString=(char*)malloc(sharedString->bytesUsed);
 		sharedString->c_str=sharedString->bigString;
 	}
 }
@@ -1391,14 +1391,14 @@ void RakString::Assign(const char *str, va_list ap)
 	size_t buffSize=8096;
 	while (1)
 	{
-		newBuff = (char*) rakRealloc_Ex(buff, buffSize,__FILE__,__LINE__);
+		newBuff = (char*) realloc(buff, buffSize);
 		if (newBuff==0)
 		{
-			notifyOutOfMemory(_FILE_AND_LINE_);
+			RakAssert(0)
 			if (buff!=0)
 			{
 				Assign(buff);
-				rakFree_Ex(buff,__FILE__,__LINE__);
+				free(buff);
 			}
 			else
 			{
@@ -1410,7 +1410,7 @@ void RakString::Assign(const char *str, va_list ap)
 		if (_vsnprintf(buff, buffSize, str, ap)!=-1)
 		{
 			Assign(buff);
-			rakFree_Ex(buff,__FILE__,__LINE__);
+			free(buff);
 			return;
 		}
 		buffSize*=2;
@@ -1522,7 +1522,7 @@ void RakString::Free(void)
 		sharedString->refCountMutex->Unlock();
 		const size_t smallStringSize = 128-sizeof(unsigned int)-sizeof(size_t)-sizeof(char*)*2;
 		if (sharedString->bytesUsed>smallStringSize)
-			rakFree_Ex(sharedString->bigString, _FILE_AND_LINE_ );
+			free(sharedString->bigString);
 		/*
 		poolMutex->Lock();
 		pool.Release(sharedString);

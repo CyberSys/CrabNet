@@ -1571,7 +1571,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 	InternalPacket * internalPacket = AllocateFromInternalPacketPool();
 	if (internalPacket==0)
 	{
-		notifyOutOfMemory(_FILE_AND_LINE_);
+		RakAssert(0)
 		return false; // Out of memory
 	}
 
@@ -1582,7 +1582,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 	if ( makeDataCopy )
 	{
 		AllocInternalPacketData(internalPacket, numberOfBytesToSend, true, _FILE_AND_LINE_ );
-		//internalPacket->data = (unsigned char*) rakMalloc_Ex( numberOfBytesToSend, _FILE_AND_LINE_ );
+		//internalPacket->data = (unsigned char*) malloc(( numberOfBytesToSend);
 		memcpy( internalPacket->data, data, numberOfBytesToSend );
 	}
 	else
@@ -2768,7 +2768,7 @@ InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::Bit
 	if (internalPacket->data == 0)
 	{
 		RakAssert("Out of memory in ReliabilityLayer::CreateInternalPacketFromBitStream" && 0);
-		notifyOutOfMemory(_FILE_AND_LINE_);
+		RakAssert(0)
 		ReleaseToInternalPacketPool( internalPacket );
 		return 0;
 	}
@@ -2940,7 +2940,7 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket )
 	}
 	else
 #endif
-		internalPacketArray = (InternalPacket**) rakMalloc_Ex( sizeof(InternalPacket*) * internalPacket->splitPacketCount, _FILE_AND_LINE_ );
+		internalPacketArray = (InternalPacket**) malloc( sizeof(InternalPacket*) * internalPacket->splitPacketCount);
 
 	for ( i = 0; i < ( int ) internalPacket->splitPacketCount; i++ )
 	{
@@ -2972,7 +2972,7 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket )
 		// Copy over our chunk of data
 
 		AllocInternalPacketData(internalPacketArray[ splitPacketIndex ], &refCounter, internalPacket->data, internalPacket->data + byteOffset);
-		//		internalPacketArray[ splitPacketIndex ]->data = (unsigned char*) rakMalloc_Ex( bytesToSend, _FILE_AND_LINE_ );
+		//		internalPacketArray[ splitPacketIndex ]->data = (unsigned char*) malloc(( bytesToSend);
 		//		memcpy( internalPacketArray[ splitPacketIndex ]->data, internalPacket->data + byteOffset, bytesToSend );
 
 		if ( bytesToSend != maximumSendBlockBytes )
@@ -3017,7 +3017,7 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket )
 	ReleaseToInternalPacketPool( internalPacket );
 
 	if (usedAlloca==false)
-		rakFree_Ex(internalPacketArray, _FILE_AND_LINE_ );
+		free(internalPacketArray);
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -3188,7 +3188,7 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketCh
 		internalPacket->dataBitLength+=splitPacketChannel->splitPacketList[j]->dataBitLength;
 	// splitPacketPartLength=BITS_TO_BYTES(splitPacketChannel->firstPacket->dataBitLength);
 
-	internalPacket->data = (unsigned char*) rakMalloc_Ex( (size_t) BITS_TO_BYTES( internalPacket->dataBitLength ), _FILE_AND_LINE_ );
+	internalPacket->data = (unsigned char*) malloc( (size_t) BITS_TO_BYTES( internalPacket->dataBitLength ));
 	internalPacket->allocationScheme=InternalPacket::NORMAL;
 
     BitSize_t offset = 0;
@@ -3855,7 +3855,7 @@ void ReliabilityLayer::AllocInternalPacketData(InternalPacket *internalPacket, u
 	else
 	{
 		internalPacket->allocationScheme=InternalPacket::NORMAL;
-		internalPacket->data=(unsigned char*) rakMalloc_Ex(numBytes,file,line);
+		internalPacket->data=(unsigned char*) malloc(numBytes);
 	}
 }
 //-------------------------------------------------------------------------------------------------------
@@ -3872,7 +3872,7 @@ void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, co
 		internalPacket->refCountedData->refCount--;
 		if (internalPacket->refCountedData->refCount==0)
 		{
-			rakFree_Ex(internalPacket->refCountedData->sharedDataBlock, file, line );
+			free(internalPacket->refCountedData->sharedDataBlock);
 			internalPacket->refCountedData->sharedDataBlock=0;
 			// RakNet::OP_DELETE(internalPacket->refCountedData,file, line);
 			refCountedDataPool.Release(internalPacket->refCountedData,file, line);
@@ -3884,7 +3884,7 @@ void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, co
 		if (internalPacket->data==0)
 			return;
 
-		rakFree_Ex(internalPacket->data, file, line );
+		free(internalPacket->data);
 		internalPacket->data=0;
 	}
 	else

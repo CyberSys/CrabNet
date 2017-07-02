@@ -143,7 +143,7 @@ struct PacketFollowedByData
 Packet *RakPeer::AllocPacket(unsigned dataSize, const char *file, unsigned int line)
 {
 	// Crashes when dataSize is 4 bytes - not sure why
-// 	unsigned char *data = (unsigned char *) rakMalloc_Ex(sizeof(PacketFollowedByData)+dataSize, file, line);
+// 	unsigned char *data = (unsigned char *) malloc(sizeof(PacketFollowedByData)+dataSize);
 // 	Packet *p = &((PacketFollowedByData *)data)->p;
 // 	p->data=((PacketFollowedByData *)data)->data;
 // 	p->length=dataSize;
@@ -157,7 +157,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize, const char *file, unsigned int l
 	p = packetAllocationPool.Allocate(file,line);
 	packetAllocationPoolMutex.Unlock();
 	p = new ((void*)p) Packet;
-	p->data=(unsigned char*) rakMalloc_Ex(dataSize,file,line);
+	p->data=(unsigned char*) malloc(dataSize);
 	p->length=dataSize;
 	p->bitSize=BYTES_TO_BITS(dataSize);
 	p->deleteData=true;
@@ -168,7 +168,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize, const char *file, unsigned int l
 
 Packet *RakPeer::AllocPacket(unsigned dataSize, unsigned char *data, const char *file, unsigned int line)
 {
-	// Packet *p = (Packet *)rakMalloc_Ex(sizeof(Packet), file, line);
+	// Packet *p = (Packet *)malloc(sizeof(Packet));
 	RakNet::Packet *p;
 	packetAllocationPoolMutex.Lock();
 	p = packetAllocationPool.Allocate(file,line);
@@ -1617,7 +1617,7 @@ void RakPeer::DeallocatePacket( Packet *packet )
 
 	if (packet->deleteData)
 	{
-		rakFree_Ex(packet->data, _FILE_AND_LINE_ );
+		free(packet->data);
 		packet->~Packet();
 		packetAllocationPoolMutex.Lock();
 		packetAllocationPool.Release(packet,_FILE_AND_LINE_);
@@ -1625,7 +1625,7 @@ void RakPeer::DeallocatePacket( Packet *packet )
 	}
 	else
 	{
-		rakFree_Ex(packet, _FILE_AND_LINE_ );
+		free(packet);
 	}
 }
 
@@ -1888,7 +1888,7 @@ void RakPeer::AddToBanList( const char *IP, RakNet::TimeMS milliseconds )
 	banListMutex.Unlock();
 
 	BanStruct *banStruct = RakNet::OP_NEW<BanStruct>( _FILE_AND_LINE_ );
-	banStruct->IP = (char*) rakMalloc_Ex( 16, _FILE_AND_LINE_ );
+	banStruct->IP = (char*) malloc(16);
 	if (milliseconds==0)
 		banStruct->timeout=0; // Infinite
 	else
@@ -1935,7 +1935,7 @@ void RakPeer::RemoveFromBanList( const char *IP )
 
 	if (temp)
 	{
-		rakFree_Ex(temp->IP, _FILE_AND_LINE_ );
+		free(temp->IP);
 		RakNet::OP_DELETE(temp, _FILE_AND_LINE_);
 	}
 
@@ -1953,7 +1953,7 @@ void RakPeer::ClearBanList( void )
 
 	for ( ; index < banList.Size(); index++ )
 	{
-		rakFree_Ex(banList[ index ]->IP, _FILE_AND_LINE_ );
+		free(banList[ index ]->IP);
 		RakNet::OP_DELETE(banList[ index ], _FILE_AND_LINE_);
 	}
 
@@ -2004,7 +2004,7 @@ bool RakPeer::IsBanned( const char *IP )
 			temp = banList[ banListIndex ];
 			banList[ banListIndex ] = banList[ banList.Size() - 1 ];
 			banList.RemoveAtIndex( banList.Size() - 1 );
-			rakFree_Ex(temp->IP, _FILE_AND_LINE_ );
+			free(temp->IP);
 			RakNet::OP_DELETE(temp, _FILE_AND_LINE_);
 		}
 		else
@@ -3279,7 +3279,7 @@ ConnectionAttemptResult RakPeer::SendConnectionRequest( const char* host, unsign
 	if (GetRemoteSystemFromSystemAddress(systemAddress, false, true))
 		return ALREADY_CONNECTED_TO_ENDPOINT;
 
-	//RequestedConnectionStruct *rcs = (RequestedConnectionStruct *) rakMalloc_Ex(sizeof(RequestedConnectionStruct), _FILE_AND_LINE_);
+	//RequestedConnectionStruct *rcs = (RequestedConnectionStruct *) malloc(sizeof(RequestedConnectionStruct));
 	RequestedConnectionStruct *rcs = RakNet::OP_NEW<RequestedConnectionStruct>(_FILE_AND_LINE_);
 
 	rcs->systemAddress=systemAddress;
@@ -3333,7 +3333,7 @@ ConnectionAttemptResult RakPeer::SendConnectionRequest( const char* host, unsign
 	if (GetRemoteSystemFromSystemAddress(systemAddress, false, true))
 		return ALREADY_CONNECTED_TO_ENDPOINT;
 
-	//RequestedConnectionStruct *rcs = (RequestedConnectionStruct *) rakMalloc_Ex(sizeof(RequestedConnectionStruct), _FILE_AND_LINE_);
+	//RequestedConnectionStruct *rcs = (RequestedConnectionStruct *) malloc(sizeof(RequestedConnectionStruct));
 	RequestedConnectionStruct *rcs = RakNet::OP_NEW<RequestedConnectionStruct>(_FILE_AND_LINE_);
 
 	rcs->systemAddress=systemAddress;
@@ -4195,10 +4195,10 @@ void RakPeer::SendBuffered( const char *data, BitSize_t numberOfBitsToSend, Pack
 	BufferedCommandStruct *bcs;
 
 	bcs=bufferedCommands.Allocate( _FILE_AND_LINE_ );
-	bcs->data = (char*) rakMalloc_Ex( (size_t) BITS_TO_BYTES(numberOfBitsToSend), _FILE_AND_LINE_ ); // Making a copy doesn't lose efficiency because I tell the reliability layer to use this allocation for its own copy
+	bcs->data = (char*) malloc((size_t) BITS_TO_BYTES(numberOfBitsToSend)); // Making a copy doesn't lose efficiency because I tell the reliability layer to use this allocation for its own copy
 	if (bcs->data==0)
 	{
-		notifyOutOfMemory(_FILE_AND_LINE_);
+		RakAssert(0)
 		bufferedCommands.Deallocate(bcs, _FILE_AND_LINE_);
 		return;
 	}
@@ -4241,10 +4241,10 @@ void RakPeer::SendBufferedList( const char **data, const int *lengths, const int
 		return;
 
 	char *dataAggregate;
-	dataAggregate = (char*) rakMalloc_Ex( (size_t) totalLength, _FILE_AND_LINE_ ); // Making a copy doesn't lose efficiency because I tell the reliability layer to use this allocation for its own copy
+	dataAggregate = (char*) malloc((size_t) totalLength); // Making a copy doesn't lose efficiency because I tell the reliability layer to use this allocation for its own copy
 	if (dataAggregate==0)
 	{
-		notifyOutOfMemory(_FILE_AND_LINE_);
+		RakAssert(0)
 		return;
 	}
 	for (i=0, lengthOffset=0; i < numParameters; i++)
@@ -4259,7 +4259,7 @@ void RakPeer::SendBufferedList( const char **data, const int *lengths, const int
 	if (broadcast==false && IsLoopbackAddress(systemIdentifier,true))
 	{
 		SendLoopback(dataAggregate,totalLength);
-		rakFree_Ex(dataAggregate,_FILE_AND_LINE_);
+		free(dataAggregate);
 		return;
 	}
 
@@ -4319,7 +4319,7 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 		#if USE_ALLOCA==1
 			sendList=(unsigned *)alloca(sizeof(unsigned));
 		#else
-			sendList = (unsigned *) rakMalloc_Ex(sizeof(unsigned), _FILE_AND_LINE_);
+			sendList = (unsigned *) malloc(sizeof(unsigned));
 		#endif
 
 		if (remoteSystemList[remoteSystemIndex].isActive &&
@@ -4336,7 +4336,7 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 		#if USE_ALLOCA==1
 			sendList=(unsigned *)alloca(sizeof(unsigned)*maximumNumberOfPeers);
 		#else
-			sendList = (unsigned *) rakMalloc_Ex(sizeof(unsigned)*maximumNumberOfPeers, _FILE_AND_LINE_);
+			sendList = (unsigned *) malloc(sizeof(unsigned)*maximumNumberOfPeers);
 		#endif
 
 		// remoteSystemList in network thread
@@ -4354,7 +4354,7 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 	if (sendListSize==0)
 	{
 		#if !defined(USE_ALLOCA)
-			rakFree_Ex(sendList, _FILE_AND_LINE_ );
+			free(sendList);
 		#endif
 
 		return false;
@@ -4380,7 +4380,7 @@ bool RakPeer::SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPri
 	}
 
 #if !defined(USE_ALLOCA)
-	rakFree_Ex(sendList, _FILE_AND_LINE_ );
+	free(sendList);
 #endif
 
 	// Return value only meaningful if true was passed for useCallerDataAllocation.  Means the reliability layer used that data copy, so the caller should not deallocate it
@@ -4425,7 +4425,7 @@ void RakPeer::ClearBufferedCommands(void)
 	while ((bcs=bufferedCommands.Pop())!=0)
 	{
 		if (bcs->data)
-			rakFree_Ex(bcs->data, _FILE_AND_LINE_ );
+			free(bcs->data);
 
 		bufferedCommands.Deallocate(bcs, _FILE_AND_LINE_);
 	}
@@ -5633,7 +5633,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 
 			callerDataAllocationUsed=SendImmediate((char*)bcs->data, bcs->numberOfBitsToSend, bcs->priority, bcs->reliability, bcs->orderingChannel, bcs->systemIdentifier, bcs->broadcast, true, timeNS, bcs->receipt);
 			if ( callerDataAllocationUsed==false )
-				rakFree_Ex(bcs->data, _FILE_AND_LINE_ );
+				free(bcs->data);
 
 			// Set the new connection state AFTER we call sendImmediate in case we are setting it to a disconnection state, which does not allow further sends
 			if (bcs->connectionMode!=RemoteSystemStruct::NO_ACTION )
@@ -5717,7 +5717,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 				{
 					if (rcs->data)
 					{
-						rakFree_Ex(rcs->data, _FILE_AND_LINE_ );
+						free(rcs->data);
 						rcs->data=0;
 					}
 
@@ -5961,7 +5961,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 					if ( (unsigned char)(data)[0] == ID_CONNECTION_REQUEST )
 					{
  						ParseConnectionRequestPacket(remoteSystem, systemAddress, (const char*)data, byteSize);
-						rakFree_Ex(data, _FILE_AND_LINE_ );
+						free(data);
 					}
 					else
 					{
@@ -5975,7 +5975,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 						AddToBanList(str1, remoteSystem->reliabilityLayer.GetTimeoutTime());
 
 
-						rakFree_Ex(data, _FILE_AND_LINE_ );
+						free(data);
 					}
 				}
 				else
@@ -6004,7 +6004,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 							// This can happen due to race conditions with the fully connected mesh
 							OnConnectionRequest( remoteSystem, incomingTimestamp );
 						}
-						rakFree_Ex(data, _FILE_AND_LINE_ );
+						free(data);
 					}
 					else if ( (unsigned char) data[ 0 ] == ID_NEW_INCOMING_CONNECTION && byteSize > sizeof(unsigned char)+sizeof(unsigned int)+sizeof(unsigned short)+sizeof(RakNet::Time)*2 )
 					{
@@ -6058,7 +6058,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 						{
 							// Send to game even if already connected. This could happen when connecting to 127.0.0.1
 							// Ignore, already connected
-						//	rakFree_Ex(data, _FILE_AND_LINE_ );
+						//	free(data);
 						}
 					}
 					else if ( (unsigned char) data[ 0 ] == ID_CONNECTED_PONG && byteSize == sizeof(unsigned char)+sizeof(RakNet::Time)*2 )
@@ -6076,7 +6076,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 
 						OnConnectedPong(sendPingTime,sendPongTime,remoteSystem);
 
-						rakFree_Ex(data, _FILE_AND_LINE_ );
+						free(data);
 					}
 					else if ( (unsigned char)data[0] == ID_CONNECTED_PING && byteSize == sizeof(unsigned char)+sizeof(RakNet::Time) )
 					{
@@ -6094,20 +6094,20 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 						// Update again immediately after this tick so the ping goes out right away
 						quitAndDataEvents.SetEvent();
 
-						rakFree_Ex(data, _FILE_AND_LINE_ );
+						free(data);
 					}
 					else if ( (unsigned char) data[ 0 ] == ID_DISCONNECTION_NOTIFICATION )
 					{
 						// We shouldn't close the connection immediately because we need to ack the ID_DISCONNECTION_NOTIFICATION
 						remoteSystem->connectMode=RemoteSystemStruct::DISCONNECT_ON_NO_ACK;
-						rakFree_Ex(data, _FILE_AND_LINE_ );
+						free(data);
 
 					//	AddPacketToProducer(packet);
 					}
 					else if ( (unsigned char)(data)[0] == ID_DETECT_LOST_CONNECTIONS && byteSize == sizeof(unsigned char) )
 					{
 						// Do nothing
-						rakFree_Ex(data, _FILE_AND_LINE_ );
+						free(data);
 					}
 					else if ( (unsigned char)(data)[0] == ID_INVALID_PASSWORD )
 					{
@@ -6125,7 +6125,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 						}
 						else
 						{
-							rakFree_Ex(data, _FILE_AND_LINE_ );
+							free(data);
 						}
 					}
 					else if ( (unsigned char)(data)[0] == ID_CONNECTION_REQUEST_ACCEPTED )
@@ -6212,14 +6212,14 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 							else
 							{
 								// Ignore, already connected
-								rakFree_Ex(data, _FILE_AND_LINE_ );
+								free(data);
 							}
 						}
 						else
 						{
 							// Version mismatch error?
 							RakAssert(0);
-							rakFree_Ex(data, _FILE_AND_LINE_ );
+							free(data);
 						}
 					}
 					else
@@ -6241,7 +6241,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 						}
 						else
 						{
-							rakFree_Ex(data, _FILE_AND_LINE_ );
+							free(data);
 						}
 					}
 				}

@@ -90,6 +90,6 @@ int Base64Encoding(const unsigned char *inputData, int dataLength, char *outputD
 
 int Base64Encoding(const unsigned char *inputData, int dataLength, char **outputData)
 {
-	*outputData = (char*) rakMalloc_Ex(dataLength * 2 + 6, _FILE_AND_LINE_);
+	*outputData = (char*) malloc(dataLength * 2 + 6);
 	return Base64Encoding(inputData, dataLength, *outputData);
 }

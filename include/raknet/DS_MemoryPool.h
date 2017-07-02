@@ -138,7 +138,7 @@ namespace DataStructures
 			return retVal;
 		}
 
-		availablePages = (Page *) rakMalloc_Ex(sizeof(Page), file, line);
+		availablePages = (Page *) malloc(sizeof(Page));
 		if (availablePages==0)
 			return 0;
 		availablePagesSize=1;
@@ -154,7 +154,7 @@ namespace DataStructures
 	void MemoryPool<MemoryBlockType>::Release(MemoryBlockType *m, const char *file, unsigned int line)
 	{
 #ifdef _DISABLE_MEMORY_POOL
-		rakFree_Ex(m, file, line);
+		free(m);
 		return;
 #else
 		// Find the page this block is in and return it.
@@ -205,9 +205,9 @@ namespace DataStructures
 				curPage->prev->next=curPage->next;
 				curPage->next->prev=curPage->prev;
 				availablePagesSize--;
-				rakFree_Ex(curPage->availableStack, file, line );
-				rakFree_Ex(curPage->block, file, line );
-				rakFree_Ex(curPage, file, line );
+				free(curPage->availableStack);
+				free(curPage->block);
+				free(curPage);
 			}
 		}
 #endif
@@ -229,16 +229,16 @@ namespace DataStructures
 			while (true) 
 			// do
 			{
-				rakFree_Ex(cur->availableStack, file, line );
-				rakFree_Ex(cur->block, file, line );
+				free(cur->availableStack);
+				free(cur->block);
 				freed=cur;
 				cur=cur->next;
 				if (cur==availablePages)
 				{
-					rakFree_Ex(freed, file, line );
+					free(freed);
 					break;
 				}
-				rakFree_Ex(freed, file, line );
+				free(freed);
 			}// while(cur!=availablePages);
 		}
 		
@@ -248,16 +248,16 @@ namespace DataStructures
 			while (1)
 			//do 
 			{
-				rakFree_Ex(cur->availableStack, file, line );
-				rakFree_Ex(cur->block, file, line );
+				free(cur->availableStack);
+                free(cur->block);
 				freed=cur;
 				cur=cur->next;
 				if (cur==unavailablePages)
 				{
-					rakFree_Ex(freed, file, line );
+                    free(freed);
 					break;
 				}
-				rakFree_Ex(freed, file, line );
+                free(freed);
 			} // while(cur!=unavailablePages);
 		}
 
@@ -275,13 +275,13 @@ namespace DataStructures
 	{
 		int i=0;
 		const int bpp = BlocksPerPage();
-		page->block=(MemoryWithPage*) rakMalloc_Ex(memoryPoolPageSize, file, line);
+		page->block=(MemoryWithPage*) malloc(memoryPoolPageSize);
 		if (page->block==0)
 			return false;
-		page->availableStack=(MemoryWithPage**)rakMalloc_Ex(sizeof(MemoryWithPage*)*bpp, file, line);
+		page->availableStack=(MemoryWithPage**)malloc(sizeof(MemoryWithPage*)*bpp);
 		if (page->availableStack==0)
 		{
-			rakFree_Ex(page->block, file, line );
+			free(page->block);
 			return false;
 		}
 		MemoryWithPage *curBlock = page->block;
