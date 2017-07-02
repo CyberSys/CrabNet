@@ -86,7 +86,7 @@
 #if defined(_DEBUG)
 #define RakAssert(x) assert(x);
 #else
-#define RakAssert(x) 
+#define RakAssert(x) (void)(x);
 #endif
 #endif
 #endif
