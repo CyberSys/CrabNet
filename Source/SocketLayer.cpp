@@ -186,10 +186,6 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, Rak
 	RakNet::RakString netMaskString;
 	RakNet::RakString ipString;
 
-
-
-
-
 #if   defined(WINDOWS_STORE_RT)
 	RakAssert("Not yet supported" && 0);
 	return "";
