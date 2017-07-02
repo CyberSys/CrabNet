@@ -116,11 +116,13 @@ unsigned int splitPacketId, unsigned int splitPacketIndex, unsigned int splitPac
 }
 void PacketLogger::OnDirectSocketSend(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
 {
-	if (logDirectMessages==false)
+	if (!logDirectMessages)
 		return;
 
-	char str[256];
-	FormatLine(str, "Snd", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTimeMS(), rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress, (unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+	char str[1024];
+	FormatLine(str, "Snd", "Raw", 0, 0, (unsigned char)data[0], bitsUsed, RakNet::GetTimeMS(),
+			   rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress,
+               (unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1);
 	AddToLog(str);
 }
 
@@ -131,10 +133,10 @@ void PacketLogger::LogHeader(void)
 }
 void PacketLogger::OnDirectSocketReceive(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
 {
-	if (logDirectMessages==false)
+	if (!logDirectMessages)
 		return;
 
-	char str[256];
+	char str[1024];
 	FormatLine(str, "Rcv", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
 	AddToLog(str);
 }
@@ -190,9 +192,10 @@ void PacketLogger::OnPushBackPacket(const char *data, const BitSize_t bitsUsed, 
 					);
 	AddToLog(str);
 }
-void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time, int isSend)
+void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress,
+									RakNet::TimeMS time, int isSend)
 {
-	char str[256];
+	char str[1024];
 	const char *sendTypes[] =
 	{
 		"Rcv",
