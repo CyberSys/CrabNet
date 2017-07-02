@@ -1,4 +1,9 @@
-FILE(GLOB ALL_CPP_SRCS ${RakNet_SOURCE_DIR}/Source/*.cpp ${RakNet_SOURCE_DIR}/Source/Utils/*.cpp)
+FILE(GLOB ALL_CPP_SRCS
+        ${RakNet_SOURCE_DIR}/Source/*.cpp
+        ${RakNet_SOURCE_DIR}/Source/Utils/*.cpp
+        ${RakNet_SOURCE_DIR}/Source/Plugins/*.cpp
+        ${RakNet_SOURCE_DIR}/include/raknet/*.h
+        )
 
 set(CMAKE_CXX_FLAGS_DEBUG -D_DEBUG)
 
