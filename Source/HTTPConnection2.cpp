@@ -16,7 +16,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(HTTPConnection2,HTTPConnection2);
+STATIC_FACTORY_DEFINITIONS(HTTPConnection2,HTTPConnection2)
 
 HTTPConnection2::HTTPConnection2()
 {

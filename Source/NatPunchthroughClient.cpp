@@ -35,7 +35,7 @@ void NatPunchthroughDebugInterface_PacketLogger::OnClientMessage(const char *msg
 }
 #endif
 
-STATIC_FACTORY_DEFINITIONS(NatPunchthroughClient,NatPunchthroughClient);
+STATIC_FACTORY_DEFINITIONS(NatPunchthroughClient,NatPunchthroughClient)
 
 NatPunchthroughClient::NatPunchthroughClient()
 {

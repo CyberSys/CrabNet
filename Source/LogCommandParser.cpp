@@ -28,7 +28,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(LogCommandParser,LogCommandParser);
+STATIC_FACTORY_DEFINITIONS(LogCommandParser,LogCommandParser)
 
 LogCommandParser::LogCommandParser()
 {

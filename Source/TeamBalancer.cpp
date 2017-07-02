@@ -27,7 +27,7 @@ enum TeamBalancerOperations
 	ID_REQUEST_SPECIFIC_TEAM
 };
 
-STATIC_FACTORY_DEFINITIONS(TeamBalancer,TeamBalancer);
+STATIC_FACTORY_DEFINITIONS(TeamBalancer,TeamBalancer)
 
 TeamBalancer::TeamBalancer()
 {

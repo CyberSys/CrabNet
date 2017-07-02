@@ -23,7 +23,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(NatTypeDetectionClient,NatTypeDetectionClient);
+STATIC_FACTORY_DEFINITIONS(NatTypeDetectionClient,NatTypeDetectionClient)
 
 NatTypeDetectionClient::NatTypeDetectionClient()
 {

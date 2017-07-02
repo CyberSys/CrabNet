@@ -19,7 +19,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(CloudClient,CloudClient);
+STATIC_FACTORY_DEFINITIONS(CloudClient,CloudClient)
 
 CloudClient::CloudClient()
 {

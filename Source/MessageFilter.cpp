@@ -40,7 +40,7 @@ int RakNet::FilterSetComp( const int &key, FilterSet * const &data )
 	else
 		return 1;
 }
-STATIC_FACTORY_DEFINITIONS(MessageFilter,MessageFilter);
+STATIC_FACTORY_DEFINITIONS(MessageFilter,MessageFilter)
 
 MessageFilter::MessageFilter()
 {

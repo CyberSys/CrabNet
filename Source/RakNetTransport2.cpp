@@ -27,7 +27,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(RakNetTransport2,RakNetTransport2);
+STATIC_FACTORY_DEFINITIONS(RakNetTransport2,RakNetTransport2)
 
 RakNetTransport2::RakNetTransport2()
 {

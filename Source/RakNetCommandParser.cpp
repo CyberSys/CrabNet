@@ -26,7 +26,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(RakNetCommandParser,RakNetCommandParser);
+STATIC_FACTORY_DEFINITIONS(RakNetCommandParser,RakNetCommandParser)
 
 RakNetCommandParser::RakNetCommandParser()
 {

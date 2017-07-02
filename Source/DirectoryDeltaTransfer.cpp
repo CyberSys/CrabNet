@@ -74,7 +74,7 @@ public:
 	}
 };
 
-STATIC_FACTORY_DEFINITIONS(DirectoryDeltaTransfer,DirectoryDeltaTransfer);
+STATIC_FACTORY_DEFINITIONS(DirectoryDeltaTransfer,DirectoryDeltaTransfer)
 
 DirectoryDeltaTransfer::DirectoryDeltaTransfer()
 {

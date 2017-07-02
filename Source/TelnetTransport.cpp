@@ -28,7 +28,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(TelnetTransport,TelnetTransport);
+STATIC_FACTORY_DEFINITIONS(TelnetTransport,TelnetTransport)
 
 TelnetTransport::TelnetTransport()
 {

@@ -36,9 +36,9 @@ enum TeamManagerOperations
 	ID_RUN_SerializeWorld,
 };
 
-STATIC_FACTORY_DEFINITIONS(TM_TeamMember,TM_TeamMember);
-STATIC_FACTORY_DEFINITIONS(TM_Team,TM_Team);
-STATIC_FACTORY_DEFINITIONS(TeamManager,TeamManager);
+STATIC_FACTORY_DEFINITIONS(TM_TeamMember,TM_TeamMember)
+STATIC_FACTORY_DEFINITIONS(TM_Team,TM_Team)
+STATIC_FACTORY_DEFINITIONS(TeamManager,TeamManager)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

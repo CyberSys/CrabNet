@@ -43,7 +43,7 @@ int RakNet::ReadyEvent::ReadyEventNodeComp( const int &key, ReadyEvent::ReadyEve
 		return 1;
 }
 
-STATIC_FACTORY_DEFINITIONS(ReadyEvent,ReadyEvent);
+STATIC_FACTORY_DEFINITIONS(ReadyEvent,ReadyEvent)
 
 ReadyEvent::ReadyEvent()
 {

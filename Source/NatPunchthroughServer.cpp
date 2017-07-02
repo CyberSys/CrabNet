@@ -112,7 +112,7 @@ int RakNet::NatPunchthroughServer::NatPunchthroughUserComp( const RakNetGUID &ke
 	return 0;
 }
 
-STATIC_FACTORY_DEFINITIONS(NatPunchthroughServer,NatPunchthroughServer);
+STATIC_FACTORY_DEFINITIONS(NatPunchthroughServer,NatPunchthroughServer)
 
 NatPunchthroughServer::NatPunchthroughServer()
 {

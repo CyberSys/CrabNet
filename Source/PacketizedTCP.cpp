@@ -21,7 +21,7 @@ using namespace RakNet;
 
 typedef uint32_t PTCPHeader;
 
-STATIC_FACTORY_DEFINITIONS(PacketizedTCP,PacketizedTCP);
+STATIC_FACTORY_DEFINITIONS(PacketizedTCP,PacketizedTCP)
 
 PacketizedTCP::PacketizedTCP()
 {

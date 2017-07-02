@@ -33,7 +33,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(PacketLogger,PacketLogger);
+STATIC_FACTORY_DEFINITIONS(PacketLogger,PacketLogger)
 
 PacketLogger::PacketLogger()
 {

@@ -22,7 +22,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(RPC4,RPC4);
+STATIC_FACTORY_DEFINITIONS(RPC4,RPC4)
 
 struct GlobalRegistration
 {

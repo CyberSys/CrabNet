@@ -67,7 +67,7 @@ int UDPProxyCoordinator::ForwardingRequestComp( const SenderAndTargetAddress &ke
 // 	return inputKey.Get().senderClientAddress == cls->sata.senderClientAddress && inputKey.Get().targetClientAddress == cls->sata.targetClientAddress;
 // }
 
-STATIC_FACTORY_DEFINITIONS(UDPProxyCoordinator,UDPProxyCoordinator);
+STATIC_FACTORY_DEFINITIONS(UDPProxyCoordinator,UDPProxyCoordinator)
 
 UDPProxyCoordinator::UDPProxyCoordinator()
 {

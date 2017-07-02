@@ -27,7 +27,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(HTTPConnection,HTTPConnection);
+STATIC_FACTORY_DEFINITIONS(HTTPConnection,HTTPConnection)
 
 HTTPConnection::HTTPConnection() : connectionState(CS_NONE)
 {

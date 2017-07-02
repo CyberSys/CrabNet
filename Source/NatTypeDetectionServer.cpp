@@ -25,7 +25,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(NatTypeDetectionServer,NatTypeDetectionServer);
+STATIC_FACTORY_DEFINITIONS(NatTypeDetectionServer,NatTypeDetectionServer)
 
 NatTypeDetectionServer::NatTypeDetectionServer()
 {

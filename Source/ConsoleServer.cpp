@@ -24,7 +24,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(ConsoleServer,ConsoleServer);
+STATIC_FACTORY_DEFINITIONS(ConsoleServer,ConsoleServer)
 
 ConsoleServer::ConsoleServer()
 {

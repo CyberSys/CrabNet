@@ -19,7 +19,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(UDPProxyServer,UDPProxyServer);
+STATIC_FACTORY_DEFINITIONS(UDPProxyServer,UDPProxyServer)
 
 UDPProxyServer::UDPProxyServer()
 {

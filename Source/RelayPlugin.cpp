@@ -18,7 +18,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(RelayPlugin,RelayPlugin);
+STATIC_FACTORY_DEFINITIONS(RelayPlugin,RelayPlugin)
 
 RelayPlugin::RelayPlugin()
 {

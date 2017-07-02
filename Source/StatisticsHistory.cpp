@@ -18,8 +18,8 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(StatisticsHistory,StatisticsHistory);
-STATIC_FACTORY_DEFINITIONS(StatisticsHistoryPlugin,StatisticsHistoryPlugin);
+STATIC_FACTORY_DEFINITIONS(StatisticsHistory,StatisticsHistory)
+STATIC_FACTORY_DEFINITIONS(StatisticsHistoryPlugin,StatisticsHistoryPlugin)
 
 int StatisticsHistory::TrackedObjectComp( const uint64_t &key, StatisticsHistory::TrackedObject* const &data )
 {

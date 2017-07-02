@@ -33,7 +33,7 @@
 using namespace RakNet;
 
 
-STATIC_FACTORY_DEFINITIONS(EmailSender,EmailSender);
+STATIC_FACTORY_DEFINITIONS(EmailSender,EmailSender)
 
 const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, const char *sender, const char *recipient, const char *senderName, const char *recipientName, const char *subject, const char *body, FileList *attachedFiles, bool doPrintf, const char *password)
 {

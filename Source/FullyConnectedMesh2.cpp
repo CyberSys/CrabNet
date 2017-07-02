@@ -34,7 +34,7 @@ int FCM2ParticipantComp( FullyConnectedMesh2::FCM2Participant * const &key, Full
 	return 0;
 }
 
-STATIC_FACTORY_DEFINITIONS(FullyConnectedMesh2,FullyConnectedMesh2);
+STATIC_FACTORY_DEFINITIONS(FullyConnectedMesh2,FullyConnectedMesh2)
 
 FullyConnectedMesh2::FullyConnectedMesh2()
 {

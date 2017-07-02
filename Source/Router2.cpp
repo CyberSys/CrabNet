@@ -83,7 +83,7 @@ Router2::ConnnectRequest::~ConnnectRequest()
 
 }
 
-STATIC_FACTORY_DEFINITIONS(Router2,Router2);
+STATIC_FACTORY_DEFINITIONS(Router2,Router2)
 
 Router2::Router2()
 {
