@@ -12,6 +12,7 @@
 #include "DS_Queue.h"
 #include "BitStream.h"
 #include "RakAssert.h" 
+#include <cstdlib>
 
 #ifdef _MSC_VER
 #pragma warning( push )
