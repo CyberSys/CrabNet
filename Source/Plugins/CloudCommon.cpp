@@ -8,6 +8,7 @@
  *
  */
 
+#include <cstdlib>
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_CloudClient==1 || _RAKNET_SUPPORT_CloudServer==1
 

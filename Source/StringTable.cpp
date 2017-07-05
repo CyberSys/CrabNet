@@ -12,6 +12,7 @@
 #include <string.h>
 #include "RakAssert.h"
 #include <stdio.h>
+#include <cstdlib>
 #include "BitStream.h"
 #include "StringCompressor.h"
 using namespace RakNet;

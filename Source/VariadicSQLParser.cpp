@@ -11,6 +11,7 @@
 #include "VariadicSQLParser.h"
 #include "BitStream.h"
 #include <stdarg.h>
+#include <cstdlib>
 
 using namespace VariadicSQLParser;
 

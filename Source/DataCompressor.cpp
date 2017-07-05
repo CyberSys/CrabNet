@@ -12,6 +12,7 @@
 #include "DS_HuffmanEncodingTree.h"
 #include "RakAssert.h"
 #include <string.h> // Use string.h rather than memory.h for a console
+#include <cstdlib>
 
 using namespace RakNet;
 

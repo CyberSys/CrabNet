@@ -21,6 +21,7 @@
 #include <string.h>
 
 #include <memory.h>
+#include <cstdlib>
 
 using namespace RakNet;
 
