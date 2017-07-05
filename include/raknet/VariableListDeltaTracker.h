@@ -8,6 +8,7 @@
  *
  */
 
+#include <cstdlib>
 #include "NativeTypes.h"
 #include "DS_List.h"
 #include "BitStream.h"
