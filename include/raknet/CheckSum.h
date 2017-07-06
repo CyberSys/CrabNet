@@ -22,34 +22,22 @@ class CheckSum
 {
 public:
 
- /// Default constructor
+    /// Default constructor
 
-    CheckSum()
-    {
-        Clear();
-    }
+    CheckSum();
 
-    void Clear()
-    {
-        sum = 0;
-        r = 55665;
-        c1 = 52845;
-        c2 = 22719;
-    }
+    void Clear();
 
-    void Add ( unsigned int w );
+    void Add(unsigned int w);
 
 
-    void Add ( unsigned short w );
+    void Add(unsigned short w);
 
-    void Add ( unsigned char* b, unsigned int length );
+    void Add(unsigned char *b, unsigned int length);
 
-    void Add ( unsigned char b );
+    void Add(unsigned char b);
 
-    unsigned int Get ()
-    {
-        return sum;
-    }
+    unsigned int Get();
 
 protected:
     unsigned short r;
