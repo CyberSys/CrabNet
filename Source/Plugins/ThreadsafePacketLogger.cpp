@@ -23,27 +23,27 @@ ThreadsafePacketLogger::ThreadsafePacketLogger()
 }
 ThreadsafePacketLogger::~ThreadsafePacketLogger()
 {
-	char **msg;
-	while ((msg = logMessages.ReadLock()) != 0)
-	{
-		free(*msg);
-	}
+    char **msg;
+    while ((msg = logMessages.ReadLock()) != 0)
+    {
+        free(*msg);
+    }
 }
 void ThreadsafePacketLogger::Update(void)
 {
-	char **msg;
-	while ((msg = logMessages.ReadLock()) != 0)
-	{
-		WriteLog(*msg);
-		free(*msg);
-	}
+    char **msg;
+    while ((msg = logMessages.ReadLock()) != 0)
+    {
+        WriteLog(*msg);
+        free(*msg);
+    }
 }
 void ThreadsafePacketLogger::AddToLog(const char *str)
 {
-	char **msg = logMessages.WriteLock();
-	*msg = (char*) malloc(strlen(str)+1);
-	strcpy(*msg, str);
-	logMessages.WriteUnlock();
+    char **msg = logMessages.WriteLock();
+    *msg = (char*) malloc(strlen(str)+1);
+    strcpy(*msg, str);
+    logMessages.WriteUnlock();
 }
 
 #endif // _RAKNET_SUPPORT_*

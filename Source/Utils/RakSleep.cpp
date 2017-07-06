@@ -28,30 +28,30 @@ using namespace ThreadEmulation;
 void RakSleep(unsigned int ms)
 {
 #ifdef _WIN32
-	Sleep(ms);
+    Sleep(ms);
 #else
-	//Single thread sleep code thanks to Furquan Shaikh, http://somethingswhichidintknow.blogspot.com/2009/09/sleep-in-pthread.html
-	//Modified slightly from the original
-	struct timespec timeToWait;
-	struct timeval now;
-	int rt;
+    //Single thread sleep code thanks to Furquan Shaikh, http://somethingswhichidintknow.blogspot.com/2009/09/sleep-in-pthread.html
+    //Modified slightly from the original
+    struct timespec timeToWait;
+    struct timeval now;
+    int rt;
 
-	gettimeofday(&now,NULL);
+    gettimeofday(&now,NULL);
 
-	long seconds = ms/1000;
-	long nanoseconds = (ms - seconds * 1000) * 1000000;
-	timeToWait.tv_sec = now.tv_sec + seconds;
-	timeToWait.tv_nsec = now.tv_usec*1000 + nanoseconds;
-	
-	if (timeToWait.tv_nsec >= 1000000000)
-	{
-	        timeToWait.tv_nsec -= 1000000000;
-	        timeToWait.tv_sec++;
-	}
+    long seconds = ms/1000;
+    long nanoseconds = (ms - seconds * 1000) * 1000000;
+    timeToWait.tv_sec = now.tv_sec + seconds;
+    timeToWait.tv_nsec = now.tv_usec*1000 + nanoseconds;
 
-	pthread_mutex_lock(&fakeMutex);
-	rt = pthread_cond_timedwait(&fakeCond, &fakeMutex, &timeToWait);
-	pthread_mutex_unlock(&fakeMutex);
-	(void)(rt);
+    if (timeToWait.tv_nsec >= 1000000000)
+    {
+            timeToWait.tv_nsec -= 1000000000;
+            timeToWait.tv_sec++;
+    }
+
+    pthread_mutex_lock(&fakeMutex);
+    rt = pthread_cond_timedwait(&fakeCond, &fakeMutex, &timeToWait);
+    pthread_mutex_unlock(&fakeMutex);
+    (void)(rt);
 #endif
 }

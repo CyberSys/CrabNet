@@ -25,9 +25,9 @@
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
 #if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
-	// _tzset not supported
-	(void) tv;
-	(void) tz;
+    // _tzset not supported
+    (void) tv;
+    (void) tz;
 #else
 
   FILETIME ft;
