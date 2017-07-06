@@ -2796,15 +2796,13 @@ InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::Bit
 //-------------------------------------------------------------------------------------------------------
 // Get the SHA1 code
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::GetSHA1( unsigned char * const buffer, unsigned int
-                               nbytes, char code[ SHA1_LENGTH ] )
+void ReliabilityLayer::GetSHA1(unsigned char *const buffer, unsigned int nbytes, char code[SHA1_LENGTH])
 {
     CSHA1 sha1;
 
-    sha1.Reset();
-    sha1.Update( ( unsigned char* ) buffer, nbytes );
+    sha1.Update(buffer, nbytes);
     sha1.Final();
-    memcpy( code, sha1.GetHash(), SHA1_LENGTH );
+    memcpy(code, sha1.GetHash(), SHA1_LENGTH);
 }
 
 //-------------------------------------------------------------------------------------------------------
