@@ -55,10 +55,14 @@ public:
             variableList[nextWriteIndex].isDirty=false;
             return true; // Different because the serialized size is different
         }
-        if (variableList[nextWriteIndex].isDirty==false && memcmp(temp.GetData(),variableList[nextWriteIndex].lastData, variableList[nextWriteIndex].byteLength)==0)
+
+        if (!variableList[nextWriteIndex].isDirty)
         {
-            nextWriteIndex++;
-            return false; // Same because not dirty and memcmp is the same
+            if (memcmp(temp.GetData(), variableList[nextWriteIndex].lastData, variableList[nextWriteIndex].byteLength) == 0)
+            {
+                nextWriteIndex++;
+                return false; // Same because not dirty and memcmp is the same
+            }
         }
 
         variableList[nextWriteIndex].isDirty=false;
@@ -83,7 +87,7 @@ public:
     template <class VarType>
     bool WriteVarToBitstream(const VarType &varData, RakNet::BitStream *bitStream, unsigned char *bArray, unsigned short writeOffset)
     {
-        if (WriteVarToBitstream(varData,bitStream)==true)
+        if (WriteVarToBitstream(varData, bitStream))
         {
             BitSize_t numberOfBitsMod8 = writeOffset & 7;
 
@@ -108,11 +112,11 @@ public:
     static bool ReadVarFromBitstream(VarType &varData, RakNet::BitStream *bitStream)
     {
         bool wasWritten;
-        if (bitStream->Read(wasWritten)==false)
+        if (!bitStream->Read(wasWritten))
             return false;
         if (wasWritten)
         {
-            if (bitStream->Read(varData)==false)
+            if (!bitStream->Read(varData))
                 return false;
         }
         return wasWritten;
@@ -129,7 +133,7 @@ public:
         VariableLastValueNode(const unsigned char *data, size_t _byteLength);
         ~VariableLastValueNode();
         char *lastData;
-        unsigned int byteLength;
+        size_t byteLength;
         bool isDirty;
     };
 
