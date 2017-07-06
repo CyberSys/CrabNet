@@ -631,14 +631,28 @@ namespace RakNet
 
         /// Get the number of leading zeros for a number
         /// \param[in] x Number to test
-        static int NumberOfLeadingZeroes( uint8_t x );
-        static int NumberOfLeadingZeroes( uint16_t x );
-        static int NumberOfLeadingZeroes( uint32_t x );
-        static int NumberOfLeadingZeroes( uint64_t x );
-        static int NumberOfLeadingZeroes( int8_t x );
-        static int NumberOfLeadingZeroes( int16_t x );
-        static int NumberOfLeadingZeroes( int32_t x );
-        static int NumberOfLeadingZeroes( int64_t x );
+        template<typename T>
+        static int NumberOfLeadingZeroes(T x)
+        {
+            int n = sizeof(T) * 8;
+            T y;
+
+            for(int i = sizeof(T) * 4; i >= 2; i /= 2)
+            {
+                y = x >> i;
+                if (y != 0)
+                {
+                    n -= i;
+                    x = y;
+                }
+            }
+
+            y = x >> 1;
+            if (y != 0)
+                return n - 2;
+
+            return (int) (n - x);
+        }
 
         /// \internal Unrolled inner loop, for when performance is critical
         void WriteAlignedVar8(const char *inByteArray);
