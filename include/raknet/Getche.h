@@ -14,5 +14,6 @@
 #include <termios.h>
 #include <stdio.h>
 #include <unistd.h>
-char getche();
+int getche();
+#define _getche getche
 #endif 

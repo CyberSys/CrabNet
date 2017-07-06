@@ -16,10 +16,10 @@
 
 #include "Getche.h"
 
-char getche()
+int getche()
 {
   struct termios oldt, newt;
-  char ch;
+  int ch;
   tcgetattr( STDIN_FILENO, &oldt );
   newt = oldt;
   newt.c_lflag &= ~( ICANON | ECHO );
