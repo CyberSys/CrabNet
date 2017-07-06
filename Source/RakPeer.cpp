@@ -4361,42 +4361,6 @@ inline void RakPeer::AddPacketToProducer(RakNet::Packet *p)
 	packetReturnMutex.Unlock();
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-union Buff6AndBuff8
-{
-	unsigned char buff6[6];
-	uint64_t buff8;
-};
-uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
-{
-	// Mac address is a poor solution because you can't have multiple connections from the same system
-
-#if   defined(_WIN32)
-	uint64_t g=RakNet::GetTimeUS();
-
-	RakNet::TimeUS lastTime, thisTime;
-	int j;
-	// Sleep a small random time, then use the last 4 bits as a source of randomness
-	for (j=0; j < 8; j++)
-	{
-		lastTime = RakNet::GetTimeUS();
-		RakSleep(1);
-		RakSleep(0);
-		thisTime = RakNet::GetTimeUS();
-		RakNet::TimeUS diff = thisTime-lastTime;
-		unsigned int diff4Bits = (unsigned int) (diff & 15);
-		diff4Bits <<= 32-4;
-		diff4Bits >>= j*4;
-		((char*)&g)[j] ^= diff4Bits;
-	}
-	return g;
-
-#else
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return tv.tv_usec + tv.tv_sec * 1000000;
-#endif
-}
-// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::GenerateGUID(void)
 {
 	myGuid.g=Get64BitUniqueRandomNumber();
