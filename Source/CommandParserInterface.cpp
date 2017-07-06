@@ -26,7 +26,7 @@
 #include <arpa/inet.h>
 #endif
 
-#include "LinuxStrings.h"
+#include "Utils/LinuxStrings.h"
 
 using namespace RakNet;
 

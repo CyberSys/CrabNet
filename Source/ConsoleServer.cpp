@@ -20,7 +20,7 @@
 #define COMMAND_DELINATOR ' '
 #define COMMAND_DELINATOR_TOGGLE '"'
 
-#include "LinuxStrings.h"
+#include "Utils/LinuxStrings.h"
 
 using namespace RakNet;
 

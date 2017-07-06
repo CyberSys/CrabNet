@@ -15,12 +15,15 @@
 #include "GetTime.h"
 #include "MTUSize.h"
 #include "SocketLayer.h"
-#include "WSAStartupSingleton.h"
 #include "RakSleep.h"
 #include "DS_OrderedList.h"
-#include "LinuxStrings.h"
-#include "SocketDefines.h"
+#include "../Utils/LinuxStrings.h"
+#include "../Utils/SocketDefines.h"
 #include "errno.h"
+
+#ifdef _WIN32
+#include "../WSAStartupSingleton.h"
+#endif
 
 #ifndef INVALID_SOCKET
 #define INVALID_SOCKET -1

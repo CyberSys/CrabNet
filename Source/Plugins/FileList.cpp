@@ -41,7 +41,7 @@
 #include "FileOperations.h"
 #include "SuperFastHash.h"
 #include "RakAssert.h"
-#include "LinuxStrings.h"
+#include "../Utils/LinuxStrings.h"
 
 #define MAX_FILENAME_LENGTH 512
 static const unsigned HASH_LENGTH=4;
@@ -61,7 +61,7 @@ using namespace RakNet;
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include "_FindFirst.h"
+#include "../Utils/_FindFirst.h"
 #include <stdint.h> //defines intptr_t
 #endif
 

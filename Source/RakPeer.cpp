@@ -20,7 +20,7 @@
 #include "RakNetTypes.h"
 
 #ifdef _WIN32
-
+#include "WSAStartupSingleton.h"
 #else
 #include <unistd.h>
 #endif
@@ -51,7 +51,6 @@
 #include "SignaledEvent.h"
 #include "SuperFastHash.h"
 #include "RakAlloca.h"
-#include "WSAStartupSingleton.h"
 
 #ifdef USE_THREADED_SEND
 #include "SendToThread.h"
@@ -200,7 +199,9 @@ RakPeer::RakPeer()
 
     StringCompressor::AddReference();
     RakNet::StringTable::AddReference();
+#ifdef _WIN32
     WSAStartupSingleton::AddRef();
+#endif
 
     defaultMTUSize = mtuSizes[NUM_MTU_SIZES-1];
     trackFrequencyTable = false;
@@ -278,7 +279,9 @@ RakPeer::~RakPeer()
 
     StringCompressor::RemoveReference();
     RakNet::StringTable::RemoveReference();
+#ifdef _WIN32
     WSAStartupSingleton::Deref();
+#endif
 
     quitAndDataEvents.CloseEvent();
 

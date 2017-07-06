@@ -35,12 +35,14 @@ else use congestion avoidance
 
 */
 
+
+#ifndef __CONGESTION_CONTROL_SLIDING_WINDOW_H
+#define __CONGESTION_CONTROL_SLIDING_WINDOW_H
+
 #include "RakNetDefines.h"
 
 #if USE_SLIDING_WINDOW_CONGESTION_CONTROL==1
 
-#ifndef __CONGESTION_CONTROL_SLIDING_WINDOW_H
-#define __CONGESTION_CONTROL_SLIDING_WINDOW_H
 
 #include <stdint.h>
 #include "RakNetTime.h"

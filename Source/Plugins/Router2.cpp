@@ -19,7 +19,7 @@
 #include "DS_OrderedList.h"
 #include "SocketLayer.h"
 #include "FormatString.h"
-#include "SocketDefines.h"
+#include "../Utils/SocketDefines.h"
 
 using namespace RakNet;
 

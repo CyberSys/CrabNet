@@ -19,7 +19,7 @@
 #include "MessageIdentifiers.h"
 #include "GetTime.h"
 #include "BitStream.h"
-#include "SocketDefines.h"
+#include "../Utils/SocketDefines.h"
 
 // #define NTDS_VERBOSE
 

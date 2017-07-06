@@ -20,7 +20,7 @@
 #include "TCPInterface.h"
 #ifdef _WIN32
 typedef int socklen_t;
-
+#include "WSAStartupSingleton.h"
 
 #else
 #include <sys/time.h>
@@ -36,7 +36,7 @@ typedef int socklen_t;
 #include "StringTable.h"
 #include "Itoa.h"
 #include "SocketLayer.h"
-#include "SocketDefines.h"
+#include "Utils/SocketDefines.h"
 #if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32__)
 #include <netdb.h>
 #endif
@@ -44,9 +44,6 @@ typedef int socklen_t;
 #ifdef _DO_PRINTF
 #endif
 
-#ifdef _WIN32
-#include "WSAStartupSingleton.h"
-#endif
 namespace RakNet
 {
 RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop);

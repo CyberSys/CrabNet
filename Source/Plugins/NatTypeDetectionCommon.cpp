@@ -14,7 +14,7 @@
 
 #include "SocketLayer.h"
 #include "SocketIncludes.h"
-#include "SocketDefines.h"
+#include "../Utils/SocketDefines.h"
 
 using namespace RakNet;
 

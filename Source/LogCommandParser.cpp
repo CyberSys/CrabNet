@@ -20,7 +20,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "LinuxStrings.h"
+#include "Utils/LinuxStrings.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )

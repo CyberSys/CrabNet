@@ -11,7 +11,7 @@
 #include "RakNetSocket2.h"
 #include "RakAssert.h"
 #include "RakSleep.h"
-#include "SocketDefines.h"
+#include "Utils/SocketDefines.h"
 #include "GetTime.h"
 #include <stdio.h>
 #include <string.h> // memcpy
