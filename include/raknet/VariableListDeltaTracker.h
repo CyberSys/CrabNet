@@ -126,7 +126,7 @@ public:
 	struct VariableLastValueNode
 	{
 		VariableLastValueNode();
-		VariableLastValueNode(const unsigned char *data, int _byteLength);
+		VariableLastValueNode(const unsigned char *data, size_t _byteLength);
 		~VariableLastValueNode();
 		char *lastData;
 		unsigned int byteLength;
