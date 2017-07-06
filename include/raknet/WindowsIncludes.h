@@ -8,10 +8,7 @@
  *
  */
 
-#if   defined (WINDOWS_STORE_RT)
-#include <windows.h>
-#include <winsock.h>
-#elif defined (_WIN32)
+#if defined (_WIN32)
 #include <WinSock2.h>
 #include <windows.h>
 #include <Ws2tcpip.h>

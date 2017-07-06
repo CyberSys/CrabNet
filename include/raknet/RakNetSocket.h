@@ -106,7 +106,7 @@ public:
     #endif
 
 
-#if defined(_WIN32) && !defined(WINDOWS_STORE_RT)
+#if defined(_WIN32)
     inline int _WSASendTo(
     LPWSABUF lpBuffers,
     DWORD dwBufferCount,

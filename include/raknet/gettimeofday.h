@@ -19,13 +19,6 @@ struct timezone
   int  tz_dsttime;     /* type of dst correction */
 };
 
-#if defined(WINDOWS_STORE_RT)
-struct timeval {
-    long    tv_sec;
-    long    tv_usec;
-};
-#endif
-
 int gettimeofday(struct timeval *tv, struct timezone *tz);
 
 #else

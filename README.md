@@ -235,35 +235,6 @@ Native client
 -----------------------------------------
 Solution: RakNet_NativeClient_VS2010. See Samples\nacl_sdk\RakNet_NativeClient_VS2010\HowToSetup.txt for detailed instructions on setup.
 
-Windows Phone 8
------------------------------------------
-Example solution: RakNet_WinPhone8_VS2012.
-Add to your project DependentExtensions\WinPhone8\ThreadEmulation.cpp
-Add DependentExtensions\WinPhone8\ to your include paths
-Define _CRT_SECURE_NO_WARNINGS and WINDOWS_PHONE_8
-
-Windows Store 8
------------------------------------------
-Example solution: RakNet_WindowsStore8_VS2012.sln
-Add to your project DependentExtensions\WinPhone8\ThreadEmulation.cpp
-Add DependentExtensions\WinPhone8\ and DependentExtensions\WinRT to your include paths
-TCP is not supported, only UDP (RakPeer).
-IPV4 only (not hard to also add IPV6 upon request).
-Define:
-_CRT_SECURE_NO_WARNINGS
-WINDOWS_STORE_RT
-_RAKNET_SUPPORT_TCPInterface=0
-_RAKNET_SUPPORT_PacketizedTCP=0
-_RAKNET_SUPPORT_EmailSender=0
-_RAKNET_SUPPORT_HTTPConnection=0
-_RAKNET_SUPPORT_HTTPConnection2=0
-_RAKNET_SUPPORT_TelnetTransport=0
-_RAKNET_SUPPORT_NatTypeDetectionServer=0
-_RAKNET_SUPPORT_UDPProxyServer=0
-_RAKNET_SUPPORT_UDPProxyCoordinator=0
-_RAKNET_SUPPORT_UDPForwarder=0
-
-
 Unreal engine
 -----------------------------------------
 See https://udn.epicgames.com/lists/showpost.php?list=unprog3&id=37697&lessthan=&show=20

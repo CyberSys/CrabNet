@@ -14,7 +14,7 @@
 #define RAKNETSOCKET2_BERKLEY_CPP
 
 // Every platform except windows store 8 and native client supports Berkley sockets
-#if !defined(WINDOWS_STORE_RT) && !defined(__native_client__)
+#if !defined(__native_client__)
 
 #include "Itoa.h"
 
@@ -322,7 +322,7 @@ void RNS2_Berkley::RecvFromBlockingIPV4And6(RNS2RecvStruct *recvFromStruct)
 
     recvFromStruct->bytesRead = recvfrom__(rns2Socket, recvFromStruct->data, dataOutSize, flag, sockAddrPtr, socketlenPtr );
 
-#if defined(_WIN32) && defined(_DEBUG) && !defined(WINDOWS_PHONE_8)
+#if defined(_WIN32) && defined(_DEBUG)
     if (recvFromStruct->bytesRead==-1)
     {
         DWORD dwIOError = GetLastError();
@@ -395,7 +395,7 @@ void RNS2_Berkley::RecvFromBlockingIPV4(RNS2RecvStruct *recvFromStruct)
         }
         else if ( dwIOError != WSAEWOULDBLOCK && dwIOError != WSAEADDRNOTAVAIL)
         {
-#if defined(_WIN32) && !defined(_XBOX) && !defined(_XBOX_720_COMPILE_AS_WINDOWS) && !defined(X360) && defined(_DEBUG) && !defined(_XBOX_720_COMPILE_AS_WINDOWS) && !defined(WINDOWS_PHONE_8)
+#if defined(_WIN32) && !defined(_XBOX) && !defined(_XBOX_720_COMPILE_AS_WINDOWS) && !defined(X360) && defined(_DEBUG) && !defined(_XBOX_720_COMPILE_AS_WINDOWS)
             LPVOID messageBuffer;
             FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                 NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
@@ -431,7 +431,7 @@ void RNS2_Berkley::RecvFromBlocking(RNS2RecvStruct *recvFromStruct)
 #endif
 }
 
-#endif // !defined(WINDOWS_STORE_RT) && !defined(__native_client__)
+#endif // !defined(__native_client__)
 
 #endif // file header
 
