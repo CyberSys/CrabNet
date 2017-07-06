@@ -90,7 +90,6 @@ bool CCRakNetSlidingWindow::ShouldSendACKs(CCTimeType curTime, CCTimeType estima
     CCTimeType rto = GetSenderRTOForACK();
     (void) estimatedTimeToNextTick;
 
-    // iphone crashes on comparison between double and int64 http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
     if (rto==(CCTimeType) UNSET_TIME_US)
     {
         // Unknown how long until the remote system will retransmit, so better send right away
