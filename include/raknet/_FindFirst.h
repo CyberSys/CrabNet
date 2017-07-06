@@ -47,8 +47,8 @@ typedef struct _findinfo_t
 } _findinfo;
 
 long _findfirst(const char *name, _finddata_t *f);
-int _findnext(long h, _finddata_t *f);
-int _findclose(long h);
+int _findnext(intptr_t h, _finddata_t *f);
+int _findclose(intptr_t h);
 
 #endif
 #endif
