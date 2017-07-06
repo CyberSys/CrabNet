@@ -30,7 +30,7 @@ typedef unsigned int SOCKET;
 #include "DS_List.h"	
 #include "DS_ByteQueue.h"
 #include "RakAssert.h"
-#include "NativeTypes.h"
+#include <stdint.h>
 #include "SocketIncludes.h"
 #include "RakNetTime.h"
 #include "Export.h"

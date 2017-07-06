@@ -18,7 +18,7 @@
 #include "PacketPriority.h"
 #include "RakNetTypes.h"
 #include "RakNetDefines.h"
-#include "NativeTypes.h"
+#include <stdint.h>
 #include "RakNetDefines.h"
 #if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
 #include "CCRakNetUDT.h"

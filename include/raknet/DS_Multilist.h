@@ -19,7 +19,7 @@
 #include "RakAssert.h"
 #include <string.h> // memmove
 #include "Export.h"
-#include "NativeTypes.h"
+#include <stdint.h>
 
 
 #ifdef _MSC_VER

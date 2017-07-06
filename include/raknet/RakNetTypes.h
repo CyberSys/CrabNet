@@ -17,7 +17,7 @@
 #define __NETWORK_TYPES_H
 
 #include "RakNetDefines.h"
-#include "NativeTypes.h"
+#include <stdint.h>
 #include "RakNetTime.h"
 #include "Export.h"
 #include "WindowsIncludes.h"

@@ -11,7 +11,7 @@
 #include "Lobby2Client_Steam_Impl.h"
 #include "Lobby2Message_Steam.h"
 #include <stdlib.h>
-#include "NativeTypes.h"
+#include <stdint.h>
 #include "MTUSize.h"
 #include <windows.h>
 

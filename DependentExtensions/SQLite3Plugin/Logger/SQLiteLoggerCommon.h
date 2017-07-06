@@ -2,7 +2,7 @@
 #define _SQLITE_LOGGER_COMMON_H
 
 #include <string.h>
-#include "NativeTypes.h"
+#include <stdint.h>
 
 namespace RakNet
 {

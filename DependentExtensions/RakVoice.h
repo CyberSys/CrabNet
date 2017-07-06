@@ -18,7 +18,7 @@
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "DS_OrderedList.h"
-#include "NativeTypes.h"
+#include <stdint.h>
 
 namespace RakNet {
 

@@ -19,7 +19,7 @@
         #define _strnicmp strncasecmp
         #define _vsnprintf vsnprintf
         #if !defined(__APPLE__)
-            char *_strlwr(char * str ); //this won't compile on OSX for some reason
+            char *_strlwr(char * str); //this won't compile on OSX for some reason
         #endif
 #endif
 

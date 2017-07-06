@@ -9,7 +9,7 @@
  */
 
 #include <cstdlib>
-#include "NativeTypes.h"
+#include <stdint.h>
 #include "DS_List.h"
 #include "BitStream.h"
 

@@ -22,7 +22,7 @@
 #define __TEAM_BALANCER_H
 
 #include "PluginInterface2.h"
-#include "NativeTypes.h"
+#include <stdint.h>
 #include "DS_List.h"
 #include "RakString.h"
 

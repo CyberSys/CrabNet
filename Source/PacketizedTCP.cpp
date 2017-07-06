@@ -12,7 +12,7 @@
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 
 #include "PacketizedTCP.h"
-#include "NativeTypes.h"
+#include <stdint.h>
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
 #include "RakAlloca.h"

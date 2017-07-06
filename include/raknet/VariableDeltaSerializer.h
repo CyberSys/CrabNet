@@ -13,7 +13,7 @@
 
 #include "VariableListDeltaTracker.h"
 #include "DS_MemoryPool.h"
-#include "NativeTypes.h"
+#include <stdint.h>
 #include "BitStream.h"
 #include "PacketPriority.h"
 #include "DS_OrderedList.h"

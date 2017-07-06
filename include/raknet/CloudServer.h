@@ -21,7 +21,7 @@
 #define __CLOUD_SERVER_H
 
 #include "PluginInterface2.h"
-#include "NativeTypes.h"
+#include <stdint.h>
 #include "RakString.h"
 #include "DS_Hash.h"
 #include "CloudCommon.h"

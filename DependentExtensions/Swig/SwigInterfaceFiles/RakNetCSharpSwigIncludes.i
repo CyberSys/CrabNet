@@ -8,7 +8,6 @@
 //%include "RakNetSmartPtr.h"
 %include "MessageIdentifiers.h"
 %include "SimpleMutex.h"
-%include "NativeTypes.h"
 %include "SocketIncludes.h"
 %include "RakNetTypes.h"
 %include "RakString.h"

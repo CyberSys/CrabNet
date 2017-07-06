@@ -11,7 +11,7 @@
 #ifndef __SOCK_ADDR_H
 #define __SOCK_ADDR_H
 
-#include "NativeTypes.h"
+#include <stdint.h>
 
 namespace RakNet
 {
