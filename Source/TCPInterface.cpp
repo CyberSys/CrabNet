@@ -179,7 +179,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 #else
     (void) socketFamily;
 
-    if (isStarted.GetValue()>0)
+    if (isStarted > 0)
         return false;
 
     threadPriority=_threadPriority;
@@ -193,7 +193,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 #endif
     }
 
-    isStarted.Increment();
+    isStarted++;
     if (maxConnections==0)
         maxConnections=maxIncomingConnections;
     if (maxConnections==0)
@@ -220,7 +220,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
     if (errorCode!=0)
         return false;
 
-    while (threadRunning.GetValue()==0)
+    while (threadRunning == 0)
         RakSleep(0);
 
     unsigned int i;
@@ -237,7 +237,7 @@ void TCPInterface::Stop(void)
         messageHandlerList[i]->OnRakPeerShutdown();
 
 #ifndef __native_client__
-    if (isStarted.GetValue()==0)
+    if (isStarted == 0)
         return;
 
 #if OPEN_SSL_CLIENT_SUPPORT==1
@@ -245,7 +245,7 @@ void TCPInterface::Stop(void)
         remoteClients[i].DisconnectSSL();
 #endif
 
-    isStarted.Decrement();
+    isStarted--;
 
 #if !defined(WINDOWS_STORE_RT)
     if (listenSocket!=0)
@@ -269,7 +269,7 @@ void TCPInterface::Stop(void)
     blockingSocketListMutex.Unlock();
 
     // Wait for the thread to stop
-    while ( threadRunning.GetValue()>0 )
+    while ( threadRunning > 0 )
         RakSleep(15);
 
     RakSleep(100);
@@ -315,7 +315,7 @@ void TCPInterface::Stop(void)
 }
 SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort, bool block, unsigned short socketFamily, const char *bindAddress)
 {
-    if (threadRunning.GetValue()==0)
+    if (threadRunning == 0)
         return UNASSIGNED_SYSTEM_ADDRESS;
 
     int newRemoteClientIndex=-1;
@@ -423,7 +423,7 @@ void TCPInterface::Send( const char *data, unsigned length, const SystemAddress 
 }
 bool TCPInterface::SendList( const char **data, const unsigned int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast )
 {
-    if (isStarted.GetValue()==0)
+    if (isStarted == 0)
         return false;
     if (data==0)
         return false;
@@ -510,7 +510,7 @@ Packet* TCPInterface::Receive( void )
 }
 Packet* TCPInterface::ReceiveInt( void )
 {
-    if (isStarted.GetValue()==0)
+    if (isStarted == 0)
         return 0;
     if (headPush.IsEmpty()==false)
         return headPush.Pop();
@@ -550,7 +550,7 @@ void TCPInterface::DetachPlugin( PluginInterface2 *plugin )
 }
 void TCPInterface::CloseConnection( SystemAddress systemAddress )
 {
-    if (isStarted.GetValue()==0)
+    if (isStarted == 0)
         return;
     if (systemAddress==UNASSIGNED_SYSTEM_ADDRESS)
         return;
@@ -624,7 +624,7 @@ void TCPInterface::PushBackPacket( Packet *packet, bool pushAtHead )
 }
 bool TCPInterface::WasStarted(void) const
 {
-    return threadRunning.GetValue()>0;
+    return threadRunning > 0;
 }
 SystemAddress TCPInterface::HasCompletedConnectionAttempt(void)
 {
@@ -873,7 +873,7 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
     tcpInterface->remoteClients[newRemoteClientIndex].systemAddress=systemAddress;
 
     // Notify user that the connection attempt has completed.
-    if (tcpInterface->threadRunning.GetValue()>0)
+    if (tcpInterface->threadRunning > 0)
     {
         tcpInterface->completedConnectionAttemptMutex.Lock();
         tcpInterface->completedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_ );
@@ -894,7 +894,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
     char * data = (char*) malloc(BUFF_SIZE);
     Packet *incomingMessage;
     fd_set readFD, exceptionFD, writeFD;
-    sts->threadRunning.Increment();
+    sts->threadRunning++;
 
 #if RAKNET_SUPPORT_IPV6!=1
     sockaddr_in sockAddr;
@@ -914,7 +914,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
     tv.tv_usec=30000;
 
 
-    while (sts->isStarted.GetValue()>0)
+    while (sts->isStarted > 0)
     {
 #if OPEN_SSL_CLIENT_SUPPORT==1
         SystemAddress *sslSystemAddress;
@@ -1193,7 +1193,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
         // Sleep 0 on Linux monopolizes the CPU
         RakSleep(30);
     }
-    sts->threadRunning.Decrement();
+    sts->threadRunning--;
 
     free(data);
 

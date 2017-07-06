@@ -48,7 +48,6 @@
 #include "RakAssert.h"
 #include "RakNetVersion.h"
 #include "NetworkIDManager.h"
-#include "gettimeofday.h"
 #include "SignaledEvent.h"
 #include "SuperFastHash.h"
 #include "RakAlloca.h"

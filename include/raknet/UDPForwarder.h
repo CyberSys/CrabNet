@@ -14,6 +14,7 @@
 
 
 
+#include <atomic>
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_UDPForwarder==1
 
@@ -29,7 +30,6 @@
 #include "RakThread.h"
 #include "DS_Queue.h"
 #include "DS_OrderedList.h"
-#include "LocklessTypes.h"
 #include "DS_ThreadsafeAllocatingQueue.h"
 
 namespace RakNet
@@ -148,7 +148,7 @@ protected:
 //    SimpleMutex forwardListNotUpdatedMutex;
 
     unsigned short maxForwardEntries;
-    RakNet::LocklessUint32_t isRunning, threadRunning;
+    std::atomic<uint32_t> isRunning, threadRunning;
 
 };
 

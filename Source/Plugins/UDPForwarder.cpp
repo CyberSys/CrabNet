@@ -67,10 +67,10 @@ UDPForwarder::~UDPForwarder()
 }
 void UDPForwarder::Startup(void)
 {
-    if (isRunning.GetValue()>0)
+    if (isRunning > 0)
         return;
 
-    isRunning.Increment();
+    isRunning++;
 
     int errorCode;
 
@@ -84,16 +84,16 @@ void UDPForwarder::Startup(void)
         return;
     }
 
-    while (threadRunning.GetValue()==0)
+    while (threadRunning == 0)
         RakSleep(30);
 }
 void UDPForwarder::Shutdown(void)
 {
-    if (isRunning.GetValue()==0)
+    if (isRunning == 0)
         return;
-    isRunning.Decrement();
+    isRunning--;
 
-    while (threadRunning.GetValue()>0)
+    while (threadRunning > 0)
         RakSleep(30);
 
     unsigned int j;
@@ -121,7 +121,7 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
     if (timeoutOnNoDataMS == 0 || timeoutOnNoDataMS > UDP_FORWARDER_MAXIMUM_TIMEOUT || source==UNASSIGNED_SYSTEM_ADDRESS || destination==UNASSIGNED_SYSTEM_ADDRESS)
         return UDPFORWARDER_INVALID_PARAMETERS;
 
-    if (isRunning.GetValue()==0)
+    if (isRunning == 0)
         return UDPFORWARDER_NOT_RUNNING;
 
     (void) socketFamily;
@@ -568,8 +568,8 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarderGlobal)
 {
     UDPForwarder * udpForwarder = ( UDPForwarder * ) arguments;
 
-    udpForwarder->threadRunning.Increment();
-    while (udpForwarder->isRunning.GetValue()>0)
+    udpForwarder->threadRunning++;
+    while (udpForwarder->isRunning > 0)
     {
         udpForwarder->UpdateUDPForwarder();
 
@@ -581,7 +581,7 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarderGlobal)
         else
             RakSleep(0);
     }
-    udpForwarder->threadRunning.Decrement();
+    udpForwarder->threadRunning--;
     return 0;
 }
 

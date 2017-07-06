@@ -13,6 +13,7 @@
 ///
 
 
+#include <atomic>
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_TCPInterface==1
 
@@ -29,7 +30,6 @@
 #include "SocketIncludes.h"
 #include "DS_ByteQueue.h"
 #include "DS_ThreadsafeAllocatingQueue.h"
-#include "LocklessTypes.h"
 #include "PluginInterface2.h"
 
 #if OPEN_SSL_CLIENT_SUPPORT==1
@@ -147,7 +147,7 @@ protected:
     // Plugins
     DataStructures::List<PluginInterface2*> messageHandlerList;
 
-    RakNet::LocklessUint32_t isStarted, threadRunning;
+    std::atomic<uint32_t> isStarted, threadRunning;
     __TCPSOCKET__ listenSocket;
 
     DataStructures::Queue<Packet*> headPush, tailPush;

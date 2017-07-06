@@ -11,9 +11,9 @@
 #ifndef __RAKNET_SOCKET_2_H
 #define __RAKNET_SOCKET_2_H
 
+#include <atomic>
 #include "RakNetTypes.h"
 #include "MTUSize.h"
-#include "LocklessTypes.h"
 #include "RakThread.h"
 #include "DS_ThreadsafeAllocatingQueue.h"
 #include "Export.h"
@@ -313,7 +313,7 @@ protected:
     RNS2_BerkleyBindParameters binding;
 
     unsigned RecvFromLoopInt(void);
-    RakNet::LocklessUint32_t isRecvFromLoopThreadActive;
+    std::atomic<uint32_t> isRecvFromLoopThreadActive;
     volatile bool endThreads;
     // Constructor not called!
 
