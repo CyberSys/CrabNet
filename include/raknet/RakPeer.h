@@ -632,7 +632,7 @@ public:
     // Call manually if RAKPEER_USER_THREADED==1 at least every 30 milliseconds.
     // updateBitStream should be:
     //     BitStream updateBitStream( MAXIMUM_MTU_SIZE
-    // #if LIBCAT_SECURITY==1
+    // #ifdef LIBCAT_SECURITY
     //    + cat::AuthenticatedEncryption::OVERHEAD_BYTES
     // #endif
     // );
@@ -680,7 +680,7 @@ public:
         RakNetSocket2* rakNetSocket;
         SystemIndex remoteSystemIndex;
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
         // Cached answer used internally by RakPeer to prevent DoS attacks based on the connexion handshake
         char answer[cat::EasyHandshake::ANSWER_BYTES];
 
@@ -845,7 +845,7 @@ protected:
         RakNetSocket2* socket;
         enum {CONNECT=1/*, PING=2, PING_OPEN_CONNECTIONS=4,*/ /*ADVERTISE_SYSTEM=2*/} actionToTake;
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
         char handshakeChallenge[cat::EasyHandshake::CHALLENGE_BYTES];
         cat::ClientEasyHandshake *client_handshake;
         char remote_public_key[cat::EasyHandshake::PUBLIC_KEY_BYTES];
@@ -853,7 +853,7 @@ protected:
     //    char random[16];
 #endif
     };
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
     bool GenerateConnectionRequestChallenge(RequestedConnectionStruct *rcs,PublicKey *publicKey);
 #endif
 
@@ -1006,7 +1006,7 @@ protected:
     void OnConnectedPong(RakNet::Time sendPingTime, RakNet::Time sendPongTime, RemoteSystemStruct *remoteSystem);
     void CallPluginCallbacks(DataStructures::List<PluginInterface2*> &pluginList, Packet *packet);
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
     // Encryption and security
     bool _using_security, _require_client_public_key;
     char my_public_key[cat::EasyHandshake::PUBLIC_KEY_BYTES];

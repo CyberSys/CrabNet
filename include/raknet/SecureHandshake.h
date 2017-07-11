@@ -17,7 +17,7 @@
 
 #include "NativeFeatureIncludes.h"
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
 
 // If building a RakNet DLL, be sure to tweak the CAT_EXPORT macro meaning
 #if defined(_RAKNET_DLL)
@@ -27,7 +27,7 @@
 #endif
 
 // Include DependentExtensions in your path to include this
-#include "cat/AllTunnel.hpp"
+#include <cat/AllTunnel.hpp>
 
 #endif // LIBCAT_SECURITY
 

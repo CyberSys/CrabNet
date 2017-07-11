@@ -12,6 +12,15 @@ else(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG -D_DEBUG)
 endif(MSVC)
 
+if(RAKNET_ENABLE_LIBCAT_SECURITY)
+    if(MSVC)
+        add_definitions("/D LIBCAT_SECURITY")
+    else(MSVC)
+        add_definitions("-DLIBCAT_SECURITY")
+    endif(MSVC)
+    message(STATUS "Security enabled")
+endif()
+
 if(RAKNET_ENABLE_STATIC)
     add_library(RakNetLibStatic STATIC ${ALL_CPP_SRCS})
 

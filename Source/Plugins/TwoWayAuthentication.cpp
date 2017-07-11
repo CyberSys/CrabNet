@@ -18,7 +18,7 @@
 #include "BitStream.h"
 #include "RakPeerInterface.h"
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
 static const int HASH_BITS = 256;
 static const int HASH_BYTES = HASH_BITS / 8;
 static const int STRENGTHENING_FACTOR = 256;
@@ -422,7 +422,7 @@ void TwoWayAuthentication::OnPasswordResult(Packet *packet)
 }
 void TwoWayAuthentication::Hash(char thierNonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], RakNet::RakString password, char out[HASHED_NONCE_AND_PW_LENGTH])
 {
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
     cat::Skein hash;
     if (!hash.BeginKey(HASH_BITS)) return;
     hash.Crunch(thierNonce, TWO_WAY_AUTHENTICATION_NONCE_LENGTH);

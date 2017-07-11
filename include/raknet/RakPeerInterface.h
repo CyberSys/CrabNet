@@ -595,7 +595,7 @@ public:
     // Call manually if RAKPEER_USER_THREADED==1 at least every 30 milliseconds.
     // updateBitStream should be:
     //     BitStream updateBitStream( MAXIMUM_MTU_SIZE
-    // #if LIBCAT_SECURITY==1
+    // #ifdef LIBCAT_SECURITY
     //    + cat::AuthenticatedEncryption::OVERHEAD_BYTES
     // #endif
     // );

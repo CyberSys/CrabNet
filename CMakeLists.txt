@@ -26,9 +26,11 @@ ENDIF(WIN32 AND NOT UNIX)
 
 
 # Options
-option( RAKNET_ENABLE_SAMPLES "Generate RakNet sample projects if true." FALSE)
-option( RAKNET_ENABLE_DLL "Generate the DLL project if true." TRUE)
-option( RAKNET_ENABLE_STATIC "Generate the static library project if true." TRUE)
+option(RAKNET_ENABLE_SAMPLES "Generate RakNet sample projects." FALSE)
+option(RAKNET_ENABLE_DLL "Generate the DLL project." TRUE)
+option(RAKNET_ENABLE_STATIC "Generate the static library project." TRUE)
+
+option(RAKNET_ENABLE_LIBCAT_SECURITY "Enable secure connection support." FALSE)
 
 include(CmakeIncludes/CmakeMacros.cmake)
 
@@ -38,13 +40,13 @@ if(MSVC)
 endif(MSVC)
 
 
-include_directories(SYSTEM include/raknet)
+include_directories(SYSTEM include/raknet DependentExtensions)
 
 add_subdirectory(lib)
 
 set(RAKNET_COMMON_LIBS RakNetLibStatic)
 
-if( RAKNET_GENERATE_SAMPLES )
+if(RAKNET_GENERATE_SAMPLES)
     add_subdirectory(Samples)
 endif()
 

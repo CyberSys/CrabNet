@@ -50,9 +50,10 @@
 // #define _RAKNET_SUPPORT_TwoWayAuthentication 0
 
 // SET DEFAULTS IF UNDEFINED
-#ifndef LIBCAT_SECURITY
+/*#ifndef LIBCAT_SECURITY
 #define LIBCAT_SECURITY 0
-#endif
+#endif*/
+
 #ifndef _RAKNET_SUPPORT_ConnectionGraph2
 #define _RAKNET_SUPPORT_ConnectionGraph2 1
 #endif

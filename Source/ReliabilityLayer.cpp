@@ -350,7 +350,7 @@ void ReliabilityLayer::Reset( bool resetVariables, int MTUSize, bool _useSecurit
     {
         InitializeVariables();
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
         useSecurity = _useSecurity;
 
         if (_useSecurity)
@@ -665,7 +665,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
     DatagramSequenceNumberType holeCount;
     unsigned i;
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
     if (useSecurity)
     {
         unsigned int received = length;
@@ -2289,7 +2289,7 @@ void ReliabilityLayer::SendBitStream( RakNetSocket2 *s, SystemAddress &systemAdd
     }
 #endif
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
     if (useSecurity)
     {
         unsigned char *buffer = reinterpret_cast<unsigned char*>( bitStream->GetData() );
@@ -3896,7 +3896,7 @@ unsigned int ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBytes(voi
 {
     unsigned int val = congestionManager.GetMTU() - DatagramHeaderFormat::GetDataHeaderByteLength();
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
     if (useSecurity)
         val -= cat::AuthenticatedEncryption::OVERHEAD_BYTES;
 #endif

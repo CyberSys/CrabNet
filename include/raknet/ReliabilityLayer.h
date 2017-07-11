@@ -580,7 +580,7 @@ private:
     BPSTracker bpsMetrics[RNS_PER_SECOND_METRICS_COUNT];
     CCTimeType lastBpsClear;
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
 public:
     cat::AuthenticatedEncryption* GetAuthenticatedEncryption(void) { return &auth_enc; }
 

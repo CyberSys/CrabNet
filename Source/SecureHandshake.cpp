@@ -14,14 +14,8 @@
 
 #include "NativeFeatureIncludes.h"
 
-#if LIBCAT_SECURITY==1
-
-// If building a RakNet DLL, be sure to tweak the CAT_EXPORT macro meaning
-#if defined(_RAKNET_DLL)
-# define CAT_BUILD_DLL
-#else
-# define CAT_NEUTER_EXPORT
-#endif
+#ifdef LIBCAT_SECURITY
+#include "SecureHandshake.h"
 
 #include "cat/src/port/EndianNeutral.cpp"
 #include "cat/src/port/AlignedAlloc.cpp"

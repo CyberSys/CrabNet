@@ -26,7 +26,7 @@
 // How often to check for ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_TIMEOUT, and the minimum timeout time. Maximum is double this value.
 #define CHALLENGE_MINIMUM_TIMEOUT 3000
 
-#if LIBCAT_SECURITY==1
+#ifdef LIBCAT_SECURITY
 // From CPP FILE:
 // static const int HASH_BITS = 256;
 // static const int HASH_BYTES = HASH_BITS / 8;
