@@ -41,29 +41,9 @@ StringTable::~StringTable()
     }
 }
 
-void StringTable::AddReference(void)
+StringTable &StringTable::Instance(void)
 {
-    if (++referenceCount==1)
-    {
-        instance =new StringTable;
-    }
-}
-void StringTable::RemoveReference(void)
-{
-    RakAssert(referenceCount > 0);
-
-    if (referenceCount > 0)
-    {
-        if (--referenceCount==0)
-        {
-            delete instance;
-            instance=0;
-        }
-    }
-}
-
-StringTable* StringTable::Instance(void)
-{
+    static StringTable instance;
     return instance;
 }
 
@@ -103,7 +83,7 @@ void StringTable::EncodeString( const char *input, int maxCharsToWrite, RakNet::
     {
         LogStringNotFound(input);
         output->Write(false);
-        StringCompressor::Instance()->EncodeString(input, maxCharsToWrite, output);
+        StringCompressor::Instance().EncodeString(input, maxCharsToWrite, output);
     }
 }
 
@@ -118,7 +98,7 @@ bool StringTable::DecodeString( char *output, int maxCharsToWrite, RakNet::BitSt
         return false;
     if (hasIndex==false)
     {
-        StringCompressor::Instance()->DecodeString(output, maxCharsToWrite, input);
+        StringCompressor::Instance().DecodeString(output, maxCharsToWrite, input);
     }
     else
     {

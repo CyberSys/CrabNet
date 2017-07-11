@@ -56,7 +56,7 @@ namespace RakNet
         /// static function because only static functions can access static members
         /// The RakPeer constructor adds a reference to this class, so don't call this until an instance of RakPeer exists, or unless you call AddReference yourself.
         /// \return the unique instance of the StringTable
-        static StringTable* Instance(void);
+        static StringTable &Instance(void);
 
         /// Add a string to the string table.
         /// \param[in] str The string to add to the string table
@@ -76,12 +76,6 @@ namespace RakNet
         /// \param[in] maxCharsToWrite Size, in bytes, of \a output .  A NULL terminator will always be appended to the output string.  If the maxCharsToWrite is not large enough, the string will be truncated.
         /// \param[in] input The bitstream containing the compressed string
         bool DecodeString( char *output, int maxCharsToWrite, RakNet::BitStream *input );
-
-        /// Used so I can allocate and deallocate this singleton at runtime
-        static void AddReference(void);
-
-        /// Used so I can allocate and deallocate this singleton at runtime
-        static void RemoveReference(void);
 
         /// Private Constructor
         StringTable();

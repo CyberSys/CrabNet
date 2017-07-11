@@ -1226,7 +1226,7 @@ void RakString::SerializeCompressed(const char *str, BitStream *bs, uint8_t lang
 {
     if (writeLanguageId)
         bs->WriteCompressed(languageId);
-    StringCompressor::Instance()->EncodeString(str,0xFFFF,bs,languageId);
+    StringCompressor::Instance().EncodeString(str,0xFFFF,bs,languageId);
 }
 bool RakString::Deserialize(BitStream *bs)
 {
@@ -1269,7 +1269,7 @@ bool RakString::DeserializeCompressed(BitStream *bs, bool readLanguageId)
         bs->ReadCompressed(languageId);
     else
         languageId=0;
-    return StringCompressor::Instance()->DecodeString(this,0xFFFF,bs,languageId);
+    return StringCompressor::Instance().DecodeString(this,0xFFFF,bs,languageId);
 }
 bool RakString::DeserializeCompressed(char *str, BitStream *bs, bool readLanguageId)
 {
@@ -1278,7 +1278,7 @@ bool RakString::DeserializeCompressed(char *str, BitStream *bs, bool readLanguag
         bs->ReadCompressed(languageId);
     else
         languageId=0;
-    return StringCompressor::Instance()->DecodeString(str,0xFFFF,bs,languageId);
+    return StringCompressor::Instance().DecodeString(str,0xFFFF,bs,languageId);
 }
 const char *RakString::ToString(int64_t i)
 {

@@ -65,9 +65,6 @@ TCPInterface::TCPInterface()
     remoteClients=0;
     remoteClientsLength=0;
 
-    StringCompressor::AddReference();
-    RakNet::StringTable::AddReference();
-
 #if OPEN_SSL_CLIENT_SUPPORT==1
     ctx=0;
     meth=0;
@@ -86,8 +83,6 @@ TCPInterface::~TCPInterface()
 
     delete[] remoteClients;
 
-    StringCompressor::RemoveReference();
-    RakNet::StringTable::RemoveReference();
 }
 
 bool TCPInterface::CreateListenSocket(unsigned short port, unsigned short maxIncomingConnections, unsigned short socketFamily, const char *bindAddress)

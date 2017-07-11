@@ -398,7 +398,7 @@ void FileList::Serialize(RakNet::BitStream *outBitStream)
         outBitStream->WriteCompressed(fileList[i].context.op);
         outBitStream->WriteCompressed(fileList[i].context.flnc_extraData1);
         outBitStream->WriteCompressed(fileList[i].context.flnc_extraData2);
-        StringCompressor::Instance()->EncodeString(fileList[i].filename.C_String(), MAX_FILENAME_LENGTH, outBitStream);
+        StringCompressor::Instance().EncodeString(fileList[i].filename.C_String(), MAX_FILENAME_LENGTH, outBitStream);
 
         bool writeFileData = (fileList[i].dataLengthBytes>0)==true;
         outBitStream->Write(writeFileData);
@@ -433,7 +433,7 @@ bool FileList::Deserialize(RakNet::BitStream *inBitStream)
         inBitStream->ReadCompressed(n.context.op);
         inBitStream->ReadCompressed(n.context.flnc_extraData1);
         inBitStream->ReadCompressed(n.context.flnc_extraData2);
-        StringCompressor::Instance()->DecodeString((char*)filename, MAX_FILENAME_LENGTH, inBitStream);
+        StringCompressor::Instance().DecodeString((char*)filename, MAX_FILENAME_LENGTH, inBitStream);
         inBitStream->Read(dataLenNonZero);
         if (dataLenNonZero)
         {

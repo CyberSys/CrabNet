@@ -197,8 +197,6 @@ RakPeer::RakPeer()
     _cookie_jar = 0;
 #endif
 
-    StringCompressor::AddReference();
-    RakNet::StringTable::AddReference();
 #ifdef _WIN32
     WSAStartupSingleton::AddRef();
 #endif
@@ -277,8 +275,6 @@ RakPeer::~RakPeer()
     // Free the ban list.
     ClearBanList();
 
-    StringCompressor::RemoveReference();
-    RakNet::StringTable::RemoveReference();
 #ifdef _WIN32
     WSAStartupSingleton::Deref();
 #endif

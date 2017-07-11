@@ -171,8 +171,8 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(FileList &localF
     RakNet::BitStream outBitstream;
     outBitstream.Write((MessageID)ID_DDT_DOWNLOAD_REQUEST);
     outBitstream.Write(setId);
-    StringCompressor::Instance()->EncodeString(subdir, 256, &outBitstream);
-    StringCompressor::Instance()->EncodeString(outputSubdir, 256, &outBitstream);
+    StringCompressor::Instance().EncodeString(subdir, 256, &outBitstream);
+    StringCompressor::Instance().EncodeString(outputSubdir, 256, &outBitstream);
     localFiles.Serialize(&outBitstream);
     SendUnified(&outBitstream, _priority, RELIABLE_ORDERED, _orderingChannel, host, false);
 
@@ -203,9 +203,9 @@ void DirectoryDeltaTransfer::OnDownloadRequest(Packet *packet)
     unsigned short setId;
     inBitstream.IgnoreBits(8);
     inBitstream.Read(setId);
-    StringCompressor::Instance()->DecodeString(subdir, 256, &inBitstream);
-    StringCompressor::Instance()->DecodeString(remoteSubdir, 256, &inBitstream);
-    if (remoteFileHash.Deserialize(&inBitstream)==false)
+    StringCompressor::Instance().DecodeString(subdir, 256, &inBitstream);
+    StringCompressor::Instance().DecodeString(remoteSubdir, 256, &inBitstream);
+    if (!remoteFileHash.Deserialize(&inBitstream))
     {
 #ifdef _DEBUG
         RakAssert(0);

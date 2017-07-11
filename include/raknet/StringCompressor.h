@@ -54,7 +54,7 @@ namespace RakNet
         /// The RakPeer constructor adds a reference to this class, so don't call this until an instance of RakPeer exists,
         /// or unless you call AddReference yourself.
         /// \return the unique instance of the StringCompressor
-        static StringCompressor *Instance(void);
+        static StringCompressor &Instance(void);
 
         /// Given an array of strings, such as a chat log, generate the optimal encoding tree for it.
         /// This function is optional and if it is not called a default tree will be used instead.
@@ -94,23 +94,12 @@ namespace RakNet
         bool DecodeString(RakNet::RakString *output, size_t maxCharsToWrite, RakNet::BitStream *input,
                           uint8_t languageId = 0);
 
-        /// Used so I can allocate and deallocate this singleton at runtime
-        static void AddReference(void);
-
-        /// Used so I can allocate and deallocate this singleton at runtime
-        static void RemoveReference(void);
-
         StringCompressor();
 
     private:
 
-        /// Singleton instance
-        static StringCompressor *instance;
-
         /// Pointer to the huffman encoding trees.
         DataStructures::Map<int, HuffmanEncodingTree *> huffmanEncodingTrees;
-
-        static int referenceCount;
     };
 
 } // namespace RakNet

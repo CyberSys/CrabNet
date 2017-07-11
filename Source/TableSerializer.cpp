@@ -39,7 +39,7 @@ void TableSerializer::SerializeColumns(DataStructures::Table *in, RakNet::BitStr
     unsigned i;
     for (i=0; i<columns.Size(); i++)
     {
-        StringCompressor::Instance()->EncodeString(columns[i].columnName, _TABLE_MAX_COLUMN_NAME_LENGTH, out);
+        StringCompressor::Instance().EncodeString(columns[i].columnName, _TABLE_MAX_COLUMN_NAME_LENGTH, out);
         out->Write((unsigned char)columns[i].columnType);
     }
 }
@@ -52,7 +52,7 @@ void TableSerializer::SerializeColumns(DataStructures::Table *in, RakNet::BitStr
     {
         if (skipColumnIndices.GetIndexOf(i)==(unsigned)-1)
         {
-            StringCompressor::Instance()->EncodeString(columns[i].columnName, _TABLE_MAX_COLUMN_NAME_LENGTH, out);
+            StringCompressor::Instance().EncodeString(columns[i].columnName, _TABLE_MAX_COLUMN_NAME_LENGTH, out);
             out->Write((unsigned char)columns[i].columnType);
         }
     }
@@ -92,7 +92,7 @@ bool TableSerializer::DeserializeColumns(RakNet::BitStream *in, DataStructures::
     unsigned i;
     for (i=0; i<columnSize; i++)
     {
-        StringCompressor::Instance()->DecodeString(columnName, 32, in);
+        StringCompressor::Instance().DecodeString(columnName, 32, in);
         in->Read(columnType);
         out->AddColumn(columnName, (DataStructures::Table::ColumnType)columnType);
     }
@@ -167,7 +167,7 @@ void TableSerializer::SerializeCell(RakNet::BitStream *out, DataStructures::Tabl
         }
         else if (columnType==DataStructures::Table::STRING)
         {
-            StringCompressor::Instance()->EncodeString(cell->c, 65535, out);
+            StringCompressor::Instance().EncodeString(cell->c, 65535, out);
         }
         else if (columnType==DataStructures::Table::POINTER)
         {
@@ -205,7 +205,7 @@ bool TableSerializer::DeserializeCell(RakNet::BitStream *in, DataStructures::Tab
         }
         else if (columnType==DataStructures::Table::STRING)
         {
-            if (StringCompressor::Instance()->DecodeString(tempString, 65535, in)==false)
+            if (StringCompressor::Instance().DecodeString(tempString, 65535, in)==false)
                 return false;
             cell->Set(tempString);
         }
@@ -233,7 +233,7 @@ bool TableSerializer::DeserializeCell(RakNet::BitStream *in, DataStructures::Tab
 }
 void TableSerializer::SerializeFilterQuery(RakNet::BitStream *in, DataStructures::Table::FilterQuery *query)
 {
-    StringCompressor::Instance()->EncodeString(query->columnName,_TABLE_MAX_COLUMN_NAME_LENGTH,in,0);
+    StringCompressor::Instance().EncodeString(query->columnName,_TABLE_MAX_COLUMN_NAME_LENGTH,in,0);
     in->WriteCompressed(query->columnIndex);
     in->Write((unsigned char) query->operation);
     in->Write(query->cellValue->isEmpty);
@@ -249,7 +249,7 @@ bool TableSerializer::DeserializeFilterQuery(RakNet::BitStream *out, DataStructu
 {
     bool b;
     RakAssert(query->cellValue);
-    StringCompressor::Instance()->DecodeString(query->columnName,_TABLE_MAX_COLUMN_NAME_LENGTH,out,0);
+    StringCompressor::Instance().DecodeString(query->columnName,_TABLE_MAX_COLUMN_NAME_LENGTH,out,0);
     out->ReadCompressed(query->columnIndex);
     unsigned char op;
     out->Read(op);

@@ -208,7 +208,7 @@ void FileListTransfer::Send(FileList *fileList, RakNet::RakPeerInterface *rakPee
                 outBitstream << fileList->fileList[i].context;
                 // outBitstream.Write(fileList->fileList[i].context);
                 outBitstream.Write(setID);
-                StringCompressor::Instance()->EncodeString(fileList->fileList[i].filename, 512, &outBitstream);
+                StringCompressor::Instance().EncodeString(fileList->fileList[i].filename, 512, &outBitstream);
 
                 outBitstream.WriteCompressed(i);
                 outBitstream.WriteCompressed(fileList->fileList[i].dataLengthBytes); // Original length in bytes
@@ -386,7 +386,7 @@ bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFullFile)
     RakAssert(fileListReceiver->gotSetHeader==true);
 #endif
 
-    if (StringCompressor::Instance()->DecodeString(onFileStruct.fileName, 512, &inBitStream)==false)
+    if (StringCompressor::Instance().DecodeString(onFileStruct.fileName, 512, &inBitStream)==false)
     {
 #ifdef _DEBUG
         RakAssert(0);
@@ -734,7 +734,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
     RakAssert(fileListReceiver->gotSetHeader==true);
 #endif
 
-    if (StringCompressor::Instance()->DecodeString(onFileStruct.fileName, 512, &inBitStream)==false)
+    if (StringCompressor::Instance().DecodeString(onFileStruct.fileName, 512, &inBitStream)==false)
     {
 #ifdef _DEBUG
         RakAssert(0);
@@ -1000,7 +1000,7 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
                 // outBitstream.Write(ftp->fileListNode.context);
                 outBitstream << ftp->fileListNode.context;
                 outBitstream.Write(setId);
-                StringCompressor::Instance()->EncodeString(ftp->fileListNode.filename, 512, &outBitstream);
+                StringCompressor::Instance().EncodeString(ftp->fileListNode.filename, 512, &outBitstream);
                 outBitstream.WriteCompressed(ftp->setIndex);
                 outBitstream.WriteCompressed(ftp->fileListNode.dataLengthBytes); // Original length in bytes
                 outBitstream.AlignWriteToByteBoundary();
@@ -1030,7 +1030,7 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
             // outBitstream.Write(ftp->fileListNode.context);
             outBitstream << ftp->fileListNode.context;
             outBitstream.Write(setId);
-            StringCompressor::Instance()->EncodeString(ftp->fileListNode.filename, 512, &outBitstream);
+            StringCompressor::Instance().EncodeString(ftp->fileListNode.filename, 512, &outBitstream);
             outBitstream.WriteCompressed(ftp->setIndex);
             outBitstream.WriteCompressed(ftp->fileListNode.dataLengthBytes); // Original length in bytes
             outBitstream.WriteCompressed(ftp->currentOffset);

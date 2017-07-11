@@ -30,31 +30,9 @@
 
 using namespace RakNet;
 
-StringCompressor *StringCompressor::instance = 0;
-int StringCompressor::referenceCount = 0;
-
-void StringCompressor::AddReference(void)
+StringCompressor &StringCompressor::Instance(void)
 {
-    if (++referenceCount == 1)
-        instance = new StringCompressor;
-}
-
-void StringCompressor::RemoveReference(void)
-{
-    RakAssert(referenceCount > 0);
-
-    if (referenceCount > 0)
-    {
-        if (--referenceCount == 0)
-        {
-            delete instance;
-            instance = 0;
-        }
-    }
-}
-
-StringCompressor *StringCompressor::Instance(void)
-{
+    static StringCompressor instance;
     return instance;
 }
 
