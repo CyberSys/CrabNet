@@ -59,6 +59,8 @@ STATIC_FACTORY_DEFINITIONS(TCPInterface,TCPInterface)
 
 TCPInterface::TCPInterface()
 {
+    isStarted = 0;
+    threadRunning = 0;
     listenSocket=0;
     remoteClients=0;
     remoteClientsLength=0;

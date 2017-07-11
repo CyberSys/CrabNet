@@ -322,6 +322,7 @@ unsigned RNS2_Berkley::RecvFromLoopInt(void)
 }
 RNS2_Berkley::RNS2_Berkley()
 {
+    isRecvFromLoopThreadActive = 0;
     rns2Socket=(RNS2Socket)INVALID_SOCKET;
 }
 RNS2_Berkley::~RNS2_Berkley()
