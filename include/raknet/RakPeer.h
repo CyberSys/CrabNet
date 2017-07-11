@@ -748,9 +748,9 @@ protected:
     SystemAddress GetLoopbackAddress(void) const;
 
     ///Set this to true to terminate the Peer thread execution
-    volatile bool endThreads;
+    std::atomic<bool> endThreads;
     ///true if the peer thread is active.
-    volatile bool isMainLoopThreadActive;
+    std::atomic<bool> isMainLoopThreadActive;
 
     // RakNet::LocklessUint32_t isRecvFromLoopThreadActive;
 

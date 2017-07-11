@@ -23,6 +23,8 @@ static const int MINIMUM_LIST_SIZE=8;
 
 #include "Export.h"
 
+#include <atomic>
+
 /// The namespace DataStructures was only added to avoid compiler errors for commonly named data structures
 /// As these data structures are stand-alone, you can use them outside of RakNet for your own projects if you wish.
 namespace DataStructures
@@ -85,7 +87,7 @@ namespace DataStructures
             SingleProducerConsumerType object;
 
             // Ready to read is so we can use an equality boolean comparison, in case the writePointer var is trashed while context switching.
-            volatile bool readyToRead;
+            std::atomic<bool> readyToRead;
             volatile DataPlusPtr *next;
         };
         volatile DataPlusPtr *readAheadPointer;

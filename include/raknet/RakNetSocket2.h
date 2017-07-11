@@ -268,7 +268,7 @@ protected:
 
     unsigned RecvFromLoopInt(void);
     std::atomic<uint32_t> isRecvFromLoopThreadActive;
-    volatile bool endThreads;
+    std::atomic<bool> endThreads;
     // Constructor not called!
 
 #if defined(__APPLE__)
