@@ -364,7 +364,6 @@ namespace RakNet
         void Write(BitStream *bitStream);
         void Write(BitStream &bitStream, BitSize_t numberOfBits);
         void Write(BitStream &bitStream);
-        \
 
         /// \brief Write a float into 2 bytes, spanning the range between \a floatMin and \a floatMax
         /// \param[in] x The float to write
@@ -627,7 +626,7 @@ namespace RakNet
         void WriteAlignedBytes(const uint8_t *inByteArray, unsigned int numberOfBytesToWrite);
 
         // Endian swap bytes already in the bitstream
-        void EndianSwapBytes(int byteOffset, int length);
+        void EndianSwapBytes(int byteOffset, unsigned int length);
 
         /// \brief Aligns the bitstream, writes inputLength, and writes input. Won't write beyond maxBytesToWrite
         /// \param[in] inByteArray The data
@@ -956,8 +955,7 @@ namespace RakNet
                                                   bool allowOutsideRange)
     {
         int requiredBits = BYTES_TO_BITS(sizeof(templateType)) - NumberOfLeadingZeroes(templateType(maximum - minimum));
-        return SerializeBitsFromIntegerRange(writeToBitstream, value, minimum, maximum, requiredBits,
-                                             allowOutsideRange);
+        return SerializeBitsFromIntegerRange(writeToBitstream, value, minimum, maximum, requiredBits, allowOutsideRange);
     }
 
     template<class templateType>
@@ -1187,15 +1185,10 @@ namespace RakNet
     template<class templateType>
     inline void BitStream::WriteDelta(const templateType &currentValue, const templateType &lastValue)
     {
-        if (currentValue == lastValue)
-        {
-            Write(false);
-        }
-        else
-        {
-            Write(true);
+        bool c = currentValue != lastValue;
+        Write(c);
+        if (c)
             Write(currentValue);
-        }
     }
 
     /// \brief Write a bool delta. Same thing as just calling Write
@@ -1354,15 +1347,10 @@ namespace RakNet
     template<class templateType>
     inline void BitStream::WriteCompressedDelta(const templateType &currentValue, const templateType &lastValue)
     {
-        if (currentValue == lastValue)
-        {
-            Write(false);
-        }
-        else
-        {
-            Write(true);
+        bool c = currentValue != lastValue;
+        Write(c);
+        if (c)
             WriteCompressed(currentValue);
-        }
     }
 
     /// \brief Write a bool delta.  Same thing as just calling Write
@@ -1545,8 +1533,7 @@ namespace RakNet
     inline bool BitStream::ReadDelta(templateType &outTemplateVar)
     {
         bool dataWritten;
-        bool success;
-        success = Read(dataWritten);
+        bool success = Read(dataWritten);
         if (dataWritten)
             success = Read(outTemplateVar);
         return success;
@@ -1748,9 +1735,7 @@ namespace RakNet
     // templateType for this function must be a float or double
     void BitStream::WriteNormVector(templateType x, templateType y, templateType z)
     {
-#ifdef _DEBUG
         RakAssert(x <= 1.01 && y <= 1.01 && z <= 1.01 && x >= -1.01 && y >= -1.01 && z >= -1.01);
-#endif
 
         WriteFloat16((float) x, -1.0f, 1.0f);
         WriteFloat16((float) y, -1.0f, 1.0f);
@@ -1989,7 +1974,6 @@ namespace RakNet
     BitStream &operator>>(BitStream &in, templateType &c)
     {
         bool success = in.Read(c);
-        (void) success;
 
         RakAssert(success);
         return in;
