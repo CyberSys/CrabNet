@@ -11,12 +11,7 @@
 #include "SuperFastHash.h"
 #include <stdint.h>
 #include <stdlib.h>
-
-#if !defined(_WIN32)
-#include <stdint.h>
 #include <RakAssert.h>
-
-#endif
 
 #undef get16bits
 

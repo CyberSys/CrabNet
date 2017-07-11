@@ -22,6 +22,11 @@
 
 #include <memory.h>
 #include <cstdlib>
+#include <malloc.h>
+
+#ifndef alloca
+#define alloca _alloca
+#endif
 
 using namespace RakNet;
 
@@ -246,7 +251,7 @@ bool StringCompressor::DecodeString( RakString *output, int maxCharsToWrite, Rak
     else
 #endif
     {
-        destinationBlock = (char*) malloc( maxCharsToWrite);
+        destinationBlock = (char*) malloc(maxCharsToWrite);
         out=DecodeString(destinationBlock, maxCharsToWrite, input, languageId);
         *output=destinationBlock;
         free(destinationBlock);

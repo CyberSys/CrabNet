@@ -485,7 +485,7 @@ WCHAR * RakString::ToWideChar(void)
     //
     // Allocate destination buffer to store UTF-16 string
     //
-    WCHAR * pszUTF16 = RakNet::OP_NEW_ARRAY<WCHAR>(cchUTF16,__FILE__,__LINE__);
+    WCHAR *pszUTF16 = new WCHAR[cchUTF16];
 
     //
     // Do the conversion from UTF-8 to UTF-16
