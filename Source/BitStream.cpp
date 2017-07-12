@@ -883,8 +883,7 @@ void BitStream::ReverseBytes(unsigned char *inByteArray, unsigned char *inOutByt
 
 void BitStream::ReverseBytesInPlace(unsigned char *inOutData, unsigned int length)
 {
-    for (BitSize_t i = 0; i < (length >> 1); i++)
-        std::swap(inOutData[i], inOutData[length - i - 1]);
+    std::reverse(inOutData, inOutData + length);
 }
 
 bool BitStream::Read(char *varString)
