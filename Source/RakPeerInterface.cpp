@@ -1,11 +1,10 @@
 #include "RakPeerInterface.h"
-#include "gettimeofday.h"
-
 using namespace RakNet;
 
 #if defined(_WIN32)
 
 #include "GetTime.h"
+#include "RakSleep.h"
 
 uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 {
@@ -29,6 +28,8 @@ uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
     return g;
 }
 #else
+#include "gettimeofday.h"
+
 uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 {
     // Mac address is a poor solution because you can't have multiple connections from the same system
