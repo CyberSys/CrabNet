@@ -15,15 +15,16 @@
 #include <cstdlib>
 #include "BitStream.h"
 #include "StringCompressor.h"
+
 using namespace RakNet;
 
-StringTable* StringTable::instance=0;
-int StringTable::referenceCount=0;
+StringTable *StringTable::instance = 0;
+int StringTable::referenceCount = 0;
 
 
-int RakNet::StrAndBoolComp( char *const &key, const StrAndBool &data )
+int RakNet::StrAndBoolComp(char *const &key, const StrAndBool &data)
 {
-    return strcmp(key,(const char*)data.str);
+    return strcmp(key, (const char *) data.str);
 }
 
 StringTable::StringTable()
@@ -33,8 +34,7 @@ StringTable::StringTable()
 
 StringTable::~StringTable()
 {
-    unsigned i;
-    for (i=0; i < orderedStringList.Size(); i++)
+    for (unsigned i = 0; i < orderedStringList.Size(); i++)
     {
         if (orderedStringList[i].b)
             free(orderedStringList[i].str);
@@ -50,34 +50,31 @@ StringTable &StringTable::Instance(void)
 void StringTable::AddString(const char *str, bool copyString)
 {
     StrAndBool sab;
-    sab.b=copyString;
+    sab.b = copyString;
     if (copyString)
     {
-        sab.str = (char*) malloc( strlen(str)+1);
+        sab.str = (char *) malloc(strlen(str) + 1);
         strcpy(sab.str, str);
     }
     else
-    {
-        sab.str=(char*)str;
-    }
+        sab.str = (char *) str;
 
     // If it asserts inside here you are adding duplicate strings.
-    orderedStringList.Insert(sab.str,sab, true, _FILE_AND_LINE_);
+    orderedStringList.Insert(sab.str, sab, true, _FILE_AND_LINE_);
 
     // If this assert hits you need to increase the range of StringTableType
-    RakAssert(orderedStringList.Size() < (StringTableType)-1);
-
+    RakAssert(orderedStringList.Size() < (StringTableType) -1);
 }
-void StringTable::EncodeString( const char *input, int maxCharsToWrite, RakNet::BitStream *output )
+
+void StringTable::EncodeString(const char *input, size_t maxCharsToWrite, RakNet::BitStream *output)
 {
-    unsigned index;
     bool objectExists;
     // This is fast because the list is kept ordered.
-    index=orderedStringList.GetIndexFromKey((char*)input, &objectExists);
+    unsigned index = orderedStringList.GetIndexFromKey((char *) input, &objectExists);
     if (objectExists)
     {
         output->Write(true);
-        output->Write((StringTableType)index);
+        output->Write((StringTableType) index);
     }
     else
     {
@@ -87,19 +84,17 @@ void StringTable::EncodeString( const char *input, int maxCharsToWrite, RakNet::
     }
 }
 
-bool StringTable::DecodeString( char *output, int maxCharsToWrite, RakNet::BitStream *input )
+bool StringTable::DecodeString(char *output, size_t maxCharsToWrite, RakNet::BitStream *input)
 {
-    bool hasIndex=false;
-    RakAssert(maxCharsToWrite>0);
+    RakAssert(maxCharsToWrite > 0);
 
-    if (maxCharsToWrite==0)
+    if (maxCharsToWrite == 0)
         return false;
+    bool hasIndex = false;
     if (!input->Read(hasIndex))
         return false;
-    if (hasIndex==false)
-    {
+    if (!hasIndex)
         StringCompressor::Instance().DecodeString(output, maxCharsToWrite, input);
-    }
     else
     {
         StringTableType index;
@@ -107,20 +102,19 @@ bool StringTable::DecodeString( char *output, int maxCharsToWrite, RakNet::BitSt
             return false;
         if (index >= orderedStringList.Size())
         {
-#ifdef _DEBUG
             // Critical error - got a string index out of range, which means AddString was called more times on the remote system than on this system.
             // All systems must call AddString the same number of types, with the same strings in the same order.
             RakAssert(0);
-#endif
             return false;
         }
 
         strncpy(output, orderedStringList[index].str, maxCharsToWrite);
-        output[maxCharsToWrite-1]=0;
+        output[maxCharsToWrite - 1] = 0;
     }
 
     return true;
 }
+
 void StringTable::LogStringNotFound(const char *strName)
 {
     (void) strName;

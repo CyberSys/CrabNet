@@ -282,7 +282,7 @@ private:
 
     /// Creates a copy of the specified internal packet with data copied from the original starting at dataByteOffset for dataByteLength bytes.
     /// Does not copy any split data parameters as that information is always generated does not have any reason to be copied
-    InternalPacket * CreateInternalPacketCopy( InternalPacket *original, int dataByteOffset, int dataByteLength, CCTimeType time );
+    InternalPacket * CreateInternalPacketCopy(InternalPacket *original, int dataByteOffset, size_t dataByteLength, CCTimeType time);
 
     /// Get the specified ordering list
     // DataStructures::LinkedList<InternalPacket*> *GetOrderingListAtOrderingStream( unsigned char orderingChannel );
