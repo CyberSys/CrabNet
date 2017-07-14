@@ -2245,14 +2245,14 @@ void ReliabilityLayer::SendBitStream(RakNetSocket2 *s, SystemAddress &systemAddr
     (void) systemAddress;
     (void) rnr;
 
+    unsigned int length = (unsigned int) bitStream->GetNumberOfBytesUsed();
+
 #ifdef _DEBUG
     if (packetloss > 0.0)
     {
         if (frandomMT() < packetloss)
             return;
     }
-
-    unsigned int length = (unsigned int) bitStream->GetNumberOfBytesUsed();
 
     if (minExtraPing > 0 || extraPingVariance > 0)
     {
