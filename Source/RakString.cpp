@@ -1351,12 +1351,12 @@ void RakString::Assign(const char *str, va_list ap)
     }
 
     char stackBuff[512];
-    if (
+    if (_vsnprintf(stackBuff, 512, str, ap) != -1
         #ifndef _WIN32
         // Here Windows will return -1 if the string is too long; Linux just truncates the string.
-        strlen(stackBuff) < 512 &&
-        #endif
-        _vsnprintf(stackBuff, 512, str, ap) != -1)
+        && strlen(stackBuff) < 511
+#endif
+            )
     {
         Assign(stackBuff);
         return;
