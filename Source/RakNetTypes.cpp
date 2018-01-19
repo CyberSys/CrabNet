@@ -645,6 +645,7 @@ void SystemAddress::CopyPort(const SystemAddress &right)
 
 RakNetGUID::RakNetGUID()
 {
+    g = 0;
     systemIndex = (SystemIndex) -1;
     *this = UNASSIGNED_RAKNET_GUID;
 }

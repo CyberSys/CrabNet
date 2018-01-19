@@ -438,7 +438,7 @@ struct RAK_DLL_EXPORT uint24_t
 {
     uint32_t val;
 
-    uint24_t() {}
+    uint24_t() {val = 0;}
     inline operator uint32_t() { return val; }
     inline operator uint32_t() const { return val; }
 
