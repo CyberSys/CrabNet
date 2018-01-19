@@ -38,6 +38,7 @@
 #include "PluginInterface2.h"
 #include "Rand.h"
 #include "RakNetSocket2.h"
+#include "SplitPacketList.hpp"
 
 #if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
 #include "CCRakNetUDT.h"
@@ -64,7 +65,7 @@ struct SplitPacketChannel//<SplitPacketChannel>
 {
     CCTimeType lastUpdateTime;
 
-    DataStructures::List<InternalPacket*> splitPacketList;
+    SplitPacketList splitPacketList;
 
 #if PREALLOCATE_LARGE_MESSAGES==1
     InternalPacket *returnedPacket;
