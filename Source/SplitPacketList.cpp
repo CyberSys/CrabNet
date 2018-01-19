@@ -3,8 +3,9 @@
 //
 
 #include "SplitPacketList.hpp"
+#include <ReliabilityLayer.h>
 
-RakNet::SplitPacketList::SplitPacketList() : splitPacketId(0), inUse(0)
+RakNet::SplitPacketList::SplitPacketList() : splitPacketId(0), inUse(0), reliabilityLayer(nullptr)
 {
 
 }
@@ -28,12 +29,15 @@ bool RakNet::SplitPacketList::insert(RakNet::InternalPacket *internalPacket)
         return true;
     }
 
-    return false; // There was an attempt to rewrite packet ptr
+    // There was an attempt to rewrite packet ptr
+    reliabilityLayer->FreeInternalPacketData(internalPacket, __FILE__, __LINE__);
+    reliabilityLayer->ReleaseToInternalPacketPool(internalPacket);
+    return false;
 }
 
-size_t RakNet::SplitPacketList::size() const
+unsigned RakNet::SplitPacketList::size() const
 {
-    return packets.size();
+    return static_cast<unsigned>(packets.size());
 }
 
 unsigned RakNet::SplitPacketList::count() const

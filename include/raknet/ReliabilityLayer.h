@@ -116,6 +116,7 @@ struct BPSTracker
 /// Datagram reliable, ordered, unordered and sequenced sends.  Flow control.  Message splitting, reassembly, and coalescence.
 class ReliabilityLayer//<ReliabilityLayer>
 {
+    friend class SplitPacketList;
 public:
 
     // Constructor

@@ -3006,6 +3006,7 @@ void ReliabilityLayer::InsertIntoSplitPacketList(InternalPacket *internalPacket,
         newChannel->firstPacket = nullptr;
         index = splitPacketChannelList.Insert(internalPacket->splitPacketId, newChannel, true, __FILE__, __LINE__);
         // Preallocate to the final size, to avoid runtime copies
+        newChannel->splitPacketList.reliabilityLayer = this;
         newChannel->splitPacketList.prealloc(internalPacket->splitPacketCount, internalPacket->splitPacketId);
 
 #endif

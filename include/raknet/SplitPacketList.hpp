@@ -9,6 +9,8 @@
 
 namespace RakNet
 {
+
+    class ReliabilityLayer;
     class SplitPacketList
     {
         friend class ReliabilityLayer;
@@ -17,7 +19,7 @@ namespace RakNet
         ~SplitPacketList() = default;
         void prealloc(unsigned count, SplitPacketIdType splitPacketId);
         bool insert(InternalPacket *internalPacket);
-        size_t size() const;
+        unsigned size() const;
         unsigned count() const;
 
         InternalPacket *operator[](unsigned n);
@@ -26,7 +28,6 @@ namespace RakNet
         std::vector<InternalPacket*> packets;
         SplitPacketIdType splitPacketId;
         SplitPacketIndexType inUse;
+        ReliabilityLayer *reliabilityLayer;
     };
 }
-
-
