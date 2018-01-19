@@ -38,7 +38,7 @@ public:
 
 static RakStringCleanup cleanup;
 
-SimpleMutex &GetPoolMutex(void)
+SimpleMutex &GetPoolMutex()
 {
     static SimpleMutex poolMutex;
     return poolMutex;
@@ -369,7 +369,7 @@ const RakNet::RakString operator+(const RakNet::RakString &lhs, const RakNet::Ra
     return RakString(sharedString);
 }
 
-const char *RakString::ToLower(void)
+const char *RakString::ToLower()
 {
     Clone();
 
@@ -378,7 +378,7 @@ const char *RakString::ToLower(void)
     return sharedString->c_str;
 }
 
-const char *RakString::ToUpper(void)
+const char *RakString::ToUpper()
 {
     Clone();
 
@@ -396,12 +396,12 @@ void RakString::Set(const char *format, ...)
     va_end(ap);
 }
 
-bool RakString::IsEmpty(void) const
+bool RakString::IsEmpty() const
 {
     return sharedString == &emptyString;
 }
 
-size_t RakString::GetLength(void) const
+size_t RakString::GetLength() const
 {
     return strlen(sharedString->c_str);
 }
@@ -974,9 +974,9 @@ void RakString::SplitURI(RakNet::RakString &header, RakNet::RakString &domain, R
     pathOutput[outputIndex] = 0;
 }
 
-RakNet::RakString &RakString::SQLEscape(void)
+RakNet::RakString &RakString::SQLEscape()
 {
-    int strLen = (int) GetLength();
+    size_t strLen = GetLength();
     int escapedCharacterCount = 0;
     for (int index = 0; index < strLen; index++)
     {
@@ -1023,7 +1023,7 @@ RakString::FormatForPUTOrPost(const char *type, const char *uri, const char *con
 //    RakString bodyEncoded = body;
 //    bodyEncoded.URLEncode();
 
-    if (extraHeaders != 0 && extraHeaders[0])
+    if (extraHeaders != nullptr && extraHeaders[0])
     {
         out.Set("%s %s HTTP/1.1\r\n"
             "%s\r\n"
@@ -1131,7 +1131,7 @@ RakString RakString::FormatForDELETE(const char *uri, const char *extraHeaders)
     return out;
 }
 
-RakNet::RakString &RakString::MakeFilePath(void)
+RakNet::RakString &RakString::MakeFilePath()
 {
     if (IsEmpty())
         return *this;
@@ -1162,14 +1162,14 @@ RakNet::RakString &RakString::MakeFilePath(void)
     return *this;
 }
 
-void RakString::FreeMemory(void)
+void RakString::FreeMemory()
 {
     LockMutex();
     FreeMemoryNoMutex();
     UnlockMutex();
 }
 
-void RakString::FreeMemoryNoMutex(void)
+void RakString::FreeMemoryNoMutex()
 {
     for (unsigned int i = 0; i < freeList.Size(); i++)
     {
@@ -1186,7 +1186,7 @@ void RakString::Serialize(BitStream *bs) const
 
 void RakString::Serialize(const char *str, BitStream *bs)
 {
-    unsigned short l = (unsigned short) strlen(str);
+    auto l = (unsigned short) strlen(str);
     bs->Write(l);
     bs->WriteAlignedBytes((const unsigned char *) str, (const unsigned int) l);
 }
@@ -1287,7 +1287,7 @@ const char *RakString::ToString(uint64_t i)
     return buff[lastIndex];
 }
 
-void RakString::Clear(void)
+void RakString::Clear()
 {
     Free();
 }
@@ -1304,7 +1304,7 @@ void RakString::Allocate(size_t len)
             //    RakString::freeList.Insert(RakString::sharedStringFreeList+i+RakString::sharedStringFreeListAllocationCount);
             //        RakString::freeList.Insert((RakString::SharedString*)malloc(sizeof(RakString::SharedString));
 
-            RakString::SharedString *ss = (RakString::SharedString *) malloc(sizeof(RakString::SharedString));
+            auto ss = (RakString::SharedString *) malloc(sizeof(RakString::SharedString));
             ss->refCountMutex = new SimpleMutex;
             RakString::freeList.Insert(ss, _FILE_AND_LINE_);
         }
@@ -1331,7 +1331,7 @@ void RakString::Allocate(size_t len)
 
 void RakString::Assign(const char *str)
 {
-    if (str == 0 || str[0] == 0)
+    if (str == nullptr || str[0] == 0)
     {
         sharedString = &emptyString;
         return;
@@ -1344,7 +1344,7 @@ void RakString::Assign(const char *str)
 
 void RakString::Assign(const char *str, va_list ap)
 {
-    if (str == 0 || str[0] == 0)
+    if (str == nullptr || str[0] == 0)
     {
         sharedString = &emptyString;
         return;
@@ -1361,15 +1361,14 @@ void RakString::Assign(const char *str, va_list ap)
         Assign(stackBuff);
         return;
     }
-    char *buff = 0;
+    char *buff = nullptr;
     size_t buffSize = 8096;
-    while (1)
+    while (true)
     {
-        char *newBuff = (char *) realloc(buff, buffSize);
-        if (newBuff == 0)
+        auto newBuff = (char *) realloc(buff, buffSize);
+        if (newBuff == nullptr)
         {
-            RakAssert(0)
-            if (buff != 0)
+            if (buff != nullptr)
             {
                 Assign(buff);
                 free(buff);
@@ -1395,7 +1394,7 @@ RakNet::RakString RakString::Assign(const char *str, size_t pos, size_t n)
 
     Clone();
 
-    if (str == 0 || str[0] == 0 || pos >= incomingLen)
+    if (str == nullptr || str[0] == 0 || pos >= incomingLen)
     {
         sharedString = &emptyString;
         return (*this);
@@ -1455,7 +1454,7 @@ void RakString::AppendBytes(const char *bytes, unsigned int count)
     else
     {
         Clone();
-        unsigned int length = (unsigned int) GetLength();
+        auto length = (unsigned int) GetLength();
         Realloc(sharedString, count + length + 1);
         memcpy(sharedString->c_str + length, bytes, count);
         sharedString->c_str[length + count] = 0;
@@ -1464,7 +1463,7 @@ void RakString::AppendBytes(const char *bytes, unsigned int count)
 
 }
 
-void RakString::Clone(void)
+void RakString::Clone()
 {
     RakAssert(sharedString != &emptyString);
     if (sharedString == &emptyString)
@@ -1483,7 +1482,7 @@ void RakString::Clone(void)
     Assign(sharedString->c_str);
 }
 
-void RakString::Free(void)
+void RakString::Free()
 {
     if (sharedString == &emptyString)
         return;
@@ -1526,12 +1525,12 @@ unsigned char RakString::ToUpper(unsigned char c)
     return c;
 }
 
-void RakString::LockMutex(void)
+void RakString::LockMutex()
 {
     GetPoolMutex().Lock();
 }
 
-void RakString::UnlockMutex(void)
+void RakString::UnlockMutex()
 {
     GetPoolMutex().Unlock();
 }
@@ -1560,7 +1559,9 @@ int main(void)
     s9=s9;
     RakString s10(s3);
     RakString s11=s10 + s4 + s9 + s2;
-    s11+=RakString("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    s11+=RakString("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     RakString s12("Test");
     s12+=s11;
     bool b1 = s12==s12;

@@ -257,7 +257,7 @@ void TCPInterface::Stop(void)
     }
     remoteClientsLength = 0;
     delete[] remoteClients;
-    remoteClients = 0;
+    remoteClients = nullptr;
 
     incomingMessages.Clear(_FILE_AND_LINE_);
     newIncomingConnections.Clear(_FILE_AND_LINE_);
@@ -400,7 +400,7 @@ bool TCPInterface::SendList(const char **data, const unsigned int *lengths, cons
 {
     if (isStarted == 0)
         return false;
-    if (data == 0)
+    if (data == nullptr)
         return false;
     if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS && !broadcast)
         return false;
@@ -845,7 +845,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 //    const int BUFF_SIZE=8096;
     //char data[ BUFF_SIZE ];
     const unsigned int BUFF_SIZE = 1048576;
-    char *data = (char *) malloc(BUFF_SIZE);
+    auto data = (char *) malloc(BUFF_SIZE);
 
 #if RAKNET_SUPPORT_IPV6 != 1
     sockaddr_in sockAddr;
@@ -859,7 +859,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
     tv.tv_sec = 0;
     tv.tv_usec = 30000;
 
-    TCPInterface *sts = (TCPInterface *) arguments;
+    auto sts = (TCPInterface *) arguments;
     sts->threadRunning++;
 
     while (sts->isStarted > 0)

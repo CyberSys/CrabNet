@@ -57,7 +57,7 @@ namespace DataStructures
         RakNet::BitSize_t Serialize(RakNet::BitStream *in, RakNet::BitSize_t maxBits, bool clearSerialized);
         bool Deserialize(RakNet::BitStream *out);
 
-        DataStructures::OrderedList<range_type, RangeNode<range_type> , RangeNodeComp<range_type> > ranges;
+        DataStructures::OrderedList<range_type, RangeNode<range_type> , RangeNodeComp<range_type> > ranges{};
     };
 
     template <class range_type>

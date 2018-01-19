@@ -30,7 +30,7 @@
 
 using namespace RakNet;
 
-StringCompressor &StringCompressor::Instance(void)
+StringCompressor &StringCompressor::Instance()
 {
     static StringCompressor instance;
     return instance;
@@ -49,7 +49,7 @@ StringCompressor::StringCompressor()
     DataStructures::Map<int, HuffmanEncodingTree *>::IMPLEMENT_DEFAULT_COMPARISON();
 
     // Make a default tree immediately, since this is used for RPC possibly from multiple threads at the same time
-    HuffmanEncodingTree *huffmanEncodingTree = new HuffmanEncodingTree;
+    auto huffmanEncodingTree = new HuffmanEncodingTree;
     huffmanEncodingTree->GenerateFromFrequencyTable(englishCharacterFrequencies);
 
     huffmanEncodingTrees.Set(0, huffmanEncodingTree);
@@ -87,22 +87,20 @@ StringCompressor::~StringCompressor()
 
 void StringCompressor::EncodeString(const char *input, size_t maxCharsToWrite, RakNet::BitStream *output, uint8_t languageId)
 {
-    HuffmanEncodingTree *huffmanEncodingTree;
     if (!huffmanEncodingTrees.Has(languageId))
         return;
-    huffmanEncodingTree = huffmanEncodingTrees.Get(languageId);
 
-    if (input == 0)
+    auto huffmanEncodingTree = huffmanEncodingTrees.Get(languageId);
+
+    if (input == nullptr)
     {
         output->WriteCompressed((uint32_t) 0);
         return;
     }
 
-    size_t charsToWrite;
+    size_t charsToWrite = strlen(input);
 
-    if (maxCharsToWrite <= 0 || strlen(input) < maxCharsToWrite)
-        charsToWrite = strlen(input);
-    else
+    if (maxCharsToWrite > 0 && charsToWrite > maxCharsToWrite)
         charsToWrite = maxCharsToWrite - 1;
 
     RakNet::BitStream encodedBitStream;
