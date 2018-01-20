@@ -14,7 +14,7 @@ void RakNet::SplitPacketList::prealloc(unsigned count, SplitPacketIdType splitPa
 {
     RakAssert(count > 0);
     this->splitPacketId = splitPacketId;
-    packets.reserve(count);
+    packets.resize(count);
 }
 
 bool RakNet::SplitPacketList::insert(RakNet::InternalPacket *internalPacket)
