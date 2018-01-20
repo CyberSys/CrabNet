@@ -12,7 +12,7 @@ RakNet::SplitPacketList::SplitPacketList() : splitPacketId(0), inUse(0), reliabi
 
 void RakNet::SplitPacketList::prealloc(unsigned count, SplitPacketIdType splitPacketId)
 {
-    RakAssert(count == 0);
+    RakAssert(count > 0);
     this->splitPacketId = splitPacketId;
     packets.reserve(count);
 }
