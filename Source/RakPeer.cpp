@@ -2500,7 +2500,7 @@ void RakPeer::SetTimeoutTime(RakNet::TimeMS timeMS, const SystemAddress target)
     {
         RemoteSystemStruct *remoteSystem = GetRemoteSystemFromSystemAddress(target, false, true);
 
-        if (remoteSystem != 0)
+        if (remoteSystem != nullptr)
             remoteSystem->reliabilityLayer.SetTimeoutTime(timeMS);
     }
 }
@@ -2517,8 +2517,8 @@ RakNet::TimeMS RakPeer::GetTimeoutTime(const SystemAddress target)
     {
         RemoteSystemStruct *remoteSystem = GetRemoteSystemFromSystemAddress(target, false, true);
 
-        if (remoteSystem != 0)
-            remoteSystem->reliabilityLayer.GetTimeoutTime();
+        if (remoteSystem != nullptr)
+            return remoteSystem->reliabilityLayer.GetTimeoutTime();
     }
     return defaultTimeoutTime;
 }
