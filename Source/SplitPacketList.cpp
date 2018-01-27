@@ -2,7 +2,7 @@
 // Created by koncord on 19.01.18.
 //
 
-#include "SplitPacketList.hpp"
+#include "SplitPacketList.h"
 #include <ReliabilityLayer.h>
 
 RakNet::SplitPacketList::SplitPacketList() : splitPacketId(0), inUse(0), reliabilityLayer(nullptr)

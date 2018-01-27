@@ -38,7 +38,7 @@
 #include "PluginInterface2.h"
 #include "Rand.h"
 #include "RakNetSocket2.h"
-#include "SplitPacketList.hpp"
+#include "SplitPacketList.h"
 
 #if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
 #include "CCRakNetUDT.h"
