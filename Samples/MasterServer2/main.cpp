@@ -1,5 +1,6 @@
 /*
  *  Copyright (c) 2014, Oculus VR, Inc.
+ *  Copyright (c) 2016-2018, TES3MP Team
  *  All rights reserved.
  *
  *  This source code is licensed under the BSD-style license found in the
@@ -63,7 +64,7 @@ void main_RakNet_Post(void)
 	json_object_set(jsonObject, "__gameId", json_string("MotoGP_13") );
 	json_object_set(jsonObject, "__clientReqId", json_integer(0) );
 	json_object_set(jsonObject, "__timeoutSec", json_integer(60) );
-	//json_object_set(jsonObject, "mapname", json_string(RakString::NonVariadic("Joué-lés-tours").URLEncode().C_String()) );
+	//json_object_set(jsonObject, "mapname", json_string(RakString::NonVariadic("Jouï¿½-lï¿½s-tours").URLEncode().C_String()) );
 
 	char *ds = json_dumps(jsonObject,0);
 	RakString rspost = RakString::FormatForPOST(
