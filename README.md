@@ -19,7 +19,7 @@ Package notes
 * The Source directory contain all files required for the core of RakNet and is used
 if you want to use the source in your program or create your own dll
 * The Samples directory contains code samples and one game using an older version of RakNet.
-The code samples each demonstrate one feature of Raknet. The game samples cover several features.
+The code samples each demonstrate one feature of RakNet. The game samples cover several features.
 
 Linux
 -----

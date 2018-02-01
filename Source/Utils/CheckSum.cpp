@@ -35,11 +35,11 @@ union Type
 
 void CheckSum::Add(unsigned int value)
 {
-    Type<unsigned int> data;
+    Type<unsigned int> data{};
     data.value = value;
 
-    for (unsigned int i = 0; i < sizeof(data.bytes); i++)
-        Add(data.bytes[i]);
+    for (const unsigned char &byte : data.bytes)
+        Add(byte);
 } // CheckSum::add(unsigned int)
 
 /****************************************************************************
@@ -54,12 +54,12 @@ void CheckSum::Add(unsigned int value)
 
 void CheckSum::Add(unsigned short value)
 {
-    Type<unsigned short> data;
+    Type<unsigned short> data{};
     data.value = value;
 
-    for (unsigned int i = 0; i < sizeof(data.bytes); i++)
-        Add(data.bytes[i]);
-} // CheckSum::add(unsigned short)
+    for (const unsigned char &byte : data.bytes)
+        Add(byte);
+}
 
 /****************************************************************************
 *       CheckSum::add
@@ -73,10 +73,10 @@ void CheckSum::Add(unsigned short value)
 
 void CheckSum::Add(unsigned char value)
 {
-    unsigned char cipher = (unsigned char) (value ^ (r >> 8));
+    auto cipher = (unsigned char) (value ^ (r >> 8));
     r = (cipher + r) * c1 + c2;
     sum += cipher;
-} // CheckSum::add(unsigned char)
+}
 
 
 /****************************************************************************
@@ -94,7 +94,7 @@ void CheckSum::Add(unsigned char *b, unsigned int length)
 {
     for (unsigned int i = 0; i < length; i++)
         Add(b[i]);
-} // CheckSum::add(LPunsigned char, unsigned int)
+}
 
 CheckSum::CheckSum()
 {
