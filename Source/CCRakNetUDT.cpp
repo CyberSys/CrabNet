@@ -116,7 +116,7 @@ void CCRakNetUDT::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
     estimatedLinkCapacityBytesPerSecond=0;
     bytesCanSendThisTick=0;
     hadPacketlossThisBlock=false;
-    pingsLastInterval.Clear(__FILE__,__LINE__);
+    pingsLastInterval.Clear();
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetUDT::SetMTU(uint32_t bytes)
@@ -156,7 +156,7 @@ void CCRakNetUDT::Update(CCTimeType curTime, bool hasDataToSendOrResend)
     /// 500 microseconds per byte
     // printf("No incoming data, halving send rate\n");
     SND*=2.0;
-    CapMinSnd(_FILE_AND_LINE_);
+    CapMinSnd();
     ExpCount+=1.0;
     if (ExpCount>8.0)
     ExpCount=8.0;
@@ -451,7 +451,7 @@ void CCRakNetUDT::EndSlowStart(void)
 
     isInSlowStart=false;
     SND=1.0/AS;
-    CapMinSnd(_FILE_AND_LINE_);
+    CapMinSnd();
 
     // printf("ENDING SLOW START\n");
 #if CC_TIME_TYPE_BYTES==4
@@ -515,7 +515,7 @@ bool CCRakNetUDT::OnGotPacket(DatagramSequenceNumberType datagramSequenceNumber,
 
             //        if (mostRecentPacketArrivalHistory < (BytesPerMicrosecond)0.0035)
             //        {
-            //            printf("%s:%i LIKELY BUG: Calculated packetArrivalHistory is below 28.8 Kbps modem\nReport to rakkar@jenkinssoftware.com with file and line number\n", _FILE_AND_LINE_);
+            //            printf("%s:%i LIKELY BUG: Calculated packetArrivalHistory is below 28.8 Kbps modem\nReport to rakkar@jenkinssoftware.com with file and line number\n");
             //        }
 
             packetArrivalHistoryContinuousGaps[packetArrivalHistoryContinuousGapsIndex++]=(int) interval;
@@ -640,11 +640,11 @@ void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn(CCTimeType curTime, CCTimeTy
     if (isContinuousSend==false)
     {
         nextCongestionControlBlock=nextDatagramSequenceNumber;
-        pingsLastInterval.Clear(__FILE__,__LINE__);
+        pingsLastInterval.Clear();
         return;
     }
 
-    pingsLastInterval.Push(rtt,__FILE__,__LINE__);
+    pingsLastInterval.Push(rtt);
     static const int intervalSize=33; // Should be odd
     if (pingsLastInterval.Size()>intervalSize)
         pingsLastInterval.Pop();
@@ -686,7 +686,7 @@ void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn(CCTimeType curTime, CCTimeTy
             DecreaseTimeBetweenSends();
         }
 
-        pingsLastInterval.Clear(__FILE__,__LINE__);
+        pingsLastInterval.Clear();
         hadPacketlossThisBlock=false;
         nextCongestionControlBlock=nextDatagramSequenceNumber;
     }
@@ -775,7 +775,7 @@ void CCRakNetUDT::IncreaseTimeBetweenSends(void)
 
     // SND=0 then fast increase, slow decrease
     // SND=500 then slow increase, fast decrease
-    CapMinSnd(__FILE__,__LINE__);
+    CapMinSnd();
 }
 void CCRakNetUDT::DecreaseTimeBetweenSends(void)
 {

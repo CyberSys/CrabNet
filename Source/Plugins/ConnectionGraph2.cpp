@@ -246,15 +246,15 @@ void ConnectionGraph2::AddParticipant(const SystemAddress &systemAddress, RakNet
     {
         RemoteSystem* remoteSystem =new RemoteSystem;
         remoteSystem->guid=rakNetGUID;
-        remoteSystems.InsertAtIndex(remoteSystem,ii,_FILE_AND_LINE_);
+        remoteSystems.InsertAtIndex(remoteSystem,ii);
     }
 }
 void ConnectionGraph2::GetParticipantList(DataStructures::OrderedList<RakNetGUID, RakNetGUID> &participantList)
 {
-    participantList.Clear(true, _FILE_AND_LINE_);
+    participantList.Clear(true);
     unsigned int i;
     for (i=0; i < remoteSystems.Size(); i++)
-        participantList.InsertAtEnd(remoteSystems[i]->guid, _FILE_AND_LINE_);
+        participantList.InsertAtEnd(remoteSystems[i]->guid);
 }
 void ConnectionGraph2::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
@@ -299,7 +299,7 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
                 bool objectExists;
                 unsigned int ii = remoteSystems[idx]->remoteConnections.GetIndexFromKey(saag, &objectExists);
                 if (objectExists==false)
-                    remoteSystems[idx]->remoteConnections.InsertAtIndex(saag,ii,_FILE_AND_LINE_);
+                    remoteSystems[idx]->remoteConnections.InsertAtIndex(saag, ii);
             }
         }
     }

@@ -199,7 +199,7 @@ namespace DataStructures
             DeleteFromPageAtIndex(childIndex,root);
             if (root->size==0)
             {
-                pagePool.Release(root, _FILE_AND_LINE_);
+                pagePool.Release(root);
                 root=0;
                 leftmostLeaf=0;
             }
@@ -215,7 +215,7 @@ namespace DataStructures
             // Move the root down.
             Page<KeyType, DataType, order> *oldRoot=root;
             root=root->children[0];
-            pagePool.Release(oldRoot, _FILE_AND_LINE_);
+            pagePool.Release(oldRoot);
             // memset(oldRoot,0,sizeof(root));
         }
 
@@ -469,7 +469,7 @@ namespace DataStructures
             }
 
             // Free the source node
-            pagePool.Release(source, _FILE_AND_LINE_);
+            pagePool.Release(source);
             // memset(source,0,sizeof(root));
 
             // Return underflow or not of parent.
@@ -541,7 +541,7 @@ namespace DataStructures
         }
         else
         {
-            Page<KeyType, DataType, order>* newPage = pagePool.Allocate( _FILE_AND_LINE_ );
+            Page<KeyType, DataType, order>* newPage = pagePool.Allocate(  );
             newPage->isLeaf=cur->isLeaf;
             if (cur->isLeaf)
             {
@@ -832,7 +832,7 @@ namespace DataStructures
         if (root==0)
         {
             // Allocate root and make root a leaf
-            root = pagePool.Allocate( _FILE_AND_LINE_ );
+            root = pagePool.Allocate(  );
             root->isLeaf=true;
             leftmostLeaf=root;
             root->size=1;
@@ -862,7 +862,7 @@ namespace DataStructures
                 else
                      newKey = newPage->keys[0];
                 // propagate the root
-                Page<KeyType, DataType, order>* newRoot = pagePool.Allocate( _FILE_AND_LINE_ );
+                Page<KeyType, DataType, order>* newRoot = pagePool.Allocate(  );
                 newRoot->isLeaf=false;
                 newRoot->size=1;
                 newRoot->keys[0]=newKey;
@@ -890,7 +890,7 @@ namespace DataStructures
             leftmostLeaf=0;
             root=0;
         }
-        pagePool.Clear(_FILE_AND_LINE_);
+        pagePool.Clear();
     }
     template<class KeyType, class DataType, int order>
         unsigned BPlusTree<KeyType, DataType, order>::Size(void) const
@@ -948,16 +948,16 @@ namespace DataStructures
         DataStructures::Queue<DataStructures::Page<KeyType, DataType, order> *> queue;
         DataStructures::Page<KeyType, DataType, order> *ptr;
         int i;
-        queue.Push(root, _FILE_AND_LINE_ );
+        queue.Push(root );
         while (queue.Size())
         {
             ptr=queue.Pop();
             if (ptr->isLeaf==false)
             {
                 for (i=0; i < ptr->size+1; i++)
-                    queue.Push(ptr->children[i], _FILE_AND_LINE_ );
+                    queue.Push(ptr->children[i] );
             }
-            pagePool.Release(ptr, _FILE_AND_LINE_);
+            pagePool.Release(ptr);
         //    memset(ptr,0,sizeof(root));
         };
     }
@@ -1032,8 +1032,8 @@ namespace DataStructures
     void BPlusTree<KeyType, DataType, order>::PrintGraph(void)
     {
         DataStructures::Queue<DataStructures::Page<KeyType, DataType, order> *> queue;
-        queue.Push(root,_FILE_AND_LINE_);
-        queue.Push(0,_FILE_AND_LINE_);
+        queue.Push(root);
+        queue.Push(0);
         DataStructures::Page<KeyType, DataType, order> *ptr;
         int i,j;
         if (root)
@@ -1060,9 +1060,9 @@ namespace DataStructures
                     for (j=0; j < ptr->children[i]->size; j++)
                         RAKNET_DEBUG_PRINTF("%i ", ptr->children[i]->keys[j]);
                     RAKNET_DEBUG_PRINTF(") ");
-                    queue.Push(ptr->children[i],_FILE_AND_LINE_);
+                    queue.Push(ptr->children[i]);
                 }
-                 queue.Push(0,_FILE_AND_LINE_);
+                 queue.Push(0);
                 RAKNET_DEBUG_PRINTF(" -- ");
             }
         }
@@ -1142,9 +1142,9 @@ void main(void)
             RakAssert(btree.Size()==haveList.Size());
             btree.ValidateTree();
         }
-        btree.Clear(_FILE_AND_LINE_);
-        removedList.Clear(_FILE_AND_LINE_);
-        haveList.Clear(_FILE_AND_LINE_);
+        btree.Clear();
+        removedList.Clear();
+        haveList.Clear();
     }
 
     RAKNET_DEBUG_PRINTF("Done. %i\n", btree.Size());

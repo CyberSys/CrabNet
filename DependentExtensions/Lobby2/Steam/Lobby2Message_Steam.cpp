@@ -37,12 +37,12 @@ bool Client_Logoff_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 }
 Console_SearchRooms_Steam::Console_SearchRooms_Steam()
 {
-	m_SteamCallResultLobbyMatchList = RakNet::OP_NEW<CCallResult<Lobby2Client_Steam_Impl, LobbyMatchList_t> > (_FILE_AND_LINE_);
+	m_SteamCallResultLobbyMatchList = RakNet::OP_NEW<CCallResult<Lobby2Client_Steam_Impl, LobbyMatchList_t> > ();
 }
 Console_SearchRooms_Steam::~Console_SearchRooms_Steam()
 {
 	// Cast to make sure destructor gets called
-	RakNet::OP_DELETE((CCallResult<Lobby2Client_Steam_Impl, LobbyMatchList_t>*)m_SteamCallResultLobbyMatchList, _FILE_AND_LINE_);
+	RakNet::OP_DELETE((CCallResult<Lobby2Client_Steam_Impl, LobbyMatchList_t>*)m_SteamCallResultLobbyMatchList);
 }
 bool Console_SearchRooms_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
@@ -75,12 +75,12 @@ bool Console_GetRoomDetails_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 }
 Console_CreateRoom_Steam::Console_CreateRoom_Steam()
 {
-	m_SteamCallResultLobbyCreated = RakNet::OP_NEW<CCallResult<Lobby2Client_Steam_Impl, LobbyCreated_t> >(_FILE_AND_LINE_);
+	m_SteamCallResultLobbyCreated = RakNet::OP_NEW<CCallResult<Lobby2Client_Steam_Impl, LobbyCreated_t> >();
 }
 Console_CreateRoom_Steam::~Console_CreateRoom_Steam()
 {
 	// Cast to make sure destructor gets called
-	RakNet::OP_DELETE((CCallResult<Lobby2Client_Steam_Impl, LobbyCreated_t>*)m_SteamCallResultLobbyCreated, _FILE_AND_LINE_);
+	RakNet::OP_DELETE((CCallResult<Lobby2Client_Steam_Impl, LobbyCreated_t>*)m_SteamCallResultLobbyCreated);
 }
 bool Console_CreateRoom_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {
@@ -96,12 +96,12 @@ bool Console_CreateRoom_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 }
 Console_JoinRoom_Steam::Console_JoinRoom_Steam()
 {
-	m_SteamCallResultLobbyEntered = RakNet::OP_NEW<CCallResult<Lobby2Client_Steam_Impl, LobbyEnter_t> > (_FILE_AND_LINE_);
+	m_SteamCallResultLobbyEntered = RakNet::OP_NEW<CCallResult<Lobby2Client_Steam_Impl, LobbyEnter_t> > ();
 }
 Console_JoinRoom_Steam::~Console_JoinRoom_Steam()
 {
 	// Cast to make sure destructor gets called
-	RakNet::OP_DELETE((CCallResult<Lobby2Client_Steam_Impl, LobbyEnter_t>*)m_SteamCallResultLobbyEntered, _FILE_AND_LINE_);
+	RakNet::OP_DELETE((CCallResult<Lobby2Client_Steam_Impl, LobbyEnter_t>*)m_SteamCallResultLobbyEntered);
 }
 bool Console_JoinRoom_Steam::ClientImpl( RakNet::Lobby2Plugin *client)
 {

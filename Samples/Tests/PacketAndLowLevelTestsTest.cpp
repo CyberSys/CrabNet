@@ -49,7 +49,7 @@ DetachPlugin
 int PacketAndLowLevelTestsTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
 	RakPeerInterface *server,*client;
-	destroyList.Clear(false,_FILE_AND_LINE_);
+	destroyList.Clear(false);
 
 	TestHelpers::StandardClientPrep(client,destroyList);
 	TestHelpers::StandardServerPrep(server,destroyList);
@@ -321,20 +321,20 @@ void PacketAndLowLevelTestsTest::DestroyPeers()
 PacketAndLowLevelTestsTest::PacketAndLowLevelTestsTest(void)
 {
 
-	errorList.Push("Client failed to connect to server",_FILE_AND_LINE_);
-	errorList.Push("Attached plugin failed to modify packet",_FILE_AND_LINE_);
-	errorList.Push("Plugin is still modifying packets after detach",_FILE_AND_LINE_);
-	errorList.Push("GetSplitMessageProgressInterval returned wrong value",_FILE_AND_LINE_);
-	errorList.Push("Send to server failed",_FILE_AND_LINE_);
-	errorList.Push("Large packet did not split or did not properly get ID_DOWNLOAD_PROGRESS after SetSplitMessageProgressInterval is set to 1 millisecond",_FILE_AND_LINE_);
-	errorList.Push("Did not recieve and put on packet made with AllocatePacket and put on recieve stack with PushBackPacket",_FILE_AND_LINE_);
-	errorList.Push("Client failed to connect to server",_FILE_AND_LINE_);
-	errorList.Push("Did not recieve all packets from SendList",_FILE_AND_LINE_);
-	errorList.Push("Did not recieve and put on packet made with AllocatePacket and put on recieve stack with PushBackPacket",_FILE_AND_LINE_);
-	errorList.Push("Client failed to connect to server",_FILE_AND_LINE_);
-	errorList.Push("PushBackPacket messed up future communication",_FILE_AND_LINE_);
-	errorList.Push("Send/Recieve failed",_FILE_AND_LINE_);
-	errorList.Push("Recieved size incorrect",_FILE_AND_LINE_);
+	errorList.Push("Client failed to connect to server");
+	errorList.Push("Attached plugin failed to modify packet");
+	errorList.Push("Plugin is still modifying packets after detach");
+	errorList.Push("GetSplitMessageProgressInterval returned wrong value");
+	errorList.Push("Send to server failed");
+	errorList.Push("Large packet did not split or did not properly get ID_DOWNLOAD_PROGRESS after SetSplitMessageProgressInterval is set to 1 millisecond");
+	errorList.Push("Did not recieve and put on packet made with AllocatePacket and put on recieve stack with PushBackPacket");
+	errorList.Push("Client failed to connect to server");
+	errorList.Push("Did not recieve all packets from SendList");
+	errorList.Push("Did not recieve and put on packet made with AllocatePacket and put on recieve stack with PushBackPacket");
+	errorList.Push("Client failed to connect to server");
+	errorList.Push("PushBackPacket messed up future communication");
+	errorList.Push("Send/Recieve failed");
+	errorList.Push("Recieved size incorrect");
 
 }
 

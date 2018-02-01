@@ -67,7 +67,7 @@ namespace RakNet
         else
         {
             // Get random number and store what it is
-            usedValues.Push(rnr.RandomMT(), _FILE_AND_LINE_);
+            usedValues.Push(rnr.RandomMT());
             ++callCount;
             while (usedValues.Size() > 64)
                 usedValues.Pop();

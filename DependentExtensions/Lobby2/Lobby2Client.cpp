@@ -119,7 +119,7 @@ bool Lobby2Client::IsInIgnoreList(RakNet::RakString user) const
 }
 void Lobby2Client::ClearIgnoreList(void)
 {
-	ignoreList.Clear(_FILE_AND_LINE_);
+	ignoreList.Clear();
 }
 const DataStructures::OrderedList<RakNet::RakString, RakNet::RakString>* Lobby2Client::GetIgnoreList(void) const
 {

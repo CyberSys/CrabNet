@@ -117,7 +117,7 @@ using namespace RakNet;
  
  		for (int i=0;i<numRows;i++)
  		{
- 			out->Insert(*(tempIn[i]),__FILE__,__LINE__);
+ 			out->Insert(*(tempIn[i]));
  		}
  		delete [] tempIn;
  		

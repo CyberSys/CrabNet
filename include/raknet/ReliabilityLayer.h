@@ -86,8 +86,8 @@ struct BPSTracker
 {
     BPSTracker();
     ~BPSTracker();
-    void Reset(const char *file, unsigned int line);
-    inline void Push1(CCTimeType time, uint64_t value1) {dataQueue.Push(TimeAndValue2(time,value1),_FILE_AND_LINE_); total1+=value1; lastSec1+=value1;}
+    void Reset();
+    inline void Push1(CCTimeType time, uint64_t value1) {dataQueue.Push(TimeAndValue2(time, value1)); total1+=value1; lastSec1+=value1;}
 //    void Push2(RakNet::TimeUS time, uint64_t value1, uint64_t value2);
     inline uint64_t GetBPS1(CCTimeType time) {(void) time; return lastSec1;}
     inline uint64_t GetBPS1Threadsafe(CCTimeType time) {(void) time; return lastSec1;}
@@ -576,8 +576,8 @@ private:
     // Set the data pointer to externallyAllocatedPtr, do not allocate
     void AllocInternalPacketData(InternalPacket *internalPacket, unsigned char *externallyAllocatedPtr);
     // Allocate new
-    void AllocInternalPacketData(InternalPacket *internalPacket, unsigned int numBytes, bool allowStack, const char *file, unsigned int line);
-    void FreeInternalPacketData(InternalPacket *internalPacket, const char *file, unsigned int line);
+    void AllocInternalPacketData(InternalPacket *internalPacket, unsigned int numBytes, bool allowStack);
+    void FreeInternalPacketData(InternalPacket *internalPacket);
     DataStructures::MemoryPool<InternalPacketRefCountedData> refCountedDataPool;
 
     BPSTracker bpsMetrics[RNS_PER_SECOND_METRICS_COUNT];

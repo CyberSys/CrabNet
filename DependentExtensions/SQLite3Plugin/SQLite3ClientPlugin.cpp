@@ -54,7 +54,7 @@ SQLite3ClientPlugin::~SQLite3ClientPlugin()
 }
 void SQLite3ClientPlugin::AddResultHandler(SQLite3PluginResultInterface *res)
 {
-	resultHandlers.Push(res,_FILE_AND_LINE_);
+	resultHandlers.Push(res);
 }
 void SQLite3ClientPlugin::RemoveResultHandler(SQLite3PluginResultInterface *res)
 {
@@ -64,7 +64,7 @@ void SQLite3ClientPlugin::RemoveResultHandler(SQLite3PluginResultInterface *res)
 }
 void SQLite3ClientPlugin::ClearResultHandlers(void)
 {
-	resultHandlers.Clear(true,_FILE_AND_LINE_);
+	resultHandlers.Clear(true);
 }
 unsigned int SQLite3ClientPlugin::_sqlite3_exec(RakNet::RakString dbIdentifier, RakNet::RakString inputStatement,
 										  PacketPriority priority, PacketReliability reliability, char orderingChannel, const SystemAddress &systemAddress)

@@ -47,7 +47,7 @@ void ServerAndRoomBrowserData::WriteToTable(DataStructures::Table *table)
 	RakAssert(table->GetColumnCount()==4);
 	DataStructures::List<DataStructures::Table::Cell*> initialCellValues;
 	for (int i=0; i < 4; i++)
-		initialCellValues.Push(&cells[i],_FILE_AND_LINE_);
+		initialCellValues.Push(&cells[i]);
 	table->AddRow(table->GetRowCount(), initialCellValues, true);
 }
 void ServerAndRoomBrowserData::SetAsOfflinePingResponse(RakNet::RakPeerInterface *rakPeer)

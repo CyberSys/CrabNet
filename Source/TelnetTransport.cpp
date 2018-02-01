@@ -59,7 +59,7 @@ void TelnetTransport::Stop(void)
     unsigned i;
     for (i=0; i < remoteClients.Size(); i++)
         delete remoteClients[i];
-    remoteClients.Clear(false, _FILE_AND_LINE_);
+    remoteClients.Clear(false);
     delete tcpInterface;
     tcpInterface=0;
 }
@@ -276,7 +276,7 @@ SystemAddress TelnetTransport::HasNewIncomingConnection(void)
 #endif
         }
 
-        remoteClients.Insert(remoteClient, _FILE_AND_LINE_);
+        remoteClients.Insert(remoteClient);
     }
     return newConnection;
 }

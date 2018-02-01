@@ -105,7 +105,7 @@ void UDPForwarder::Shutdown(void)
     unsigned int j;
     for (j=0; j < forwardListNotUpdated.Size(); j++)
         delete forwardListNotUpdated[j];
-    forwardListNotUpdated.Clear(false, _FILE_AND_LINE_);
+    forwardListNotUpdated.Clear(false);
 }
 void UDPForwarder::SetMaxForwardEntries(unsigned short maxEntries)
 {
@@ -135,7 +135,7 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
     unsigned int inputId = nextInputId++;
 
     StartForwardingInputStruct *sfis;
-    sfis = startForwardingInput.Allocate(_FILE_AND_LINE_);
+    sfis = startForwardingInput.Allocate();
     sfis->source=source;
     sfis->destination=destination;
     sfis->timeoutOnNoDataMS=timeoutOnNoDataMS;
@@ -178,7 +178,7 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
 void UDPForwarder::StopForwarding(SystemAddress source, SystemAddress destination)
 {
     StopForwardingStruct *sfs;
-    sfs = stopForwardingCommands.Allocate(_FILE_AND_LINE_);
+    sfs = stopForwardingCommands.Allocate();
     sfs->destination=destination;
     sfs->source=source;
     stopForwardingCommands.Push(sfs);
@@ -500,7 +500,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
                     fcntl( fe->socket, F_SETFL, O_NONBLOCK );
 #endif
 
-                    forwardListNotUpdated.Insert(fe,_FILE_AND_LINE_);
+                    forwardListNotUpdated.Insert(fe);
                 }
             }
         }
@@ -508,10 +508,10 @@ void UDPForwarder::UpdateUDPForwarder(void)
         // Push result
         sfos.inputId=sfis->inputId;
         startForwardingOutputMutex.Lock();
-        startForwardingOutput.Push(sfos,_FILE_AND_LINE_);
+        startForwardingOutput.Push(sfos);
         startForwardingOutputMutex.Unlock();
 
-        startForwardingInput.Deallocate(sfis, _FILE_AND_LINE_);
+        startForwardingInput.Deallocate(sfis);
     }
 
     StopForwardingStruct *sfs;
@@ -543,7 +543,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
             }
         }
 
-        stopForwardingCommands.Deallocate(sfs, _FILE_AND_LINE_);
+        stopForwardingCommands.Deallocate(sfs);
     }
 
     unsigned int i;

@@ -32,17 +32,6 @@ using namespace RakNet;
 
 // ****************************************************** PUBLIC METHODS ******************************************************
 
-CCRakNetSlidingWindow::CCRakNetSlidingWindow()
-{
-}
-
-// ----------------------------------------------------------------------------------------------------------------------------
-CCRakNetSlidingWindow::~CCRakNetSlidingWindow()
-{
-
-}
-
-// ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::Init(CCTimeType curTime, uint32_t maxDatagramPayload)
 {
     (void) curTime;

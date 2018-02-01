@@ -45,15 +45,15 @@ namespace DataStructures
 
         Heap();
         ~Heap();
-        void Push(const weight_type &weight, const data_type &data, const char *file, unsigned int line);
+        void Push(const weight_type &weight, const data_type &data);
         /// Call before calling PushSeries, for a new series of items
         void StartSeries(void) {optimizeNextSeriesPush=false;}
         /// If you are going to push a list of items, where the weights of the items on the list are in order and follow the heap order, PushSeries is faster than Push()
-        void PushSeries(const weight_type &weight, const data_type &data, const char *file, unsigned int line);
+        void PushSeries(const weight_type &weight, const data_type &data);
         data_type Pop(const unsigned startingIndex);
         data_type Peek(const unsigned startingIndex=0) const;
         weight_type PeekWeight(const unsigned startingIndex=0) const;
-        void Clear(bool doNotDeallocateSmallBlocks, const char *file, unsigned int line);
+        void Clear(bool doNotDeallocateSmallBlocks);
         data_type& operator[] ( const unsigned int position ) const;
         unsigned Size(void) const;
 
@@ -75,11 +75,11 @@ namespace DataStructures
     template  <class weight_type, class data_type, bool isMaxHeap>
         Heap<weight_type, data_type, isMaxHeap>::~Heap()
     {
-        //Clear(true, _FILE_AND_LINE_);
+        //Clear(true);
     }
 
     template  <class weight_type, class data_type, bool isMaxHeap>
-    void Heap<weight_type, data_type, isMaxHeap>::PushSeries(const weight_type &weight, const data_type &data, const char *file, unsigned int line)
+    void Heap<weight_type, data_type, isMaxHeap>::PushSeries(const weight_type &weight, const data_type &data)
     {
         if (optimizeNextSeriesPush==false)
         {
@@ -99,7 +99,7 @@ namespace DataStructures
                         if (weight>heap[parentIndex].weight)
                         {
                             // Can't optimize
-                            Push(weight,data,file,line);
+                            Push(weight, data);
                             return;
                         }
                     }
@@ -109,7 +109,7 @@ namespace DataStructures
                         if (weight<heap[parentIndex].weight)
                         {
                             // Can't optimize
-                            Push(weight,data,file,line);
+                            Push(weight, data);
                             return;
                         }
                     }
@@ -117,21 +117,21 @@ namespace DataStructures
             }
 
             // Parent's subsequent siblings and this row's siblings all are less than / greater than inserted element. Can insert all further elements straight to the end
-            heap.Insert(HeapNode(weight, data), file, line);
+            heap.Insert(HeapNode(weight, data));
             optimizeNextSeriesPush=true;
         }
         else
         {
-            heap.Insert(HeapNode(weight, data), file, line);
+            heap.Insert(HeapNode(weight, data));
         }
     }
 
     template  <class weight_type, class data_type, bool isMaxHeap>
-    void Heap<weight_type, data_type, isMaxHeap>::Push(const weight_type &weight, const data_type &data, const char *file, unsigned int line)
+    void Heap<weight_type, data_type, isMaxHeap>::Push(const weight_type &weight, const data_type &data)
     {
         unsigned currentIndex = heap.Size();
         unsigned parentIndex;
-        heap.Insert(HeapNode(weight, data), file, line);
+        heap.Insert(HeapNode(weight, data));
         while (currentIndex!=0)
         {
             parentIndex = Parent(currentIndex);
@@ -251,9 +251,9 @@ namespace DataStructures
     }
 
     template  <class weight_type, class data_type, bool isMaxHeap>
-        void Heap<weight_type, data_type, isMaxHeap>::Clear(bool doNotDeallocateSmallBlocks, const char *file, unsigned int line)
+        void Heap<weight_type, data_type, isMaxHeap>::Clear(bool doNotDeallocateSmallBlocks)
     {
-        heap.Clear(doNotDeallocateSmallBlocks, file, line);
+        heap.Clear(doNotDeallocateSmallBlocks);
     }
 
     template <class weight_type, class data_type, bool isMaxHeap>

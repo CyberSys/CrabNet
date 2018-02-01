@@ -67,7 +67,7 @@ void GridSectorizer::AddEntry(void *entry, float minX, float minY, float maxX, f
 #ifdef _USE_ORDERED_LIST
             grid[yCur * gridCellWidthCount + xCur].Insert(entry, entry, true);
 #else
-            grid[yCur * gridCellWidthCount + xCur].Insert(entry, _FILE_AND_LINE_);
+            grid[yCur * gridCellWidthCount + xCur].Insert(entry);
 #endif
         }
     }
@@ -147,14 +147,14 @@ void GridSectorizer::GetEntries(DataStructures::List<void *> &intersectionList, 
     int xEnd = WorldToCellXOffsetAndClamped(maxX);
     int yEnd = WorldToCellYOffsetAndClamped(maxY);
 
-    intersectionList.Clear(true, _FILE_AND_LINE_);
+    intersectionList.Clear(true);
     for (int xCur = xStart; xCur <= xEnd; ++xCur)
     {
         for (int yCur = yStart; yCur <= yEnd; ++yCur)
         {
             cell = grid + yCur * gridCellWidthCount + xCur;
             for (unsigned index = 0; index < cell->Size(); ++index)
-                intersectionList.Insert((*cell)[index], _FILE_AND_LINE_);
+                intersectionList.Insert((*cell)[index]);
         }
     }
 }
@@ -194,5 +194,5 @@ void GridSectorizer::Clear()
 {
     int count = gridCellWidthCount * gridCellHeightCount;
     for (int cur = 0; cur < count; cur++)
-        grid[cur].Clear(true, _FILE_AND_LINE_);
+        grid[cur].Clear(true);
 }

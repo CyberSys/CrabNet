@@ -73,7 +73,7 @@ namespace DataStructures
         while (queue.Size())
         {
             node=queue.Pop();
-            output.Insert(node, _FILE_AND_LINE_);
+            output.Insert(node);
             for (i=0; i < node->children.Size(); i++)
                 queue.Push(node->children[i]);
         }

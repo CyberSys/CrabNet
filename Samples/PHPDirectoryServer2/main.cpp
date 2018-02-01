@@ -402,9 +402,9 @@ void TestPHPDirectoryServer(int argc, char **argv)
 	printf("Set columns and one row for your game, and upload it to a\nviewable and downloadable webpage.\n");
 	printf("Difficulty: Intermediate\n\n");
 
-// 	tcp = RakNet::OP_NEW<TCPInterface>(_FILE_AND_LINE_);
-// 	httpConnection = RakNet::OP_NEW<HTTPConnection>(_FILE_AND_LINE_);
-// 	phpDirectoryServer2 = RakNet::OP_NEW<PHPDirectoryServer2>(_FILE_AND_LINE_);
+// 	tcp = RakNet::OP_NEW<TCPInterface>();
+// 	httpConnection = RakNet::OP_NEW<HTTPConnection>();
+// 	phpDirectoryServer2 = RakNet::OP_NEW<PHPDirectoryServer2>();
 
 
 
@@ -458,9 +458,9 @@ void TestPHPDirectoryServer(int argc, char **argv)
 	} while (str[0]!='q');
 
 	// The destructor of each of these references the other, so delete in this order
-	RakNet::OP_DELETE(phpDirectoryServer2,_FILE_AND_LINE_);
-	RakNet::OP_DELETE(httpConnection,_FILE_AND_LINE_);
-	RakNet::OP_DELETE(tcp,_FILE_AND_LINE_);
+	RakNet::OP_DELETE(phpDirectoryServer2);
+	RakNet::OP_DELETE(httpConnection);
+	RakNet::OP_DELETE(tcp);
 }
 
 void TestGet(void)
@@ -498,9 +498,9 @@ int main(int argc, char **argv)
 	printf("Set columns and one row for your game, and upload it to a\nviewable and downloadable webpage.\n");
 	printf("Difficulty: Intermediate\n\n");
 
-	tcp = RakNet::OP_NEW<TCPInterface>(__FILE__,__LINE__);
-	httpConnection = RakNet::OP_NEW<HTTPConnection>(__FILE__,__LINE__);
-	phpDirectoryServer2 = RakNet::OP_NEW<PHPDirectoryServer2>(__FILE__,__LINE__);
+	tcp = RakNet::OP_NEW<TCPInterface>();
+	httpConnection = RakNet::OP_NEW<HTTPConnection>();
+	phpDirectoryServer2 = RakNet::OP_NEW<PHPDirectoryServer2>();
 
 
 

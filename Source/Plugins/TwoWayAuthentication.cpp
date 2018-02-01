@@ -49,7 +49,7 @@ void TwoWayAuthentication::NonceGenerator::GetNonce(char nonce[TWO_WAY_AUTHENTIC
     *requestId=narsr->requestId;
     memcpy(nonce,narsr->nonce,TWO_WAY_AUTHENTICATION_NONCE_LENGTH);
     narsr->whenGenerated=RakNet::GetTime();
-    generatedNonces.Push(narsr,_FILE_AND_LINE_);
+    generatedNonces.Push(narsr);
 }
 void TwoWayAuthentication::NonceGenerator::GenerateNonce(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH])
 {
@@ -85,7 +85,7 @@ void TwoWayAuthentication::NonceGenerator::Clear(void)
     unsigned int i;
     for (i=0; i < generatedNonces.Size(); i++)
         delete generatedNonces[i];
-    generatedNonces.Clear(true,_FILE_AND_LINE_);
+    generatedNonces.Clear(true);
 }
 void TwoWayAuthentication::NonceGenerator::ClearByAddress(RakNet::AddressOrGUID remoteSystem)
 {
@@ -134,7 +134,7 @@ bool TwoWayAuthentication::AddPassword(RakNet::RakString identifier, RakNet::Rak
     if (passwords.GetIndexOf(identifier.C_String()).IsInvalid()==false)
         return false; // This identifier already in use
 
-    passwords.Push(identifier, password,_FILE_AND_LINE_);
+    passwords.Push(identifier, password);
     return true;
 }
 bool TwoWayAuthentication::Challenge(RakNet::RakString identifier, AddressOrGUID remoteSystem)
@@ -153,7 +153,7 @@ bool TwoWayAuthentication::Challenge(RakNet::RakString identifier, AddressOrGUID
     pc.remoteSystem=remoteSystem;
     pc.time=RakNet::GetTime();
     pc.sentHash=false;
-    outgoingChallenges.Push(pc,_FILE_AND_LINE_);
+    outgoingChallenges.Push(pc);
 
     return true;
 }
@@ -256,8 +256,8 @@ void TwoWayAuthentication::OnClosedConnection(const SystemAddress &systemAddress
 }
 void TwoWayAuthentication::Clear(void)
 {
-    outgoingChallenges.Clear(_FILE_AND_LINE_);
-    passwords.Clear(_FILE_AND_LINE_);
+    outgoingChallenges.Clear();
+    passwords.Clear();
     nonceGenerator.Clear();
 }
 void TwoWayAuthentication::PushToUser(MessageID messageId, RakNet::RakString password, RakNet::AddressOrGUID remoteSystem)

@@ -41,7 +41,7 @@ void TestHelpers::StandardServerPrep(RakPeerInterface *&server,DataStructures::L
 {
 
 	StandardServerPrep(server);
-	destroyList.Push(server,_FILE_AND_LINE_);
+	destroyList.Push(server);
 
 }
 
@@ -49,7 +49,7 @@ void TestHelpers::StandardClientPrep(RakPeerInterface *&client,DataStructures::L
 {
 
 	StandardClientPrep(client);
-	destroyList.Push(client,_FILE_AND_LINE_);
+	destroyList.Push(client);
 
 }
 

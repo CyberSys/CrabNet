@@ -206,7 +206,7 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_RegisterAccount)
 
 	RakNet::BitStream serializedBinaryData;
 	WriteAccountBinaryData(&serializedBinaryData, pparams, index);
-	m1->createAccountParameters.binaryData = RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);
+	m1->createAccountParameters.binaryData = RakNet::OP_NEW<BinaryDataBlock>();
 	m1->createAccountParameters.binaryData->binaryData=(char*) serializedBinaryData.GetData();
 	m1->createAccountParameters.binaryData->binaryDataLength=serializedBinaryData.GetNumberOfBytesUsed();
 	lobby2Client->SendMsg(m1);
@@ -341,7 +341,7 @@ ACTIONSCRIPT_CALLABLE_FUNCTION(Lobby2ClientGFx3Impl, f2c_SendEmail)
 	for (index=0; index < 8; index++)
 	{
 		if (pparams[index].GetString() && pparams[index].GetString()[0])
-			m1->recipients.Push(RakNet::RakString(pparams[index].GetString()), _FILE_AND_LINE_);
+			m1->recipients.Push(RakNet::RakString(pparams[index].GetString()));
 	}
 	m1->subject=pparams[index++].GetString();
 	m1->body=pparams[index++].GetString();
@@ -660,7 +660,7 @@ void Lobby2ClientGFx3Impl::MessageResult(System_CreateDatabase *message)
 void Lobby2ClientGFx3Impl::MessageResult(System_CreateTitle *message)
 {
 	__L2_ALLOCATE_AND_DEFINE(messageFactory, CDKey_Add, m3);
-	m3->cdKeys.Insert("Test CD Key", _FILE_AND_LINE_);
+	m3->cdKeys.Insert("Test CD Key");
 	m3->titleName="Test Title Name";
 	lobby2Client->SendMsgAndDealloc(m3);
 }

@@ -116,7 +116,7 @@ void RakNet::GetClanMembers(unsigned int clanId, DataStructures::List<ClanMember
 		cmd.memberState=(ClanMemberState)cms;
 		PostgreSQLInterface::PQGetValueFromBinary(&cmd.banReason, result, idx, "banReason");
 		PostgreSQLInterface::PQGetValueFromBinary(&cmd.name, result, idx, "handle");
-		clanMembers.Insert(cmd, _FILE_AND_LINE_ );
+		clanMembers.Insert(cmd );
 	}
 	PQclear(result);
 }
@@ -204,7 +204,7 @@ void RakNet::GetFriendIDs(unsigned int callerUserId, bool excludeIfIgnored, Post
 	{
 		PostgreSQLInterface::PQGetValueFromBinary(&id, result, idx, "userTwo_fk");
 		if (excludeIfIgnored==false || IsIgnoredByTarget(callerUserId, id, pgsql)==false)
-			output.Insert(id, _FILE_AND_LINE_ );
+			output.Insert(id );
 	}
 	PQclear(result);
 }
@@ -224,7 +224,7 @@ void RakNet::GetClanMateIDs(unsigned int callerUserId, bool excludeIfIgnored, Po
 	{
 		PostgreSQLInterface::PQGetValueFromBinary(&id, result, idx, "userId_fk");
 		if (excludeIfIgnored==false || IsIgnoredByTarget(callerUserId, id, pgsql)==false)
-			output.Insert(id, _FILE_AND_LINE_ );
+			output.Insert(id );
 	}
 	PQclear(result);
 }
@@ -302,7 +302,7 @@ void RakNet::GetFriendInfosByStatus(unsigned int callerUserId, RakNet::RakString
 		FriendInfo fi;
 		PostgreSQLInterface::PQGetValueFromBinary(&fi.usernameAndStatus.handle, result, i, "handle");
 		fi.usernameAndStatus.isOnline=false;
-		output.Insert(fi, _FILE_AND_LINE_ );
+		output.Insert(fi );
 	}
 
 	PQclear(result);
@@ -316,14 +316,14 @@ void RakNet::SendEmail(DataStructures::List<RakNet::RakString> &recipientNames, 
 	{
 		targetUserId = GetUserRowFromHandle(recipientNames[i], pgsql);
 		if (targetUserId!=0)
-			targetUserIds.Insert(targetUserId, _FILE_AND_LINE_ );
+			targetUserIds.Insert(targetUserId );
 	}
 	SendEmail(targetUserIds, senderUserId, senderUserName, server, subject, body, binaryData, status, triggerString, pgsql);
 }
 void RakNet::SendEmail(unsigned int targetUserId, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, RakNetSmartPtr<BinaryDataBlock>binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql)
 {
 	DataStructures::List<unsigned int> targetUserIds;
-	targetUserIds.Insert(targetUserId, _FILE_AND_LINE_ );
+	targetUserIds.Insert(targetUserId );
 	SendEmail(targetUserIds, senderUserId, senderUserName, server, subject, body, binaryData, status, triggerString, pgsql);
 }
 void RakNet::SendEmail(DataStructures::List<unsigned int> &targetUserIds, unsigned int senderUserId, RakNet::RakString senderUserName, Lobby2Server *server, RakNet::RakString subject, RakNet::RakString body, RakNetSmartPtr<BinaryDataBlock>binaryData, int status, RakNet::RakString triggerString, PostgreSQLInterface *pgsql)
@@ -538,7 +538,7 @@ bool RakNet::System_CreateDatabase_PGSQL::ServerDBImpl( Lobby2ServerCommand *com
 	fseek( fp, 0, SEEK_END );
 	unsigned int fileSize = ftell( fp );
 	fseek( fp, 0, SEEK_SET );
-	char *cmd = (char*) rakMalloc_Ex(fileSize+1, _FILE_AND_LINE_);
+	char *cmd = (char*) rakMalloc_Ex(fileSize+1);
 	fread(cmd, 1, fileSize, fp);
 	fclose(fp);
 	cmd[fileSize]=0;
@@ -554,7 +554,7 @@ bool RakNet::System_CreateDatabase_PGSQL::ServerDBImpl( Lobby2ServerCommand *com
 		printf(cmd);
 		printf(pgsql->GetLastError());
 	}
-	rakFree_Ex(cmd, _FILE_AND_LINE_ );
+	rakFree_Ex(cmd );
 	return true;
 }
 
@@ -1597,13 +1597,13 @@ bool RakNet::Client_GetIgnoreList_PGSQL::ServerDBImpl( Lobby2ServerCommand *comm
 	}
 
 	RakNet::RakString handle;
-	ignoredHandles.Clear(false, _FILE_AND_LINE_);
+	ignoredHandles.Clear(false);
 	int numRowsReturned = PQntuples(result);
 	int i;
 	for (i=0; i < numRowsReturned; i++)
 	{
 		PostgreSQLInterface::PQGetValueFromBinary(&handle, result, i, "handle");
-		ignoredHandles.Insert(handle, _FILE_AND_LINE_ );
+		ignoredHandles.Insert(handle );
 	}
 	PQclear(result);
 
@@ -2307,7 +2307,7 @@ bool RakNet::BookmarkedUsers_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *comma
 		PostgreSQLInterface::PQGetValueFromBinary(&bm.type, result, i, "type");
 		PostgreSQLInterface::PQGetValueFromBinary(&bm.description, result, i, "description");
 		PostgreSQLInterface::PQGetValueFromBinary(&bm.dateWhenAdded, result, i, "creationDate");
-		bookmarkedUsers.Insert(bm, _FILE_AND_LINE_ );
+		bookmarkedUsers.Insert(bm );
 	}
 
 	PQclear(result);
@@ -2435,7 +2435,7 @@ bool RakNet::Emails_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void 
 			}		
 			emailResults.Insert(emailResult, __FILE__, __LINE__ );
 		}
-		emailResults.Insert(emailResult, _FILE_AND_LINE_ );
+		emailResults.Insert(emailResult );
 	}
 
 	resultCode=L2RC_SUCCESS;
@@ -2620,12 +2620,12 @@ bool RakNet::Ranking_GetMatches_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 		{
 			PostgreSQLInterface::PQGetValueFromBinary(&matchParticipant.handle, result2, j, "handle");
 			PostgreSQLInterface::PQGetValueFromBinary(&matchParticipant.score, result2, j, "score");
-			submittedMatch.matchParticipants.Insert(matchParticipant, _FILE_AND_LINE_ );
+			submittedMatch.matchParticipants.Insert(matchParticipant );
 		}
 
 		PQclear(result2);
 
-		submittedMatches.Insert(submittedMatch, _FILE_AND_LINE_ );
+		submittedMatches.Insert(submittedMatch );
 	}
 	PQclear(result1);
 
@@ -3098,11 +3098,11 @@ bool RakNet::Clans_Get_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void *
 		for (int j=0; j < numRowsReturned2; j++)
 		{
 			PostgreSQLInterface::PQGetValueFromBinary(&memberHandle, result2, j, "handle");
-			ci.clanMembersOtherThanLeader.Insert(memberHandle, _FILE_AND_LINE_ );
+			ci.clanMembersOtherThanLeader.Insert(memberHandle );
 		}
 		PQclear(result2);
 
-		clans.Insert(ci, _FILE_AND_LINE_ );
+		clans.Insert(ci );
 	}
 
 	PQclear(result);
@@ -3468,7 +3468,7 @@ bool RakNet::Clans_Leave_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, void
 		for (unsigned int i=0; i < clanMembers.Size(); i++)
 		{
 			if (clanMembers[i].memberState==CMD_ACTIVE)
-				targetUserIds.Insert(clanMembers[i].userId, _FILE_AND_LINE_ );
+				targetUserIds.Insert(clanMembers[i].userId );
 		}
 		SendEmail(targetUserIds, command->callerUserId, command->callingUserName, command->server, subject, body, binaryData, emailStatus, "Clans_Leave", pgsql);
 	}
@@ -3916,7 +3916,7 @@ bool RakNet::Clans_DownloadInvitationList_PGSQL::ServerDBImpl( Lobby2ServerComma
 	{
 		OpenInvite oi;
 		PostgreSQLInterface::PQGetValueFromBinary(&oi.clanHandle, result, i, "clanHandle");
-		invitationsSentToMe.Insert(oi, _FILE_AND_LINE_ );
+		invitationsSentToMe.Insert(oi );
 	}
 
 	PQclear(result);
@@ -3952,7 +3952,7 @@ bool RakNet::Clans_DownloadInvitationList_PGSQL::ServerDBImpl( Lobby2ServerComma
 		PostgreSQLInterface::PQGetValueFromBinary(&cjr.sourceClan, result, i, "clanHandle");
 		PostgreSQLInterface::PQGetValueFromBinary(&cjr.dateSent, result, i, "creationDate");
 		PostgreSQLInterface::PQGetValueFromBinary(&cjr.joinRequestTarget, result, i, "joinRequestTarget");
-		usersThatHaveAnInvitationFromClansThatIAmAMemberOf.Insert(cjr, _FILE_AND_LINE_ );
+		usersThatHaveAnInvitationFromClansThatIAmAMemberOf.Insert(cjr );
 	}
 	PQclear(result);
 
@@ -4282,7 +4282,7 @@ bool RakNet::Clans_RejectJoinRequest_PGSQL::ServerDBImpl( Lobby2ServerCommand *c
 	cmd.memberState=CMD_ACTIVE;
 	cmd.isSubleader=true;
 	cmd.userId=targetId;
-	clanMembers.Insert(cmd, _FILE_AND_LINE_ );
+	clanMembers.Insert(cmd );
 
 	for (unsigned int i=0; i < clanMembers.Size(); i++)
 	{
@@ -4338,7 +4338,7 @@ bool RakNet::Clans_DownloadRequestList_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 		PostgreSQLInterface::PQGetValueFromBinary(&cjr.targetClan, result, i, "clanHandle");
 		PostgreSQLInterface::PQGetValueFromBinary(&cjr.dateSent, result, i, "creationDate");
 		PostgreSQLInterface::PQGetValueFromBinary(&cjr.joinRequestSender, result, i, "handle");
-		joinRequestsToMyClan.Insert(cjr, _FILE_AND_LINE_ );
+		joinRequestsToMyClan.Insert(cjr );
 	}
 	PQclear(result);
 
@@ -4359,7 +4359,7 @@ bool RakNet::Clans_DownloadRequestList_PGSQL::ServerDBImpl( Lobby2ServerCommand 
 		ClanJoinRequest cjr;
 		PostgreSQLInterface::PQGetValueFromBinary(&cjr.targetClan, result, i, "clanHandle");
 		PostgreSQLInterface::PQGetValueFromBinary(&cjr.dateSent, result, i, "creationDate");
-		joinRequestsFromMe.Insert(cjr, _FILE_AND_LINE_ );
+		joinRequestsFromMe.Insert(cjr );
 	}
 	PQclear(result);
 
@@ -4592,7 +4592,7 @@ bool RakNet::Clans_GetBlacklist_PGSQL::ServerDBImpl( Lobby2ServerCommand *comman
 	for (int i=0; i < PQntuples(result); i++)
 	{
 		PostgreSQLInterface::PQGetValueFromBinary(&memberName, result, i, "handle");
-		blacklistedUsers.Insert(memberName, _FILE_AND_LINE_ );
+		blacklistedUsers.Insert(memberName );
 	}
 	PQclear(result);
 
@@ -4646,7 +4646,7 @@ bool RakNet::Clans_GetMembers_PGSQL::ServerDBImpl( Lobby2ServerCommand *command,
 	for (int i=0; i < PQntuples(result); i++)
 	{
 		PostgreSQLInterface::PQGetValueFromBinary(&memberName, result, i, "handle");
-		clanMembersOtherThanLeader.Insert(memberName, _FILE_AND_LINE_ );
+		clanMembersOtherThanLeader.Insert(memberName );
 	}
 	PQclear(result);
 
@@ -4671,7 +4671,7 @@ bool RakNet::Clans_GetList_PGSQL::ServerDBImpl( Lobby2ServerCommand *command, vo
 	for (int i=0; i < PQntuples(result); i++)
 	{
 		PostgreSQLInterface::PQGetValueFromBinary(&clanName, result, i, "clanhandle");
-		clanNames.Insert(clanName, _FILE_AND_LINE_ );
+		clanNames.Insert(clanName );
 	}
 	PQclear(result);
 

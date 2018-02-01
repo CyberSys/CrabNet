@@ -34,9 +34,9 @@ namespace DataStructures
         ~BytePool()  = default;
         // Should be at least 8 times bigger than 8192
         void SetPageSize(int size);
-        unsigned char* Allocate(int bytesWanted, const char *file, unsigned int line);
-        void Release(unsigned char *data, const char *file, unsigned int line);
-        void Clear(const char *file, unsigned int line);
+        unsigned char* Allocate(int bytesWanted);
+        void Release(unsigned char *data);
+        void Clear();
     protected:
         MemoryPool<unsigned char[128]> pool128;
         MemoryPool<unsigned char[512]> pool512;

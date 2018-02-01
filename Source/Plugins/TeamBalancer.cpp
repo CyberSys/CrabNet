@@ -43,9 +43,9 @@ TeamBalancer::~TeamBalancer()
 }
 void TeamBalancer::SetTeamSizeLimit(TeamId team, unsigned short limit)
 {
-    teamLimits.Replace(limit,0,team,_FILE_AND_LINE_);
+    teamLimits.Replace(limit,0,team);
     if (teamLimits.Size() > teamMemberCounts.Size())
-        teamMemberCounts.Replace(0,0,teamLimits.Size()-1,_FILE_AND_LINE_);
+        teamMemberCounts.Replace(0,0,teamLimits.Size()-1);
 }
 void TeamBalancer::SetDefaultAssignmentAlgorithm(DefaultAssigmentAlgorithm daa)
 {
@@ -145,7 +145,7 @@ void TeamBalancer::RequestSpecificTeam(NetworkID memberId, TeamId desiredTeam)
         mtm.currentTeam=UNASSIGNED_TEAM_ID;
         mtm.memberId=memberId;
         mtm.requestedTeam=desiredTeam;
-        myTeamMembers.Push(mtm, _FILE_AND_LINE_);
+        myTeamMembers.Push(mtm);
     }
 
     // Send desiredTeam to the current host.
@@ -199,7 +199,7 @@ void TeamBalancer::RequestAnyTeam(NetworkID memberId)
         mtm.currentTeam=UNASSIGNED_TEAM_ID;
         mtm.memberId=memberId;
         mtm.requestedTeam=UNASSIGNED_TEAM_ID;
-        myTeamMembers.Push(mtm, _FILE_AND_LINE_);
+        myTeamMembers.Push(mtm);
     }
 
     // Else send to the current host that we need a team.
@@ -582,9 +582,9 @@ unsigned int TeamBalancer::AddTeamMember(const TeamMember &tm)
 
     RakAssert(tm.currentTeam!=UNASSIGNED_TEAM_ID);
 
-    teamMembers.Push(tm,_FILE_AND_LINE_);
+    teamMembers.Push(tm);
     if (teamMemberCounts.Size()<tm.currentTeam)
-        teamMemberCounts.Replace(1,0,tm.currentTeam,_FILE_AND_LINE_);
+        teamMemberCounts.Replace(1,0,tm.currentTeam);
     else
         teamMemberCounts[tm.currentTeam]=teamMemberCounts[tm.currentTeam]+1;
     return teamMembers.Size()-1;
@@ -642,9 +642,9 @@ unsigned int TeamBalancer::GetMemberIndexToSwitchTeams(const DataStructures::Lis
             if (teamMembers[i].currentTeam==sourceTeamNumbers[j])
             {
                 if (teamMembers[i].requestedTeam==targetTeamNumber)
-                    preferredSwapIndices.Push(i,_FILE_AND_LINE_);
+                    preferredSwapIndices.Push(i);
                 else
-                    potentialSwapIndices.Push(i,_FILE_AND_LINE_);
+                    potentialSwapIndices.Push(i);
             }
         }
     }
@@ -672,11 +672,11 @@ void TeamBalancer::SwitchMemberTeam(unsigned int teamMemberIndex, TeamId destina
 }
 void TeamBalancer::GetOverpopulatedTeams(DataStructures::List<TeamId> &overpopulatedTeams, int maxTeamSize)
 {
-    overpopulatedTeams.Clear(true,_FILE_AND_LINE_);
+    overpopulatedTeams.Clear(true);
     for (TeamId i=0; i < teamMemberCounts.Size(); i++)
     {
         if (teamMemberCounts[i]>=maxTeamSize)
-            overpopulatedTeams.Push(i,_FILE_AND_LINE_);
+            overpopulatedTeams.Push(i);
     }
 }
 void TeamBalancer::NotifyTeamAssigment(unsigned int teamMemberIndex)
@@ -831,7 +831,7 @@ TeamId TeamBalancer::MoveMemberThatWantsToJoinTeamInternal(TeamId teamId)
     for (TeamId i=0; i < teamMembers.Size(); i++)
     {
         if (teamMembers[i].requestedTeam==teamId)
-            membersThatWantToJoinTheTeam.Push(i,_FILE_AND_LINE_);
+            membersThatWantToJoinTheTeam.Push(i);
     }
 
     if (membersThatWantToJoinTheTeam.Size()>0)

@@ -107,7 +107,7 @@ public:
 		if (IsFunctionRegistered(uniqueIdentifier)) return false;
 		_RPC3::FunctionPointer fp;
 		fp= _RPC3::GetBoundPointer(functionPtr);
-		localFunctions.Push(uniqueIdentifier,RakNet::OP_NEW_1<LocalRPCFunction>( _FILE_AND_LINE_, fp ),_FILE_AND_LINE_);
+		localFunctions.Push(uniqueIdentifier,RakNet::OP_NEW_1<LocalRPCFunction>( , fp ));
 		return true;
 	}
 
@@ -152,14 +152,14 @@ public:
 		LocalSlot *localSlot;
 		if (idx.IsInvalid())
 		{
-			localSlot = RakNet::OP_NEW<LocalSlot>(_FILE_AND_LINE_);
-			localSlots.Push(sharedIdentifier, localSlot,_FILE_AND_LINE_);
+			localSlot = RakNet::OP_NEW<LocalSlot>();
+			localSlots.Push(sharedIdentifier, localSlot);
 		}
 		else
 		{
 			localSlot=localSlots.ItemAtIndex(idx);
 		}
-		localSlot->slotObjects.Insert(lso,lso,true,_FILE_AND_LINE_);
+		localSlot->slotObjects.Insert(lso,lso,true);
 	}
 
 	/// Unregisters a function pointer to be callable given an identifier for the pointer

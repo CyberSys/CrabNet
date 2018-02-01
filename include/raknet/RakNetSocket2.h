@@ -101,10 +101,10 @@ public:
     //        bufferedPackets.Push(recvFromStruct);
     //        quitAndDataEvents.SetEvent();
     virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct)=0;
-    virtual void DeallocRNS2RecvStruct(RNS2RecvStruct *s, const char *file, unsigned int line)=0;
-    virtual RNS2RecvStruct *AllocRNS2RecvStruct(const char *file, unsigned int line)=0;
+    virtual void DeallocRNS2RecvStruct(RNS2RecvStruct *s)=0;
+    virtual RNS2RecvStruct *AllocRNS2RecvStruct()=0;
 
-    // recvFromStruct=bufferedPackets.Allocate( _FILE_AND_LINE_ );
+    // recvFromStruct=bufferedPackets.Allocate(  );
     //     DataStructures::ThreadsafeAllocatingQueue<RNS2RecvStruct> bufferedPackets;
 };
 
@@ -116,7 +116,7 @@ public:
 
     // In order for the handler to trigger, some platforms must call PollRecvFrom, some platforms this create an internal thread.
     void SetRecvEventHandler(RNS2EventHandler *_eventHandler);
-    virtual RNS2SendResult Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line )=0;
+    virtual RNS2SendResult Send( RNS2_SendParameters *sendParameters )=0;
     RNS2Type GetSocketType(void) const;
     void SetSocketType(RNS2Type t);
     bool IsBerkleySocket(void) const;
@@ -155,8 +155,8 @@ class RNS2_NativeClient : public RakNetSocket2
 public:
     RNS2_NativeClient();
     virtual ~RNS2_NativeClient();
-    RNS2BindResult Bind( NativeClientBindParameters *bindParameters, const char *file, unsigned int line );
-    RNS2SendResult Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
+    RNS2BindResult Bind( NativeClientBindParameters *bindParameters );
+    RNS2SendResult Send( RNS2_SendParameters *sendParameters );
     const NativeClientBindParameters *GetBindings(void) const;
 
     // ----------- STATICS ------------
@@ -181,12 +181,12 @@ protected:
     void ProcessBufferedSend(void);
     static void SendImmediate(RNS2_SendParameters_NativeClient *sp);
     static void DeallocSP(RNS2_SendParameters_NativeClient *sp);
-    static RNS2_SendParameters_NativeClient* CloneSP(RNS2_SendParameters *sp, RNS2_NativeClient *socket2, const char *file, unsigned int line);
+    static RNS2_SendParameters_NativeClient* CloneSP(RNS2_SendParameters *sp, RNS2_NativeClient *socket2);
     static void onRecvFrom(void* pData, int32_t dataSize);
     void IssueReceiveCall(void);
     static void onSocketBound(void* pData, int32_t dataSize);
     static void onSendTo(void* pData, int32_t dataSize);
-    void BufferSend( RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
+    void BufferSend( RNS2_SendParameters *sendParameters );
     PP_Resource rns2Socket;
     NativeClientBindParameters binding;
     bool sendInProgress;
@@ -231,7 +231,7 @@ public:
     static bool IsPortInUse(unsigned short port, const char *hostAddress, unsigned short addressFamily, int type );
 
     // ----------- MEMBERS ------------
-    virtual RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line )=0;
+    virtual RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters )=0;
 };
 // Every platform that uses Berkley sockets, except native client, can compile some common functions
 class RNS2_Berkley : public IRNS2_Berkley
@@ -248,9 +248,9 @@ public:
 
 protected:
     // Used by other classes
-    RNS2BindResult BindShared( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line );
-    RNS2BindResult BindSharedIPV4( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line );
-    RNS2BindResult BindSharedIPV4And6( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line );
+    RNS2BindResult BindShared( RNS2_BerkleyBindParameters *bindParameters );
+    RNS2BindResult BindSharedIPV4( RNS2_BerkleyBindParameters *bindParameters );
+    RNS2BindResult BindSharedIPV4And6( RNS2_BerkleyBindParameters *bindParameters );
 
     static void GetSystemAddressIPV4 ( RNS2Socket rns2Socket, SystemAddress *systemAddressOut );
     static void GetSystemAddressIPV4And6 ( RNS2Socket rns2Socket, SystemAddress *systemAddressOut );
@@ -286,7 +286,7 @@ class RNS2_Windows_Linux_360
 {
 public:
 protected:
-    static RNS2SendResult Send_Windows_Linux_360NoVDP( RNS2Socket rns2Socket, RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
+    static RNS2SendResult Send_Windows_Linux_360NoVDP( RNS2Socket rns2Socket, RNS2_SendParameters *sendParameters );
 };
 #endif
 
@@ -311,8 +311,8 @@ class RNS2_Windows : public RNS2_Berkley, public RNS2_Windows_Linux_360
 public:
     RNS2_Windows();
     virtual ~RNS2_Windows();
-    RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line );
-    RNS2SendResult Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
+    RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters );
+    RNS2SendResult Send( RNS2_SendParameters *sendParameters );
     void SetSocketLayerOverride(SocketLayerOverride *_slo);
     SocketLayerOverride* GetSocketLayerOverride(void);
     // ----------- STATICS ------------
@@ -327,8 +327,8 @@ protected:
 class RNS2_Linux : public RNS2_Berkley, public RNS2_Windows_Linux_360
 {
 public:
-    RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line );
-    RNS2SendResult Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
+    RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters );
+    RNS2SendResult Send( RNS2_SendParameters *sendParameters );
 
     // ----------- STATICS ------------
     static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );

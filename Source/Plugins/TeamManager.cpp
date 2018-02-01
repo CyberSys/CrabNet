@@ -254,9 +254,9 @@ TeamSelection TM_TeamMember::GetRequestedTeam(void) const
 
 void TM_TeamMember::GetRequestedSpecificTeams(DataStructures::List<TM_Team*> &requestedTeams) const
 {
-    requestedTeams.Clear(true, _FILE_AND_LINE_);
+    requestedTeams.Clear(true);
     for (unsigned int i=0; i < teamsRequested.Size(); i++)
-        requestedTeams.Push(teamsRequested[i].requested, _FILE_AND_LINE_);
+        requestedTeams.Push(teamsRequested[i].requested);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -522,7 +522,7 @@ bool TM_TeamMember::DeserializeConstruction(TeamManager *teamManager, BitStream 
             (hasTeamRequested==false || (hasTeamRequested==true && rt.requested!=0))
             )
         {
-            teamsRequested.Push(rt, _FILE_AND_LINE_);
+            teamsRequested.Push(rt);
         }
     }
 
@@ -571,12 +571,12 @@ unsigned long TM_TeamMember::ToUint32( const NetworkID &g )
 
 void TM_TeamMember::UpdateListsToNoTeam(NoTeamId nti)
 {
-    teamsRequested.Clear(true, _FILE_AND_LINE_ );
+    teamsRequested.Clear(true );
     for (unsigned int i=0; i < teams.Size(); i++)
     {
         teams[i]->RemoveFromTeamMemberList(this);
     }
-    teams.Clear(true, _FILE_AND_LINE_ );
+    teams.Clear(true );
     noTeamSubcategory=nti;
     joinTeamType=JOIN_NO_TEAM;
 }
@@ -676,7 +676,7 @@ bool TM_TeamMember::LeaveTeamCheck(TM_Team *team) const
 
 void TM_TeamMember::UpdateTeamsRequestedToAny(void)
 {
-    teamsRequested.Clear(true, _FILE_AND_LINE_);
+    teamsRequested.Clear(true);
     joinTeamType=JOIN_ANY_AVAILABLE_TEAM;
     whenJoinAnyRequested=RakNet::GetTime();
     joinAnyRequestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
@@ -686,7 +686,7 @@ void TM_TeamMember::UpdateTeamsRequestedToAny(void)
 
 void TM_TeamMember::UpdateTeamsRequestedToNone(void)
 {
-    teamsRequested.Clear(true, _FILE_AND_LINE_);
+    teamsRequested.Clear(true);
     joinTeamType=JOIN_NO_TEAM;
 }
 
@@ -702,7 +702,7 @@ void TM_TeamMember::AddToRequestedTeams(TM_Team *teamToJoin)
     rt.teamToLeave=0;
     rt.whenRequested=RakNet::GetTime();
     rt.requestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
-    teamsRequested.Push(rt, _FILE_AND_LINE_ );
+    teamsRequested.Push(rt );
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -717,7 +717,7 @@ void TM_TeamMember::AddToRequestedTeams(TM_Team *teamToJoin, TM_Team *teamToLeav
     rt.teamToLeave=teamToLeave;
     rt.whenRequested=RakNet::GetTime();
     rt.requestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
-    teamsRequested.Push(rt, _FILE_AND_LINE_ );
+    teamsRequested.Push(rt );
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -726,7 +726,7 @@ bool TM_TeamMember::RemoveFromRequestedTeams(TM_Team *team)
 {
     if (team==0)
     {
-        teamsRequested.Clear(true, _FILE_AND_LINE_);
+        teamsRequested.Clear(true);
         joinTeamType=JOIN_NO_TEAM;
         return true;
     }
@@ -753,8 +753,8 @@ bool TM_TeamMember::RemoveFromRequestedTeams(TM_Team *team)
 
 void TM_TeamMember::AddToTeamList(TM_Team *team)
 {
-    team->teamMembers.Push(this, _FILE_AND_LINE_ );
-    teams.Push(team, _FILE_AND_LINE_ );
+    team->teamMembers.Push(this );
+    teams.Push(team );
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -799,7 +799,7 @@ void TM_TeamMember::RemoveFromAllTeamsInternal(void)
             }
         }
     }
-    teams.Clear(true, _FILE_AND_LINE_);
+    teams.Clear(true);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1089,7 +1089,7 @@ TeamManager *TM_World::GetTeamManager(void) const
 
 void TM_World::AddParticipant(RakNetGUID rakNetGUID)
 {
-    participants.Push(rakNetGUID, _FILE_AND_LINE_ );
+    participants.Push(rakNetGUID );
 
     // Send to remote system status of balanceTeamsIsActive
 
@@ -1145,9 +1145,9 @@ void TM_World::ReferenceTeam(TM_Team *team, NetworkID networkId, bool applyBalan
     team->world=this;
 
     // Add this team to the list of teams
-    teams.Push(team, _FILE_AND_LINE_);
+    teams.Push(team);
 
-    teamsHash.Push(networkId,team,_FILE_AND_LINE_);
+    teamsHash.Push(networkId,team);
 
     // If autobalancing is on, and the team lock state supports it, then call EnforceTeamBalancing()
     if (applyBalancing && balanceTeamsIsActive)
@@ -1172,7 +1172,7 @@ void TM_World::DereferenceTeam(TM_Team *team, NoTeamId noTeamSubcategory)
             }
             teams.RemoveAtIndex(i);
 
-            teamsHash.Remove(team->GetNetworkID(),_FILE_AND_LINE_);
+            teamsHash.Remove(team->GetNetworkID());
 
             break;
         }
@@ -1230,9 +1230,9 @@ void TM_World::ReferenceTeamMember(TM_TeamMember *teamMember, NetworkID networkI
     teamMember->world=this;
     teamMember->networkId=networkId;
 
-    teamMembers.Push(teamMember, _FILE_AND_LINE_);
+    teamMembers.Push(teamMember);
 
-    teamMembersHash.Push(networkId,teamMember,_FILE_AND_LINE_);
+    teamMembersHash.Push(networkId,teamMember);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1245,7 +1245,7 @@ void TM_World::DereferenceTeamMember(TM_TeamMember *teamMember)
         if (teamMembers[i]==teamMember)
         {
             teamMembers[i]->UpdateListsToNoTeam(0);
-            teamMembersHash.Remove(teamMembers[i]->GetNetworkID(),_FILE_AND_LINE_);
+            teamMembersHash.Remove(teamMembers[i]->GetNetworkID());
             teamMembers.RemoveAtIndex(i);
             break;
         }
@@ -1365,9 +1365,9 @@ void TM_World::Clear(void)
     {
         teamMembers[i]->world=0;
     }
-    participants.Clear(true, _FILE_AND_LINE_);
-    teams.Clear(true, _FILE_AND_LINE_);
-    teamMembers.Clear(true, _FILE_AND_LINE_);
+    participants.Clear(true);
+    teams.Clear(true);
+    teamMembers.Clear(true);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1542,7 +1542,7 @@ void TM_World::FillRequestedSlots(void)
                     {
                         if (teamMember->IsOnTeam(teamToLeave))
                         {
-                            teamsWeAreLeaving.Push(teamToLeave, _FILE_AND_LINE_);
+                            teamsWeAreLeaving.Push(teamToLeave);
                         }
                         else
                         {
@@ -1624,7 +1624,7 @@ void TM_World::GetSortedJoinRequests(DataStructures::OrderedList<TM_World::JoinR
                 jrh.whenRequestMade=teamMember->whenJoinAnyRequested;
                 jrh.teamMemberIndex=i;
                 jrh.requestIndex=teamMember->joinAnyRequestIndex;
-                joinRequests.Insert(jrh, jrh, true, _FILE_AND_LINE_);
+                joinRequests.Insert(jrh, jrh, true);
             }
         }
         else
@@ -1637,7 +1637,7 @@ void TM_World::GetSortedJoinRequests(DataStructures::OrderedList<TM_World::JoinR
                 jrh.teamMemberIndex=i;
                 jrh.indexIntoTeamsRequested=j;
                 jrh.requestIndex=teamMember->teamsRequested[j].requestIndex;
-                joinRequests.Insert(jrh, jrh, true, _FILE_AND_LINE_);
+                joinRequests.Insert(jrh, jrh, true);
             }
 
         }
@@ -1839,7 +1839,7 @@ TM_World* TeamManager::AddWorld(WorldId worldId)
     newWorld->teamManager=this;
     newWorld->hostGuid=GetMyGUIDUnified();
     worldsArray[worldId]=newWorld;
-    worldsList.Push(newWorld,_FILE_AND_LINE_);
+    worldsList.Push(newWorld);
     return newWorld;
 }
 
@@ -2091,9 +2091,9 @@ void TeamManager::DecodeTeamAssigned(BitStream *bsIn, TM_World **world, TM_TeamM
                                         DataStructures::List<TM_Team *> &teamsLeft, DataStructures::List<TM_Team *> &teamsJoined
                                         )
 {
-    newTeam.Clear(true, _FILE_AND_LINE_);
-    teamsLeft.Clear(true, _FILE_AND_LINE_);
-    teamsJoined.Clear(true, _FILE_AND_LINE_);
+    newTeam.Clear(true);
+    teamsLeft.Clear(true);
+    teamsJoined.Clear(true);
 
     WorldId worldId;
     NetworkID teamMemberId;
@@ -2114,7 +2114,7 @@ void TeamManager::DecodeTeamAssigned(BitStream *bsIn, TM_World **world, TM_TeamM
             TM_Team * team = (*world)->GetTeamByNetworkID(teamId);
             RakAssert(team);
             if (team)
-                newTeam.Push(team, _FILE_AND_LINE_);
+                newTeam.Push(team);
             // else probably didn't reference team first
         }
 
@@ -2124,7 +2124,7 @@ void TeamManager::DecodeTeamAssigned(BitStream *bsIn, TM_World **world, TM_TeamM
             {
                 TM_Team *team = (*teamMember)->teams[i];
                 if (newTeam.GetIndexOf(team)==(unsigned int)-1)
-                    teamsLeft.Push(team, _FILE_AND_LINE_);
+                    teamsLeft.Push(team);
             }
         }
 
@@ -2132,7 +2132,7 @@ void TeamManager::DecodeTeamAssigned(BitStream *bsIn, TM_World **world, TM_TeamM
         {
             TM_Team *team = newTeam[i];
             if ((*teamMember)->teams.GetIndexOf(team)==(unsigned int)-1)
-                teamsJoined.Push(team, _FILE_AND_LINE_);
+                teamsJoined.Push(team);
         }
 
         bsIn->Read(noTeamId);
@@ -2154,7 +2154,7 @@ void TeamManager::Clear(void)
         worldsList[i]->Clear();
         delete worldsList[i];
     }
-    worldsList.Clear(false, _FILE_AND_LINE_);
+    worldsList.Clear(false);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2499,7 +2499,7 @@ void TeamManager::OnJoinRequestedTeam(Packet *packet, TM_World *world)
             else
             {
                 if (teamMember->IsOnTeam(teamToLeave))
-                    teamsWeAreLeaving.Push(teamToLeave, _FILE_AND_LINE_);
+                    teamsWeAreLeaving.Push(teamToLeave);
             }
 
             if (teamsWeAreLeaving.Size()==0)

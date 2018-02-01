@@ -169,10 +169,10 @@ int main(void)
 	printf("Difficulty: Intermediate\n\n");
 
 	DataStructures::OrderedList<int,int> ol;
-	ol.Insert(3,3,false,_FILE_AND_LINE_);
-	ol.Insert(4,4,false,_FILE_AND_LINE_);
-	ol.Insert(5,5,false,_FILE_AND_LINE_);
-	ol.Insert(4,4,false,_FILE_AND_LINE_);
+	ol.Insert(3,3,false);
+	ol.Insert(4,4,false);
+	ol.Insert(5,5,false);
+	ol.Insert(4,4,false);
 	bool objectExists;
 	int idx = ol.GetIndexFromKey(4,&objectExists);
 

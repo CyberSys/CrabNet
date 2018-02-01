@@ -79,7 +79,7 @@ void ConsoleServer::AddCommandParser(CommandParserInterface *commandParserInterf
         }
     }
 
-    commandParserList.Insert(commandParserInterface, _FILE_AND_LINE_);
+    commandParserList.Insert(commandParserInterface);
     if (transport)
         commandParserInterface->OnTransportChange(transport);
 }

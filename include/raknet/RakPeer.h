@@ -648,7 +648,7 @@ public:
     /// \internal
     bool SendOutOfBand(const char *host, unsigned short remotePort, const char *data, BitSize_t dataLength, unsigned connectionSocketIndex=0 );
 
-    // static Packet *AllocPacket(unsigned dataSize, const char *file, unsigned int line);
+    // static Packet *AllocPacket(unsigned dataSize);
 
     /// \internal
     /// \brief Holds the clock differences between systems, along with the ping
@@ -903,8 +903,8 @@ protected:
     DataStructures::Queue<RNS2RecvStruct*> bufferedPacketsQueue;
     RakNet::SimpleMutex bufferedPacketsQueueMutex;
 
-    virtual void DeallocRNS2RecvStruct(RNS2RecvStruct *s, const char *file, unsigned int line);
-    virtual RNS2RecvStruct *AllocRNS2RecvStruct(const char *file, unsigned int line);
+    virtual void DeallocRNS2RecvStruct(RNS2RecvStruct *s);
+    virtual RNS2RecvStruct *AllocRNS2RecvStruct();
     void SetupBufferedPackets(void);
     void PushBufferedPacket(RNS2RecvStruct * p);
     RNS2RecvStruct *PopBufferedPacket(void);
@@ -995,8 +995,8 @@ protected:
 
     SimpleMutex packetReturnMutex;
     DataStructures::Queue<Packet*> packetReturnQueue;
-    Packet *AllocPacket(unsigned dataSize, const char *file, unsigned int line);
-    Packet *AllocPacket(unsigned dataSize, unsigned char *data, const char *file, unsigned int line);
+    Packet *AllocPacket(unsigned dataSize);
+    Packet *AllocPacket(unsigned dataSize, unsigned char *data);
 
     /// This is used to return a number to the user when they call Send identifying the message
     /// This number will be returned back with ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS and is only returned

@@ -244,8 +244,8 @@ namespace DataStructures
         unsigned i;
         for (i=0; i < map.Size(); i++)
             delete map[i];
-        map.Clear(_FILE_AND_LINE_);
-        heap.Clear(_FILE_AND_LINE_);
+        map.Clear();
+        heap.Clear();
     }
 }
 

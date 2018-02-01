@@ -49,7 +49,7 @@ void HTTPConnection::Post(const char *remote_path, const char *data, const char 
     op.data=data;
     op.remotePath=remote_path;
     op.isPost=true;
-    outgoingCommand.Push(op, _FILE_AND_LINE_ );
+    outgoingCommand.Push(op);
     //printf("Adding outgoing post\n");
 }
 
@@ -58,7 +58,7 @@ void HTTPConnection::Get(const char *path)
     OutgoingCommand op;
     op.remotePath=path;
     op.isPost=false;
-    outgoingCommand.Push(op, _FILE_AND_LINE_ );
+    outgoingCommand.Push(op);
 }
 
 bool HTTPConnection::HasBadResponse(int *code, RakNet::RakString *data)
@@ -125,7 +125,7 @@ void HTTPConnection::Update(void)
             {
                 if (incomingData.IsEmpty()==false)
                 {
-                    results.Push(incomingData, _FILE_AND_LINE_ );
+                    results.Push(incomingData);
                 }
                 incomingData.Clear();
                 tcp->CloseConnection(server);
@@ -230,7 +230,7 @@ void HTTPConnection::ProcessTCPPacket(Packet *packet)
 
             if(response_code > 299)
             {
-                badResponses.Push(BadResponse(packet->data, response_code), _FILE_AND_LINE_ );
+                badResponses.Push(BadResponse(packet->data, response_code));
                 //printf("Closed connection (Bad response 2)\n");
                 CloseConnection();
                 return;

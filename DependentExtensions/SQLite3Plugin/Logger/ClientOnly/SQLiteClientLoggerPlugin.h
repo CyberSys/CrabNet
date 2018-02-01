@@ -26,8 +26,8 @@
 // Either:
 // 1. You forgot to write the TABLE_DESCRIPTOR
 // 2. You forgot to put the parameter list in parenthesis
-#define rakSqlLog(TABLE_DESCRIPTOR, COLUMN_NAMES, PARAMETER_LIST) RakNet::SQLiteClientLoggerPlugin::__sqlLogInternal(false, TABLE_DESCRIPTOR, COLUMN_NAMES, _FILE_AND_LINE_, RakNet::SQLiteClientLoggerPlugin::ParameterListHelper PARAMETER_LIST)
-#define rakFnLog(TABLE_DESCRIPTOR, PARAMETER_LIST) RakNet::SQLiteClientLoggerPlugin::__sqlLogInternal(true, TABLE_DESCRIPTOR, 0, _FILE_AND_LINE_, RakNet::SQLiteClientLoggerPlugin::ParameterListHelper PARAMETER_LIST)
+#define rakSqlLog(TABLE_DESCRIPTOR, COLUMN_NAMES, PARAMETER_LIST) RakNet::SQLiteClientLoggerPlugin::__sqlLogInternal(false, TABLE_DESCRIPTOR, COLUMN_NAMES, RakNet::SQLiteClientLoggerPlugin::ParameterListHelper PARAMETER_LIST)
+#define rakFnLog(TABLE_DESCRIPTOR, PARAMETER_LIST) RakNet::SQLiteClientLoggerPlugin::__sqlLogInternal(true, TABLE_DESCRIPTOR, 0, RakNet::SQLiteClientLoggerPlugin::ParameterListHelper PARAMETER_LIST)
 
 
 namespace RakNet
@@ -437,7 +437,7 @@ RakNet::SQLLogResult __sqlLog(const char *tableDescriptor, const char *columnNam
 {
 	return RakNet::SQLiteClientLoggerPlugin::__sqlLogInternal(false, tableDescriptor, columnNames, file, line, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
 }
-// TODO - Add _FILE_AND_LINE_ automatically somehow or this is nearly useless
+// TODO - Add  automatically somehow or this is nearly useless
 RakNet::SQLLogResult __functionLog(const char *functionName, const char *file, const int line )
 {
 	return RakNet::SQLiteClientLoggerPlugin::__sqlLogInternal(true, functionName, 0, file, line);

@@ -34,10 +34,10 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakString> params,b
 	unsigned short clientPort;
 	bool gotNotification;
 	server=RakPeerInterface::GetInstance();
-	destroyList.Clear(false,_FILE_AND_LINE_);
-	destroyList.Push(server,_FILE_AND_LINE_);
+	destroyList.Clear(false);
+	destroyList.Push(server);
 	client=RakPeerInterface::GetInstance();
-	destroyList.Push(client,_FILE_AND_LINE_);
+	destroyList.Push(client);
 
 	
 

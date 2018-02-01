@@ -63,7 +63,7 @@ void RakVoice::Init(unsigned short sampleRate, unsigned bufferSizeBytes)
 	this->sampleRate=sampleRate;
 	this->bufferSizeBytes=bufferSizeBytes;
 	bufferedOutputCount=bufferSizeBytes/SAMPLESIZE;
-	bufferedOutput = (float*) rakMalloc_Ex(sizeof(float)*bufferedOutputCount, _FILE_AND_LINE_);
+	bufferedOutput = (float*) rakMalloc_Ex(sizeof(float)*bufferedOutputCount);
 	unsigned i;
 	for (i=0; i < bufferedOutputCount; i++)
 		bufferedOutput[i]=0.0f;
@@ -75,7 +75,7 @@ void RakVoice::Deinit(void)
 	// check pointer before free
 	if (bufferedOutput)
 	{
-		rakFree_Ex(bufferedOutput, _FILE_AND_LINE_ );
+		rakFree_Ex(bufferedOutput );
 		bufferedOutput = 0;
 		CloseAllChannels();
 	}
@@ -134,7 +134,7 @@ void RakVoice::CloseAllChannels(void)
 		FreeChannelMemory(index,false);
 	}
 
-	voiceChannels.Clear(false, _FILE_AND_LINE_);
+	voiceChannels.Clear(false);
 }
 bool RakVoice::SendFrame(RakNetGUID recipient, void *inputBuffer)
 {
@@ -618,7 +618,7 @@ void RakVoice::OpenChannel(Packet *packet)
 
 	FreeChannelMemory(packet->guid);
 
-	VoiceChannel *channel=RakNet::OP_NEW<VoiceChannel>( _FILE_AND_LINE_ );
+	VoiceChannel *channel=RakNet::OP_NEW<VoiceChannel>(  );
 	channel->guid=packet->guid;
 	channel->isSendingVoiceData=false;
 	int sampleRate;
@@ -630,7 +630,7 @@ void RakVoice::OpenChannel(Packet *packet)
 #ifdef _DEBUG
 		RakAssert(0);
 #endif
-		RakNet::OP_DELETE(channel, _FILE_AND_LINE_);
+		RakNet::OP_DELETE(channel);
 		return;
 	}
 
@@ -654,7 +654,7 @@ void RakVoice::OpenChannel(Packet *packet)
 	int ret;
 	ret=speex_encoder_ctl(channel->enc_state, SPEEX_GET_FRAME_SIZE, &channel->speexOutgoingFrameSampleCount);
 	RakAssert(ret==0);
-	channel->outgoingBuffer = (char*) rakMalloc_Ex(bufferSizeBytes * FRAME_OUTGOING_BUFFER_COUNT, _FILE_AND_LINE_);
+	channel->outgoingBuffer = (char*) rakMalloc_Ex(bufferSizeBytes * FRAME_OUTGOING_BUFFER_COUNT);
 	channel->outgoingReadIndex=0;
 	channel->outgoingWriteIndex=0;
 	channel->bufferOutput=true;
@@ -663,7 +663,7 @@ void RakVoice::OpenChannel(Packet *packet)
 
 	ret=speex_decoder_ctl(channel->dec_state, SPEEX_GET_FRAME_SIZE, &channel->speexIncomingFrameSampleCount);
 	RakAssert(ret==0);
-	channel->incomingBuffer = (char*) rakMalloc_Ex(bufferSizeBytes * FRAME_INCOMING_BUFFER_COUNT, _FILE_AND_LINE_);
+	channel->incomingBuffer = (char*) rakMalloc_Ex(bufferSizeBytes * FRAME_INCOMING_BUFFER_COUNT);
 	channel->incomingReadIndex=0;
 	channel->incomingWriteIndex=0;
 	channel->lastSend=0;
@@ -680,7 +680,7 @@ void RakVoice::OpenChannel(Packet *packet)
 	SetPreprocessorParameter(channel->pre_state, SPEEX_PREPROCESS_SET_DENOISE, (defaultDENOISEState) ? 1 : 2);
 	SetPreprocessorParameter(channel->pre_state, SPEEX_PREPROCESS_SET_VAD, (defaultVADState) ? 1 : 2);
 
-	voiceChannels.Insert(packet->guid, channel, true, _FILE_AND_LINE_);
+	voiceChannels.Insert(packet->guid, channel, true);
 }
 
 
@@ -775,9 +775,9 @@ void RakVoice::FreeChannelMemory(unsigned index, bool removeIndex)
 	speex_encoder_destroy(channel->enc_state);
 	speex_decoder_destroy(channel->dec_state);
 	speex_preprocess_state_destroy((SpeexPreprocessState*)channel->pre_state);
-	rakFree_Ex(channel->incomingBuffer, _FILE_AND_LINE_ );
-	rakFree_Ex(channel->outgoingBuffer, _FILE_AND_LINE_ );
-	RakNet::OP_DELETE(channel, _FILE_AND_LINE_);
+	rakFree_Ex(channel->incomingBuffer );
+	rakFree_Ex(channel->outgoingBuffer );
+	RakNet::OP_DELETE(channel);
 	if (removeIndex)
 		voiceChannels.RemoveAtIndex(index);
 }

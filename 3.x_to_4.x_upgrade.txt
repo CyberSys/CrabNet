@@ -7,7 +7,6 @@ Deleted RakPeer::RPC, AutoRPC, ConnectionGraph, ReplicaManager, ReplicaManager2,
 BitStream now takes const references for all input parameters. If you want to cast, use SerializeCasted(), WriteCasted, and ReadCasted(), or else just copy the variable to the desired type first.
 RakNetTimeMS, RakNetTime, and RakNetTimeUS have been renamed and put in namespaces RakNet::TimeMS, RakNet::Time, and RakNet::TimeUS
 Most classes are now in the RakNet namespace.
-Added _FILE_AND_LINE_ to RakNetDefines.h so the user can strip out this information if desired.
 C# is now supported. See Help\swigtutorial.html
 NetworkIDObject and NetworkIDManager systems largely rewritten. IsNetworkIDAuthority() no longer is needed, so was removed.
 RakPeer::Startup() no longer takes a threadSleepTimer parameter.

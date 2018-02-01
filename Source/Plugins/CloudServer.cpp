@@ -109,7 +109,7 @@ void CloudServer::CloudQueryWithAddresses::Serialize(bool writeToBitstream, BitS
         for (uint16_t i=0; i < specificSystemsCount; i++)
         {
             bitStream->Read(addressOrGuid);
-            specificSystems.Push(addressOrGuid, _FILE_AND_LINE_);
+            specificSystems.Push(addressOrGuid);
         }
     }
 }
@@ -129,7 +129,7 @@ void CloudServer::GetRequest::Clear(CloudAllocator *allocator)
         remoteServerResponses[i]->Clear(allocator);
         delete remoteServerResponses[i];
     }
-    remoteServerResponses.Clear(false, _FILE_AND_LINE_);
+    remoteServerResponses.Clear(false);
 }
 void CloudServer::BufferedGetResponseFromServer::Clear(CloudAllocator *allocator)
 {
@@ -139,7 +139,7 @@ void CloudServer::BufferedGetResponseFromServer::Clear(CloudAllocator *allocator
         allocator->DeallocateRowData(queryResult.rowsReturned[i]->data);
         allocator->DeallocateCloudQueryRow(queryResult.rowsReturned[i]);
     }
-    queryResult.rowsReturned.Clear(false, _FILE_AND_LINE_);
+    queryResult.rowsReturned.Clear(false);
 }
 CloudServer::CloudServer()
 {
@@ -275,9 +275,9 @@ void CloudServer::OnPostRequest(Packet *packet)
     if (remoteSystemsHashIndex.IsInvalid())
     {
         remoteCloudClient =new RemoteCloudClient;
-        remoteCloudClient->uploadedKeys.Insert(key,key,true,_FILE_AND_LINE_);
+        remoteCloudClient->uploadedKeys.Insert(key,key,true);
         remoteCloudClient->uploadedBytes=0;
-        remoteSystems.Push(packet->guid, remoteCloudClient, _FILE_AND_LINE_);
+        remoteSystems.Push(packet->guid, remoteCloudClient);
     }
     else
     {
@@ -287,7 +287,7 @@ void CloudServer::OnPostRequest(Packet *packet)
         unsigned int uploadedKeysIndex = remoteCloudClient->uploadedKeys.GetIndexFromKey(key,&objectExists);
         if (objectExists==false)
         {
-            remoteCloudClient->uploadedKeys.InsertAtIndex(key, uploadedKeysIndex, _FILE_AND_LINE_);
+            remoteCloudClient->uploadedKeys.InsertAtIndex(key, uploadedKeysIndex);
         }
     }
 
@@ -323,7 +323,7 @@ void CloudServer::OnPostRequest(Packet *packet)
             if (remoteCloudClient->IsUnused())
             {
                 delete remoteCloudClient;
-                remoteSystems.Remove(packet->guid, _FILE_AND_LINE_);
+                remoteSystems.Remove(packet->guid);
             }
 
             if (dataLengthBytes>CLOUD_SERVER_DATA_STACK_SIZE)
@@ -354,7 +354,7 @@ void CloudServer::OnPostRequest(Packet *packet)
         cloudData->clientSystemAddress=packet->systemAddress;
         cloudData->serverGUID=rakPeerInterface->GetMyGUID();
         cloudData->clientGUID=packet->guid;
-        cloudDataList->keyData.Insert(packet->guid,cloudData,true,_FILE_AND_LINE_);
+        cloudDataList->keyData.Insert(packet->guid,cloudData,true);
     }
     else
     {
@@ -459,7 +459,7 @@ void CloudServer::OnReleaseRequest(Packet *packet)
     for (uint16_t keyCountIndex=0; keyCountIndex < keyCount; keyCountIndex++)
     {
         key.Serialize(false, &bsIn);
-        cloudKeys.Push(key, _FILE_AND_LINE_);
+        cloudKeys.Push(key);
     }
 
     for (unsigned int filterIndex=0; filterIndex < queryFilters.Size(); filterIndex++)
@@ -520,7 +520,7 @@ void CloudServer::OnReleaseRequest(Packet *packet)
             if (remoteCloudClient->IsUnused())
             {
                 delete remoteCloudClient;
-                remoteSystems.RemoveAtIndex(remoteSystemIndex, _FILE_AND_LINE_);
+                remoteSystems.RemoveAtIndex(remoteSystemIndex);
                 break;
             }
         }
@@ -544,7 +544,7 @@ void CloudServer::OnGetRequest(Packet *packet)
     for (uint16_t i=0; i < specificSystemsCount; i++)
     {
         bsIn.Read(addressOrGuid);
-        getRequest->cloudQueryWithAddresses.specificSystems.Push(addressOrGuid, _FILE_AND_LINE_);
+        getRequest->cloudQueryWithAddresses.specificSystems.Push(addressOrGuid);
     }
 
     if (getRequest->cloudQueryWithAddresses.cloudQuery.keys.Size()==0)
@@ -583,13 +583,13 @@ void CloudServer::OnGetRequest(Packet *packet)
             BufferedGetResponseFromServer* bufferedGetResponseFromServer =new BufferedGetResponseFromServer;
             bufferedGetResponseFromServer->serverAddress=remoteServersWithData[remoteServerIndex]->serverAddress;
             bufferedGetResponseFromServer->gotResult=false;
-            getRequest->remoteServerResponses.Insert(remoteServersWithData[remoteServerIndex]->serverAddress, bufferedGetResponseFromServer, true, _FILE_AND_LINE_);
+            getRequest->remoteServerResponses.Insert(remoteServersWithData[remoteServerIndex]->serverAddress, bufferedGetResponseFromServer, true);
 
             SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, remoteServersWithData[remoteServerIndex]->serverAddress, false);
         }
 
         // Record that this system made this request
-        getRequests.Insert(getRequest->requestId, getRequest, true, _FILE_AND_LINE_);
+        getRequests.Insert(getRequest->requestId, getRequest, true);
     }
 
     if (getRequest->cloudQueryWithAddresses.cloudQuery.subscribeToResults)
@@ -601,7 +601,7 @@ void CloudServer::OnGetRequest(Packet *packet)
         {
             remoteCloudClient =new RemoteCloudClient;
             remoteCloudClient->uploadedBytes=0;
-            remoteSystems.Push(packet->guid, remoteCloudClient, _FILE_AND_LINE_);
+            remoteSystems.Push(packet->guid, remoteCloudClient);
         }
         else
         {
@@ -629,10 +629,10 @@ void CloudServer::OnGetRequest(Packet *packet)
             unsigned int specificSystemIndex;
             for (specificSystemIndex=0; specificSystemIndex < getRequest->cloudQueryWithAddresses.specificSystems.Size(); specificSystemIndex++)
             {
-                keySubscriberId->specificSystemsSubscribedTo.Insert(getRequest->cloudQueryWithAddresses.specificSystems[specificSystemIndex], getRequest->cloudQueryWithAddresses.specificSystems[specificSystemIndex], true, _FILE_AND_LINE_);
+                keySubscriberId->specificSystemsSubscribedTo.Insert(getRequest->cloudQueryWithAddresses.specificSystems[specificSystemIndex], getRequest->cloudQueryWithAddresses.specificSystems[specificSystemIndex], true);
             }
 
-            remoteCloudClient->subscribedKeys.InsertAtIndex(keySubscriberId, keySubscriberIndex, _FILE_AND_LINE_);
+            remoteCloudClient->subscribedKeys.InsertAtIndex(keySubscriberId, keySubscriberIndex);
 
             // Add CloudData in a similar way
             unsigned int dataRepositoryIndex;
@@ -666,7 +666,7 @@ void CloudServer::OnGetRequest(Packet *packet)
                         cloudData->clientSystemAddress=UNASSIGNED_SYSTEM_ADDRESS;
                         cloudData->serverGUID=rakPeerInterface->GetMyGUID();
                         cloudData->clientGUID=specificSystem;
-                        cloudDataList->keyData.Insert(specificSystem,cloudData,true,_FILE_AND_LINE_);
+                        cloudDataList->keyData.Insert(specificSystem,cloudData,true);
                     }
                     else
                     {
@@ -674,13 +674,13 @@ void CloudServer::OnGetRequest(Packet *packet)
                     }
 
                     ++cloudDataList->subscriberCount;
-                    cloudData->specificSubscribers.Insert(packet->guid, packet->guid, true, _FILE_AND_LINE_);
+                    cloudData->specificSubscribers.Insert(packet->guid, packet->guid, true);
                 }
             }
             else
             {
                 ++cloudDataList->subscriberCount;
-                cloudDataList->nonSpecificSubscribers.Insert(packet->guid, packet->guid, true, _FILE_AND_LINE_);
+                cloudDataList->nonSpecificSubscribers.Insert(packet->guid, packet->guid, true);
 
                 // Remove packet->guid from CloudData::specificSubscribers among all instances of cloudDataList->keyData
                 unsigned int subscribedKeysIndex;
@@ -709,7 +709,7 @@ void CloudServer::OnGetRequest(Packet *packet)
         if (remoteCloudClient->subscribedKeys.Size()==0)
         {
             // Didn't do anything
-            remoteSystems.Remove(packet->guid, _FILE_AND_LINE_);
+            remoteSystems.Remove(packet->guid);
             delete remoteCloudClient;
         }
     }
@@ -738,7 +738,7 @@ void CloudServer::OnUnsubscribeRequest(Packet *packet)
     for (index=0; index < keyCount; index++)
     {
         cloudKey.Serialize(false, &bsIn);
-        cloudKeys.Push(cloudKey, _FILE_AND_LINE_);
+        cloudKeys.Push(cloudKey);
     }
 
     RakNetGUID specificSystem;
@@ -746,7 +746,7 @@ void CloudServer::OnUnsubscribeRequest(Packet *packet)
     for (index=0; index < specificSystemCount; index++)
     {
         bsIn.Read(specificSystem);
-        specificSystems.Push(specificSystem, _FILE_AND_LINE_);
+        specificSystems.Push(specificSystem);
     }
 
     for (unsigned int filterIndex=0; filterIndex < queryFilters.Size(); filterIndex++)
@@ -782,7 +782,7 @@ void CloudServer::OnUnsubscribeRequest(Packet *packet)
     if (remoteCloudClient->IsUnused())
     {
         delete remoteCloudClient;
-        remoteSystems.RemoveAtIndex(remoteSystemIndex, _FILE_AND_LINE_);
+        remoteSystems.RemoveAtIndex(remoteSystemIndex);
     }
 }
 void CloudServer::OnServerToServerGetRequest(Packet *packet)
@@ -993,7 +993,7 @@ void CloudServer::OnClosedConnection(const SystemAddress &systemAddress, RakNetG
 
         // Delete and remove from remoteSystems
         delete remoteCloudClient;
-        remoteSystems.RemoveAtIndex(remoteSystemIndex, _FILE_AND_LINE_);
+        remoteSystems.RemoveAtIndex(remoteSystemIndex);
     }
 }
 void CloudServer::OnRakPeerShutdown(void)
@@ -1013,13 +1013,13 @@ void CloudServer::Clear(void)
         }
         delete cloudDataList;
     }
-    dataRepository.Clear(false, _FILE_AND_LINE_);
+    dataRepository.Clear(false);
 
     for (i=0; i < remoteServers.Size(); i++)
     {
         delete remoteServers[i];
     }
-    remoteServers.Clear(false, _FILE_AND_LINE_);
+    remoteServers.Clear(false);
 
     for (i=0; i < getRequests.Size(); i++)
     {
@@ -1027,11 +1027,11 @@ void CloudServer::Clear(void)
         getRequest->Clear(this);
         delete getRequests[i];
     }
-    getRequests.Clear(false, _FILE_AND_LINE_);
+    getRequests.Clear(false);
 
     DataStructures::List<RakNetGUID> keyList;
     DataStructures::List<RemoteCloudClient*> itemList;
-    remoteSystems.GetAsList(itemList, keyList, _FILE_AND_LINE_);
+    remoteSystems.GetAsList(itemList, keyList);
     for (i=0; i < itemList.Size(); i++)
     {
         RemoteCloudClient* remoteCloudClient = itemList[i];
@@ -1041,7 +1041,7 @@ void CloudServer::Clear(void)
         }
         delete remoteCloudClient;
     }
-    remoteSystems.Clear(_FILE_AND_LINE_);
+    remoteSystems.Clear();
 }
 void CloudServer::WriteCloudQueryRowFromResultList(DataStructures::List<CloudData*> &cloudDataResultList, DataStructures::List<CloudKey> &cloudKeyResultList, BitStream *bsOut)
 {
@@ -1138,7 +1138,7 @@ void CloudServer::AddServer(RakNetGUID systemIdentifier)
         RemoteServer *remoteServer =new RemoteServer;
         remoteServer->gotSubscribedAndUploadedKeys=false;
         remoteServer->serverAddress=systemIdentifier;
-        remoteServers.InsertAtIndex(remoteServer, index, _FILE_AND_LINE_);
+        remoteServers.InsertAtIndex(remoteServer, index);
 
         SendUploadedAndSubscribedKeysToServer(systemIdentifier);
     }
@@ -1155,12 +1155,12 @@ void CloudServer::RemoveServer(RakNetGUID systemAddress)
 }
 void CloudServer::GetRemoteServers(DataStructures::List<RakNetGUID> &remoteServersOut)
 {
-    remoteServersOut.Clear(true, _FILE_AND_LINE_);
+    remoteServersOut.Clear(true);
 
     unsigned int i;
     for (i=0; i < remoteServers.Size(); i++)
     {
-        remoteServersOut.Push(remoteServers[i]->serverAddress, _FILE_AND_LINE_);
+        remoteServersOut.Push(remoteServers[i]->serverAddress);
     }
 }
 void CloudServer::ProcessAndTransmitGetRequest(GetRequest *getRequest)
@@ -1280,8 +1280,8 @@ void CloudServer::ProcessCloudQueryWithAddresses( CloudServer::CloudQueryWithAdd
                         keyDataIndex = cloudDataList->keyData.GetIndexFromKey(cloudQueryWithAddresses.specificSystems[specificSystemIndex], &uploaderExists);
                         if (uploaderExists)
                         {
-                            cloudDataResultList.Push(cloudDataList->keyData[keyDataIndex], _FILE_AND_LINE_);
-                            cloudKeyResultList.Push(key, _FILE_AND_LINE_);
+                            cloudDataResultList.Push(cloudDataList->keyData[keyDataIndex]);
+                            cloudKeyResultList.Push(key);
                         }
                     }
                 }
@@ -1290,8 +1290,8 @@ void CloudServer::ProcessCloudQueryWithAddresses( CloudServer::CloudQueryWithAdd
                     // Return data for all systems
                     for (keyDataIndex=0; keyDataIndex < cloudDataList->keyData.Size(); keyDataIndex++)
                     {
-                        cloudDataResultList.Push(cloudDataList->keyData[keyDataIndex], _FILE_AND_LINE_);
-                        cloudKeyResultList.Push(key, _FILE_AND_LINE_);
+                        cloudDataResultList.Push(cloudDataList->keyData[keyDataIndex]);
+                        cloudKeyResultList.Push(key);
                     }
                 }
             }
@@ -1387,7 +1387,7 @@ void CloudServer::OnSendUploadedAndSubscribedKeysToServer( Packet *packet )
     //    insertionIndex =
             remoteServer->uploadedKeys.GetIndexFromKey(cloudKey, &alreadyHasKey);
         if (alreadyHasKey==false)
-            remoteServer->uploadedKeys.Insert(cloudKey,cloudKey,true,_FILE_AND_LINE_);
+            remoteServer->uploadedKeys.Insert(cloudKey,cloudKey,true);
     }
 
     bsIn.Read(numSubscribedKeys);
@@ -1399,7 +1399,7 @@ void CloudServer::OnSendUploadedAndSubscribedKeysToServer( Packet *packet )
         //insertionIndex =
             remoteServer->subscribedKeys.GetIndexFromKey(cloudKey, &alreadyHasKey);
         if (alreadyHasKey==false)
-            remoteServer->subscribedKeys.Insert(cloudKey,cloudKey,true,_FILE_AND_LINE_);
+            remoteServer->subscribedKeys.Insert(cloudKey,cloudKey,true);
     }
 
     // Potential todo - join servers
@@ -1423,7 +1423,7 @@ void CloudServer::OnSendUploadedKeyToServers( Packet *packet )
 //    insertionIndex =
         remoteServer->uploadedKeys.GetIndexFromKey(cloudKey, &alreadyHasKey);
     if (alreadyHasKey==false)
-        remoteServer->uploadedKeys.Insert(cloudKey,cloudKey,true,_FILE_AND_LINE_);
+        remoteServer->uploadedKeys.Insert(cloudKey,cloudKey,true);
 }
 void CloudServer::OnSendSubscribedKeyToServers( Packet *packet )
 {
@@ -1444,7 +1444,7 @@ void CloudServer::OnSendSubscribedKeyToServers( Packet *packet )
 
     // Do not need to send current values, the Get request will do that as the Get request is sent at the same time
     if (alreadyHasKey==false)
-        remoteServer->subscribedKeys.Insert(cloudKey,cloudKey,true,_FILE_AND_LINE_);
+        remoteServer->subscribedKeys.Insert(cloudKey,cloudKey,true);
 }
 void CloudServer::OnRemoveUploadedKeyFromServers( Packet *packet )
 {
@@ -1525,7 +1525,7 @@ void CloudServer::GetServersWithUploadedKeys(
                                 DataStructures::List<CloudServer::RemoteServer*> &remoteServersWithData
                                 )
 {
-    remoteServersWithData.Clear(true, _FILE_AND_LINE_);
+    remoteServersWithData.Clear(true);
 
     unsigned int i,j;
     for (i=0; i < remoteServers.Size(); i++)
@@ -1540,7 +1540,7 @@ void CloudServer::GetServersWithUploadedKeys(
             if (remoteServers[i]->gotSubscribedAndUploadedKeys==false)
             {
                 remoteServers[i]->workingFlag=true;
-                remoteServersWithData.Push(remoteServers[i], _FILE_AND_LINE_);
+                remoteServersWithData.Push(remoteServers[i]);
             }
             else
             {
@@ -1550,7 +1550,7 @@ void CloudServer::GetServersWithUploadedKeys(
                     if (remoteServers[i]->workingFlag==false && remoteServers[i]->uploadedKeys.HasData(keys[j]))
                     {
                         remoteServers[i]->workingFlag=true;
-                        remoteServersWithData.Push(remoteServers[i], _FILE_AND_LINE_);
+                        remoteServersWithData.Push(remoteServers[i]);
                         break;
                     }
                 }
@@ -1570,7 +1570,7 @@ CloudServer::CloudDataList *CloudServer::GetOrAllocateCloudDataList(CloudKey key
         cloudDataList->key=key;
         cloudDataList->uploaderCount=0;
         cloudDataList->subscriberCount=0;
-        dataRepository.InsertAtIndex(cloudDataList,dataRepositoryIndex,_FILE_AND_LINE_);
+        dataRepository.InsertAtIndex(cloudDataList,dataRepositoryIndex);
     }
     else
     {
@@ -1607,7 +1607,7 @@ void CloudServer::UnsubscribeFromKey(RemoteCloudClient *remoteCloudClient, RakNe
                 RemoveSpecificSubscriber(keySubscriberId->specificSystemsSubscribedTo[i], cloudDataList, remoteCloudClientGuid);
             }
         }
-        keySubscriberId->specificSystemsSubscribedTo.Clear(true, _FILE_AND_LINE_);
+        keySubscriberId->specificSystemsSubscribedTo.Clear(true);
     }
     else
     {
@@ -1669,7 +1669,7 @@ void CloudServer::AddQueryFilter(CloudServerQueryFilter* filter)
 {
     if (queryFilters.GetIndexOf(filter)!=(unsigned int) -1)
         return;
-    queryFilters.Push(filter, _FILE_AND_LINE_);
+    queryFilters.Push(filter);
 }
 void CloudServer::RemoveQueryFilter(CloudServerQueryFilter* filter)
 {
@@ -1680,7 +1680,7 @@ void CloudServer::RemoveQueryFilter(CloudServerQueryFilter* filter)
 }
 void CloudServer::RemoveAllQueryFilters(void)
 {
-    queryFilters.Clear(true, _FILE_AND_LINE_);
+    queryFilters.Clear(true);
 }
 
 #endif

@@ -45,14 +45,14 @@ bool RakNetTransport2::Start(unsigned short port, bool serverMode)
 }
 void RakNetTransport2::Stop(void)
 {
-    newConnections.Clear(_FILE_AND_LINE_);
-    lostConnections.Clear(_FILE_AND_LINE_);
+    newConnections.Clear();
+    lostConnections.Clear();
     for (unsigned int i=0; i < packetQueue.Size(); i++)
     {
         free(packetQueue[i]->data);
         delete packetQueue[i];
     }
-    packetQueue.Clear(_FILE_AND_LINE_);
+    packetQueue.Clear();
 }
 void RakNetTransport2::Send( SystemAddress systemAddress, const char *data, ... )
 {
@@ -113,7 +113,7 @@ PluginReceiveResult RakNetTransport2::OnReceive(Packet *packet)
             p->length--;
             p->data=(unsigned char*) malloc(p->length);
             memcpy(p->data, packet->data+1, p->length);
-            packetQueue.Push(p, _FILE_AND_LINE_ );
+            packetQueue.Push(p);
 
         }
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -124,13 +124,13 @@ void RakNetTransport2::OnClosedConnection(const SystemAddress &systemAddress, Ra
 {
     (void) rakNetGUID;
     (void) lostConnectionReason;
-    lostConnections.Push(systemAddress, _FILE_AND_LINE_ );
+    lostConnections.Push(systemAddress);
 }
 void RakNetTransport2::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
     (void) rakNetGUID;
     (void) isIncoming;
-    newConnections.Push(systemAddress, _FILE_AND_LINE_ );
+    newConnections.Push(systemAddress);
 }
 #ifdef _MSC_VER
 #pragma warning( pop )

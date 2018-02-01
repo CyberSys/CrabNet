@@ -33,7 +33,7 @@ void BytePool::SetPageSize(int size)
     pool2048.SetPageSize(size);
     pool8192.SetPageSize(size);
 }
-unsigned char *BytePool::Allocate(int bytesWanted, const char *file, unsigned int line)
+unsigned char *BytePool::Allocate(int bytesWanted)
 {
 #ifdef _DISABLE_BYTE_POOL
     return malloc(bytesWanted);
@@ -44,7 +44,7 @@ unsigned char *BytePool::Allocate(int bytesWanted, const char *file, unsigned in
         #ifdef _THREADSAFE_BYTE_POOL
         mutex128.Lock();
         #endif
-        out = (unsigned char*) pool128.Allocate(file, line);
+        out = (unsigned char*) pool128.Allocate();
         #ifdef _THREADSAFE_BYTE_POOL
         mutex128.Unlock();
         #endif
@@ -56,7 +56,7 @@ unsigned char *BytePool::Allocate(int bytesWanted, const char *file, unsigned in
         #ifdef _THREADSAFE_BYTE_POOL
         mutex512.Lock();
         #endif
-        out = (unsigned char*) pool512.Allocate(file, line);
+        out = (unsigned char*) pool512.Allocate();
         #ifdef _THREADSAFE_BYTE_POOL
         mutex512.Unlock();
         #endif
@@ -68,7 +68,7 @@ unsigned char *BytePool::Allocate(int bytesWanted, const char *file, unsigned in
         #ifdef _THREADSAFE_BYTE_POOL
         mutex2048.Lock();
         #endif
-        out = (unsigned char*) pool2048.Allocate(file, line);
+        out = (unsigned char*) pool2048.Allocate();
         #ifdef _THREADSAFE_BYTE_POOL
         mutex2048.Unlock();
         #endif
@@ -80,7 +80,7 @@ unsigned char *BytePool::Allocate(int bytesWanted, const char *file, unsigned in
         #ifdef _THREADSAFE_BYTE_POOL
         mutex8192.Lock();
         #endif
-        out = (unsigned char*) pool8192.Allocate(file, line);
+        out = (unsigned char*) pool8192.Allocate();
         #ifdef _THREADSAFE_BYTE_POOL
         mutex8192.Unlock();
         #endif
@@ -92,7 +92,7 @@ unsigned char *BytePool::Allocate(int bytesWanted, const char *file, unsigned in
     out[0] = (unsigned char) 255;
     return out + 1;
 }
-void BytePool::Release(unsigned char *data, const char *file, unsigned int line)
+void BytePool::Release(unsigned char *data)
 {
 #ifdef _DISABLE_BYTE_POOL
     free(data);
@@ -104,7 +104,7 @@ void BytePool::Release(unsigned char *data, const char *file, unsigned int line)
         #ifdef _THREADSAFE_BYTE_POOL
         mutex128.Lock();
         #endif
-        pool128.Release((unsigned char(*)[128]) realData, file, line);
+        pool128.Release((unsigned char(*)[128]) realData);
         #ifdef _THREADSAFE_BYTE_POOL
         mutex128.Unlock();
         #endif
@@ -113,7 +113,7 @@ void BytePool::Release(unsigned char *data, const char *file, unsigned int line)
         #ifdef _THREADSAFE_BYTE_POOL
         mutex512.Lock();
         #endif
-        pool512.Release((unsigned char(*)[512]) realData, file, line);
+        pool512.Release((unsigned char(*)[512]) realData);
         #ifdef _THREADSAFE_BYTE_POOL
         mutex512.Unlock();
         #endif
@@ -122,7 +122,7 @@ void BytePool::Release(unsigned char *data, const char *file, unsigned int line)
         #ifdef _THREADSAFE_BYTE_POOL
         mutex2048.Lock();
         #endif
-        pool2048.Release((unsigned char(*)[2048]) realData, file, line);
+        pool2048.Release((unsigned char(*)[2048]) realData);
         #ifdef _THREADSAFE_BYTE_POOL
         mutex2048.Unlock();
         #endif
@@ -131,7 +131,7 @@ void BytePool::Release(unsigned char *data, const char *file, unsigned int line)
         #ifdef _THREADSAFE_BYTE_POOL
         mutex8192.Lock();
         #endif
-        pool8192.Release((unsigned char(*)[8192]) realData, file, line);
+        pool8192.Release((unsigned char(*)[8192]) realData);
         #ifdef _THREADSAFE_BYTE_POOL
         mutex8192.Unlock();
         #endif
@@ -144,15 +144,12 @@ void BytePool::Release(unsigned char *data, const char *file, unsigned int line)
         break;
     }
 }
-void BytePool::Clear(const char *file, unsigned int line)
+void BytePool::Clear()
 {
-    (void) file;
-    (void) line;
-
 #ifdef _THREADSAFE_BYTE_POOL
-    pool128.Clear(file, line);
-    pool512.Clear(file, line);
-    pool2048.Clear(file, line);
-    pool8192.Clear(file, line);
+    pool128.Clear();
+    pool512.Clear();
+    pool2048.Clear();
+    pool8192.Clear();
 #endif
 }

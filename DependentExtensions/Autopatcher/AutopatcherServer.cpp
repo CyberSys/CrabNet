@@ -138,7 +138,7 @@ void AutopatcherServer::StartThreads(int numThreads, int numSQLConnections, Auto
 	{
 		// Test the pointers passed, in case the user incorrectly casted an array of a different type
 		sqlConnectionPtrArray[i]->GetLastError();
-		connectionPool.Push(sqlConnectionPtrArray[i],_FILE_AND_LINE_);
+		connectionPool.Push(sqlConnectionPtrArray[i]);
 	}
 	connectionPoolMutex.Unlock();
 	threadPool.SetThreadDataInterface(this,0);
@@ -222,21 +222,21 @@ void AutopatcherServer::Clear(void)
 	{
 		if (DecrementPatchingUserCount(threadPool.GetInputAtIndex(i).systemAddress))
 			CallPatchCompleteCallback(threadPool.GetInputAtIndex(i).systemAddress, AutopatcherServerLoadNotifier::PR_ABORTED_FROM_INPUT_THREAD);
-		RakNet::OP_DELETE(threadPool.GetInputAtIndex(i).clientList, _FILE_AND_LINE_);
+		RakNet::OP_DELETE(threadPool.GetInputAtIndex(i).clientList);
 	}
 	threadPool.ClearInput();
 	for (i=0; i < threadPool.OutputSize(); i++)
 	{
-		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->patchList, _FILE_AND_LINE_);
-		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->deletedFiles, _FILE_AND_LINE_);
-		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedOrModifiedFilesWithHashData, _FILE_AND_LINE_);
+		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->patchList);
+		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->deletedFiles);
+		RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedOrModifiedFilesWithHashData);
 	}
 	threadPool.ClearOutput();
 
 	while (userRequestWaitingQueue.Size())
 		DeallocPacketUnified(AbortOffWaitingQueue());
 
-	patchingUsers.Clear(true, _FILE_AND_LINE_);
+	patchingUsers.Clear(true);
 }
 #ifdef _MSC_VER
 #pragma warning( disable : 4100 ) // warning C4100: <variable name> : unreferenced formal parameter
@@ -282,7 +282,7 @@ void AutopatcherServer::RemoveFromThreadPool(SystemAddress systemAddress)
 		{
 			if (DecrementPatchingUserCount(systemAddress))
 				CallPatchCompleteCallback(threadPool.GetInputAtIndex(i).systemAddress, AutopatcherServerLoadNotifier::PR_ABORTED_FROM_INPUT_THREAD);
-			RakNet::OP_DELETE(threadPool.GetInputAtIndex(i).clientList, _FILE_AND_LINE_);
+			RakNet::OP_DELETE(threadPool.GetInputAtIndex(i).clientList);
 			threadPool.RemoveInputAtIndex(i);
 		}
 		else
@@ -296,9 +296,9 @@ void AutopatcherServer::RemoveFromThreadPool(SystemAddress systemAddress)
 	{
 		if (threadPool.GetOutputAtIndex(i)->systemAddress==systemAddress)
 		{
-			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->patchList, _FILE_AND_LINE_);
-			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->deletedFiles, _FILE_AND_LINE_);
-			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedOrModifiedFilesWithHashData, _FILE_AND_LINE_);
+			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->patchList);
+			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->deletedFiles);
+			RakNet::OP_DELETE(threadPool.GetOutputAtIndex(i)->addedOrModifiedFilesWithHashData);
 			threadPool.RemoveOutputAtIndex(i);
 		}
 		else
@@ -315,11 +315,11 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 	FileList addedOrModifiedFilesWithHashData, deletedFiles;
 	AutopatcherServer *server = threadData.server;
 
-	//AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>( _FILE_AND_LINE_ );
+	//AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>(  );
 	AutopatcherServer::ResultTypeAndBitstream rtab;
 	rtab.systemAddress=threadData.systemAddress;
-// 	rtab.deletedFiles=RakNet::OP_NEW<FileList>( _FILE_AND_LINE_ );
-// 	rtab.addedFiles=RakNet::OP_NEW<FileList>( _FILE_AND_LINE_ );
+// 	rtab.deletedFiles=RakNet::OP_NEW<FileList>(  );
+// 	rtab.addedFiles=RakNet::OP_NEW<FileList>(  );
 	rtab.deletedFiles=&deletedFiles;
 	rtab.addedOrModifiedFilesWithHashData=&addedOrModifiedFilesWithHashData;
 
@@ -368,8 +368,8 @@ AutopatcherServer::ResultTypeAndBitstream* GetChangelistSinceDateCB(AutopatcherS
 		rtab.bitStream2.Write((unsigned char) ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR);
 		StringCompressor::Instance()->EncodeString(repository->GetLastError(), 256, &rtab.bitStream2);	
 	}
-// 	RakNet::OP_DELETE(rtab.deletedFiles, _FILE_AND_LINE_);
-// 	RakNet::OP_DELETE(rtab.addedFiles, _FILE_AND_LINE_);
+// 	RakNet::OP_DELETE(rtab.deletedFiles);
+// 	RakNet::OP_DELETE(rtab.addedFiles);
 
 	*returnOutput=false;
 
@@ -488,11 +488,11 @@ AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadD
 	AutopatcherServer *server = threadData.server;
 	AutopatcherRepositoryInterface *repository = (AutopatcherRepositoryInterface*)perThreadData;
 
-	// AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>( _FILE_AND_LINE_ );
+	// AutopatcherServer::ResultTypeAndBitstream *rtab = RakNet::OP_NEW<AutopatcherServer::ResultTypeAndBitstream>(  );
 	AutopatcherServer::ResultTypeAndBitstream rtab;
 	rtab.systemAddress=threadData.systemAddress;
 	FileList fileList;
-	// rtab.patchList=RakNet::OP_NEW<FileList>( _FILE_AND_LINE_ );
+	// rtab.patchList=RakNet::OP_NEW<FileList>(  );
 	rtab.patchList=&fileList;
 	RakAssert(server);
 //	RakAssert(server->repository);
@@ -502,7 +502,7 @@ AutopatcherServer::ResultTypeAndBitstream* GetPatchCB(AutopatcherServer::ThreadD
 	rtab.setId=threadData.setId;
 	rtab.currentDate=(double) time(NULL);
 
-	RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+	RakNet::OP_DELETE(threadData.clientList);
 
 	if (rtab.resultCode==1)
 	{
@@ -590,17 +590,17 @@ PluginReceiveResult AutopatcherServer::OnGetPatch(Packet *packet)
 	{
 		threadData.systemAddress=packet->systemAddress;
 		threadData.server=this;
-		threadData.clientList=RakNet::OP_NEW<FileList>( _FILE_AND_LINE_ );
+		threadData.clientList=RakNet::OP_NEW<FileList>(  );
 
 		if (threadData.clientList->Deserialize(&inBitStream)==false)
 		{
-			RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+			RakNet::OP_DELETE(threadData.clientList);
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
 		}
 		if (threadData.clientList->fileList.Size()==0)
 		{
 			RakAssert(0);
-			RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+			RakNet::OP_DELETE(threadData.clientList);
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
 		}
 
@@ -621,7 +621,7 @@ PluginReceiveResult AutopatcherServer::OnGetPatch(Packet *packet)
 				// If the user has a hash, check for this file in cache_patchedFiles. If not found, or hash is wrong, use DB
 				if (threadData.clientList->fileList[i].dataLengthBytes!=HASH_LENGTH)
 				{
-					RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+					RakNet::OP_DELETE(threadData.clientList);
 					return RR_STOP_PROCESSING_AND_DEALLOCATE;
 				}
 
@@ -691,13 +691,13 @@ PluginReceiveResult AutopatcherServer::OnGetPatch(Packet *packet)
 				bitStream1.Write(t);
 				SendUnified(&bitStream1, priority, RELIABLE_ORDERED, orderingChannel, packet->systemAddress, false);
 
-				RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+				RakNet::OP_DELETE(threadData.clientList);
 				return RR_STOP_PROCESSING_AND_DEALLOCATE;
 			}
 		}
 	}
 
-	RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+	RakNet::OP_DELETE(threadData.clientList);
 	
 	if (PatchingUserLimitReached())
 	{
@@ -720,17 +720,17 @@ void AutopatcherServer::OnGetPatchInt(Packet *packet)
 	inBitStream.ReadCompressed(threadData.applicationName);
 	threadData.systemAddress=packet->systemAddress;
 	threadData.server=this;
-	threadData.clientList=RakNet::OP_NEW<FileList>( _FILE_AND_LINE_ );
+	threadData.clientList=RakNet::OP_NEW<FileList>(  );
 
 	if (threadData.clientList->Deserialize(&inBitStream)==false)
 	{
-		RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+		RakNet::OP_DELETE(threadData.clientList);
 		return;
 	}
 	if (threadData.clientList->fileList.Size()==0)
 	{
 		RakAssert(0);
-		RakNet::OP_DELETE(threadData.clientList, _FILE_AND_LINE_);
+		RakNet::OP_DELETE(threadData.clientList);
 		return;
 	}
 
@@ -768,7 +768,7 @@ bool AutopatcherServer::IncrementPatchingUserCount(SystemAddress sa)
 {
 	// A system address may exist more than once in patchingUsers
 	patchingUsersMutex.Lock();
-	patchingUsers.Insert(sa, _FILE_AND_LINE_);
+	patchingUsers.Insert(sa);
 	patchingUsersMutex.Unlock();
 	return true;
 }
@@ -833,7 +833,7 @@ void AutopatcherServer::CallPatchCompleteCallback(const SystemAddress &systemAdd
 }
 void AutopatcherServer::AddToWaitingQueue(Packet *packet)
 {
-	userRequestWaitingQueue.Push(packet, _FILE_AND_LINE_);
+	userRequestWaitingQueue.Push(packet);
 	CallPacketCallback(packet, AutopatcherServerLoadNotifier::QO_WAS_ADDED);
 }
 Packet *AutopatcherServer::AbortOffWaitingQueue(void)

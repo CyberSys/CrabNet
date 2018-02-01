@@ -219,7 +219,7 @@ namespace DataStructures
     void Map<key_type, data_type, key_comparison_func>::Clear()
     {
         lastSearchIndexValid = false;
-        mapNodeList.Clear(false, _FILE_AND_LINE_);
+        mapNodeList.Clear(false);
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>

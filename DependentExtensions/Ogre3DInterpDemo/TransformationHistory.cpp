@@ -29,21 +29,21 @@ void TransformationHistory::Init(RakNet::TimeMS maxWriteInterval, RakNet::TimeMS
 {
 	writeInterval=maxWriteInterval;
 	maxHistoryLength = maxHistoryTime/maxWriteInterval+1;
-	history.ClearAndForceAllocation(maxHistoryLength+1, _FILE_AND_LINE_ );
+	history.ClearAndForceAllocation(maxHistoryLength+1 );
 	RakAssert(writeInterval>0);
 }
 void TransformationHistory::Write(const Ogre::Vector3 &position, const Ogre::Vector3 &velocity, const Ogre::Quaternion &orientation, RakNet::TimeMS curTimeMS)
 {
 	if (history.Size()==0)
 	{
-		history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation), _FILE_AND_LINE_ );
+		history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation) );
 	}
 	else
 	{
 		const TransformationHistoryCell &lastCell = history.PeekTail();
 		if (curTimeMS-lastCell.time>=writeInterval)
 		{
-			history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation), _FILE_AND_LINE_ );
+			history.Push(TransformationHistoryCell(curTimeMS,position,velocity,orientation) );
 			if (history.Size()>maxHistoryLength)
 				history.Pop();
 		}
@@ -54,7 +54,7 @@ void TransformationHistory::Overwrite(const Ogre::Vector3 &position, const Ogre:
 	int historySize = history.Size();
 	if (historySize==0)
 	{
-		history.Push(TransformationHistoryCell(when,position,velocity,orientation), _FILE_AND_LINE_ );
+		history.Push(TransformationHistoryCell(when,position,velocity,orientation) );
 	}
 	else
 	{
@@ -68,7 +68,7 @@ void TransformationHistory::Overwrite(const Ogre::Vector3 &position, const Ogre:
 				if (i==historySize-1 && when-cell.time>=writeInterval)
 				{
 					// Not an overwrite at all, but a new cell
-					history.Push(TransformationHistoryCell(when,position,velocity,orientation), _FILE_AND_LINE_ );
+					history.Push(TransformationHistoryCell(when,position,velocity,orientation) );
 					if (history.Size()>maxHistoryLength)
 						history.Pop();
 					return;
@@ -142,5 +142,5 @@ TransformationHistory::ReadResult TransformationHistory::Read(Ogre::Vector3 *pos
 }
 void TransformationHistory::Clear(void)
 {
-	history.Clear(_FILE_AND_LINE_);
+	history.Clear();
 }

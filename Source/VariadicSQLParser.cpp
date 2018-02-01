@@ -49,7 +49,7 @@ void VariadicSQLParser::GetTypeMappingIndices( const char *format, DataStructure
     bool previousCharWasPercentSign;
     unsigned int i;
     unsigned int typeMappingIndex;
-    indices.Clear(false, _FILE_AND_LINE_);
+    indices.Clear(false);
     unsigned int len = (unsigned int) strlen(format);
     previousCharWasPercentSign=false;
     for (i=0; i < len; i++)
@@ -62,7 +62,7 @@ void VariadicSQLParser::GetTypeMappingIndices( const char *format, DataStructure
                 IndexAndType iat;
                 iat.strIndex=i-1;
                 iat.typeMappingIndex=typeMappingIndex;
-                indices.Insert(iat, _FILE_AND_LINE_ );
+                indices.Insert(iat);
             }
         }
 
@@ -76,7 +76,7 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 
     unsigned int i;
     *argumentBinary= new char *[indices.Size()];
-    *argumentLengths= new int[indices.Size(), _FILE_AND_LINE_];
+    *argumentLengths= new int[indices.Size()];
 
     char **paramData=*argumentBinary;
     int *paramLength=*argumentLengths;

@@ -24,11 +24,11 @@ ByteQueue::ByteQueue()
 }
 ByteQueue::~ByteQueue()
 {
-    Clear(_FILE_AND_LINE_);
+    Clear();
 
 
 }
-void ByteQueue::WriteBytes(const char *in, unsigned length, const char *file, unsigned int line)
+void ByteQueue::WriteBytes(const char *in, unsigned length)
 {
     unsigned bytesWritten = GetBytesWritten();
     if (lengthAllocated==0 || length > lengthAllocated - bytesWritten - 1)
@@ -103,7 +103,7 @@ char* ByteQueue::PeekContiguousBytes(unsigned int *outLength) const
         *outLength=lengthAllocated - readOffset;
     return data + readOffset;
 }
-void ByteQueue::Clear(const char *file, unsigned int line)
+void ByteQueue::Clear()
 {
     if (lengthAllocated)
         free(data);

@@ -55,12 +55,12 @@ PatchContext AutopatcherClientCBInterface::ApplyPatchBSDiff(const char *oldFileP
 	fseek(fp, 0, SEEK_END);
 	unsigned int prePatchLength = ftell(fp);
 	fseek(fp, 0, SEEK_SET);
-	char *prePatchFile = (char*) rakMalloc_Ex(prePatchLength, _FILE_AND_LINE_);
+	char *prePatchFile = (char*) rakMalloc_Ex(prePatchLength);
 	fread(prePatchFile, prePatchLength, 1, fp);
 	fclose(fp);
 
 	bool result = ApplyPatch(prePatchFile, prePatchLength, newFileContents, newFileSize, patchContents, patchSize);
-	rakFree_Ex(prePatchFile, _FILE_AND_LINE_);
+	rakFree_Ex(prePatchFile);
 
 	if (result==false)
 		return PC_ERROR_PATCH_APPLICATION_FAILURE;
@@ -206,24 +206,24 @@ public:
 		{
 			info = threadPool.GetInputAtIndex(i);
 //			if (info->prePatchFile)
-//				rakFree_Ex(info->prePatchFile, _FILE_AND_LINE_ );
+//				rakFree_Ex(info->prePatchFile );
 			if (info->postPatchFile)
-				rakFree_Ex(info->postPatchFile, _FILE_AND_LINE_ );
+				rakFree_Ex(info->postPatchFile );
 			if (info->onFileStruct.fileData)
-				rakFree_Ex(info->onFileStruct.fileData, _FILE_AND_LINE_ );
-			RakNet::OP_DELETE(info, _FILE_AND_LINE_);
+				rakFree_Ex(info->onFileStruct.fileData );
+			RakNet::OP_DELETE(info);
 		}
 		threadPool.ClearInput();
 		for (i=0; i < threadPool.OutputSize(); i++)
 		{
 			info = threadPool.GetOutputAtIndex(i);
 //			if (info->prePatchFile)
-//				rakFree_Ex(info->prePatchFile, _FILE_AND_LINE_ );
+//				rakFree_Ex(info->prePatchFile );
 			if (info->postPatchFile)
-				rakFree_Ex(info->postPatchFile, _FILE_AND_LINE_ );
+				rakFree_Ex(info->postPatchFile );
 			if (info->onFileStruct.fileData)
-				rakFree_Ex(info->onFileStruct.fileData, _FILE_AND_LINE_ );
-			RakNet::OP_DELETE(info, _FILE_AND_LINE_);
+				rakFree_Ex(info->onFileStruct.fileData );
+			RakNet::OP_DELETE(info);
 		}
 		threadPool.ClearOutput();
 	}
@@ -247,7 +247,7 @@ public:
 					else
 					{
 						// Regular file in use but we can write the temporary file.  Restart and copy it over the existing
-						rakFree_Ex(threadInfo->onFileStruct.fileData, _FILE_AND_LINE_ );
+						rakFree_Ex(threadInfo->onFileStruct.fileData );
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 						threadInfo->onFileStruct.fileData=0;
@@ -262,7 +262,7 @@ public:
 					}
 					else
 					{
-						rakFree_Ex(threadInfo->onFileStruct.fileData, _FILE_AND_LINE_ );
+						rakFree_Ex(threadInfo->onFileStruct.fileData );
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						threadInfo->onFileStruct.byteLengthOfThisFile=threadInfo->postPatchLength;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
@@ -298,7 +298,7 @@ public:
 					}
 					else
 					{
-						rakFree_Ex(threadInfo->onFileStruct.fileData, _FILE_AND_LINE_ );
+						rakFree_Ex(threadInfo->onFileStruct.fileData );
 						threadInfo->onFileStruct.fileData=threadInfo->postPatchFile;
 						onFileCallback->OnFile(&threadInfo->onFileStruct);
 						threadInfo->onFileStruct.fileData=0;
@@ -308,12 +308,12 @@ public:
 			}
 
 //			if (threadInfo->prePatchFile)
-//				rakFree_Ex(threadInfo->prePatchFile, _FILE_AND_LINE_ );
+//				rakFree_Ex(threadInfo->prePatchFile );
 			if (threadInfo->postPatchFile)
-				rakFree_Ex(threadInfo->postPatchFile, _FILE_AND_LINE_ );
+				rakFree_Ex(threadInfo->postPatchFile );
 			if (threadInfo->onFileStruct.fileData)
-				rakFree_Ex(threadInfo->onFileStruct.fileData, _FILE_AND_LINE_ );
-			RakNet::OP_DELETE(threadInfo, _FILE_AND_LINE_);
+				rakFree_Ex(threadInfo->onFileStruct.fileData );
+			RakNet::OP_DELETE(threadInfo);
 		}
 
 		// If both input and output are empty, we are done.
@@ -348,7 +348,7 @@ public:
 	}
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
-		AutopatcherClientThreadInfo *inStruct = RakNet::OP_NEW<AutopatcherClientThreadInfo>( _FILE_AND_LINE_ );
+		AutopatcherClientThreadInfo *inStruct = RakNet::OP_NEW<AutopatcherClientThreadInfo>(  );
 		memset(inStruct,0,sizeof(AutopatcherClientThreadInfo));
 //		inStruct->prePatchFile=0;
 		inStruct->postPatchFile=0;
@@ -480,7 +480,7 @@ void AutopatcherClient::Update(void)
 		{
 			RakNet::BitStream outBitStream;
 			AutopatcherClientCallback *transferCallback;
-			transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>( _FILE_AND_LINE_ );
+			transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>(  );
 			strcpy(transferCallback->applicationDirectory, applicationDirectory);
 			transferCallback->onFileCallback=userCB;
 			transferCallback->client=this;
@@ -612,7 +612,7 @@ PluginReceiveResult AutopatcherClient::OnCreationList(Packet *packet)
 
 	// Prepare the transfer plugin to get a file list.
 	AutopatcherClientCallback *transferCallback;
-	transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>( _FILE_AND_LINE_ );
+	transferCallback = RakNet::OP_NEW<AutopatcherClientCallback>(  );
 	strcpy(transferCallback->applicationDirectory, applicationDirectory);
 	transferCallback->onFileCallback=userCB;
 	transferCallback->client=this;

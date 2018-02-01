@@ -35,7 +35,7 @@ using namespace RakNet;
 
 FILE *fp;
 int memoryUsage=0;
-void *LoggedMalloc(size_t size, const char *file, unsigned int line)
+void *LoggedMalloc(size_t size)
 {
 	memoryUsage+=size;
 	if (fp)
@@ -44,7 +44,7 @@ void *LoggedMalloc(size_t size, const char *file, unsigned int line)
 	memcpy(p,&size,sizeof(size));
 	return p+sizeof(size);
 }
-void LoggedFree(void *p, const char *file, unsigned int line)
+void LoggedFree(void *p)
 {
 	char *realP=(char*)p-sizeof(size_t);
 	size_t allocatedSize;
@@ -54,7 +54,7 @@ void LoggedFree(void *p, const char *file, unsigned int line)
 		fprintf(fp,"Free %s:%i %i bytes %i total\n", file,line,allocatedSize,memoryUsage);
 	free(realP);
 }
-void* LoggedRealloc(void *p, size_t size, const char *file, unsigned int line)
+void* LoggedRealloc(void *p, size_t size)
 {
 	char *realP=(char*)p-sizeof(size_t);
 	size_t allocatedSize;

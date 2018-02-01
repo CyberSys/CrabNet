@@ -143,7 +143,7 @@ struct PacketFollowedByData
     unsigned char data[1];
 };
 
-Packet *RakPeer::AllocPacket(unsigned dataSize, const char *file, unsigned int line)
+Packet *RakPeer::AllocPacket(unsigned dataSize)
 {
     // Crashes when dataSize is 4 bytes - not sure why
 //     unsigned char *data = (unsigned char *) malloc(sizeof(PacketFollowedByData)+dataSize);
@@ -157,7 +157,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize, const char *file, unsigned int l
 
     RakNet::Packet *p;
     packetAllocationPoolMutex.Lock();
-    p = packetAllocationPool.Allocate(file, line);
+    p = packetAllocationPool.Allocate();
     packetAllocationPoolMutex.Unlock();
     p = new((void *) p) Packet;
     p->data = (unsigned char *) malloc(dataSize);
@@ -169,12 +169,12 @@ Packet *RakPeer::AllocPacket(unsigned dataSize, const char *file, unsigned int l
     return p;
 }
 
-Packet *RakPeer::AllocPacket(unsigned dataSize, unsigned char *data, const char *file, unsigned int line)
+Packet *RakPeer::AllocPacket(unsigned dataSize, unsigned char *data)
 {
     // Packet *p = (Packet *)malloc(sizeof(Packet));
     RakNet::Packet *p;
     packetAllocationPoolMutex.Lock();
-    p = packetAllocationPool.Allocate(file, line);
+    p = packetAllocationPool.Allocate();
     packetAllocationPoolMutex.Unlock();
     p = new((void *) p) Packet;
     RakAssert(p);
@@ -413,7 +413,7 @@ RakPeer::Startup(unsigned int maxConnections, SocketDescriptor *socketDescriptor
         ncbp.is_ipv6=socketDescriptors[i].socketFamily==AF_INET6;
         ncbp.nativeClientInstance=socketDescriptors[i].chromeInstance;
         ncbp.port=socketDescriptors[i].port;
-        nativeClientSocket->Bind(&ncbp, _FILE_AND_LINE_);
+        nativeClientSocket->Bind(&ncbp);
 #else
         if (r2->IsBerkleySocket())
         {
@@ -430,7 +430,7 @@ RakPeer::Startup(unsigned int maxConnections, SocketDescriptor *socketDescriptor
             bbp.pollingThreadPriority = threadPriority;
             bbp.eventHandler = this;
             bbp.remotePortRakNetWasStartedOn_PS3_PS4_PSP2 = socketDescriptors[i].remotePortRakNetWasStartedOn_PS3_PSP2;
-            RNS2BindResult br = ((RNS2_Berkley *) r2)->Bind(&bbp, _FILE_AND_LINE_);
+            RNS2BindResult br = ((RNS2_Berkley *) r2)->Bind(&bbp);
 
             if (
 #if RAKNET_SUPPORT_IPV6 == 0
@@ -483,7 +483,7 @@ br == BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE)
         // GetBoundAddress is asynch, which isn't supported by this architecture
 #if !defined(__native_client__)
         int zero=0;
-        if (SocketLayer::SendTo(rns, (const char*) &zero,4, rns->GetBoundAddress(), _FILE_AND_LINE_)!=0)
+        if (SocketLayer::SendTo(rns, (const char*) &zero,4, rns->GetBoundAddress())!=0)
         {
             DerefAllSockets();
             return SOCKET_FAILED_TEST_SEND;
@@ -491,7 +491,7 @@ br == BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE)
 #endif
         */
 
-        socketList.Push(r2, _FILE_AND_LINE_);
+        socketList.Push(r2);
 
     }
 
@@ -753,7 +753,7 @@ void RakPeer::DisableSecurity(void)
 void RakPeer::AddToSecurityExceptionList(const char *ip)
 {
     securityExceptionMutex.Lock();
-    securityExceptionList.Insert(RakString(ip), _FILE_AND_LINE_);
+    securityExceptionList.Insert(RakString(ip));
     securityExceptionMutex.Unlock();
 }
 
@@ -766,7 +766,7 @@ void RakPeer::RemoveFromSecurityExceptionList(const char *ip)
     if (ip == 0)
     {
         securityExceptionMutex.Lock();
-        securityExceptionList.Clear(false, _FILE_AND_LINE_);
+        securityExceptionList.Clear(false);
         securityExceptionMutex.Unlock();
     }
     else
@@ -1043,7 +1043,7 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
     // Get recvfrom to unblock
     for (i=0; i < socketList.Size(); i++)
     {
-        if (SocketLayer::SendTo(socketList[i], (const char*) &i,1,socketList[i]->GetBoundAddress(), _FILE_AND_LINE_)!=0)
+        if (SocketLayer::SendTo(socketList[i], (const char*) &i,1,socketList[i]->GetBoundAddress())!=0)
             break;
     }
     */
@@ -1061,7 +1061,7 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
         // Get recvfrom to unblock
         for (i=0; i < socketList.Size(); i++)
         {
-            SocketLayer::SendTo(socketList[i], (const char*) &i,1,socketList[i]->GetBoundAddress(), _FILE_AND_LINE_);
+            SocketLayer::SendTo(socketList[i], (const char*) &i,1,socketList[i]->GetBoundAddress());
         }
 
         RakSleep(30);
@@ -1105,10 +1105,10 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
     packetReturnMutex.Lock();
     for (i = 0; i < packetReturnQueue.Size(); i++)
         DeallocatePacket(packetReturnQueue[i]);
-    packetReturnQueue.Clear(_FILE_AND_LINE_);
+    packetReturnQueue.Clear();
     packetReturnMutex.Unlock();
     packetAllocationPoolMutex.Lock();
-    packetAllocationPool.Clear(_FILE_AND_LINE_);
+    packetAllocationPool.Clear();
     packetAllocationPoolMutex.Unlock();
 
     /*
@@ -1288,7 +1288,7 @@ void RakPeer::SendLoopback(const char *data, const int length)
     if (data == 0 || length < 0)
         return;
 
-    Packet *packet = AllocPacket(length, _FILE_AND_LINE_);
+    Packet *packet = AllocPacket(length);
     memcpy(packet->data, data, length);
     packet->systemAddress = GetLoopbackAddress();
     packet->guid = myGuid;
@@ -1436,7 +1436,7 @@ Packet *RakPeer::Receive(void)
     {
         while (1)
         {
-            recvFromStruct=bufferedPackets.Allocate( _FILE_AND_LINE_ );
+            recvFromStruct=bufferedPackets.Allocate(  );
             recvFromStruct->s=socketList[i]->s;
             recvFromStruct->remotePortRakNetWasStartedOn_PS3=socketList[i]->remotePortRakNetWasStartedOn_PS3_PSP2;
             recvFromStruct->extraSocketOptions=socketList[i]->extraSocketOptions;
@@ -1445,7 +1445,7 @@ Packet *RakPeer::Receive(void)
                 recvFromStruct->extraSocketOptions, recvFromStruct->data, &recvFromStruct->bytesRead, &recvFromStruct->systemAddress, &recvFromStruct->timeRead);
             if (recvFromStruct->bytesRead<=0)
             {
-                bufferedPackets.Deallocate(recvFromStruct, _FILE_AND_LINE_);
+                bufferedPackets.Deallocate(recvFromStruct);
                 break;
             }
             else
@@ -1560,7 +1560,7 @@ void RakPeer::DeallocatePacket(Packet *packet)
         free(packet->data);
         packet->~Packet();
         packetAllocationPoolMutex.Lock();
-        packetAllocationPool.Release(packet, _FILE_AND_LINE_);
+        packetAllocationPool.Release(packet);
         packetAllocationPoolMutex.Unlock();
     }
     else
@@ -1610,7 +1610,7 @@ RakPeer::CloseConnection(const AddressOrGUID target, bool sendDisconnectionNotif
     // 12/14/09 Return ID_CONNECTION_LOST when calling CloseConnection with sendDisconnectionNotification==false, elsewise it is never returned
     if (sendDisconnectionNotification == false && GetConnectionState(target) == IS_CONNECTED)
     {
-        Packet *packet = AllocPacket(sizeof(char), _FILE_AND_LINE_);
+        Packet *packet = AllocPacket(sizeof(char));
         packet->data[0] = ID_CONNECTION_LOST; // DeadConnection
         packet->guid = target.rakNetGuid == UNASSIGNED_RAKNET_GUID ? GetGuidFromSystemAddress(target.systemAddress)
                                                                    : target.rakNetGuid;
@@ -1782,8 +1782,8 @@ RakNetGUID RakPeer::GetGUIDFromIndex(unsigned int index)
 void
 RakPeer::GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids) const
 {
-    addresses.Clear(false, _FILE_AND_LINE_);
-    guids.Clear(false, _FILE_AND_LINE_);
+    addresses.Clear(false);
+    guids.Clear(false);
 
     if (remoteSystemList == 0 || endThreads == true)
         return;
@@ -1794,8 +1794,8 @@ RakPeer::GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStruc
         if ((activeSystemList[i])->isActive &&
             (activeSystemList[i])->connectMode == RakPeer::RemoteSystemStruct::CONNECTED)
         {
-            addresses.Push((activeSystemList[i])->systemAddress, _FILE_AND_LINE_);
-            guids.Push((activeSystemList[i])->guid, _FILE_AND_LINE_);
+            addresses.Push((activeSystemList[i])->systemAddress);
+            guids.Push((activeSystemList[i])->guid);
         }
     }
 }
@@ -1846,7 +1846,7 @@ void RakPeer::AddToBanList(const char *IP, RakNet::TimeMS milliseconds)
         banStruct->timeout = time + milliseconds;
     strcpy(banStruct->IP, IP);
     banListMutex.Lock();
-    banList.Insert(banStruct, _FILE_AND_LINE_);
+    banList.Insert(banStruct);
     banListMutex.Unlock();
 }
 
@@ -1908,7 +1908,7 @@ void RakPeer::ClearBanList(void)
         delete banList[index];
     }
 
-    banList.Clear(false, _FILE_AND_LINE_);
+    banList.Clear(false);
 
     banListMutex.Unlock();
 }
@@ -2074,7 +2074,7 @@ bool RakPeer::Ping(const char *host, unsigned short remotePort, bool onlyReplyOn
     unsigned i;
     for (i=0; i < pluginListNTS.Size(); i++)
         pluginListNTS[i]->OnDirectSocketSend((const char*)bitStream.GetData(), bitStream.GetNumberOfBitsUsed(), systemAddress);
-    SocketLayer::SendTo( socketList[realIndex], (const char*)bitStream.GetData(), (int) bitStream.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+    SocketLayer::SendTo( socketList[realIndex], (const char*)bitStream.GetData(), (int) bitStream.GetNumberOfBytesUsed(), systemAddress );
     */
 
     RNS2_SendParameters bsp;
@@ -2088,7 +2088,7 @@ bool RakPeer::Ping(const char *host, unsigned short remotePort, bool onlyReplyOn
     for (i = 0; i < pluginListNTS.Size(); i++)
         pluginListNTS[i]->OnDirectSocketSend((const char *) bitStream.GetData(), bitStream.GetNumberOfBitsUsed(),
                                              bsp.systemAddress);
-    socketList[realIndex]->Send(&bsp, _FILE_AND_LINE_);
+    socketList[realIndex]->Send(&bsp);
 
     return true;
 }
@@ -2698,7 +2698,7 @@ void RakPeer::SendTTL(const char *host, unsigned short remotePort, int ttl, unsi
         unsigned i;
         for (i = 0; i < pluginListNTS.Size(); i++)
             pluginListNTS[i]->OnDirectSocketSend((const char *) bsp.data, BYTES_TO_BITS(bsp.length), bsp.systemAddress);
-        socketList[realIndex]->Send(&bsp, _FILE_AND_LINE_);
+        socketList[realIndex]->Send(&bsp);
     }
 #endif
 }
@@ -2718,7 +2718,7 @@ void RakPeer::AttachPlugin(PluginInterface2 *plugin)
         {
             plugin->SetRakPeerInterface(this);
             plugin->OnAttach();
-            pluginListNTS.Insert(plugin, _FILE_AND_LINE_);
+            pluginListNTS.Insert(plugin);
         }
     }
     else
@@ -2727,7 +2727,7 @@ void RakPeer::AttachPlugin(PluginInterface2 *plugin)
         {
             plugin->SetRakPeerInterface(this);
             plugin->OnAttach();
-            pluginListTS.Insert(plugin, _FILE_AND_LINE_);
+            pluginListTS.Insert(plugin);
         }
     }
 }
@@ -2788,9 +2788,9 @@ void RakPeer::PushBackPacket(Packet *packet, bool pushAtHead)
 
     packetReturnMutex.Lock();
     if (pushAtHead)
-        packetReturnQueue.PushAtHead(packet, 0, _FILE_AND_LINE_);
+        packetReturnQueue.PushAtHead(packet, 0);
     else
-        packetReturnQueue.Push(packet, _FILE_AND_LINE_);
+        packetReturnQueue.Push(packet);
     packetReturnMutex.Unlock();
 }
 
@@ -2799,7 +2799,7 @@ void RakPeer::ChangeSystemAddress(RakNetGUID guid, const SystemAddress &systemAd
 {
     BufferedCommandStruct *bcs;
 
-    bcs = bufferedCommands.Allocate(_FILE_AND_LINE_);
+    bcs = bufferedCommands.Allocate();
     bcs->data = 0;
     bcs->systemIdentifier.systemAddress = systemAddress;
     bcs->systemIdentifier.rakNetGuid = guid;
@@ -2810,7 +2810,7 @@ void RakPeer::ChangeSystemAddress(RakNetGUID guid, const SystemAddress &systemAd
 // ---------------------------------------------------------------------------------------------------------------------
 Packet *RakPeer::AllocatePacket(unsigned dataSize)
 {
-    return AllocPacket(dataSize, _FILE_AND_LINE_);
+    return AllocPacket(dataSize);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -2818,7 +2818,7 @@ RakNetSocket2 *RakPeer::GetSocket(const SystemAddress target)
 {
     // Send a query to the thread to get the socket, and return when we got it
     BufferedCommandStruct *bcs;
-    bcs = bufferedCommands.Allocate(_FILE_AND_LINE_);
+    bcs = bufferedCommands.Allocate();
     bcs->command = BufferedCommandStruct::BCS_GET_SOCKET;
     bcs->systemIdentifier = target;
     bcs->data = 0;
@@ -2839,8 +2839,8 @@ RakNetSocket2 *RakPeer::GetSocket(const SystemAddress target)
         if (sqo)
         {
             output = sqo->sockets;
-            sqo->sockets.Clear(false, _FILE_AND_LINE_);
-            socketQueryOutput.Deallocate(sqo, _FILE_AND_LINE_);
+            sqo->sockets.Clear(false);
+            socketQueryOutput.Deallocate(sqo);
             if (output.Size())
                 return output[0];
             break;
@@ -2852,12 +2852,12 @@ RakNetSocket2 *RakPeer::GetSocket(const SystemAddress target)
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::GetSockets(DataStructures::List<RakNetSocket2 *> &sockets)
 {
-    sockets.Clear(false, _FILE_AND_LINE_);
+    sockets.Clear(false);
 
     // Send a query to the thread to get the socket, and return when we got it
     BufferedCommandStruct *bcs;
 
-    bcs = bufferedCommands.Allocate(_FILE_AND_LINE_);
+    bcs = bufferedCommands.Allocate();
     bcs->command = BufferedCommandStruct::BCS_GET_SOCKET;
     bcs->systemIdentifier = UNASSIGNED_SYSTEM_ADDRESS;
     bcs->data = 0;
@@ -2877,8 +2877,8 @@ void RakPeer::GetSockets(DataStructures::List<RakNetSocket2 *> &sockets)
         if (sqo)
         {
             sockets = sqo->sockets;
-            sqo->sockets.Clear(false, _FILE_AND_LINE_);
-            socketQueryOutput.Deallocate(sqo, _FILE_AND_LINE_);
+            sqo->sockets.Clear(false);
+            socketQueryOutput.Deallocate(sqo);
             return;
         }
     }
@@ -2887,7 +2887,7 @@ void RakPeer::GetSockets(DataStructures::List<RakNetSocket2 *> &sockets)
 
 void RakPeer::ReleaseSockets(DataStructures::List<RakNetSocket2 *> &sockets)
 {
-    sockets.Clear(false, _FILE_AND_LINE_);
+    sockets.Clear(false);
 }
 // ---------------------------------------------------------------------------------------------------------------------
 
@@ -2997,7 +2997,7 @@ bool RakPeer::SendOutOfBand(const char *host, unsigned short remotePort, const c
     for (i=0; i < pluginListNTS.Size(); i++)
         pluginListNTS[i]->OnDirectSocketSend((const char*)bitStream.GetData(), bitStream.GetNumberOfBitsUsed(), systemAddress);
 
-    SocketLayer::SendTo( socketList[realIndex], (const char*)bitStream.GetData(), (int) bitStream.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+    SocketLayer::SendTo( socketList[realIndex], (const char*)bitStream.GetData(), (int) bitStream.GetNumberOfBytesUsed(), systemAddress );
     */
 
     RNS2_SendParameters bsp;
@@ -3008,7 +3008,7 @@ bool RakPeer::SendOutOfBand(const char *host, unsigned short remotePort, const c
     unsigned i;
     for (i = 0; i < pluginListNTS.Size(); i++)
         pluginListNTS[i]->OnDirectSocketSend((const char *) bsp.data, BYTES_TO_BITS(bsp.length), bsp.systemAddress);
-    socketList[realIndex]->Send(&bsp, _FILE_AND_LINE_);
+    socketList[realIndex]->Send(&bsp);
 
     return true;
 }
@@ -3063,9 +3063,9 @@ RakNetStatistics *RakPeer::GetStatistics(const SystemAddress systemAddress, RakN
 void RakPeer::GetStatisticsList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids,
                                 DataStructures::List<RakNetStatistics> &statistics)
 {
-    addresses.Clear(false, _FILE_AND_LINE_);
-    guids.Clear(false, _FILE_AND_LINE_);
-    statistics.Clear(false, _FILE_AND_LINE_);
+    addresses.Clear(false);
+    guids.Clear(false);
+    statistics.Clear(false);
 
     if (remoteSystemList == 0 || endThreads == true)
         return;
@@ -3074,11 +3074,11 @@ void RakPeer::GetStatisticsList(DataStructures::List<SystemAddress> &addresses, 
     {
         if ((activeSystemList[i])->isActive && (activeSystemList[i])->connectMode == RakPeer::RemoteSystemStruct::CONNECTED)
         {
-            addresses.Push((activeSystemList[i])->systemAddress, _FILE_AND_LINE_);
-            guids.Push((activeSystemList[i])->guid, _FILE_AND_LINE_);
+            addresses.Push((activeSystemList[i])->systemAddress);
+            guids.Push((activeSystemList[i])->guid);
             RakNetStatistics rns;
             (activeSystemList[i])->reliabilityLayer.GetStatistics(&rns);
-            statistics.Push(rns, _FILE_AND_LINE_);
+            statistics.Push(rns);
         }
     }
 }
@@ -3282,7 +3282,7 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
             return CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS;
         }
     }
-    requestedConnectionQueue.Push(rcs, _FILE_AND_LINE_);
+    requestedConnectionQueue.Push(rcs);
     requestedConnectionQueueMutex.Unlock();
 
     return CONNECTION_ATTEMPT_STARTED;
@@ -3341,7 +3341,7 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
             return CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS;
         }
     }
-    requestedConnectionQueue.Push(rcs, _FILE_AND_LINE_);
+    requestedConnectionQueue.Push(rcs);
     requestedConnectionQueueMutex.Unlock();
 
     return CONNECTION_ATTEMPT_STARTED;
@@ -3706,7 +3706,7 @@ void RakPeer::ReferenceRemoteSystem(const SystemAddress &sa, unsigned int remote
     remoteSystemList[remoteSystemListIndex].systemAddress = sa;
 
     unsigned int hashIndex = RemoteSystemLookupHashIndex(sa);
-    RemoteSystemIndex *rsi = remoteSystemIndexPool.Allocate(_FILE_AND_LINE_);
+    RemoteSystemIndex *rsi = remoteSystemIndexPool.Allocate();
     if (remoteSystemLookup[hashIndex] == 0)
     {
         rsi->next = 0;
@@ -3719,7 +3719,7 @@ void RakPeer::ReferenceRemoteSystem(const SystemAddress &sa, unsigned int remote
         while (cur->next != 0)
             cur = cur->next;
         
-        rsi = remoteSystemIndexPool.Allocate(_FILE_AND_LINE_);
+        rsi = remoteSystemIndexPool.Allocate();
         rsi->next = 0;
         rsi->index = remoteSystemListIndex;
         cur->next = rsi;
@@ -3742,7 +3742,7 @@ void RakPeer::DereferenceRemoteSystem(const SystemAddress &sa)
                 remoteSystemLookup[hashIndex] = cur->next;
             else
                 last->next = cur->next;
-            remoteSystemIndexPool.Release(cur, _FILE_AND_LINE_);
+            remoteSystemIndexPool.Release(cur);
             break;
         }
         last = cur;
@@ -3776,7 +3776,7 @@ RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystem(const SystemAddress &sa) c
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::ClearRemoteSystemLookup(void)
 {
-    remoteSystemIndexPool.Clear(_FILE_AND_LINE_);
+    remoteSystemIndexPool.Clear();
     delete[] remoteSystemLookup;
     remoteSystemLookup = 0;
 }
@@ -3884,15 +3884,15 @@ bool RakPeer::AllowIncomingConnections(void) const
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::DeallocRNS2RecvStruct(RNS2RecvStruct *s, const char *file, unsigned int line)
+void RakPeer::DeallocRNS2RecvStruct(RNS2RecvStruct *s)
 {
     bufferedPacketsFreePoolMutex.Lock();
-    bufferedPacketsFreePool.Push(s, file, line);
+    bufferedPacketsFreePool.Push(s);
     bufferedPacketsFreePoolMutex.Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-RNS2RecvStruct *RakPeer::AllocRNS2RecvStruct(const char *file, unsigned int line)
+RNS2RecvStruct *RakPeer::AllocRNS2RecvStruct()
 {
     bufferedPacketsFreePoolMutex.Lock();
     if (bufferedPacketsFreePool.Size() > 0)
@@ -3931,7 +3931,7 @@ void RakPeer::SetupBufferedPackets(void)
 void RakPeer::PushBufferedPacket(RNS2RecvStruct *p)
 {
     bufferedPacketsQueueMutex.Lock();
-    bufferedPacketsQueue.Push(p, _FILE_AND_LINE_);
+    bufferedPacketsQueue.Push(p);
     bufferedPacketsQueueMutex.Unlock();
 }
 
@@ -4020,7 +4020,7 @@ void RakPeer::CloseConnectionInternal(const AddressOrGUID &systemIdentifier, boo
         }
         else
         {
-            BufferedCommandStruct *bcs = bufferedCommands.Allocate(_FILE_AND_LINE_);
+            BufferedCommandStruct *bcs = bufferedCommands.Allocate();
             bcs->command = BufferedCommandStruct::BCS_CLOSE_CONNECTION;
             bcs->systemIdentifier = target;
             bcs->data = 0;
@@ -4036,13 +4036,13 @@ void RakPeer::SendBuffered(const char *data, BitSize_t numberOfBitsToSend, Packe
                            PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier,
                            bool broadcast, RemoteSystemStruct::ConnectMode connectionMode, uint32_t receipt)
 {
-    BufferedCommandStruct *bcs = bufferedCommands.Allocate(_FILE_AND_LINE_);
+    BufferedCommandStruct *bcs = bufferedCommands.Allocate();
     // Making a copy doesn't lose efficiency because I tell the reliability layer to use this allocation for its own copy
     bcs->data = (char *) malloc((size_t) BITS_TO_BYTES(numberOfBitsToSend));
     if (bcs->data == 0)
     {
         RakAssert(0)
-        bufferedCommands.Deallocate(bcs, _FILE_AND_LINE_);
+        bufferedCommands.Deallocate(bcs);
         return;
     }
 
@@ -4111,7 +4111,7 @@ void RakPeer::SendBufferedList(const char **data, const int *lengths, const int 
     RakAssert(!(priority > NUMBER_OF_PRIORITIES || priority < 0));
     RakAssert(!(orderingChannel >= NUMBER_OF_ORDERED_STREAMS));
 
-    BufferedCommandStruct *bcs = bufferedCommands.Allocate(_FILE_AND_LINE_);
+    BufferedCommandStruct *bcs = bufferedCommands.Allocate();
     bcs->data = dataAggregate;
     bcs->numberOfBitsToSend = BYTES_TO_BITS(totalLength);
     bcs->priority = priority;
@@ -4268,15 +4268,15 @@ void RakPeer::ClearBufferedCommands(void)
         if (bcs->data)
             free(bcs->data);
 
-        bufferedCommands.Deallocate(bcs, _FILE_AND_LINE_);
+        bufferedCommands.Deallocate(bcs);
     }
-    bufferedCommands.Clear(_FILE_AND_LINE_);
+    bufferedCommands.Clear();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::ClearSocketQueryOutput(void)
 {
-    socketQueryOutput.Clear(_FILE_AND_LINE_);
+    socketQueryOutput.Clear();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -4285,7 +4285,7 @@ void RakPeer::ClearRequestedConnectionList(void)
     DataStructures::Queue<RequestedConnectionStruct *> freeQueue;
     requestedConnectionQueueMutex.Lock();
     while (requestedConnectionQueue.Size())
-        freeQueue.Push(requestedConnectionQueue.Pop(), _FILE_AND_LINE_);
+        freeQueue.Push(requestedConnectionQueue.Pop());
     requestedConnectionQueueMutex.Unlock();
 
     for (unsigned i = 0; i < freeQueue.Size(); i++)
@@ -4302,7 +4302,7 @@ void RakPeer::ClearRequestedConnectionList(void)
 inline void RakPeer::AddPacketToProducer(RakNet::Packet *p)
 {
     packetReturnMutex.Lock();
-    packetReturnQueue.Push(p, _FILE_AND_LINE_);
+    packetReturnQueue.Push(p);
     packetReturnMutex.Unlock();
 }
 
@@ -4349,13 +4349,13 @@ namespace RakNet
             bsp.systemAddress = systemAddress;
             for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                 rakPeer->pluginListNTS[i]->OnDirectSocketSend((char *) bs.GetData(), bs.GetNumberOfBitsUsed(), systemAddress);
-            rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+            rakNetSocket->Send(&bsp);
 
             /*
             unsigned i;
             for (i=0; i < rakPeer->pluginListNTS.Size(); i++)
                 rakPeer->pluginListNTS[i]->OnDirectSocketSend((char*) bs.GetData(), bs.GetNumberOfBitsUsed(), systemAddress);
-            SocketLayer::SendTo( rakNetSocket, (char*) bs.GetData(), bs.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+            SocketLayer::SendTo( rakNetSocket, (char*) bs.GetData(), bs.GetNumberOfBytesUsed(), systemAddress );
             */
 
             return true;
@@ -4448,11 +4448,11 @@ namespace RakNet
                     bsp.data = (char *) outBitStream.GetData();
                     bsp.length = outBitStream.GetNumberOfBytesUsed();
                     bsp.systemAddress = systemAddress;
-                    rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+                    rakNetSocket->Send(&bsp);
 
-                    // SocketLayer::SendTo( rakNetSocket, (const char*)outBitStream.GetData(), (unsigned int) outBitStream.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+                    // SocketLayer::SendTo( rakNetSocket, (const char*)outBitStream.GetData(), (unsigned int) outBitStream.GetNumberOfBytesUsed(), systemAddress );
 
-                    packet = rakPeer->AllocPacket(sizeof(MessageID), _FILE_AND_LINE_);
+                    packet = rakPeer->AllocPacket(sizeof(MessageID));
                     packet->data[0] = data[0];
                     packet->systemAddress = systemAddress;
                     packet->guid = remoteGuid;
@@ -4470,7 +4470,7 @@ namespace RakNet
                                        sizeof(OFFLINE_MESSAGE_DATA_ID) + MAX_OFFLINE_DATA_LENGTH)
             {
                 packet = rakPeer->AllocPacket((unsigned int) (length - sizeof(OFFLINE_MESSAGE_DATA_ID) - RakNetGUID::size() -
-                                        sizeof(RakNet::Time) + sizeof(RakNet::TimeMS)), _FILE_AND_LINE_);
+                                        sizeof(RakNet::Time) + sizeof(RakNet::TimeMS)));
                 RakNet::BitStream bsIn((unsigned char *) data, length, false);
                 bsIn.IgnoreBytes(sizeof(unsigned char));
                 RakNet::Time ping;
@@ -4499,7 +4499,7 @@ namespace RakNet
                 unsigned int dataLength = (unsigned int) (length - sizeof(OFFLINE_MESSAGE_DATA_ID) -
                                                           RakNetGUID::size() - sizeof(MessageID));
                 RakAssert(dataLength < 1024);
-                packet = rakPeer->AllocPacket(dataLength + 1, _FILE_AND_LINE_);
+                packet = rakPeer->AllocPacket(dataLength + 1);
                 RakAssert(packet->length < 1024);
 
                 RakNet::BitStream bs2((unsigned char *) data, length, false);
@@ -4577,7 +4577,7 @@ namespace RakNet
                                 rakPeer->requestedConnectionQueueMutex.Unlock();
                                 CAT_AUDIT_PRINTF("AUDIT: Expected public key does not match what was sent by server -- Reporting back ID_PUBLIC_KEY_MISMATCH to user\n");
 
-                                packet = rakPeer->AllocPacket(sizeof(char), _FILE_AND_LINE_);
+                                packet = rakPeer->AllocPacket(sizeof(char));
                                 packet->data[0] = ID_PUBLIC_KEY_MISMATCH; // Attempted a connection and couldn't
                                 packet->bitSize = (sizeof(char) * 8);
                                 packet->systemAddress = rcs->systemAddress;
@@ -4614,7 +4614,7 @@ namespace RakNet
                                 rakPeer->requestedConnectionQueueMutex.Unlock();
                                 CAT_AUDIT_PRINTF("AUDIT: Security disabled by server but we expected security (indicated by client_handshake not null) so failing!\n");
 
-                                packet = rakPeer->AllocPacket(sizeof(char), _FILE_AND_LINE_);
+                                packet = rakPeer->AllocPacket(sizeof(char));
                                 packet->data[0] = ID_OUR_SYSTEM_REQUIRES_SECURITY; // Attempted a connection and couldn't
                                 packet->bitSize = (sizeof(char) * 8);
                                 packet->systemAddress = rcs->systemAddress;
@@ -4640,13 +4640,13 @@ namespace RakNet
                             rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char *) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(),
                                                                           rcs->systemAddress);
 
-                        // SocketLayer::SendTo( rakPeer->socketList[rcs->socketIndex], (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), rcs->systemAddress, _FILE_AND_LINE_ );
+                        // SocketLayer::SendTo( rakPeer->socketList[rcs->socketIndex], (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), rcs->systemAddress );
 
                         RNS2_SendParameters bsp;
                         bsp.data = (char *) bsOut.GetData();
                         bsp.length = bsOut.GetNumberOfBytesUsed();
                         bsp.systemAddress = systemAddress;
-                        rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+                        rakNetSocket->Send(&bsp);
 
                         return true;
                     }
@@ -4702,7 +4702,7 @@ namespace RakNet
                                 CAT_AUDIT_PRINTF("AUDIT: Server wants security but we didn't set a public key -- Reporting back ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY to user\n");
                                 rakPeer->requestedConnectionQueueMutex.Unlock();
 
-                                packet = rakPeer->AllocPacket(2, _FILE_AND_LINE_);
+                                packet = rakPeer->AllocPacket(2);
                                 packet->data[0] = ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY; // Attempted a connection and couldn't
                                 packet->data[1] = 0; // Indicate server public key is missing
                                 packet->bitSize = (sizeof(char) * 8);
@@ -4808,7 +4808,7 @@ namespace RakNet
                             else
                             {
                                 // Failed, no connections available anymore
-                                packet = rakPeer->AllocPacket(sizeof(char), _FILE_AND_LINE_);
+                                packet = rakPeer->AllocPacket(sizeof(char));
                                 packet->data[0] = ID_CONNECTION_ATTEMPT_FAILED; // Attempted a connection and couldn't
                                 packet->bitSize = (sizeof(char) * 8);
                                 packet->systemAddress = rcs->systemAddress;
@@ -4886,7 +4886,7 @@ namespace RakNet
                 if (connectionAttemptCancelled)
                 {
                     // Tell user of connection attempt failed
-                    packet = rakPeer->AllocPacket(sizeof(char), _FILE_AND_LINE_);
+                    packet = rakPeer->AllocPacket(sizeof(char));
                     packet->data[0] = data[0]; // Attempted a connection and couldn't
                     packet->bitSize = (sizeof(char) * 8);
                     packet->systemAddress = systemAddress;
@@ -4914,7 +4914,7 @@ namespace RakNet
                     bsp.length = bs.GetNumberOfBytesUsed();
                     bsp.systemAddress = systemAddress;
 
-                    rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+                    rakNetSocket->Send(&bsp);
                     return true;
                 }
 
@@ -4948,13 +4948,13 @@ namespace RakNet
 
                 for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                     rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char *) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
-                // SocketLayer::SendTo( rakNetSocket, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+                // SocketLayer::SendTo( rakNetSocket, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress );
 
                 RNS2_SendParameters bsp;
                 bsp.data = (char *) bsOut.GetData();
                 bsp.length = bsOut.GetNumberOfBytesUsed();
                 bsp.systemAddress = systemAddress;
-                rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+                rakNetSocket->Send(&bsp);
             }
             else if ((unsigned char) (data)[0] == ID_OPEN_CONNECTION_REQUEST_2)
             {
@@ -5067,13 +5067,13 @@ namespace RakNet
                     for (i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                         rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char *) bsAnswer.GetData(),
                                                                       bsAnswer.GetNumberOfBitsUsed(), systemAddress);
-                    // SocketLayer::SendTo( rakNetSocket, (const char*) bsAnswer.GetData(), bsAnswer.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+                    // SocketLayer::SendTo( rakNetSocket, (const char*) bsAnswer.GetData(), bsAnswer.GetNumberOfBytesUsed(), systemAddress );
 
                     RNS2_SendParameters bsp;
                     bsp.data = (char *) bsAnswer.GetData();
                     bsp.length = bsAnswer.GetNumberOfBytesUsed();
                     bsp.systemAddress = systemAddress;
-                    rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+                    rakNetSocket->Send(&bsp);
 
                     return true;
                 }
@@ -5086,12 +5086,12 @@ namespace RakNet
                     for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                         rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char *) bsOut.GetData(),
                                                                       bsOut.GetNumberOfBitsUsed(), systemAddress);
-                    // SocketLayer::SendTo( rakNetSocket, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+                    // SocketLayer::SendTo( rakNetSocket, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress );
                     RNS2_SendParameters bsp;
                     bsp.data = (char *) bsOut.GetData();
                     bsp.length = bsOut.GetNumberOfBytesUsed();
                     bsp.systemAddress = systemAddress;
-                    rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+                    rakNetSocket->Send(&bsp);
 
                     return true;
                 }
@@ -5105,12 +5105,12 @@ namespace RakNet
                     for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                         rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char *) bsOut.GetData(),
                                                                       bsOut.GetNumberOfBitsUsed(), systemAddress);
-                    //SocketLayer::SendTo( rakNetSocket, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+                    //SocketLayer::SendTo( rakNetSocket, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress );
                     RNS2_SendParameters bsp;
                     bsp.data = (char *) bsOut.GetData();
                     bsp.length = bsOut.GetNumberOfBytesUsed();
                     bsp.systemAddress = systemAddress;
-                    rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+                    rakNetSocket->Send(&bsp);
 
                     return true;
                 }
@@ -5131,13 +5131,13 @@ namespace RakNet
                     for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                         rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char *) bsOut.GetData(),
                                                                       bsOut.GetNumberOfBitsUsed(), systemAddress);
-                    //SocketLayer::SendTo( rakNetSocket, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+                    //SocketLayer::SendTo( rakNetSocket, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), systemAddress );
 
                     RNS2_SendParameters bsp;
                     bsp.data = (char *) bsOut.GetData();
                     bsp.length = bsOut.GetNumberOfBytesUsed();
                     bsp.systemAddress = systemAddress;
-                    rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+                    rakNetSocket->Send(&bsp);
 
                     return true;
                 }
@@ -5166,12 +5166,12 @@ namespace RakNet
 #endif // LIBCAT_SECURITY
                 for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                     rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char *) bsAnswer.GetData(), bsAnswer.GetNumberOfBitsUsed(), systemAddress);
-                // SocketLayer::SendTo( rakNetSocket, (const char*) bsAnswer.GetData(), bsAnswer.GetNumberOfBytesUsed(), systemAddress, _FILE_AND_LINE_ );
+                // SocketLayer::SendTo( rakNetSocket, (const char*) bsAnswer.GetData(), bsAnswer.GetNumberOfBytesUsed(), systemAddress );
                 RNS2_SendParameters bsp;
                 bsp.data = (char *) bsAnswer.GetData();
                 bsp.length = bsAnswer.GetNumberOfBytesUsed();
                 bsp.systemAddress = systemAddress;
-                rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+                rakNetSocket->Send(&bsp);
             }
             return true;
         }
@@ -5247,7 +5247,7 @@ void RakPeer::DerefAllSockets(void)
     {
         delete socketList[i];
     }
-    socketList.Clear(false, _FILE_AND_LINE_);
+    socketList.Clear(false);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -5271,7 +5271,7 @@ void RakPeer::ProcessChromePacket(RakNetSocket2 *s, const char *buffer, int data
     RakAssert(recvFromAddress.GetPort());
 
     RNS2RecvStruct *recvFromStruct;
-    recvFromStruct=bufferedPackets.Allocate( _FILE_AND_LINE_ );
+    recvFromStruct=bufferedPackets.Allocate(  );
     RakAssert(dataSize <= (int)sizeof(recvFromStruct->data));
     memcpy(recvFromStruct->data, buffer, dataSize);
     recvFromStruct->bytesRead=dataSize;
@@ -5287,7 +5287,7 @@ bool RakPeer::RunRecvFromOnce( RakNetSocket *s )
 {
     RakPeer::RecvFromStruct *recvFromStruct;
 
-    recvFromStruct=bufferedPackets.Allocate( _FILE_AND_LINE_ );
+    recvFromStruct=bufferedPackets.Allocate(  );
     if (recvFromStruct != NULL)
     {
         recvFromStruct->s=s;
@@ -5304,7 +5304,7 @@ bool RakPeer::RunRecvFromOnce( RakNetSocket *s )
         }
         else
         {
-            bufferedPackets.Deallocate(recvFromStruct, _FILE_AND_LINE_);
+            bufferedPackets.Deallocate(recvFromStruct);
         }
     }
     // No data
@@ -5355,7 +5355,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
         */
         ProcessNetworkPacket(recvFromStruct->systemAddress, recvFromStruct->data, recvFromStruct->bytesRead, this,
                              recvFromStruct->socket, recvFromStruct->timeRead, updateBitStream);
-        DeallocRNS2RecvStruct(recvFromStruct, _FILE_AND_LINE_);
+        DeallocRNS2RecvStruct(recvFromStruct);
     }
 
     BufferedCommandStruct *bcs;
@@ -5398,16 +5398,16 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
         }
         else if (bcs->command == BufferedCommandStruct::BCS_GET_SOCKET)
         {
-            SocketQueryOutput *sqo = socketQueryOutput.Allocate(_FILE_AND_LINE_);
+            SocketQueryOutput *sqo = socketQueryOutput.Allocate();
             if (bcs->systemIdentifier.IsUndefined())
                 sqo->sockets = socketList;
             else
             {
                 RakPeer::RemoteSystemStruct *remoteSystem = GetRemoteSystem(bcs->systemIdentifier, true, true);
 
-                sqo->sockets.Clear(false, _FILE_AND_LINE_);
+                sqo->sockets.Clear(false);
                 if (remoteSystem)
-                    sqo->sockets.Push(remoteSystem->rakNetSocket, _FILE_AND_LINE_);
+                    sqo->sockets.Push(remoteSystem->rakNetSocket);
                 else
                 {
                     // Leave empty smart pointer
@@ -5420,7 +5420,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
         bcs->data = 0;
 #endif
 
-        bufferedCommands.Deallocate(bcs, _FILE_AND_LINE_);
+        bufferedCommands.Deallocate(bcs);
     }
 
     if (!requestedConnectionQueue.IsEmpty())
@@ -5453,7 +5453,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                     if (condition1 && !condition2 && rcs->actionToTake == RequestedConnectionStruct::CONNECT)
                     {
                         // Tell user of connection attempt failed
-                        packet = AllocPacket(sizeof(char), _FILE_AND_LINE_);
+                        packet = AllocPacket(sizeof(char));
                         packet->data[0] = ID_CONNECTION_ATTEMPT_FAILED; // Attempted a connection and couldn't
                         packet->bitSize = (sizeof(char) * 8);
                         packet->systemAddress = rcs->systemAddress;
@@ -5520,8 +5520,8 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                     bsp.data = (char *) bitStream.GetData();
                     bsp.length = bitStream.GetNumberOfBytesUsed();
                     bsp.systemAddress = rcs->systemAddress;
-                    if (socketToUse->Send(&bsp, _FILE_AND_LINE_) == 10040)
-                        // if (SocketLayer::SendTo( socketToUse, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress, _FILE_AND_LINE_ )==-10040)
+                    if (socketToUse->Send(&bsp) == 10040)
+                        // if (SocketLayer::SendTo( socketToUse, (const char*) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), rcs->systemAddress )==-10040)
                     {
                         // Don't use this MTU size again
                         rcs->requestsMade = (unsigned char) ((MTUSizeIndex + 1) * (rcs->sendConnectionAttemptCount / NUM_MTU_SIZES));
@@ -5633,7 +5633,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
 //                    remoteSystem->reliabilityLayer.GetUndeliveredMessages(&undeliveredMessages,remoteSystem->MTUSize);
 
 //                    packet=AllocPacket(sizeof( char ) + undeliveredMessages.GetNumberOfBytesUsed());
-                packet = AllocPacket(sizeof(char), _FILE_AND_LINE_);
+                packet = AllocPacket(sizeof(char));
                 if (remoteSystem->connectMode == RemoteSystemStruct::REQUESTED_CONNECTION)
                     packet->data[0] = ID_CONNECTION_ATTEMPT_FAILED; // Attempted a connection and couldn't
                 else if (remoteSystem->connectMode == RemoteSystemStruct::CONNECTED)
@@ -5782,7 +5782,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                         }
 
                         // Send this info down to the game
-                        packet = AllocPacket(byteSize, data, _FILE_AND_LINE_);
+                        packet = AllocPacket(byteSize, data);
                         packet->bitSize = bitSize;
                         packet->systemAddress = systemAddress;
                         packet->systemAddress.systemIndex = remoteSystem->remoteSystemIndex;
@@ -5850,7 +5850,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                 {
                     if (remoteSystem->connectMode == RemoteSystemStruct::REQUESTED_CONNECTION)
                     {
-                        packet = AllocPacket(byteSize, data, _FILE_AND_LINE_);
+                        packet = AllocPacket(byteSize, data);
                         packet->bitSize = bitSize;
                         packet->systemAddress = systemAddress;
                         packet->systemAddress.systemIndex = remoteSystem->remoteSystemIndex;
@@ -5920,7 +5920,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                             }
 
                             // Send the connection request complete to the game
-                            packet = AllocPacket(byteSize, data, _FILE_AND_LINE_);
+                            packet = AllocPacket(byteSize, data);
                             packet->bitSize = byteSize * 8;
                             packet->systemAddress = systemAddress;
                             packet->systemAddress.systemIndex = (SystemIndex) GetIndexFromSystemAddress(systemAddress, true);
@@ -5961,7 +5961,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                     if ((data[0] >= (MessageID) ID_TIMESTAMP || data[0] == ID_SND_RECEIPT_ACKED ||
                          data[0] == ID_SND_RECEIPT_LOSS) && remoteSystem->isActive)
                     {
-                        packet = AllocPacket(byteSize, data, _FILE_AND_LINE_);
+                        packet = AllocPacket(byteSize, data);
                         packet->bitSize = bitSize;
                         packet->systemAddress = systemAddress;
                         packet->systemAddress.systemIndex = remoteSystem->remoteSystemIndex;

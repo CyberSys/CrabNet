@@ -105,27 +105,27 @@ void PacketizedTCP::PushNotificationsToQueues(void)
     sa = TCPInterface::HasNewIncomingConnection();
     if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
     {
-        _newIncomingConnections.Push(sa, _FILE_AND_LINE_ );
+        _newIncomingConnections.Push(sa);
         AddToConnectionList(sa);
     }
 
     sa = TCPInterface::HasFailedConnectionAttempt();
     if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
     {
-        _failedConnectionAttempts.Push(sa, _FILE_AND_LINE_ );
+        _failedConnectionAttempts.Push(sa);
     }
 
     sa = TCPInterface::HasLostConnection();
     if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
     {
-        _lostConnections.Push(sa, _FILE_AND_LINE_ );
+        _lostConnections.Push(sa);
         RemoveFromConnectionList(sa);
     }
 
     sa = TCPInterface::HasCompletedConnectionAttempt();
     if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
     {
-        _completedConnectionAttempts.Push(sa, _FILE_AND_LINE_ );
+        _completedConnectionAttempts.Push(sa);
         AddToConnectionList(sa);
     }
 }
@@ -167,7 +167,7 @@ Packet* PacketizedTCP::Receive( void )
             {
                 DataStructures::ByteQueue *bq = connections[index];
                 // Buffer data
-                bq->WriteBytes((const char*) incomingPacket->data,incomingPacket->length, _FILE_AND_LINE_);
+                bq->WriteBytes((const char*) incomingPacket->data,incomingPacket->length);
                 systemAddressFromPacket=incomingPacket->systemAddress;
                 PTCPHeader dataLength;
 
@@ -196,7 +196,7 @@ Packet* PacketizedTCP::Receive( void )
                         }
                         bq->ReadBytes((char*) outgoingPacket->data,dataLength,false);
 
-                        waitingPackets.Push(outgoingPacket, _FILE_AND_LINE_ );
+                        waitingPackets.Push(outgoingPacket);
 
                         // Peek the header to see if a full message is waiting
                         if (bq->ReadBytes((char*) &dataLength,sizeof(PTCPHeader),true))
@@ -245,7 +245,7 @@ Packet* PacketizedTCP::Receive( void )
                         bq->ReadBytes((char*) outgoingPacket->data+sizeof(MessageID)+sizeof(unsigned int)*3,oneChunkSize,true);
                         bq->DecrementReadOffset(sizeof(PTCPHeader));
 
-                        waitingPackets.Push(outgoingPacket, _FILE_AND_LINE_ );
+                        waitingPackets.Push(outgoingPacket);
                     }
                 }
 
@@ -255,7 +255,7 @@ Packet* PacketizedTCP::Receive( void )
             incomingPacket=0;
         }
         else
-            waitingPackets.Push(incomingPacket, _FILE_AND_LINE_ );
+            waitingPackets.Push(incomingPacket);
 
         incomingPacket = TCPInterface::ReceiveInt();
     }

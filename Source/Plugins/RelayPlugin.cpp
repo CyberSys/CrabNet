@@ -30,8 +30,8 @@ RelayPlugin::~RelayPlugin()
 {
     DataStructures::List<StrAndGuidAndRoom*> itemList;
     DataStructures::List<RakString> keyList;
-    strToGuidHash.GetAsList(itemList, keyList, _FILE_AND_LINE_);
-    guidToStrHash.Clear(_FILE_AND_LINE_);
+    strToGuidHash.GetAsList(itemList, keyList);
+    guidToStrHash.Clear();
     for (unsigned int i=0; i < itemList.Size(); i++)
         delete itemList[i];
     for (unsigned int i=0; i < chatRooms.Size(); i++)
@@ -49,9 +49,9 @@ RelayPluginEnums RelayPlugin::AddParticipantOnServer(const RakString &key, const
 
     // If GUID is already in use, remove existing
     StrAndGuidAndRoom *strAndGuidExisting;
-    if (guidToStrHash.Pop(strAndGuidExisting, guid, _FILE_AND_LINE_))
+    if (guidToStrHash.Pop(strAndGuidExisting, guid))
     {
-        strToGuidHash.Remove(strAndGuidExisting->str, _FILE_AND_LINE_);
+        strToGuidHash.Remove(strAndGuidExisting->str);
         delete strAndGuidExisting;
     }
 
@@ -59,18 +59,18 @@ RelayPluginEnums RelayPlugin::AddParticipantOnServer(const RakString &key, const
     strAndGuid->guid=guid;
     strAndGuid->str=key;
 
-    strToGuidHash.Push(key, strAndGuid, _FILE_AND_LINE_);
-    guidToStrHash.Push(guid, strAndGuid, _FILE_AND_LINE_);
+    strToGuidHash.Push(key, strAndGuid);
+    guidToStrHash.Push(guid, strAndGuid);
 
     return RPE_ADD_CLIENT_SUCCESS;
 }
 void RelayPlugin::RemoveParticipantOnServer(const RakNetGUID &guid)
 {
     StrAndGuidAndRoom *strAndGuid;
-    if (guidToStrHash.Pop(strAndGuid, guid, _FILE_AND_LINE_))
+    if (guidToStrHash.Pop(strAndGuid, guid))
     {
         LeaveGroup(&strAndGuid);
-        strToGuidHash.Remove(strAndGuid->str, _FILE_AND_LINE_);
+        strToGuidHash.Remove(strAndGuid->str);
         delete strAndGuid;
     }
 }
@@ -238,7 +238,7 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(RP_Group* room, StrAndGuidAndRoom 
     sag.guid=(*strAndGuidSender)->guid;
     sag.str=(*strAndGuidSender)->str;
 
-    room->usersInRoom.Push(sag, _FILE_AND_LINE_);
+    room->usersInRoom.Push(sag);
     (*strAndGuidSender)->currentRoom=room->roomName;
 
     return room;
@@ -279,7 +279,7 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(RakNetGUID userGuid, RakString roo
         // Create new room
         RP_Group *room =new RP_Group;
         room->roomName=roomName;
-        chatRooms.Push(room, _FILE_AND_LINE_);
+        chatRooms.Push(room);
         return JoinGroup(room,strAndGuidSender);
     }
 

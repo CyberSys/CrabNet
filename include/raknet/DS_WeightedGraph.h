@@ -146,7 +146,7 @@ namespace DataStructures
         unsigned i;
         DataStructures::Queue<node_type> removeNodeQueue;
 
-        removeNodeQueue.Push(node, _FILE_AND_LINE_ );
+        removeNodeQueue.Push(node );
         while (removeNodeQueue.Size())
         {
             delete adjacencyLists.Pop(removeNodeQueue.Pop());
@@ -160,7 +160,7 @@ namespace DataStructures
 #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
 #endif
                 if (allow_unlinkedNodes==false && adjacencyLists[i]->Size()==0)
-                    removeNodeQueue.Push(adjacencyLists.GetKeyAtIndex(i), _FILE_AND_LINE_ );
+                    removeNodeQueue.Push(adjacencyLists.GetKeyAtIndex(i) );
             }
         }
 
@@ -225,11 +225,11 @@ namespace DataStructures
     template <class node_type, class weight_type, bool allow_unlinkedNodes>
         bool WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::GetShortestPath(DataStructures::List<node_type> &path, node_type startNode, node_type endNode, weight_type INFINITE_WEIGHT)
     {
-        path.Clear(false, _FILE_AND_LINE_);
+        path.Clear(false);
         if (startNode==endNode)
         {
-            path.Insert(startNode, _FILE_AND_LINE_);
-            path.Insert(endNode, _FILE_AND_LINE_);
+            path.Insert(startNode);
+            path.Insert(endNode);
             return true;
         }
 
@@ -257,8 +257,8 @@ namespace DataStructures
         row=costMatrixIndices.Size()-2;
         if (row==0)
         {
-            path.Insert(startNode, _FILE_AND_LINE_);
-            path.Insert(endNode, _FILE_AND_LINE_);
+            path.Insert(startNode);
+            path.Insert(endNode);
             return true;
         }
         currentWeight=costMatrix[row*adjacencyLists.Size() + col];
@@ -268,7 +268,7 @@ namespace DataStructures
             return true;
         }
         vertex=endNode;
-        outputQueue.PushAtHead(vertex, 0, _FILE_AND_LINE_);
+        outputQueue.PushAtHead(vertex, 0);
         row--;
 #ifdef _MSC_VER
 #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
@@ -279,25 +279,25 @@ namespace DataStructures
             {
                 if (row==0)
                 {
-                    path.Insert(startNode, _FILE_AND_LINE_);
+                    path.Insert(startNode);
                     for (col=0; outputQueue.Size(); col++)
-                        path.Insert(outputQueue.Pop(), _FILE_AND_LINE_);
+                        path.Insert(outputQueue.Pop());
                     return true;
                 }
                 --row;
             }
 
             vertex=leastNodeArray[row];
-            outputQueue.PushAtHead(vertex, 0, _FILE_AND_LINE_);
+            outputQueue.PushAtHead(vertex, 0);
             if (row==0)
                 break;
             col=costMatrixIndices.GetIndexFromKey(vertex, &objectExists);
             currentWeight=costMatrix[row*adjacencyLists.Size() + col];
         }
 
-        path.Insert(startNode, _FILE_AND_LINE_);
+        path.Insert(startNode);
         for (col=0; outputQueue.Size(); col++)
-            path.Insert(outputQueue.Pop(), _FILE_AND_LINE_);
+            path.Insert(outputQueue.Pop());
         return true;
     }
 
@@ -365,8 +365,8 @@ namespace DataStructures
             nap2.node=new DataStructures::Tree<node_type> ;
             nap2.node->data=adjacencyList->GetKeyAtIndex(i);
             nap2.parent=current;
-            nodesToProcess.Push(nap2, _FILE_AND_LINE_ );
-            current->children.Insert(nap2.node, _FILE_AND_LINE_);
+            nodesToProcess.Push(nap2 );
+            current->children.Insert(nap2.node);
         }
 
         while (nodesToProcess.Size())
@@ -383,8 +383,8 @@ namespace DataStructures
                     nap2.node=new DataStructures::Tree<node_type> ;
                     nap2.node->data=key;
                     nap2.parent=current;
-                    nodesToProcess.Push(nap2, _FILE_AND_LINE_ );
-                    current->children.Insert(nap2.node, _FILE_AND_LINE_);
+                    nodesToProcess.Push(nap2 );
+                    current->children.Insert(nap2.node);
                 }
             }
         }
@@ -413,7 +413,7 @@ namespace DataStructures
         for (col=0; col < adjacencyLists.Size(); col++)
         {
             // This should be already sorted, so it's a bit inefficient to do an insertion sort, but what the heck
-            costMatrixIndices.Insert(adjacencyLists.GetKeyAtIndex(col),adjacencyLists.GetKeyAtIndex(col), true, _FILE_AND_LINE_);
+            costMatrixIndices.Insert(adjacencyLists.GetKeyAtIndex(col),adjacencyLists.GetKeyAtIndex(col), true);
         }
         for (col=0; col < adjacencyLists.Size() * adjacencyLists.Size(); col++)
             costMatrix[col]=INFINITE_WEIGHT;
@@ -451,9 +451,9 @@ namespace DataStructures
             }
 
             // Find the lowest in the open set
-            minHeap.Clear(true,_FILE_AND_LINE_);
+            minHeap.Clear(true);
             for (openSetIndex=0; openSetIndex < openSet.Size(); openSetIndex++)
-                minHeap.Push(openSet[openSetIndex], openSet.GetKeyAtIndex(openSetIndex),_FILE_AND_LINE_);
+                minHeap.Push(openSet[openSetIndex], openSet.GetKeyAtIndex(openSetIndex));
 
             /*
             unsigned i,j;
@@ -508,7 +508,7 @@ namespace DataStructures
             isValidPath=false;
             delete[] costMatrix;
             delete[] leastNodeArray;
-            costMatrixIndices.Clear(false, _FILE_AND_LINE_);
+            costMatrixIndices.Clear(false);
         }
     }
 

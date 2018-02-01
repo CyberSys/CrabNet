@@ -56,7 +56,7 @@ void main_sockets(void)
 using namespace RakNet;
 void main_RakNet_Post(void)
 {
-	TCPInterface *tcp = RakNet::OP_NEW<TCPInterface>(__FILE__,__LINE__);
+	TCPInterface *tcp = RakNet::OP_NEW<TCPInterface>();
 	tcp->Start(0, 64);
 	tcp->Connect(MASTER_SERVER_ADDRESS, MASTER_SERVER_PORT, true);
 
@@ -100,7 +100,7 @@ void main_RakNet_Get(void)
 	HTTPConnection2 *httpConnection2;
 	httpConnection2 = HTTPConnection2::GetInstance();
 
-	TCPInterface *tcp = RakNet::OP_NEW<TCPInterface>(__FILE__,__LINE__);
+	TCPInterface *tcp = RakNet::OP_NEW<TCPInterface>();
 	tcp->Start(0, 64);
 	tcp->AttachPlugin(httpConnection2);
 

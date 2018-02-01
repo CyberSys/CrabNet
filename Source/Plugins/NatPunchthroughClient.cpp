@@ -108,7 +108,7 @@ bool NatPunchthroughClient::OpenNATGroup(DataStructures::List<RakNetGUID> destin
     GroupPunchRequest *gpr =new GroupPunchRequest;
     gpr->facilitator=facilitator;
     gpr->pendingList=destinationSystems;
-    groupPunchRequests.Push(gpr, _FILE_AND_LINE_);
+    groupPunchRequests.Push(gpr);
 
     return true;
 }
@@ -418,7 +418,7 @@ void NatPunchthroughClient::OnPunchthroughFailure(void)
     AddrAndGuid aag;
     aag.addr=sp.targetAddress;
     aag.guid=sp.targetGuid;
-    failedAttemptList.Push(aag, _FILE_AND_LINE_);
+    failedAttemptList.Push(aag);
 
     // Tell the server we are ready
     OnReadyForNextPunchthrough();
@@ -1017,7 +1017,7 @@ void NatPunchthroughClient::QueueOpenNAT(RakNetGUID destination, const SystemAdd
     DSTAndFac daf;
     daf.destination=destination;
     daf.facilitator=facilitator;
-    queuedOpenNat.Push(daf, _FILE_AND_LINE_);
+    queuedOpenNat.Push(daf);
 }
 void NatPunchthroughClient::SendQueuedOpenNAT(void)
 {
@@ -1059,17 +1059,17 @@ void NatPunchthroughClient::Clear(void)
 {
     OnReadyForNextPunchthrough();
 
-    failedAttemptList.Clear(false, _FILE_AND_LINE_);
+    failedAttemptList.Clear(false);
 
-    queuedOpenNat.Clear(_FILE_AND_LINE_);
+    queuedOpenNat.Clear();
     /*
-    groupRequestsInProgress.Clear(false, _FILE_AND_LINE_);
+    groupRequestsInProgress.Clear(false);
     unsigned int i;
     for (i=0; i < groupPunchRequests.Size(); i++)
     {
         delete groupPunchRequests[i];
     }
-    groupPunchRequests.Clear(true, _FILE_AND_LINE_);
+    groupPunchRequests.Clear(true);
     */
 }
 PunchthroughConfiguration* NatPunchthroughClient::GetPunchthroughConfiguration(void)
@@ -1150,16 +1150,16 @@ void NatPunchthroughClient::UpdateGroupPunchOnNatResult(SystemAddress facilitato
                 {
                     if (result==0)
                     {
-                        gpr->failedList.Push(targetSystem, _FILE_AND_LINE_);
+                        gpr->failedList.Push(targetSystem);
                     }
                     else if (result==1)
                     {
-                        gpr->passedListGuid.Push(targetSystem, _FILE_AND_LINE_);
-                        gpr->passedListAddress.Push(targetSystemAddress, _FILE_AND_LINE_);
+                        gpr->passedListGuid.Push(targetSystem);
+                        gpr->passedListAddress.Push(targetSystemAddress);
                     }
                     else
                     {
-                        gpr->ignoredList.Push(targetSystem, _FILE_AND_LINE_);
+                        gpr->ignoredList.Push(targetSystem);
                     }
                     gpr->pendingList.RemoveAtIndex(j);
                 }

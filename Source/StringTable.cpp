@@ -61,7 +61,7 @@ void StringTable::AddString(const char *str, bool copyString)
         sab.str = (char *) str;
 
     // If it asserts inside here you are adding duplicate strings.
-    orderedStringList.Insert(sab.str, sab, true, _FILE_AND_LINE_);
+    orderedStringList.Insert(sab.str, sab, true);
 
     // If this assert hits you need to increase the range of StringTableType
     RakAssert(orderedStringList.Size() < (StringTableType) -1);

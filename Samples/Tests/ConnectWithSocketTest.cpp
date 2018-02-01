@@ -38,7 +38,7 @@ GetSocket
 */
 int ConnectWithSocketTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
 {
-	destroyList.Clear(false,_FILE_AND_LINE_);
+	destroyList.Clear(false);
 
 	RakPeerInterface *server,*client;
 
@@ -185,12 +185,12 @@ RakString ConnectWithSocketTest::ErrorCodeToString(int errorCode)
 
 ConnectWithSocketTest::ConnectWithSocketTest(void)
 {
-	errorList.Push("Client did not connect after 5 seconds",_FILE_AND_LINE_);
-	errorList.Push("Control test send didn't work",_FILE_AND_LINE_);
-	errorList.Push("Client did not connect after 5 secods Using ConnectWithSocket, could be GetSockets or ConnectWithSocket problem",_FILE_AND_LINE_);
-	errorList.Push("Server did not recieve test packet from client",_FILE_AND_LINE_);
-	errorList.Push("Client did not connect after 5 secods Using ConnectWithSocket, could be GetSocket or ConnectWithSocket problem",_FILE_AND_LINE_);
-	errorList.Push("Server did not recieve test packet from client",_FILE_AND_LINE_);
+	errorList.Push("Client did not connect after 5 seconds");
+	errorList.Push("Control test send didn't work");
+	errorList.Push("Client did not connect after 5 secods Using ConnectWithSocket, could be GetSockets or ConnectWithSocket problem");
+	errorList.Push("Server did not recieve test packet from client");
+	errorList.Push("Client did not connect after 5 secods Using ConnectWithSocket, could be GetSocket or ConnectWithSocket problem");
+	errorList.Push("Server did not recieve test packet from client");
 
 }
 

@@ -37,25 +37,25 @@ int main(int argc, char *argv[])
 	DataStructures::List <int> testsToRunIndexes;//A list of tests to run by index
 
 	//Add all the tests to the test list
-	testList.Push(new EightPeerTest(),_FILE_AND_LINE_);
-	testList.Push(new MaximumConnectTest(),_FILE_AND_LINE_);
-	testList.Push(new PeerConnectDisconnectWithCancelPendingTest(),_FILE_AND_LINE_);
-	testList.Push(new PeerConnectDisconnectTest(),_FILE_AND_LINE_);
-	testList.Push(new ManyClientsOneServerBlockingTest(),_FILE_AND_LINE_);
-	testList.Push(new ManyClientsOneServerNonBlockingTest(),_FILE_AND_LINE_);
-	testList.Push(new ManyClientsOneServerDeallocateBlockingTest(),_FILE_AND_LINE_);
-	testList.Push(new ReliableOrderedConvertedTest(),_FILE_AND_LINE_);
-	testList.Push(new DroppedConnectionConvertTest(),_FILE_AND_LINE_);
-	testList.Push(new ComprehensiveConvertTest(),_FILE_AND_LINE_);
-	testList.Push(new CrossConnectionConvertTest(),_FILE_AND_LINE_);
-	testList.Push(new PingTestsTest(),_FILE_AND_LINE_);
-	testList.Push(new OfflineMessagesConvertTest(),_FILE_AND_LINE_);
-	testList.Push(new LocalIsConnectedTest(),_FILE_AND_LINE_);
-	testList.Push(new SecurityFunctionsTest(),_FILE_AND_LINE_);
-	testList.Push(new ConnectWithSocketTest(),_FILE_AND_LINE_);
-	testList.Push(new SystemAddressAndGuidTest(),_FILE_AND_LINE_);	
-	testList.Push(new PacketAndLowLevelTestsTest(),_FILE_AND_LINE_);
-	testList.Push(new MiscellaneousTestsTest(),_FILE_AND_LINE_);
+	testList.Push(new EightPeerTest());
+	testList.Push(new MaximumConnectTest());
+	testList.Push(new PeerConnectDisconnectWithCancelPendingTest());
+	testList.Push(new PeerConnectDisconnectTest());
+	testList.Push(new ManyClientsOneServerBlockingTest());
+	testList.Push(new ManyClientsOneServerNonBlockingTest());
+	testList.Push(new ManyClientsOneServerDeallocateBlockingTest());
+	testList.Push(new ReliableOrderedConvertedTest());
+	testList.Push(new DroppedConnectionConvertTest());
+	testList.Push(new ComprehensiveConvertTest());
+	testList.Push(new CrossConnectionConvertTest());
+	testList.Push(new PingTestsTest());
+	testList.Push(new OfflineMessagesConvertTest());
+	testList.Push(new LocalIsConnectedTest());
+	testList.Push(new SecurityFunctionsTest());
+	testList.Push(new ConnectWithSocketTest());
+	testList.Push(new SystemAddressAndGuidTest());
+	testList.Push(new PacketAndLowLevelTestsTest());
+	testList.Push(new MiscellaneousTestsTest());
 
 	testListSize=testList.Size();
 
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
 		for (int p=1;p<argc;p++)
 		{
-			testsToRun.Push(argv[p],_FILE_AND_LINE_);
+			testsToRun.Push(argv[p]);
 
 		}
 
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 				if (testList[j]->GetTestName().StrICmp(testName)==0)
 				{
 
-					testsToRunIndexes.Push(j,_FILE_AND_LINE_);
+					testsToRunIndexes.Push(j);
 
 				}
 
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
 		delete testList[i];
 
 	}
-	testList.Clear(false,_FILE_AND_LINE_);
+	testList.Clear(false);
 
 	return 0;
 }

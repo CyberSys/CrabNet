@@ -120,7 +120,7 @@ void GetInvitesToParticipant_Func::SerializeOut(bool writeToBitstream, RakNet::B
 		{
 			InvitedUser invitedUser;
 			invitedUser.Serialize(false,bitStream);
-			invitedUsers.Insert(invitedUser, _FILE_AND_LINE_ );
+			invitedUsers.Insert(invitedUser );
 		}
 	}
 }
@@ -300,7 +300,7 @@ void SetReadyStatus_Func::SerializeOut(bool writeToBitstream, RakNet::BitStream 
 		for (i=0; i < listSize; i++)
 		{
 			bitStream->Serialize(writeToBitstream, name);
-			readyUsers.Insert(name, _FILE_AND_LINE_ );
+			readyUsers.Insert(name );
 		}
 	}
 
@@ -316,7 +316,7 @@ void SetReadyStatus_Func::SerializeOut(bool writeToBitstream, RakNet::BitStream 
 		for (i=0; i < listSize; i++)
 		{
 			bitStream->Serialize(writeToBitstream, name);
-			unreadyUsers.Insert(name, _FILE_AND_LINE_ );
+			unreadyUsers.Insert(name );
 		}
 	}
 }
@@ -341,7 +341,7 @@ void GetReadyStatus_Func::SerializeIn(bool writeToBitstream, RakNet::BitStream *
 		for (i=0; i < listSize; i++)
 		{
 			bitStream->Serialize(writeToBitstream, name);
-			readyUsers.Insert(name, _FILE_AND_LINE_ );
+			readyUsers.Insert(name );
 		}
 	}
 
@@ -357,7 +357,7 @@ void GetReadyStatus_Func::SerializeIn(bool writeToBitstream, RakNet::BitStream *
 		for (i=0; i < listSize; i++)
 		{
 			bitStream->Serialize(writeToBitstream, name);
-			unreadyUsers.Insert(name, _FILE_AND_LINE_ );
+			unreadyUsers.Insert(name );
 		}
 	}
 }
@@ -488,7 +488,7 @@ void IsInQuickJoin_Func::SerializeOut(bool writeToBitstream, RakNet::BitStream *
 SearchByFilter_Func::~SearchByFilter_Func()
 {
 	for (unsigned int i=0; i < roomsOutput.Size(); i++)
-		RakNet::OP_DELETE(roomsOutput[i], _FILE_AND_LINE_);
+		RakNet::OP_DELETE(roomsOutput[i]);
 }
 void SearchByFilter_Func::SerializeIn(bool writeToBitstream, RakNet::BitStream *bitStream)
 {
@@ -513,9 +513,9 @@ void SearchByFilter_Func::SerializeOut(bool writeToBitstream, RakNet::BitStream 
 			roomsOutput[i]->Serialize(true,bitStream);
 		else
 		{
-			RoomDescriptor *desc = RakNet::OP_NEW<RoomDescriptor>( _FILE_AND_LINE_ );
+			RoomDescriptor *desc = RakNet::OP_NEW<RoomDescriptor>(  );
 			desc->Serialize(false,bitStream);
-			roomsOutput.Insert(desc, _FILE_AND_LINE_ );
+			roomsOutput.Insert(desc );
 		}
 	}
 }
@@ -671,7 +671,7 @@ void RoomMemberReadyStatusSet_Notification::Serialize(bool writeToBitstream, Rak
 		for (i=0; i < listSize; i++)
 		{
 			bitStream->Serialize(writeToBitstream, name);
-			readyUsers.Insert(name, _FILE_AND_LINE_ );
+			readyUsers.Insert(name );
 		}
 	}
 
@@ -687,7 +687,7 @@ void RoomMemberReadyStatusSet_Notification::Serialize(bool writeToBitstream, Rak
 		for (i=0; i < listSize; i++)
 		{
 			bitStream->Serialize(writeToBitstream, name);
-			unreadyUsers.Insert(name, _FILE_AND_LINE_ );
+			unreadyUsers.Insert(name );
 		}
 	}
 }
@@ -733,7 +733,7 @@ void RoomMemberJoinedRoom_Notification::Serialize(bool writeToBitstream, RakNet:
 	bitStream->Serialize(writeToBitstream, recipient);
 	bitStream->Serialize(writeToBitstream, roomId);
 	if (joinedRoomResult==0 && writeToBitstream==false)
-		joinedRoomResult = RakNet::OP_NEW<JoinedRoomResult>( _FILE_AND_LINE_ );
+		joinedRoomResult = RakNet::OP_NEW<JoinedRoomResult>(  );
 	joinedRoomResult->Serialize(writeToBitstream, bitStream);
 }
 void RoomInvitationSent_Notification::Serialize(bool writeToBitstream, RakNet::BitStream *bitStream)
@@ -812,13 +812,13 @@ void RoomsPlugin::SetSendPriority(PacketPriority pp)
 
 void RoomsPlugin::SetRoomsCallback(RoomsCallback *_roomsCallback)
 {
-	roomsCallback.Clear(true,_FILE_AND_LINE_);
-	roomsCallback.Push(_roomsCallback,_FILE_AND_LINE_);
+	roomsCallback.Clear(true);
+	roomsCallback.Push(_roomsCallback);
 }
 void RoomsPlugin::AddRoomsCallback(RoomsCallback *_roomsCallback)
 {
 	if (roomsCallback.GetIndexOf(_roomsCallback)==(unsigned int) -1)
-		roomsCallback.Push(_roomsCallback,_FILE_AND_LINE_);
+		roomsCallback.Push(_roomsCallback);
 }
 void RoomsPlugin::RemoveRoomsCallback(RoomsCallback *_roomsCallback)
 {
@@ -866,11 +866,11 @@ bool RoomsPlugin::LoginRoomsParticipant(RakNet::RakString userName, SystemAddres
 	index=roomsParticipants.GetIndexFromKey(userName, &objectExists);
 	if (objectExists==false)
 	{
-		RoomsPluginParticipant *rpp = RakNet::OP_NEW<RoomsPluginParticipant>( _FILE_AND_LINE_ );
+		RoomsPluginParticipant *rpp = RakNet::OP_NEW<RoomsPluginParticipant>(  );
 		rpp->SetSystemAddress(roomsParticipantAddress);
 		rpp->SetGUID(guid);
 		rpp->SetName(userName);
-		roomsParticipants.InsertAtIndex(rpp, index, _FILE_AND_LINE_ );
+		roomsParticipants.InsertAtIndex(rpp, index );
 		return true;
 	}
 	return false;
@@ -887,7 +887,7 @@ bool RoomsPlugin::LogoffRoomsParticipant(RakNet::RakString userName, SystemAddre
 		RemoveUserResult removeUserResult;
 		roomsContainer.RemoveUser(roomsParticipants[index], &removeUserResult);
 		ProcessRemoveUserResult(&removeUserResult);
-		RakNet::OP_DELETE(roomsParticipants[index], _FILE_AND_LINE_);
+		RakNet::OP_DELETE(roomsParticipants[index]);
 		roomsParticipants.RemoveAtIndex(index);
 		return true;
 	}
@@ -897,8 +897,8 @@ void RoomsPlugin::ClearRoomMembers(void)
 {
 	unsigned int i;
 	for (i=0; i < roomsParticipants.Size(); i++)
-		RakNet::OP_DELETE(roomsParticipants[i], _FILE_AND_LINE_);
-	roomsParticipants.Clear(false, _FILE_AND_LINE_);
+		RakNet::OP_DELETE(roomsParticipants[i]);
+	roomsParticipants.Clear(false);
 }
 void RoomsPlugin::SerializeLogin(RakNet::RakString userName, SystemAddress userAddress, RakNetGUID guid, RakNet::BitStream *bs)
 {
@@ -937,7 +937,7 @@ void RoomsPlugin::AddLoginServerAddress(SystemAddress systemAddress)
 {
 	unsigned int index = loginServers.GetIndexOf(systemAddress);
 	if (index==(unsigned int) -1)
-		loginServers.Push(systemAddress, _FILE_AND_LINE_ );
+		loginServers.Push(systemAddress );
 }
 void RoomsPlugin::RemoveLoginServerAddress(SystemAddress systemAddress)
 {
@@ -947,7 +947,7 @@ void RoomsPlugin::RemoveLoginServerAddress(SystemAddress systemAddress)
 }
 void RoomsPlugin::ClearLoginServerAdddresses(void)
 {
-	loginServers.Clear(false, _FILE_AND_LINE_);
+	loginServers.Clear(false);
 }
 void RoomsPlugin::SetProfanityFilter(ProfanityFilter *pf)
 {
@@ -1003,7 +1003,7 @@ void RoomsPlugin::Update(void)
 		}
 
 		for (i=0; i < dereferencedPointers.Size(); i++)
-			RakNet::OP_DELETE(dereferencedPointers[i], _FILE_AND_LINE_);
+			RakNet::OP_DELETE(dereferencedPointers[i]);
 	}
 
 	lastUpdateTime=curTime;
@@ -1630,7 +1630,7 @@ void RoomsPlugin::OnClosedConnection(const SystemAddress &systemAddress, RakNetG
 		{
 			roomsContainer.RemoveUser(roomsParticipants[i], &removeUserResult);
 			ProcessRemoveUserResult(&removeUserResult);
-			RakNet::OP_DELETE(roomsParticipants[i], _FILE_AND_LINE_);
+			RakNet::OP_DELETE(roomsParticipants[i]);
 			roomsParticipants.RemoveAtIndex(i);
 		}
 		else
@@ -1771,7 +1771,7 @@ void RoomsPlugin::GetInvitesToParticipant_Callback( const SystemAddress &senderA
 	callResult->resultCode=roomsContainer.GetInvitesToParticipant( roomsPluginParticipant, invitedUsers );
 	unsigned int i;
 	for (i=0; i < invitedUsers.Size(); i++)
-		callResult->invitedUsers.Insert(* (invitedUsers[i]), _FILE_AND_LINE_ );
+		callResult->invitedUsers.Insert(* (invitedUsers[i]) );
 	ExecuteFunc(callResult, senderAddress);
 }
 void RoomsPlugin::SendInvite_Callback( const SystemAddress &senderAddress, SendInvite_Func *callResult)
@@ -1810,7 +1810,7 @@ void RoomsPlugin::AcceptInvite_Callback( const SystemAddress &senderAddress, Acc
 	if (callResult->resultCode==REC_SUCCESS)
 	{
 		RoomMemberJoinedRoom_Notification notificationToRoom;
-		notificationToRoom.joinedRoomResult=RakNet::OP_NEW<JoinedRoomResult>( _FILE_AND_LINE_ );
+		notificationToRoom.joinedRoomResult=RakNet::OP_NEW<JoinedRoomResult>(  );
 		notificationToRoom.joinedRoomResult->acceptedInvitor=0;
 		notificationToRoom.joinedRoomResult->acceptedInvitorName=callResult->inviteSender;
 		notificationToRoom.joinedRoomResult->joiningMember=roomsPluginParticipant;
@@ -2012,17 +2012,17 @@ void RoomsPlugin::SetReadyStatus_Callback( const SystemAddress &senderAddress, S
 		notification.roomMember=roomsPluginParticipant->GetName();
 
 		for (i=0; i < readyUsers.Size(); i++)
-			notification.readyUsers.Insert(readyUsers[i]->GetName(), _FILE_AND_LINE_ );
+			notification.readyUsers.Insert(readyUsers[i]->GetName() );
 		for (i=0; i < unreadyUsers.Size(); i++)
-			notification.unreadyUsers.Insert(unreadyUsers[i]->GetName(), _FILE_AND_LINE_ );
+			notification.unreadyUsers.Insert(unreadyUsers[i]->GetName() );
 
 		ExecuteNotificationToOtherRoomMembers(roomsPluginParticipant->GetRoom(), roomsPluginParticipant, &notification);
 	}
 
 	for (i=0; i < readyUsers.Size(); i++)
-		callResult->readyUsers.Insert(readyUsers[i]->GetName(), _FILE_AND_LINE_ );
+		callResult->readyUsers.Insert(readyUsers[i]->GetName() );
 	for (i=0; i < unreadyUsers.Size(); i++)
-		callResult->unreadyUsers.Insert(unreadyUsers[i]->GetName(), _FILE_AND_LINE_ );
+		callResult->unreadyUsers.Insert(unreadyUsers[i]->GetName() );
 
 	ExecuteFunc(callResult, senderAddress);
 }
@@ -2044,9 +2044,9 @@ void RoomsPlugin::GetReadyStatus_Callback( const SystemAddress &senderAddress, G
 	callResult->resultCode=roomsContainer.GetReadyStatus( roomsPluginParticipant->GetRoom()->GetID(), &room, readyUsers, unreadyUsers );
 	unsigned int i;
 	for (i=0; i < readyUsers.Size(); i++)
-		callResult->readyUsers.Insert(readyUsers[i]->GetName(), _FILE_AND_LINE_ );
+		callResult->readyUsers.Insert(readyUsers[i]->GetName() );
 	for (i=0; i < unreadyUsers.Size(); i++)
-		callResult->unreadyUsers.Insert(unreadyUsers[i]->GetName(), _FILE_AND_LINE_ );
+		callResult->unreadyUsers.Insert(unreadyUsers[i]->GetName() );
 	ExecuteFunc(callResult, senderAddress);
 }
 void RoomsPlugin::SetRoomLockState_Callback( const SystemAddress &senderAddress, SetRoomLockState_Func *callResult)
@@ -2145,7 +2145,7 @@ void RoomsPlugin::AddUserToQuickJoin_Callback( const SystemAddress &senderAddres
 	RoomsPluginParticipant* roomsPluginParticipant = ValidateUserHandle(callResult, senderAddress);
 	if (roomsPluginParticipant==0)
 		return;
-	QuickJoinUser *qju = RakNet::OP_NEW<QuickJoinUser>( _FILE_AND_LINE_ );
+	QuickJoinUser *qju = RakNet::OP_NEW<QuickJoinUser>(  );
 	qju->networkedQuickJoinUser=callResult->networkedQuickJoinUser;
 	qju->roomsParticipant=roomsPluginParticipant;
 	callResult->resultCode=roomsContainer.AddUserToQuickJoin( callResult->gameIdentifier, qju );
@@ -2159,7 +2159,7 @@ void RoomsPlugin::RemoveUserFromQuickJoin_Callback( const SystemAddress &senderA
 	QuickJoinUser *qju;
 	callResult->resultCode=roomsContainer.RemoveUserFromQuickJoin( roomsPluginParticipant, &qju );
 	if (qju)
-		RakNet::OP_DELETE(qju, _FILE_AND_LINE_);
+		RakNet::OP_DELETE(qju);
 	ExecuteFunc(callResult, senderAddress);
 }
 void RoomsPlugin::IsInQuickJoin_Callback( const SystemAddress &senderAddress, IsInQuickJoin_Func *callResult)
@@ -2183,9 +2183,9 @@ void RoomsPlugin::SearchByFilter_Callback( const SystemAddress &senderAddress, S
 	RoomDescriptor *desc;
 	for (i=0; i < roomsOutput.Size(); i++)
 	{
-		desc = RakNet::OP_NEW<RoomDescriptor>( _FILE_AND_LINE_ );
+		desc = RakNet::OP_NEW<RoomDescriptor>(  );
 		desc->FromRoom(roomsOutput[i], &roomsContainer);
-		callResult->roomsOutput.Insert(desc, _FILE_AND_LINE_ );
+		callResult->roomsOutput.Insert(desc );
 	}
 	ExecuteFunc(callResult, senderAddress);
 }
@@ -2396,7 +2396,7 @@ void RoomsPlugin::ProcessRemoveUserResult(RemoveUserResult *removeUserResult)
 	if (removeUserResult->removedFromQuickJoin)
 	{
 		if (removeUserResult->qju)
-			RakNet::OP_DELETE(removeUserResult->qju, _FILE_AND_LINE_);
+			RakNet::OP_DELETE(removeUserResult->qju);
 	}
 	roomsContainer.DestroyRoomIfDead(removeUserResult->room);
 }

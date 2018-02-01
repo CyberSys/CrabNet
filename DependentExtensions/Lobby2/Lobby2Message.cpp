@@ -340,10 +340,10 @@ void BinaryDataBlock::Serialize(bool writeToBitstream, BitStream *bitStream)
 	if (writeToBitstream==false)
 	{
 		if (binaryData)
-			rakFree_Ex(binaryData, _FILE_AND_LINE_ );
+			rakFree_Ex(binaryData );
 
 		if (binaryDataLength<=L2_MAX_BINARY_DATA_LENGTH)
-			binaryData = (char*) rakMalloc_Ex(binaryDataLength, _FILE_AND_LINE_);
+			binaryData = (char*) rakMalloc_Ex(binaryDataLength);
 		else
 			binaryData=0;
 	}
@@ -427,7 +427,7 @@ void SubmittedMatch::Serialize(bool writeToBitstream, BitStream *bitStream)
 		else
 		{
 			obj.Serialize(writeToBitstream, bitStream);
-			matchParticipants.Insert(obj, _FILE_AND_LINE_ );
+			matchParticipants.Insert(obj );
 		}
 	}
 }
@@ -449,7 +449,7 @@ void ClanInfo::Serialize(bool writeToBitstream, BitStream *bitStream)
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			clanMembersOtherThanLeader.Insert(obj, _FILE_AND_LINE_ );
+			clanMembersOtherThanLeader.Insert(obj );
 		}
 	}
 }
@@ -530,7 +530,7 @@ void System_RegisterProfanity::Serialize( bool writeToBitstream, bool serializeO
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			profanityWords.Insert(obj, _FILE_AND_LINE_);
+			profanityWords.Insert(obj);
 		}
 	}
 }
@@ -585,7 +585,7 @@ void CDKey_Add::Serialize( bool writeToBitstream, bool serializeOutput, BitStrea
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			cdKeys.Insert(obj, _FILE_AND_LINE_);
+			cdKeys.Insert(obj);
 		}
 	}
 }
@@ -878,7 +878,7 @@ void Client_GetIgnoreList::Serialize( bool writeToBitstream, bool serializeOutpu
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				ignoredHandles.Insert(obj, _FILE_AND_LINE_);
+				ignoredHandles.Insert(obj);
 			}
 		}
 	}
@@ -1028,7 +1028,7 @@ void Friends_GetInvites::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				invitesSent.Insert(obj, _FILE_AND_LINE_);
+				invitesSent.Insert(obj);
 			}
 		}
 		listSize = (unsigned short) invitesReceived.Size();
@@ -1043,7 +1043,7 @@ void Friends_GetInvites::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				invitesReceived.Insert(obj, _FILE_AND_LINE_);
+				invitesReceived.Insert(obj);
 			}
 		}
 	}
@@ -1066,7 +1066,7 @@ void Friends_GetFriends::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				myFriends.Insert(obj, _FILE_AND_LINE_);
+				myFriends.Insert(obj);
 			}
 		}
 	}
@@ -1132,7 +1132,7 @@ void BookmarkedUsers_Get::Serialize( bool writeToBitstream, bool serializeOutput
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				bookmarkedUsers.Insert(obj, _FILE_AND_LINE_);
+				bookmarkedUsers.Insert(obj);
 			}
 		}
 	}
@@ -1157,7 +1157,7 @@ void Emails_Send::Serialize( bool writeToBitstream, bool serializeOutput, BitStr
 		else
 		{
 			bitStream->Serialize(writeToBitstream, obj);
-			recipients.Insert(obj, _FILE_AND_LINE_);
+			recipients.Insert(obj);
 		}
 	}
 }
@@ -1215,7 +1215,7 @@ void Emails_Get::Serialize( bool writeToBitstream, bool serializeOutput, BitStre
 			else
 			{
 				obj.Serialize( writeToBitstream, bitStream );
-				emailResults.Insert(obj, _FILE_AND_LINE_);
+				emailResults.Insert(obj);
 			}
 		}
 	}
@@ -1287,7 +1287,7 @@ void Ranking_GetMatches::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				submittedMatches.Insert(obj, _FILE_AND_LINE_);
+				submittedMatches.Insert(obj);
 			}
 		}
 	}
@@ -1614,7 +1614,7 @@ void Clans_Get::Serialize( bool writeToBitstream, bool serializeOutput, BitStrea
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				clans.Insert(obj, _FILE_AND_LINE_);
+				clans.Insert(obj);
 			}
 		}
 	}
@@ -1715,7 +1715,7 @@ void Clans_DownloadInvitationList::Serialize( bool writeToBitstream, bool serial
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				invitationsSentToMe.Insert(obj, _FILE_AND_LINE_);
+				invitationsSentToMe.Insert(obj);
 			}
 		}
 
@@ -1731,7 +1731,7 @@ void Clans_DownloadInvitationList::Serialize( bool writeToBitstream, bool serial
 			{
 				ClanJoinInvite obj;
 				obj.Serialize(writeToBitstream, bitStream);
-				usersThatHaveAnInvitationFromClansThatIAmAMemberOf.Insert(obj, _FILE_AND_LINE_);
+				usersThatHaveAnInvitationFromClansThatIAmAMemberOf.Insert(obj);
 			}
 		}
 	}
@@ -1834,7 +1834,7 @@ void Clans_DownloadRequestList::Serialize( bool writeToBitstream, bool serialize
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				joinRequestsToMyClan.Insert(obj, _FILE_AND_LINE_);
+				joinRequestsToMyClan.Insert(obj);
 			}
 		}
 
@@ -1850,7 +1850,7 @@ void Clans_DownloadRequestList::Serialize( bool writeToBitstream, bool serialize
 			else
 			{
 				obj.Serialize(writeToBitstream, bitStream);
-				joinRequestsFromMe.Insert(obj, _FILE_AND_LINE_);
+				joinRequestsFromMe.Insert(obj);
 			}
 		}
 	}
@@ -1918,7 +1918,7 @@ void Clans_GetBlacklist::Serialize( bool writeToBitstream, bool serializeOutput,
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				blacklistedUsers.Insert(obj, _FILE_AND_LINE_);
+				blacklistedUsers.Insert(obj);
 			}
 		}
 	}
@@ -1952,7 +1952,7 @@ void Clans_GetMembers::Serialize( bool writeToBitstream, bool serializeOutput, B
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanMembersOtherThanLeader.Insert(obj, _FILE_AND_LINE_);
+				clanMembersOtherThanLeader.Insert(obj);
 			}
 		}
 	}
@@ -1982,7 +1982,7 @@ void Clans_GetList::Serialize( bool writeToBitstream, bool serializeOutput, BitS
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanNames.Insert(obj, _FILE_AND_LINE_);
+				clanNames.Insert(obj);
 			}
 		}
 	}
@@ -2088,7 +2088,7 @@ void Clans_GetBoards::Serialize( bool writeToBitstream, bool serializeOutput, Bi
 			else
 			{
 				bitStream->Serialize(writeToBitstream, obj);
-				clanBoardsNames.Insert(obj, _FILE_AND_LINE_);
+				clanBoardsNames.Insert(obj);
 			}
 		}
 	}

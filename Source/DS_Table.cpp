@@ -25,7 +25,7 @@ using namespace DataStructures;
 void ExtendRows(Table::Row* input, int index)
 {
     (void) index;
-    input->cells.Insert(new Table::Cell, _FILE_AND_LINE_ );
+    input->cells.Insert(new Table::Cell );
 }
 void FreeRow(Table::Row* input, int index)
 {
@@ -284,7 +284,7 @@ unsigned Table::AddColumn(const char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH], 
         return (unsigned) -1;
 
     // Add this column.
-    columns.Insert(Table::ColumnDescriptor(columnName, columnType), _FILE_AND_LINE_);
+    columns.Insert(Table::ColumnDescriptor(columnName, columnType));
 
     // Extend the rows by one
     rows.ForEachData(ExtendRows);
@@ -357,7 +357,7 @@ Table::Row* Table::AddRow(unsigned rowId)
     }
     unsigned rowIndex;
     for (rowIndex=0; rowIndex < columns.Size(); rowIndex++)
-        newRow->cells.Insert(new Table::Cell, _FILE_AND_LINE_ );
+        newRow->cells.Insert(new Table::Cell );
     return newRow;
 }
 Table::Row* Table::AddRow(unsigned rowId, DataStructures::List<Cell> &initialCellValues)
@@ -371,10 +371,10 @@ Table::Row* Table::AddRow(unsigned rowId, DataStructures::List<Cell> &initialCel
             Table::Cell *c;
             c =new Table::Cell;
             c->SetByType(initialCellValues[rowIndex].i,initialCellValues[rowIndex].c,initialCellValues[rowIndex].ptr,columns[rowIndex].columnType);
-            newRow->cells.Insert(c, _FILE_AND_LINE_ );
+            newRow->cells.Insert(c );
         }
         else
-            newRow->cells.Insert(new Table::Cell, _FILE_AND_LINE_ );
+            newRow->cells.Insert(new Table::Cell );
     }
     rows.Insert(rowId, newRow);
     return newRow;
@@ -390,16 +390,16 @@ Table::Row* Table::AddRow(unsigned rowId, DataStructures::List<Cell*> &initialCe
             if (copyCells==false)
                 newRow->cells.Insert(new Table::Cell(
                         initialCellValues[rowIndex]->i, initialCellValues[rowIndex]->c,
-                        initialCellValues[rowIndex]->ptr, columns[rowIndex].columnType), _FILE_AND_LINE_);
+                        initialCellValues[rowIndex]->ptr, columns[rowIndex].columnType));
             else
             {
                 Table::Cell *c =new Table::Cell;
-                newRow->cells.Insert(c, _FILE_AND_LINE_);
+                newRow->cells.Insert(c);
                 *c=*(initialCellValues[rowIndex]);
             }
         }
         else
-            newRow->cells.Insert(new Table::Cell, _FILE_AND_LINE_);
+            newRow->cells.Insert(new Table::Cell);
     }
     rows.Insert(rowId, newRow);
     return newRow;
@@ -414,11 +414,11 @@ Table::Row* Table::AddRowColumns(unsigned rowId, Row *row, DataStructures::List<
         {
             newRow->cells.Insert(new Table::Cell(
                 row->cells[columnIndices[columnIndex]]->i, row->cells[columnIndices[columnIndex]]->c,
-                row->cells[columnIndices[columnIndex]]->ptr, columns[columnIndex].columnType), _FILE_AND_LINE_);
+                row->cells[columnIndices[columnIndex]]->ptr, columns[columnIndex].columnType));
         }
         else
         {
-            newRow->cells.Insert(new Table::Cell, _FILE_AND_LINE_);
+            newRow->cells.Insert(new Table::Cell);
         }
     }
     rows.Insert(rowId, newRow);
@@ -605,13 +605,13 @@ void Table::QueryTable(unsigned *columnIndicesSubset, unsigned numColumnSubset, 
         for (i=0; i < numColumnSubset; i++)
         {
             if (columnIndicesSubset[i]<columns.Size())
-                columnIndicesToReturn.Insert(columnIndicesSubset[i], _FILE_AND_LINE_);
+                columnIndicesToReturn.Insert(columnIndicesSubset[i]);
         }
     }
     else
     {
         for (i=0; i < columns.Size(); i++)
-            columnIndicesToReturn.Insert(i, _FILE_AND_LINE_);
+            columnIndicesToReturn.Insert(i);
     }
 
     if (columnIndicesToReturn.Size()==0)
@@ -631,9 +631,9 @@ void Table::QueryTable(unsigned *columnIndicesSubset, unsigned numColumnSubset, 
             if (inclusionFilters[i].columnName[0])
                 inclusionFilters[i].columnIndex=ColumnIndex(inclusionFilters[i].columnName);
             if (inclusionFilters[i].columnIndex<columns.Size())
-                inclusionFilterColumnIndices.Insert(inclusionFilters[i].columnIndex, _FILE_AND_LINE_);
+                inclusionFilterColumnIndices.Insert(inclusionFilters[i].columnIndex);
             else
-                inclusionFilterColumnIndices.Insert((unsigned)-1, _FILE_AND_LINE_);
+                inclusionFilterColumnIndices.Insert((unsigned)-1);
         }
     }
 
@@ -895,11 +895,11 @@ void Table::SortTable(Table::SortQuery *sortQueries, unsigned numSortQueries, Ta
     {
         if (sortQueries[i].columnIndex<columns.Size() && columns[sortQueries[i].columnIndex].columnType!=BINARY)
         {
-            columnIndices.Insert(sortQueries[i].columnIndex, _FILE_AND_LINE_);
+            columnIndices.Insert(sortQueries[i].columnIndex);
             anyValid=true;
         }
         else
-            columnIndices.Insert((unsigned)-1, _FILE_AND_LINE_); // Means don't check this column
+            columnIndices.Insert((unsigned)-1); // Means don't check this column
     }
 
     DataStructures::Page<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER> *cur;
@@ -925,7 +925,7 @@ void Table::SortTable(Table::SortQuery *sortQueries, unsigned numSortQueries, Ta
         for (i=0; i < (unsigned)cur->size; i++)
         {
             RakAssert(cur->data[i]);
-            orderedList.Insert(cur->data[i],cur->data[i], true, _FILE_AND_LINE_);
+            orderedList.Insert(cur->data[i],cur->data[i], true);
         }
         cur=cur->next;
     }
@@ -1053,7 +1053,7 @@ void Table::Clear(void)
 {
     rows.ForEachData(FreeRow);
     rows.Clear();
-    columns.Clear(true, _FILE_AND_LINE_);
+    columns.Clear(true);
 }
 const List<Table::ColumnDescriptor>& Table::GetColumns(void) const
 {

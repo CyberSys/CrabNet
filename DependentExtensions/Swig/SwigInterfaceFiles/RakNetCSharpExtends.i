@@ -168,7 +168,7 @@
 		{
 			for (int i=0;i<*numberOfSystems;i++)
 			{
-				remoteSystems->Insert(inSys[i],__FILE__,__LINE__);
+				remoteSystems->Insert(inSys[i]);
 			}
 		}
 		return returnVal;
@@ -366,7 +366,7 @@ STRUCT_UNSIGNED_INT64_ARRAY_EXTEND_SPECIAL_RAKNETSTATISTICS(SetValueOverLastSeco
 
 %extend DataStructures::ByteQueue
 {
-	void WriteBytes(unsigned char *inByteArray, unsigned length, const char *file, unsigned int line)
+	void WriteBytes(unsigned char *inByteArray, unsigned length)
 	{
 		self->WriteBytes((const char *)inByteArray,  length, file,  line);
 	}
@@ -488,8 +488,8 @@ STRUCT_UNSIGNED_INT64_ARRAY_EXTEND_SPECIAL_RAKNETSTATISTICS(SetValueOverLastSeco
 
 		for (int i=0;i<*inOutLength;i++)
 		{
-			saOut->Insert(tempInSystemAddress[i],__FILE__,__LINE__);
-			guidOut->Insert(tempInRakNetGUID[i],__FILE__,__LINE__);
+			saOut->Insert(tempInSystemAddress[i]);
+			guidOut->Insert(tempInRakNetGUID[i]);
 		}
 		delete [] tempInSystemAddress;
 		delete [] tempInRakNetGUID;
@@ -502,7 +502,7 @@ STRUCT_UNSIGNED_INT64_ARRAY_EXTEND_SPECIAL_RAKNETSTATISTICS(SetValueOverLastSeco
 		DataStructures::OrderedList<RakNetGUID, RakNetGUID> participantList;
 		self->GetParticipantList(participantList);
 		for (unsigned int i=0; i < participantList.Size(); i++)
-			guidOut->Insert(participantList[i],__FILE__,__LINE__);
+			guidOut->Insert(participantList[i]);
 	}
 
 }

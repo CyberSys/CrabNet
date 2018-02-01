@@ -169,8 +169,8 @@ int main(void)
 				dataKey1.secondaryKey=1;
 
 				RakNet::CloudQuery keyQuery;
-				keyQuery.keys.Push(RakNet::CloudKey("ApplicationName", 1), _FILE_AND_LINE_);
-				keyQuery.keys.Push(RakNet::CloudKey("ApplicationName", 2), _FILE_AND_LINE_);
+				keyQuery.keys.Push(RakNet::CloudKey("ApplicationName", 1));
+				keyQuery.keys.Push(RakNet::CloudKey("ApplicationName", 2));
 				keyQuery.maxRowsToReturn=0;
 				keyQuery.startingRowIndex=0;
 				keyQuery.subscribeToResults=false;
@@ -181,8 +181,8 @@ int main(void)
 			{
 				printf("Releasing data sets 1 and 2 from client 1\n");
 				DataStructures::List<RakNet::CloudKey> keys;
-				keys.Push(RakNet::CloudKey("ApplicationName", 1), _FILE_AND_LINE_);
-				keys.Push(RakNet::CloudKey("ApplicationName", 2), _FILE_AND_LINE_);
+				keys.Push(RakNet::CloudKey("ApplicationName", 1));
+				keys.Push(RakNet::CloudKey("ApplicationName", 2));
 				cloudClient[CLOUD_CLIENT_1].Release(keys, rakPeer[CLIENT_1]->GetGUIDFromIndex(0));
 			}
 			else if (command=='f' || command=='F')
@@ -190,14 +190,14 @@ int main(void)
 				printf("Subscribing to data sets 1 and 2 from client 2 to server 2.\n");
 
 				RakNet::CloudQuery keyQuery;
-				keyQuery.keys.Push(RakNet::CloudKey("ApplicationName", 1), _FILE_AND_LINE_);
-				keyQuery.keys.Push(RakNet::CloudKey("ApplicationName", 2), _FILE_AND_LINE_);
+				keyQuery.keys.Push(RakNet::CloudKey("ApplicationName", 1));
+				keyQuery.keys.Push(RakNet::CloudKey("ApplicationName", 2));
 				keyQuery.maxRowsToReturn=0;
 				keyQuery.startingRowIndex=0;
 				keyQuery.subscribeToResults=true;
 
 				DataStructures::List<RakNet::RakNetGUID> specificSystems;
-				specificSystems.Push(rakPeer[CLIENT_1]->GetMyGUID(), _FILE_AND_LINE_);
+				specificSystems.Push(rakPeer[CLIENT_1]->GetMyGUID());
 
 				cloudClient[CLOUD_CLIENT_2].Get(&keyQuery, specificSystems, rakPeer[CLIENT_2]->GetGUIDFromIndex(0));
 			}
@@ -206,10 +206,10 @@ int main(void)
 				printf("Unsubscribing to data sets 1 and 2 from client 2 to server 2.\n");
 
 				DataStructures::List<RakNet::CloudKey> keys;
-				keys.Push(RakNet::CloudKey("ApplicationName", 1), _FILE_AND_LINE_);
-				keys.Push(RakNet::CloudKey("ApplicationName", 2), _FILE_AND_LINE_);
+				keys.Push(RakNet::CloudKey("ApplicationName", 1));
+				keys.Push(RakNet::CloudKey("ApplicationName", 2));
 				DataStructures::List<RakNet::RakNetGUID> specificSystems;
-				specificSystems.Push(rakPeer[CLIENT_1]->GetMyGUID(), _FILE_AND_LINE_);
+				specificSystems.Push(rakPeer[CLIENT_1]->GetMyGUID());
 
 				cloudClient[CLOUD_CLIENT_2].Unsubscribe(keys, specificSystems, rakPeer[CLIENT_2]->GetGUIDFromIndex(0));
 			}
@@ -217,8 +217,8 @@ int main(void)
 			{
 				printf("Releasing data sets 1 and 2 from client 2\n");
 				DataStructures::List<RakNet::CloudKey> keys;
-				keys.Push(RakNet::CloudKey("ApplicationName", 1), _FILE_AND_LINE_);
-				keys.Push(RakNet::CloudKey("ApplicationName", 2), _FILE_AND_LINE_);
+				keys.Push(RakNet::CloudKey("ApplicationName", 1));
+				keys.Push(RakNet::CloudKey("ApplicationName", 2));
 				cloudClient[CLOUD_CLIENT_2].Unsubscribe(keys, rakPeer[CLIENT_2]->GetGUIDFromIndex(0));
 			}
 			else if (command=='y' || command=='Y')

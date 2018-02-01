@@ -185,7 +185,7 @@ void NatTypeDetectionServer::Update(void)
             }
         }
 
-        DeallocRNS2RecvStruct(recvStruct, _FILE_AND_LINE_);
+        DeallocRNS2RecvStruct(recvStruct);
         bufferedPacketsMutex.Lock();
         if (bufferedPackets.Size()>0)
             recvStruct=bufferedPackets.Pop();
@@ -281,7 +281,7 @@ void NatTypeDetectionServer::Update(void)
                 bsp.data = (char*) &c;
                 bsp.length = 1;
                 bsp.systemAddress = saOut;
-                s4p5->Send(&bsp, _FILE_AND_LINE_);
+                s4p5->Send(&bsp);
                 break;
             case STATE_TESTING_FULL_CONE_1:
             case STATE_TESTING_FULL_CONE_2:
@@ -299,7 +299,7 @@ void NatTypeDetectionServer::Update(void)
                 bsp.data = (char*) bs.GetData();
                 bsp.length = bs.GetNumberOfBytesUsed();
                 bsp.systemAddress = saOut;
-                s2p3->Send(&bsp, _FILE_AND_LINE_);
+                s2p3->Send(&bsp);
                 break;
             case STATE_TESTING_ADDRESS_RESTRICTED_1:
             case STATE_TESTING_ADDRESS_RESTRICTED_2:
@@ -317,7 +317,7 @@ void NatTypeDetectionServer::Update(void)
                 bsp.data = (char*) bs.GetData();
                 bsp.length = bs.GetNumberOfBytesUsed();
                 bsp.systemAddress = saOut;
-                s1p2->Send(&bsp, _FILE_AND_LINE_);
+                s1p2->Send(&bsp);
                 break;
             case STATE_TESTING_PORT_RESTRICTED_1:
             case STATE_TESTING_PORT_RESTRICTED_2:
@@ -388,7 +388,7 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet *packet)
         bsIn.Read(nda.c2Port);
         nda.nextStateTime=0;
         nda.timeBetweenAttempts=rakPeerInterface->GetLastPing(nda.systemAddress)*3+50;
-        natDetectionAttempts.Push(nda, _FILE_AND_LINE_);
+        natDetectionAttempts.Push(nda);
     }
     else
     {
@@ -419,12 +419,12 @@ unsigned int NatTypeDetectionServer::GetDetectionAttemptIndex(RakNetGUID guid)
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void NatTypeDetectionServer::DeallocRNS2RecvStruct(RNS2RecvStruct *s, const char *file, unsigned int line)
+void NatTypeDetectionServer::DeallocRNS2RecvStruct(RNS2RecvStruct *s)
 {
     delete s;
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-RNS2RecvStruct *NatTypeDetectionServer::AllocRNS2RecvStruct(const char *file, unsigned int line)
+RNS2RecvStruct *NatTypeDetectionServer::AllocRNS2RecvStruct()
 {
     return new RNS2RecvStruct;
 }
@@ -432,7 +432,7 @@ RNS2RecvStruct *NatTypeDetectionServer::AllocRNS2RecvStruct(const char *file, un
 void NatTypeDetectionServer::OnRNS2Recv(RNS2RecvStruct *recvStruct)
 {
     bufferedPacketsMutex.Lock();
-    bufferedPackets.Push(recvStruct,_FILE_AND_LINE_);
+    bufferedPackets.Push(recvStruct);
     bufferedPacketsMutex.Unlock();
 }
 

@@ -177,7 +177,7 @@ PlayerReplica::PlayerReplica()
 	isMoving=false;
 	deathTimeout=0;
 	lastUpdate=RakNet::GetTimeMS();
-	playerList.Push(this,_FILE_AND_LINE_);
+	playerList.Push(this);
 }
 PlayerReplica::~PlayerReplica()
 {

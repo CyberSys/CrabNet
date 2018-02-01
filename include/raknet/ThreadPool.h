@@ -281,7 +281,7 @@ void* WorkerThread( void* arguments )
             if (returnOutput)
             {
                 threadPool->outputQueueMutex.Lock();
-                threadPool->outputQueue.Push(callbackOutput, _FILE_AND_LINE_ );
+                threadPool->outputQueue.Push(callbackOutput);
                 threadPool->outputQueueMutex.Unlock();
             }
         }
@@ -423,8 +423,8 @@ template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddInput(OutputType (*workerThreadCallback)(InputType, bool *returnOutput, void* perThreadData), InputType inputData)
 {
     inputQueueMutex.Lock();
-    inputQueue.Push(inputData, _FILE_AND_LINE_ );
-    inputFunctionQueue.Push(workerThreadCallback, _FILE_AND_LINE_ );
+    inputQueue.Push(inputData);
+    inputFunctionQueue.Push(workerThreadCallback);
     inputQueueMutex.Unlock();
 
     quitAndIncomingDataEvents.SetEvent();
@@ -433,7 +433,7 @@ template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddOutput(OutputType outputData)
 {
     outputQueueMutex.Lock();
-    outputQueue.Push(outputData, _FILE_AND_LINE_ );
+    outputQueue.Push(outputData);
     outputQueueMutex.Unlock();
 }
 template <class InputType, class OutputType>
@@ -482,19 +482,19 @@ void ThreadPool<InputType, OutputType>::Clear(void)
     {
         runThreadsMutex.Unlock();
         inputQueueMutex.Lock();
-        inputFunctionQueue.Clear(_FILE_AND_LINE_);
-        inputQueue.Clear(_FILE_AND_LINE_);
+        inputFunctionQueue.Clear();
+        inputQueue.Clear();
         inputQueueMutex.Unlock();
 
         outputQueueMutex.Lock();
-        outputQueue.Clear(_FILE_AND_LINE_);
+        outputQueue.Clear();
         outputQueueMutex.Unlock();
     }
     else
     {
-        inputFunctionQueue.Clear(_FILE_AND_LINE_);
-        inputQueue.Clear(_FILE_AND_LINE_);
-        outputQueue.Clear(_FILE_AND_LINE_);
+        inputFunctionQueue.Clear();
+        inputQueue.Clear();
+        outputQueue.Clear();
     }
 }
 template <class InputType, class OutputType>
@@ -551,14 +551,14 @@ void ThreadPool<InputType, OutputType>::RemoveOutputAtIndex(unsigned index)
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::ClearInput(void)
 {
-    inputQueue.Clear(_FILE_AND_LINE_);
-    inputFunctionQueue.Clear(_FILE_AND_LINE_);
+    inputQueue.Clear();
+    inputFunctionQueue.Clear();
 }
 
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::ClearOutput(void)
 {
-    outputQueue.Clear(_FILE_AND_LINE_);
+    outputQueue.Clear();
 }
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::IsWorking(void)

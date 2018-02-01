@@ -271,7 +271,7 @@ bool PostgreSQLInterface::PQGetValueFromBinary(char **output, int *outputLength,
 		}
 		else
 		{
-			*output = (char*) rakMalloc_Ex(*outputLength,_FILE_AND_LINE_);
+			*output = (char*) rakMalloc_Ex(*outputLength);
 			memcpy(*output, PQgetvalue(result, rowIndex, columnIndex), *outputLength);
 			return true;
 		}
@@ -549,13 +549,13 @@ void PostgreSQLInterface::EncodeQueryUpdate(const char *colName, const RakNet::R
 RakNet::RakString PostgreSQLInterface::GetEscapedString(const char *input) const
 {
 	unsigned long len = (unsigned long) strlen(input);
-	char *fn = (char*) rakMalloc_Ex(len*2+1,_FILE_AND_LINE_);
+	char *fn = (char*) rakMalloc_Ex(len*2+1);
 	int error;
 	PQescapeStringConn(pgConn, fn, input, len, &error);
 	RakNet::RakString output;
 	// Use assignment so it doesn't parse printf escape strings
 	output = fn;
-	rakFree_Ex(fn,_FILE_AND_LINE_);
+	rakFree_Ex(fn);
 	return output;
 }
 
@@ -579,7 +579,7 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 
 	// Find out how many params there are
 	// Find out the type of each param (%f, %s)
-	indices.Clear(false, _FILE_AND_LINE_);
+	indices.Clear(false);
 	GetTypeMappingIndices( input, indices );
 
 	if (preparedQueryIndex==preparedQueries.Size())
@@ -614,7 +614,7 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 		if (IsResultSuccessful(result, false))
 		{
 			PQclear(result);
-			preparedQueries.Insert(inputStr, _FILE_AND_LINE_);
+			preparedQueries.Insert(inputStr);
 		}
 		else
 		{
@@ -637,12 +637,12 @@ PGresult * PostgreSQLInterface::QueryVariadic( const char * input, ... )
 	int *paramLength;
 	int *paramFormat;
 	ExtractArguments(argptr, indices, &paramData, &paramLength);
-	paramFormat=RakNet::OP_NEW_ARRAY<int>(indices.Size(),_FILE_AND_LINE_);
+	paramFormat=RakNet::OP_NEW_ARRAY<int>(indices.Size());
 	for (unsigned int i=0; i < indices.Size(); i++)
 		paramFormat[i]=PQEXECPARAM_FORMAT_BINARY;
 	result = PQexecPrepared(pgConn, RakNet::RakString("PGSQL_ExecuteVariadic_%i", preparedQueryIndex), indices.Size(), paramData, paramLength, paramFormat, PQEXECPARAM_FORMAT_BINARY );
 	VariadicSQLParser::FreeArguments(indices, paramData, paramLength);
-	RakNet::OP_DELETE_ARRAY(paramFormat,_FILE_AND_LINE_);
+	RakNet::OP_DELETE_ARRAY(paramFormat);
 	va_end(argptr);
 
 	if (IsResultSuccessful(result, false)==false)

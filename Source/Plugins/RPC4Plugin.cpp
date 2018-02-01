@@ -139,13 +139,13 @@ RPC4::~RPC4()
 
     DataStructures::List<RakNet::RakString> keyList;
     DataStructures::List<LocalSlot*> outputList;
-    localSlots.GetAsList(outputList,keyList,_FILE_AND_LINE_);
+    localSlots.GetAsList(outputList,keyList);
     unsigned int j;
     for (j=0; j < outputList.Size(); j++)
     {
         delete outputList[j];
     }
-    localSlots.Clear(_FILE_AND_LINE_);
+    localSlots.Clear();
 }
 bool RPC4::RegisterFunction(const char* uniqueID, void ( *functionPointer ) ( RakNet::BitStream *userData, Packet *packet ))
 {
@@ -153,7 +153,7 @@ bool RPC4::RegisterFunction(const char* uniqueID, void ( *functionPointer ) ( Ra
     if (skhi.IsInvalid()==false)
         return false;
 
-    registeredNonblockingFunctions.Push(uniqueID,functionPointer,_FILE_AND_LINE_);
+    registeredNonblockingFunctions.Push(uniqueID,functionPointer);
     return true;
 }
 void RPC4::RegisterSlot(const char *sharedIdentifier, void ( *functionPointer ) ( RakNet::BitStream *userData, Packet *packet ), int callPriority)
@@ -164,13 +164,13 @@ void RPC4::RegisterSlot(const char *sharedIdentifier, void ( *functionPointer ) 
     if (idx.IsInvalid())
     {
         localSlot =new LocalSlot;
-        localSlots.Push(sharedIdentifier, localSlot,_FILE_AND_LINE_);
+        localSlots.Push(sharedIdentifier, localSlot);
     }
     else
     {
         localSlot=localSlots.ItemAtIndex(idx);
     }
-    localSlot->slotObjects.Insert(lso,lso,true,_FILE_AND_LINE_);
+    localSlot->slotObjects.Insert(lso,lso,true);
 }
 bool RPC4::RegisterBlockingFunction(const char* uniqueID, void ( *functionPointer ) ( RakNet::BitStream *userData, RakNet::BitStream *returnData, Packet *packet ))
 {
@@ -178,7 +178,7 @@ bool RPC4::RegisterBlockingFunction(const char* uniqueID, void ( *functionPointe
     if (skhi.IsInvalid()==false)
         return false;
 
-    registeredBlockingFunctions.Push(uniqueID,functionPointer,_FILE_AND_LINE_);
+    registeredBlockingFunctions.Push(uniqueID,functionPointer);
     return true;
 }
 void RPC4::RegisterLocalCallback(const char* uniqueID, MessageID messageId)
@@ -194,25 +194,25 @@ void RPC4::RegisterLocalCallback(const char* uniqueID, MessageID messageId)
         lc = localCallbacks[index];
         index = lc->functions.GetIndexFromKey(str,&objectExists);
         if (objectExists==false)
-            lc->functions.InsertAtIndex(str,index,_FILE_AND_LINE_);
+            lc->functions.InsertAtIndex(str,index);
     }
     else
     {
         lc =new LocalCallback;
         lc->messageId=messageId;
-        lc->functions.Insert(str,str,false,_FILE_AND_LINE_);
-        localCallbacks.InsertAtIndex(lc,index,_FILE_AND_LINE_);
+        lc->functions.Insert(str,str,false);
+        localCallbacks.InsertAtIndex(lc,index);
     }
 }
 bool RPC4::UnregisterFunction(const char* uniqueID)
 {
     void ( *f ) ( RakNet::BitStream *, Packet * );
-    return registeredNonblockingFunctions.Pop(f,uniqueID,_FILE_AND_LINE_);
+    return registeredNonblockingFunctions.Pop(f,uniqueID);
 }
 bool RPC4::UnregisterBlockingFunction(const char* uniqueID)
 {
     void ( *f ) ( RakNet::BitStream *, RakNet::BitStream *,Packet * );
-    return registeredBlockingFunctions.Pop(f,uniqueID,_FILE_AND_LINE_);
+    return registeredBlockingFunctions.Pop(f,uniqueID);
 }
 bool RPC4::UnregisterLocalCallback(const char* uniqueID, MessageID messageId)
 {
@@ -246,7 +246,7 @@ bool RPC4::UnregisterSlot(const char* sharedIdentifier)
     {
         LocalSlot *ls = localSlots.ItemAtIndex(hi);
         delete ls;
-        localSlots.RemoveAtIndex(hi, _FILE_AND_LINE_);
+        localSlots.RemoveAtIndex(hi);
         return true;
     }
 
@@ -394,12 +394,12 @@ bool RPC4::CallBlocking( const char* uniqueID, RakNet::BitStream * bitStream, Pa
                 }
                 else
                 {
-                    packetQueue.PushAtHead(packet,0,_FILE_AND_LINE_);
+                    packetQueue.PushAtHead(packet, 0);
                 }
             }
             else
             {
-                packetQueue.PushAtHead(packet,0,_FILE_AND_LINE_);
+                packetQueue.PushAtHead(packet, 0);
             }
         }
     }

@@ -200,7 +200,7 @@ void FileListTransfer::Send(FileList *fileList, RakNet::RakPeerInterface *rakPee
                 fileToPush->currentOffset=0;
                 fileToPush->incrementalReadInterface=_incrementalReadInterface;
                 fileToPush->chunkSize=_chunkSize;
-                filesToPush.Push(fileToPush,_FILE_AND_LINE_);
+                filesToPush.Push(fileToPush);
             }
             else
             {
@@ -247,12 +247,12 @@ void FileListTransfer::Send(FileList *fileList, RakNet::RakPeerInterface *rakPee
                 ftpr->systemAddress=recipient;
                 ftpr->setId=setID;
                 ftpr->refCount=2; // Allocated and in the list
-                fileToPushRecipientList.Push(ftpr, _FILE_AND_LINE_);
+                fileToPushRecipientList.Push(ftpr);
             //}
             while (filesToPush.IsEmpty()==false)
             {
                 ////ftpr->filesToPushMutex.Lock();
-                ftpr->filesToPush.Push(filesToPush.Pop(), _FILE_AND_LINE_);
+                ftpr->filesToPush.Push(filesToPush.Pop());
                 ////ftpr->filesToPushMutex.Unlock();
             }
             // ftpr out of scope
@@ -550,10 +550,10 @@ void FileListTransfer::Clear(void)
         // Taken out of the list
         ftpr->Deref();
     }
-    fileToPushRecipientList.Clear(false,_FILE_AND_LINE_);
+    fileToPushRecipientList.Clear(false);
     fileToPushRecipientListMutex.Unlock();
 
-    //filesToPush.Clear(false, _FILE_AND_LINE_);
+    //filesToPush.Clear(false);
 }
 void FileListTransfer::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
@@ -642,7 +642,7 @@ void FileListTransfer::AddCallback(FileListProgress *cb)
         return;
 
     if (fileListProgressCallbacks.GetIndexOf(cb)==(unsigned int) -1)
-        fileListProgressCallbacks.Push(cb, _FILE_AND_LINE_);
+        fileListProgressCallbacks.Push(cb);
 }
 void FileListTransfer::RemoveCallback(FileListProgress *cb)
 {
@@ -652,7 +652,7 @@ void FileListTransfer::RemoveCallback(FileListProgress *cb)
 }
 void FileListTransfer::ClearCallbacks(void)
 {
-    fileListProgressCallbacks.Clear(true, _FILE_AND_LINE_);
+    fileListProgressCallbacks.Clear(true);
 }
 void FileListTransfer::GetCallbacks(DataStructures::List<FileListProgress*> &callbacks)
 {
@@ -972,7 +972,7 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
             if (buff==0)
             {
                 ////ftpr->filesToPushMutex.Lock();
-                ftpr->filesToPush.PushAtHead(ftp,0,_FILE_AND_LINE_);
+                ftpr->filesToPush.PushAtHead(ftp, 0);
                 ////ftpr->filesToPushMutex.Unlock();
 
                 ftpr->Deref();
@@ -1076,7 +1076,7 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
             else
             {
                 ////ftpr->filesToPushMutex.Lock();
-                ftpr->filesToPush.PushAtHead(ftp,0,_FILE_AND_LINE_);
+                ftpr->filesToPush.PushAtHead(ftp,0);
                 ////ftpr->filesToPushMutex.Unlock();
             }
             // ftpr out of scope

@@ -146,13 +146,13 @@ int PeerConnectDisconnectTest::RunTest(DataStructures::List<RakString> params,bo
 
 	SystemAddress currentSystem;
 
-	destroyList.Clear(false,_FILE_AND_LINE_);
+	destroyList.Clear(false);
 
 	//Initializations of the arrays
 	for (int i=0;i<peerNum;i++)
 	{
 		peerList[i]=RakPeerInterface::GetInstance();
-		destroyList.Push(peerList[i],_FILE_AND_LINE_);
+		destroyList.Push(peerList[i]);
 
 		peerList[i]->Startup(maxConnections, &SocketDescriptor(60000+i,0), 1);
 		peerList[i]->SetMaximumIncomingConnections(maxConnections);

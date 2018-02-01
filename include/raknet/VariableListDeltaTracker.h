@@ -42,7 +42,7 @@ public:
         temp.Write(varData);
         if (nextWriteIndex>=variableList.Size())
         {
-            variableList.Push(VariableLastValueNode(temp.GetData(),temp.GetNumberOfBytesUsed()),_FILE_AND_LINE_);
+            variableList.Push(VariableLastValueNode(temp.GetData(),temp.GetNumberOfBytesUsed()));
             nextWriteIndex++;
             return true; // Different because it's new
         }

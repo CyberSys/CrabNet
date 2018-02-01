@@ -121,13 +121,7 @@ void CSHA1::Transform(UINT_32 *pState, const UINT_8 *pBuffer)
 
     // Wipe variables
 #ifdef SHA1_WIPE_VARIABLES
-#ifndef _MSC_VER
-#pragma optimize("-no-dead-code-removal")
-#endif
     a = b = c = d = e = 0;
-#ifndef _MSC_VER
-#pragma optimize("-dead-code-removal")
-#endif
 #endif //SHA1_WIPE_VARIABLES
 }
 
@@ -219,12 +213,10 @@ void CSHA1::Final()
     // Wipe variables for security reasons
 #ifdef SHA1_WIPE_VARIABLES
 #ifndef _WIN32
-#pragma optmizie(-no-dead-code-removal)
     memset(m_buffer, 0, 64);
     memset(m_state, 0, 20);
     memset(m_count, 0, 8);
     memset(pbFinalCount, 0, 8);
-#pragma optimize("-dead-code-removal")
 #else
     SecureZeroMemory(m_buffer, 64);
     SecureZeroMemory(m_state, 20);

@@ -114,7 +114,7 @@ namespace DataStructures
     template <class range_type>
     bool RangeList<range_type>::Deserialize(RakNet::BitStream *out)
     {
-        ranges.Clear(true, _FILE_AND_LINE_);
+        ranges.Clear(true);
         unsigned short count;
         out->AlignReadToByteBoundary();
         out->Read(count);
@@ -138,7 +138,7 @@ namespace DataStructures
                 max=min;
 
 
-            ranges.InsertAtEnd(RangeNode<range_type>(min,max), _FILE_AND_LINE_);
+            ranges.InsertAtEnd(RangeNode<range_type>(min,max));
         }
         return true;
     }
@@ -160,7 +160,7 @@ namespace DataStructures
     {
         if (ranges.Size()==0)
         {
-            ranges.Insert(index, RangeNode<range_type>(index, index), true, _FILE_AND_LINE_);
+            ranges.Insert(index, RangeNode<range_type>(index, index), true);
             return;
         }
 
@@ -173,7 +173,7 @@ namespace DataStructures
             else if (index > ranges[insertionIndex-1].maxIndex+(range_type)1)
             {
                 // Insert at end
-                ranges.Insert(index, RangeNode<range_type>(index, index), true, _FILE_AND_LINE_);
+                ranges.Insert(index, RangeNode<range_type>(index, index), true);
             }
 
             return;
@@ -182,7 +182,7 @@ namespace DataStructures
         if (index < ranges[insertionIndex].minIndex-(range_type)1)
         {
             // Insert here
-            ranges.InsertAtIndex(RangeNode<range_type>(index, index), insertionIndex, _FILE_AND_LINE_);
+            ranges.InsertAtIndex(RangeNode<range_type>(index, index), insertionIndex);
 
             return;
         }
@@ -220,7 +220,7 @@ namespace DataStructures
     template <class range_type>
     void RangeList<range_type>::Clear(void)
     {
-        ranges.Clear(true, _FILE_AND_LINE_);
+        ranges.Clear(true);
     }
 
     template <class range_type>

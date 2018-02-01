@@ -230,14 +230,14 @@ void UploadInstanceToCloud(RakNet::CloudClient *cloudClient, RakNet::RakNetGUID 
 void GetClientSubscription(RakNet::CloudClient *cloudClient, RakNet::RakNetGUID serverGuid)
 {
 	RakNet::CloudQuery cloudQuery;
-	cloudQuery.keys.Push(RakNet::CloudKey(CLOUD_CLIENT_PRIMARY_KEY,0),_FILE_AND_LINE_);
+	cloudQuery.keys.Push(RakNet::CloudKey(CLOUD_CLIENT_PRIMARY_KEY,0));
 	cloudQuery.subscribeToResults=true; // Causes ID_CLOUD_SUBSCRIPTION_NOTIFICATION
 	cloudClient->Get(&cloudQuery, serverGuid);
 }
 void GetServers(RakNet::CloudClient *cloudClient, RakNet::RakNetGUID serverGuid)
 {
 	RakNet::CloudQuery cloudQuery;
-	cloudQuery.keys.Push(RakNet::CloudKey("CloudConnCount",0),_FILE_AND_LINE_); // CloudConnCount is defined at the top of CloudServerHelper.cpp
+	cloudQuery.keys.Push(RakNet::CloudKey("CloudConnCount",0)); // CloudConnCount is defined at the top of CloudServerHelper.cpp
 	cloudQuery.subscribeToResults=false;
 	cloudClient->Get(&cloudQuery, serverGuid);
 }

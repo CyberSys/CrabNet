@@ -81,7 +81,7 @@ void CloudQuery::Serialize(bool writeToBitstream, BitStream *bitStream)
         for (uint16_t i=0; i < numKeys; i++)
         {
             cmdk.Serialize(false,bitStream);
-            keys.Push(cmdk, _FILE_AND_LINE_);
+            keys.Push(cmdk);
         }
     }
 }
@@ -149,7 +149,7 @@ void CloudQueryResult::SerializeCloudQueryRows(bool writeToBitstream, uint32_t &
                     numRows=i;
                     return;
                 }
-                rowsReturned.Push(cmdr, _FILE_AND_LINE_);
+                rowsReturned.Push(cmdr);
             }
             else
             {

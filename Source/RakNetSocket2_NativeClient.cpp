@@ -18,7 +18,7 @@
 
 using namespace pp;
 
-RNS2BindResult RNS2_NativeClient::Bind( NativeClientBindParameters *bindParameters, const char *file, unsigned int line )
+RNS2BindResult RNS2_NativeClient::Bind( NativeClientBindParameters *bindParameters )
 {
     memcpy(&binding, bindParameters, sizeof(NativeClientBindParameters));
 
@@ -97,7 +97,7 @@ void RNS2_NativeClient::onRecvFrom(void* pData, int32_t dataSize)
     if(dataSize <=0 || !pData )
     {
         // Free data
-        socket2->eventHandler->DeallocRNS2RecvStruct(recvStruct, _FILE_AND_LINE_);
+        socket2->eventHandler->DeallocRNS2RecvStruct(recvStruct);
 
         // This value indicates failure due to an asynchronous operation being
         // interrupted. The most common cause of this error code is destroying
@@ -152,7 +152,7 @@ void RNS2_NativeClient::onRecvFrom(void* pData, int32_t dataSize)
 void RNS2_NativeClient::IssueReceiveCall(void)
 {
     RNS2RecvStruct *recvFromStruct;
-    recvFromStruct=binding.eventHandler->AllocRNS2RecvStruct(_FILE_AND_LINE_);
+    recvFromStruct=binding.eventHandler->AllocRNS2RecvStruct();
     if (recvFromStruct != NULL)
     {
         recvFromStruct->socket=this;

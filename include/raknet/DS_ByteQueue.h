@@ -29,13 +29,13 @@ namespace DataStructures
     public:
         ByteQueue();
         ~ByteQueue();
-        void WriteBytes(const char *in, unsigned length, const char *file, unsigned int line);
+        void WriteBytes(const char *in, unsigned length);
         bool ReadBytes(char *out, unsigned maxLengthToRead, bool peek);
         unsigned GetBytesWritten() const;
         char* PeekContiguousBytes(unsigned int *outLength) const;
         void IncrementReadOffset(unsigned length);
         void DecrementReadOffset(unsigned length);
-        void Clear(const char *file, unsigned int line);
+        void Clear();
         void Print();
 
     protected:

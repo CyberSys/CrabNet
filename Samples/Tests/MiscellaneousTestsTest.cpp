@@ -36,7 +36,7 @@ AdvertiseSystem
 
 */
 int MiscellaneousTestsTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
-{	destroyList.Clear(false,_FILE_AND_LINE_);
+{	destroyList.Clear(false);
 
 RakPeerInterface *client,*server;
 
@@ -94,10 +94,10 @@ void MiscellaneousTestsTest::DestroyPeers()
 MiscellaneousTestsTest::MiscellaneousTestsTest(void)
 {
 
-	errorList.Push("Did not recieve client advertise",_FILE_AND_LINE_);
-	errorList.Push("The router interface should not be called because no send has happened yet",_FILE_AND_LINE_);
-	errorList.Push("Router failed to trigger on failed directed send",_FILE_AND_LINE_);
-	errorList.Push("Router was not properly removed",_FILE_AND_LINE_);
+	errorList.Push("Did not recieve client advertise");
+	errorList.Push("The router interface should not be called because no send has happened yet");
+	errorList.Push("Router failed to trigger on failed directed send");
+	errorList.Push("Router was not properly removed");
 
 }
 

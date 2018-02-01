@@ -111,7 +111,7 @@ RakNetSocket2* RakNet::CreateNonblockingBoundSocket(const char *bindAddr
     ncbp.is_ipv6=false;
     ncbp.nativeClientInstance=chromeInstance;
     ncbp.port=0;
-    nativeClientSocket->Bind(&ncbp, _FILE_AND_LINE_);
+    nativeClientSocket->Bind(&ncbp);
 #else
     if (r2->IsBerkleySocket())
     {
@@ -128,7 +128,7 @@ RakNetSocket2* RakNet::CreateNonblockingBoundSocket(const char *bindAddr
         bbp.pollingThreadPriority=0;
         bbp.eventHandler=eventHandler;
         bbp.remotePortRakNetWasStartedOn_PS3_PS4_PSP2=0;
-        RNS2BindResult br = ((RNS2_Berkley*) r2)->Bind(&bbp, _FILE_AND_LINE_);
+        RNS2BindResult br = ((RNS2_Berkley*) r2)->Bind(&bbp);
 
         if (br==BR_FAILED_TO_BIND_SOCKET)
         {
@@ -186,7 +186,7 @@ int RakNet::NatTypeRecvFrom(char *data, RakNetSocket2* socket, SystemAddress &se
     if (socket->IsBerkleySocket())
     {
         RNS2RecvStruct *recvFromStruct;
-        recvFromStruct=AllocRNS2RecvStruct(_FILE_AND_LINE_);
+        recvFromStruct=AllocRNS2RecvStruct();
         if (recvFromStruct != NULL)
         {
             recvFromStruct->socket=this;

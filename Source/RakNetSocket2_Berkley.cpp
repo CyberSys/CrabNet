@@ -78,7 +78,7 @@ void RNS2_Berkley::SetDoNotFragment( int opt )
     #endif
 }
 
-void RNS2_Berkley::GetSystemAddressIPV4 ( RNS2Socket rns2Socket, SystemAddress *systemAddressOut )
+void RNS2_Berkley::GetSystemAddressIPV4 (RNS2Socket rns2Socket, SystemAddress *systemAddressOut)
 {
     sockaddr_in sa;
     memset(&sa,0,sizeof(sockaddr_in));
@@ -93,7 +93,7 @@ void RNS2_Berkley::GetSystemAddressIPV4 ( RNS2Socket rns2Socket, SystemAddress *
             systemAddressOut->address.addr4.sin_addr.s_addr=inet_addr__("127.0.0.1");
     }
 }
-void RNS2_Berkley::GetSystemAddressIPV4And6 ( RNS2Socket rns2Socket, SystemAddress *systemAddressOut )
+void RNS2_Berkley::GetSystemAddressIPV4And6 (RNS2Socket rns2Socket, SystemAddress *systemAddressOut)
 {
 #if RAKNET_SUPPORT_IPV6==1
 
@@ -152,10 +152,7 @@ void RNS2_Berkley::GetSystemAddressIPV4And6 ( RNS2Socket rns2Socket, SystemAddre
 #ifdef _MSC_VER
 #pragma warning( disable : 4702 ) // warning C4702: unreachable code
 #endif
-RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line ) {
-
-    (void) file;
-    (void) line;
+RNS2BindResult RNS2_Berkley::BindSharedIPV4(RNS2_BerkleyBindParameters *bindParameters) {
 
     int ret;
     memset(&boundAddress.address.addr4,0,sizeof(sockaddr_in));
@@ -235,10 +232,8 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindPar
     return BR_SUCCESS;
 
 }
-RNS2BindResult RNS2_Berkley::BindSharedIPV4And6( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line ) {
+RNS2BindResult RNS2_Berkley::BindSharedIPV4And6(RNS2_BerkleyBindParameters *bindParameters) {
 
-    (void) file;
-    (void) line;
     (void) bindParameters;
 
 #if RAKNET_SUPPORT_IPV6==1

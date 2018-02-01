@@ -109,11 +109,11 @@ public:
 	} cshState;
 
 	CloudServerHelper_RackspaceCloudDNS() {
-		rackspace2= RakNet::OP_NEW<Rackspace2>(_FILE_AND_LINE_);
+		rackspace2= RakNet::OP_NEW<Rackspace2>();
 		memset(&thisServerDetail, 0, sizeof(ServerDetail));
 	}
 	~CloudServerHelper_RackspaceCloudDNS() {
-		RakNet::OP_DELETE(rackspace2,_FILE_AND_LINE_);
+		RakNet::OP_DELETE(rackspace2);
 	}
 	virtual bool Update(void) {
 		UpdateTCP();
@@ -872,7 +872,7 @@ class AutopatcherPostgreRepository2_WithXDelta : public RakNet::AutopatcherPostg
 			fseek(fpPatch, 0, SEEK_END);
 			*patchLength = ftell(fpPatch);
 			fseek(fpPatch, 0, SEEK_SET);
-			*patch = (char*) rakMalloc_Ex(*patchLength, _FILE_AND_LINE_);
+			*patch = (char*) rakMalloc_Ex(*patchLength);
 			fread(*patch, 1, *patchLength, fpPatch);
 			fclose(fpPatch);
 
@@ -897,7 +897,7 @@ int main(int argc, char **argv)
 	return 0;
 #endif
 
-	cloudServerHelper = RakNet::OP_NEW<CloudServerHelper_RackspaceCloudDNS>(_FILE_AND_LINE_);
+	cloudServerHelper = RakNet::OP_NEW<CloudServerHelper_RackspaceCloudDNS>();
 	if (!cloudServerHelper->ParseCommandLineParameters(argc, argv))
 	{
 		return 1;
@@ -925,13 +925,13 @@ int main(int argc, char **argv)
 	appState=AP_RUNNING;
 	timeSinceZeroUsers=RakNet::GetTime();
 	printf("Server starting... ");
-	autopatcherServer = RakNet::OP_NEW<AutopatcherServer>(_FILE_AND_LINE_);
+	autopatcherServer = RakNet::OP_NEW<AutopatcherServer>();
 	// RakNet::FLP_Printf progressIndicator;
 	RakNet::FileListTransfer fileListTransfer;
 	AutopatcherPostgreRepository2_WithXDelta *connectionObject;
-	connectionObject = RakNet::OP_NEW_ARRAY<AutopatcherPostgreRepository2_WithXDelta>(sqlConnectionObjectCount, _FILE_AND_LINE_);
+	connectionObject = RakNet::OP_NEW_ARRAY<AutopatcherPostgreRepository2_WithXDelta>(sqlConnectionObjectCount);
 	// RakNet::AutopatcherRepositoryInterface **connectionObjectAddresses[sqlConnectionObjectCount];
-	AutopatcherRepositoryInterface **connectionObjectAddresses = RakNet::OP_NEW_ARRAY<AutopatcherRepositoryInterface *>(sqlConnectionObjectCount, _FILE_AND_LINE_);
+	AutopatcherRepositoryInterface **connectionObjectAddresses = RakNet::OP_NEW_ARRAY<AutopatcherRepositoryInterface *>(sqlConnectionObjectCount);
 
 	for (int i=0; i < sqlConnectionObjectCount; i++)
 		connectionObjectAddresses[i]=&connectionObject[i];
@@ -1230,7 +1230,7 @@ int main(int argc, char **argv)
 				// If the load exceeds such that >=1 new fully loaded server is needed, add that many servers
 				// See ID_CLOUD_GET_RESPONSE
 				RakNet::CloudQuery cloudQuery;
-				cloudQuery.keys.Push(RakNet::CloudKey("CloudConnCount",0),_FILE_AND_LINE_); // CloudConnCount is defined at the top of CloudServerHelper.cpp
+				cloudQuery.keys.Push(RakNet::CloudKey("CloudConnCount",0)); // CloudConnCount is defined at the top of CloudServerHelper.cpp
 				cloudQuery.subscribeToResults=false;
 				cloudClient.Get(&cloudQuery, rakPeer->GetMyGUID());
 			}
@@ -1351,11 +1351,11 @@ int main(int argc, char **argv)
 
 
 
-	RakNet::OP_DELETE_ARRAY(connectionObject, _FILE_AND_LINE_);
-	RakNet::OP_DELETE_ARRAY(connectionObjectAddresses, _FILE_AND_LINE_);
+	RakNet::OP_DELETE_ARRAY(connectionObject);
+	RakNet::OP_DELETE_ARRAY(connectionObjectAddresses);
 	packetizedTCP.Stop();
 	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
-	RakNet::OP_DELETE(cloudServerHelper, _FILE_AND_LINE_);
+	RakNet::OP_DELETE(cloudServerHelper);
 
 
 return 0;

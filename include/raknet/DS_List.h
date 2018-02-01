@@ -61,7 +61,7 @@ namespace DataStructures
 
         /// \brief Push an element at the end of the stack.
         /// \param[in] input The new element.
-        void Push(const list_type &input, const char *file, unsigned int line );
+        void Push(const list_type &input );
 
         /// \brief Pop an element from the end of the stack.
         /// \pre Size()>0
@@ -71,11 +71,11 @@ namespace DataStructures
         /// \brief Insert an element at position \a position in the list.
         /// \param[in] input The new element.
         /// \param[in] position The position of the new element.
-        void Insert( const list_type &input, const unsigned int position, const char *file, unsigned int line );
+        void Insert( const list_type &input, const unsigned int position );
 
         /// \brief Insert at the end of the list.
         /// \param[in] input The new element.
-        void Insert( const list_type &input, const char *file, unsigned int line );
+        void Insert( const list_type &input );
 
         /// \brief Replace the value at \a position by \a input.
         /// \details If the size of the list is less than @em position, it increase the capacity of
@@ -83,7 +83,7 @@ namespace DataStructures
         /// \param[in] input The element to replace at position @em position.
         /// \param[in] filler The element use to fill new allocated capacity.
         /// \param[in] position The position of input in the list.
-        void Replace( const list_type &input, const list_type filler, const unsigned int position, const char *file, unsigned int line );
+        void Replace( const list_type &input, const list_type filler, const unsigned int position );
 
         /// \brief Replace the last element of the list by \a input.
         /// \param[in] input The element used to replace the last element.
@@ -112,15 +112,15 @@ namespace DataStructures
         unsigned int Size( void ) const;
 
         /// \brief Clear the list
-        void Clear( bool doNotDeallocateSmallBlocks, const char *file, unsigned int line );
+        void Clear( bool doNotDeallocateSmallBlocks );
 
         /// \brief Preallocate the list, so it needs fewer reallocations at runtime.
-        void Preallocate( unsigned countNeeded, const char *file, unsigned int line );
+        void Preallocate( unsigned countNeeded );
 
         /// \brief Frees overallocated members, to use the minimum memory necessary.
         /// \attention
         /// This is a slow operation
-        void Compress( const char *file, unsigned int line );
+        void Compress(  );
 
     private:
         /// An array of user values
@@ -177,7 +177,7 @@ namespace DataStructures
     {
         if ( ( &original_copy ) != this )
         {
-            Clear( false, _FILE_AND_LINE_ );
+            Clear(false);
 
             // Allocate memory for copy
 
@@ -224,9 +224,9 @@ namespace DataStructures
         }
 
         template <class list_type>
-        void List<list_type>::Push(const list_type &input, const char *file, unsigned int line)
+        void List<list_type>::Push(const list_type &input)
         {
-            Insert(input, file, line);
+            Insert(input);
         }
 
         template <class list_type>
@@ -240,7 +240,7 @@ namespace DataStructures
         }
 
     template <class list_type>
-    void List<list_type>::Insert( const list_type &input, const unsigned int position, const char *file, unsigned int line )
+    void List<list_type>::Insert( const list_type &input, const unsigned int position )
     {
 #ifdef _DEBUG
         if (position>list_size)
@@ -291,7 +291,7 @@ namespace DataStructures
 
 
     template <class list_type>
-    void List<list_type>::Insert( const list_type &input, const char *file, unsigned int line )
+    void List<list_type>::Insert( const list_type &input )
     {
         // Reallocate list if necessary
 
@@ -330,7 +330,7 @@ namespace DataStructures
     }
 
     template <class list_type>
-        inline void List<list_type>::Replace( const list_type &input, const list_type filler, const unsigned int position, const char *file, unsigned int line )
+        inline void List<list_type>::Replace( const list_type &input, const list_type filler, const unsigned int position )
     {
         if ( ( list_size > 0 ) && ( position < list_size ) )
         {
@@ -448,7 +448,7 @@ namespace DataStructures
     }
 
     template <class list_type>
-    void List<list_type>::Clear( bool doNotDeallocateSmallBlocks, const char *file, unsigned int line )
+    void List<list_type>::Clear( bool doNotDeallocateSmallBlocks )
     {
         if ( allocation_size == 0 )
             return;
@@ -463,7 +463,7 @@ namespace DataStructures
     }
 
     template <class list_type>
-    void List<list_type>::Compress( const char *file, unsigned int line )
+    void List<list_type>::Compress(  )
     {
         list_type * new_array;
 
@@ -486,7 +486,7 @@ namespace DataStructures
     }
 
     template <class list_type>
-    void List<list_type>::Preallocate( unsigned countNeeded, const char *file, unsigned int line )
+    void List<list_type>::Preallocate( unsigned countNeeded )
     {
         unsigned amountToAllocate = allocation_size;
         if (allocation_size==0)

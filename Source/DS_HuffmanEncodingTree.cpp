@@ -41,17 +41,17 @@ void HuffmanEncodingTree::FreeMemory( void )
 
     HuffmanEncodingTreeNode *node;
 
-    nodeQueue.Push( root, _FILE_AND_LINE_  );
+    nodeQueue.Push( root);
 
     while ( nodeQueue.Size() > 0 )
     {
         node = nodeQueue.Pop();
 
         if ( node->left )
-            nodeQueue.Push( node->left, _FILE_AND_LINE_  );
+            nodeQueue.Push( node->left);
 
         if ( node->right )
-            nodeQueue.Push( node->right, _FILE_AND_LINE_  );
+            nodeQueue.Push( node->right);
 
         delete node;
     }

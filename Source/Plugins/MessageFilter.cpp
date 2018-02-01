@@ -72,7 +72,7 @@ void MessageFilter::SetAllowRPC4(bool allow, const char* uniqueID, int filterSet
     {
         if (objectExists==false)
         {
-            filterSet->allowedRPC4.InsertAtIndex(uniqueID, idx, _FILE_AND_LINE_);
+            filterSet->allowedRPC4.InsertAtIndex(uniqueID, idx);
             filterSet->allowedIDs[ID_RPC_PLUGIN]=true;
         }
     }
@@ -146,8 +146,8 @@ void MessageFilter::SetSystemFilterSet(AddressOrGUID addressOrGUID, int filterSe
         filteredSystem.filter = GetFilterSetByID(filterSetID);
     //    filteredSystem.addressOrGUID=addressOrGUID;
         filteredSystem.timeEnteredThisSet=RakNet::GetTimeMS();
-    //    systemList.Insert(addressOrGUID, filteredSystem, true, _FILE_AND_LINE_);
-        systemList.Push(addressOrGUID,filteredSystem,_FILE_AND_LINE_);
+    //    systemList.Insert(addressOrGUID, filteredSystem, true);
+        systemList.Push(addressOrGUID,filteredSystem);
     }
     else
     {
@@ -159,7 +159,7 @@ void MessageFilter::SetSystemFilterSet(AddressOrGUID addressOrGUID, int filterSe
         }
         else
         {
-            systemList.RemoveAtIndex(index, _FILE_AND_LINE_);
+            systemList.RemoveAtIndex(index);
         }
     }
 }
@@ -175,7 +175,7 @@ unsigned MessageFilter::GetSystemCount(int filterSetID) const
         unsigned count=0;
         DataStructures::List< FilteredSystem > itemList;
         DataStructures::List< AddressOrGUID > keyList;
-        systemList.GetAsList(itemList, keyList, _FILE_AND_LINE_);
+        systemList.GetAsList(itemList, keyList);
         for (i=0; i < itemList.Size(); i++)
             if (itemList[i].filter->filterSetID==filterSetID)
                 ++count;
@@ -204,12 +204,12 @@ void MessageFilter::DeleteFilterSet(int filterSetID)
 
         DataStructures::List< FilteredSystem > itemList;
         DataStructures::List< AddressOrGUID > keyList;
-        systemList.GetAsList(itemList, keyList, _FILE_AND_LINE_);
+        systemList.GetAsList(itemList, keyList);
         for (i=0; i < itemList.Size(); i++)
         {
             if (itemList[i].filter==filterSet)
             {
-                systemList.Remove(keyList[i], _FILE_AND_LINE_);
+                systemList.Remove(keyList[i]);
             }
         }
 
@@ -229,10 +229,10 @@ void MessageFilter::DeleteFilterSet(int filterSetID)
 void MessageFilter::Clear(void)
 {
     unsigned i;
-    systemList.Clear(_FILE_AND_LINE_);
+    systemList.Clear();
     for (i=0; i < filterList.Size(); i++)
         DeallocateFilterSet(filterList[i]);
-    filterList.Clear(false, _FILE_AND_LINE_);
+    filterList.Clear(false);
 }
 void MessageFilter::DeallocateFilterSet(FilterSet* filterSet)
 {
@@ -260,7 +260,7 @@ FilterSet* MessageFilter::GetFilterSetByID(int filterSetID)
         newFilterSet->invalidMessageCallback=0;
         newFilterSet->timeoutCallback=0;
         newFilterSet->timeoutUserData=0;
-        filterList.Insert(filterSetID, newFilterSet, true, _FILE_AND_LINE_);
+        filterList.Insert(filterSetID, newFilterSet, true);
         return newFilterSet;
     }
 }
@@ -292,7 +292,7 @@ void MessageFilter::Update(void)
     {
         DataStructures::List< FilteredSystem > itemList;
         DataStructures::List< AddressOrGUID > keyList;
-        systemList.GetAsList(itemList, keyList, _FILE_AND_LINE_);
+        systemList.GetAsList(itemList, keyList);
 
         unsigned int index;
         for (index=0; index < itemList.Size(); index++)
@@ -317,7 +317,7 @@ void MessageFilter::Update(void)
                     tcpInterface->CloseConnection(keyList[index].systemAddress);
 #endif
 
-                systemList.Remove(keyList[index], _FILE_AND_LINE_);
+                systemList.Remove(keyList[index]);
             }
         }
 
@@ -348,7 +348,7 @@ void MessageFilter::OnClosedConnection(const SystemAddress &systemAddress, RakNe
     aog.systemAddress=systemAddress;
 
     // Lost system, remove from the list
-    systemList.Remove(aog, _FILE_AND_LINE_);
+    systemList.Remove(aog);
 }
  PluginReceiveResult MessageFilter::OnReceive(Packet *packet)
 {

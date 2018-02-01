@@ -41,9 +41,9 @@ public:
 	RakString ErrorCodeToString(int errorCode);
 	void DestroyPeers();
 protected:
-	void *LoggedMalloc(size_t size, const char *file, unsigned int line);
-	void LoggedFree(void *p, const char *file, unsigned int line);
-	void* LoggedRealloc(void *p, size_t size, const char *file, unsigned int line);
+	void *LoggedMalloc(size_t size);
+	void LoggedFree(void *p);
+	void* LoggedRealloc(void *p, size_t size);
 private:
 	DataStructures::List <RakPeerInterface *> destroyList;
 

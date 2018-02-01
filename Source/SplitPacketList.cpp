@@ -30,7 +30,7 @@ bool RakNet::SplitPacketList::insert(RakNet::InternalPacket *internalPacket)
     }
 
     // There was an attempt to rewrite packet ptr
-    reliabilityLayer->FreeInternalPacketData(internalPacket, __FILE__, __LINE__);
+    reliabilityLayer->FreeInternalPacketData(internalPacket);
     reliabilityLayer->ReleaseToInternalPacketPool(internalPacket);
     return false;
 }

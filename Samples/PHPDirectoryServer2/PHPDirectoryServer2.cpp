@@ -184,7 +184,7 @@ HTTPReadResult PHPDirectoryServer2::ProcessHTTPRead(RakNet::RakString httpRead)
 			if (isCommand)
 			{
 				buff[buffIndex]=0;
-				columns.Push(RakString::NonVariadic(buff), _FILE_AND_LINE_);
+				columns.Push(RakString::NonVariadic(buff));
 				isCommand=false;
 				if (buff[0]!=0)
 					resultCode=HTTP_RESULT_GOT_TABLE;
@@ -192,7 +192,7 @@ HTTPReadResult PHPDirectoryServer2::ProcessHTTPRead(RakNet::RakString httpRead)
 			else
 			{
 				buff[buffIndex]=0;
-				values.Push(RakString::NonVariadic(buff), _FILE_AND_LINE_);
+				values.Push(RakString::NonVariadic(buff));
 				isCommand=true;
 			}
 			buffIndex=0;
@@ -201,11 +201,11 @@ HTTPReadResult PHPDirectoryServer2::ProcessHTTPRead(RakNet::RakString httpRead)
 		{
 			buff[buffIndex]=0;
 			buffIndex=0;
-			values.Push(RakString::NonVariadic(buff), _FILE_AND_LINE_);
+			values.Push(RakString::NonVariadic(buff));
 			isCommand=true;
 			PushColumnsAndValues(columns, values);
-			columns.Clear(true, _FILE_AND_LINE_);
-			values.Clear(true, _FILE_AND_LINE_);
+			columns.Clear(true);
+			values.Clear(true);
 
 		}
 		else
@@ -218,7 +218,7 @@ HTTPReadResult PHPDirectoryServer2::ProcessHTTPRead(RakNet::RakString httpRead)
 	if (buff[0] && columns.Size()==values.Size()+1)
 	{
 		buff[buffIndex]=0;
-		values.Push(RakString::NonVariadic(buff), _FILE_AND_LINE_);
+		values.Push(RakString::NonVariadic(buff));
 	}
 
 	PushColumnsAndValues(columns, values);

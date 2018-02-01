@@ -520,16 +520,16 @@ void RPC3::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStre
 // 		{
 // 			newRemoteFunction.functionIndex=remoteIndex;
 // 			newRemoteFunction.identifier = strIdentifier;
-// 			theList->InsertAtIndex(newRemoteFunction, insertionIndex, _FILE_AND_LINE_ );
+// 			theList->InsertAtIndex(newRemoteFunction, insertionIndex );
 // 		}
 // 	}
 // 	else
 // 	{
-// 		theList = RakNet::OP_NEW<DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> >(_FILE_AND_LINE_);
+// 		theList = RakNet::OP_NEW<DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> >();
 // 
 // 		newRemoteFunction.functionIndex=remoteIndex;
 // 		newRemoteFunction.identifier = strIdentifier;
-// 		theList->InsertAtEnd(newRemoteFunction, _FILE_AND_LINE_ );
+// 		theList->InsertAtEnd(newRemoteFunction );
 // 
 // 		if (isCall==true)
 // 			remoteFunctions.SetNew(systemAddress,theList);
@@ -567,30 +567,30 @@ void RPC3::Clear(void)
 // 	for (j=0; j < remoteFunctions.Size(); j++)
 // 	{
 // 		DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *theList = remoteFunctions[j];
-// 		RakNet::OP_DELETE(theList,_FILE_AND_LINE_);
+// 		RakNet::OP_DELETE(theList);
 // 	}
 // 	for (j=0; j < remoteSlots.Size(); j++)
 // 	{
 // 		DataStructures::OrderedList<RPCIdentifier, RemoteRPCFunction, RPC3::RemoteRPCFunctionComp> *theList = remoteSlots[j];
-// 		RakNet::OP_DELETE(theList,_FILE_AND_LINE_);
+// 		RakNet::OP_DELETE(theList);
 // 	}
 
 	DataStructures::List<RakNet::RakString> keyList;
 	DataStructures::List<LocalSlot*> outputList;
-	localSlots.GetAsList(outputList,keyList,_FILE_AND_LINE_);
+	localSlots.GetAsList(outputList,keyList);
 	for (j=0; j < outputList.Size(); j++)
 	{
-		RakNet::OP_DELETE(outputList[j],_FILE_AND_LINE_);
+		RakNet::OP_DELETE(outputList[j]);
 	}
-	localSlots.Clear(_FILE_AND_LINE_);
+	localSlots.Clear();
 
 	DataStructures::List<LocalRPCFunction*> outputList2;
-	localFunctions.GetAsList(outputList2,keyList,_FILE_AND_LINE_);
+	localFunctions.GetAsList(outputList2,keyList);
 	for (j=0; j < outputList2.Size(); j++)
 	{
-		RakNet::OP_DELETE(outputList2[j],_FILE_AND_LINE_);
+		RakNet::OP_DELETE(outputList2[j]);
 	}
-	localFunctions.Clear(_FILE_AND_LINE_);
+	localFunctions.Clear();
 //	remoteFunctions.Clear();
 //	remoteSlots.Clear();
 	outgoingExtraData.Reset();

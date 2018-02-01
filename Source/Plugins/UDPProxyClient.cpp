@@ -267,11 +267,11 @@ void UDPProxyClient::OnPingServers(Packet *packet)
     {
         incomingBs.Read(swp.serverAddress);
         swp.ping=DEFAULT_UNRESPONSIVE_PING_TIME_COORDINATOR;
-        psg->serversToPing.Push(swp, _FILE_AND_LINE_ );
+        psg->serversToPing.Push(swp );
         swp.serverAddress.ToString(false,ipStr);
         rakPeerInterface->Ping(ipStr,swp.serverAddress.GetPort(),false,0);
     }
-    pingServerGroups.Push(psg,_FILE_AND_LINE_);
+    pingServerGroups.Push(psg);
 }
 
 bool UDPProxyClient::PingServerGroup::AreAllServersPinged(void) const
@@ -306,7 +306,7 @@ void UDPProxyClient::Clear(void)
 {
     for (unsigned int i=0; i < pingServerGroups.Size(); i++)
         delete pingServerGroups[i];
-    pingServerGroups.Clear(false, _FILE_AND_LINE_);
+    pingServerGroups.Clear(false);
 }
 
 

@@ -221,7 +221,7 @@ void VariableDeltaSerializer::RemoveRemoteSystemVariableHistory(void)
 
         delete remoteSystemVariableHistoryList[idx];
     }
-    remoteSystemVariableHistoryList.Clear(false,_FILE_AND_LINE_);
+    remoteSystemVariableHistoryList.Clear(false);
 }
 
 VariableDeltaSerializer::RemoteSystemVariableHistory* VariableDeltaSerializer::GetRemoteSystemVariableHistory(RakNetGUID guid)
@@ -232,19 +232,19 @@ VariableDeltaSerializer::RemoteSystemVariableHistory* VariableDeltaSerializer::G
 
 VariableDeltaSerializer::ChangedVariablesList *VariableDeltaSerializer::AllocChangedVariablesList(void)
 {
-    VariableDeltaSerializer::ChangedVariablesList *p = updatedVariablesMemoryPool.Allocate(_FILE_AND_LINE_);
+    VariableDeltaSerializer::ChangedVariablesList *p = updatedVariablesMemoryPool.Allocate();
     p->bitWriteIndex=0;
     p->bitField[0]=0;
     return p;
 }
 void VariableDeltaSerializer::FreeChangedVariablesList(ChangedVariablesList *changedVariables)
 {
-    updatedVariablesMemoryPool.Release(changedVariables, _FILE_AND_LINE_);
+    updatedVariablesMemoryPool.Release(changedVariables);
 }
 void VariableDeltaSerializer::StoreChangedVariablesList(RemoteSystemVariableHistory *variableHistory, ChangedVariablesList *changedVariables, uint32_t sendReceipt)
 {
     changedVariables->sendReceipt=sendReceipt;
-    variableHistory->updatedVariablesHistory.Insert(changedVariables->sendReceipt,changedVariables,true,_FILE_AND_LINE_);
+    variableHistory->updatedVariablesHistory.Insert(changedVariables->sendReceipt,changedVariables,true);
 }
 
 VariableDeltaSerializer::RemoteSystemVariableHistory *VariableDeltaSerializer::StartVariableHistoryWrite(RakNetGUID guid)
@@ -256,7 +256,7 @@ VariableDeltaSerializer::RemoteSystemVariableHistory *VariableDeltaSerializer::S
     {
         variableHistory = new RemoteSystemVariableHistory;
         variableHistory->guid=guid;
-        remoteSystemVariableHistoryList.Push(variableHistory,_FILE_AND_LINE_);
+        remoteSystemVariableHistoryList.Push(variableHistory);
     }
     else
     {

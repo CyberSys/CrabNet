@@ -242,7 +242,7 @@ struct RemoteClient
     void Reset(void)
     {
         outgoingDataMutex.Lock();
-        outgoingData.Clear(_FILE_AND_LINE_);
+        outgoingData.Clear();
         outgoingDataMutex.Unlock();
     }
     void SetActive(bool a);

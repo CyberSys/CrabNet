@@ -32,7 +32,7 @@ void Rackspace::AddEventCallback(Rackspace2EventCallback *callback)
 {
     unsigned int idx = eventCallbacks.GetIndexOf(callback);
     if (idx == (unsigned int)-1)
-        eventCallbacks.Push(callback,_FILE_AND_LINE_);
+        eventCallbacks.Push(callback);
 }
 void Rackspace::RemoveEventCallback(Rackspace2EventCallback *callback)
 {
@@ -42,7 +42,7 @@ void Rackspace::RemoveEventCallback(Rackspace2EventCallback *callback)
 }
 void Rackspace::ClearEventCallbacks(void)
 {
-    eventCallbacks.Clear(true, _FILE_AND_LINE_);
+    eventCallbacks.Clear(true);
 }
 SystemAddress Rackspace::Authenticate(TCPInterface *_tcpInterface, const char *_authenticationURL, const char *_rackspaceCloudUsername, const char *_apiAccessKey)
 {
@@ -86,7 +86,7 @@ SystemAddress Rackspace::Authenticate(TCPInterface *_tcpInterface, const char *_
         ,_authenticationURL, _rackspaceCloudUsername, _apiAccessKey);
     tcpInterface->Send(command.C_String(), (unsigned int) command.GetLength(), ro.connectionAddress, false);
 
-    operations.Insert(ro,_FILE_AND_LINE_);
+    operations.Insert(ro);
     return ro.connectionAddress;
 }
 
@@ -140,10 +140,10 @@ void Rackspace::AddOperation(RackspaceOperationType type, RakNet::RakString http
     if (ro.isPendingAuthentication==false)
     {
         if (ExecuteOperation(ro))
-            operations.Insert(ro,_FILE_AND_LINE_);
+            operations.Insert(ro);
     }
     else
-        operations.Insert(ro,_FILE_AND_LINE_);
+        operations.Insert(ro);
 }
 void Rackspace::ListServers(void)
 {

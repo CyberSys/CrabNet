@@ -53,8 +53,8 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakString> params
 	serverID.port=serverPort;
 
 	server=RakPeerInterface::GetInstance();
-	destroyList.Clear(false,_FILE_AND_LINE_);
-	destroyList.Push(server,_FILE_AND_LINE_);
+	destroyList.Clear(false);
+	destroyList.Push(server);
 	//	server->InitializeSecurity(0,0,0,0);
 	SocketDescriptor socketDescriptor(serverPort,0);
 	server->Startup(NUMBER_OF_CLIENTS, &socketDescriptor, 1);
@@ -64,7 +64,7 @@ int DroppedConnectionConvertTest::RunTest(DataStructures::List<RakString> params
 	for (index=0; index < NUMBER_OF_CLIENTS; index++)
 	{
 		clients[index]=RakPeerInterface::GetInstance();
-		destroyList.Push(clients[index],_FILE_AND_LINE_);
+		destroyList.Push(clients[index]);
 		SocketDescriptor socketDescriptor2(serverPort+1+index,0);
 		clients[index]->Startup(1, &socketDescriptor2, 1);
 		if (clients[index]->Connect("127.0.0.1", serverPort, 0, 0)!=CONNECTION_ATTEMPT_STARTED)

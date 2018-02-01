@@ -112,7 +112,7 @@ class AutopatcherPostgreRepository2_WithXDelta : public RakNet::AutopatcherPostg
 			fseek(fpPatch, 0, SEEK_END);
 			*patchLength = ftell(fpPatch);
 			fseek(fpPatch, 0, SEEK_SET);
-			*patch = (char*) rakMalloc_Ex(*patchLength, _FILE_AND_LINE_);
+			*patch = (char*) rakMalloc_Ex(*patchLength);
 			fread(*patch, 1, *patchLength, fpPatch);
 			fclose(fpPatch);
 

@@ -723,7 +723,7 @@ struct BinaryDataBlock
 	BinaryDataBlock() {binaryData=0; binaryDataLength=0;}
 	~BinaryDataBlock() {
 		if (binaryData)
-			rakFree_Ex(binaryData, _FILE_AND_LINE_ );
+			rakFree_Ex(binaryData );
 	}
 	void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
 };
@@ -744,7 +744,7 @@ struct IndexedBinaryValue
 {
 	IndexedBinaryValue() {index=0; value=0; valueByteLength=0; searchOperator=-1; type=(unsigned char)-1;}
 	IndexedBinaryValue(unsigned int idx, char* val, unsigned short valLength) : index(idx), value(val), valueByteLength(valLength) {searchOperator=-1; type=(unsigned char)-1;}
-	~IndexedBinaryValue() {if (value) rakFree_Ex(value,_FILE_AND_LINE_);};
+	~IndexedBinaryValue() {if (value) rakFree_Ex(value);};
 
 	/// Index of the value to set, required.
 	unsigned int index;
@@ -759,8 +759,8 @@ struct IndexedBinaryValue
 };
 struct CreateAccountParameters
 {
-	CreateAccountParameters() {ageInDays=0; binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~CreateAccountParameters() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	CreateAccountParameters() {ageInDays=0; binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~CreateAccountParameters() {/*RakNet::OP_DELETE(binaryData);*/}
 	/// [in] Self-apparent
 	RakNet::RakString firstName;
 	/// [in] Self-apparent
@@ -817,8 +817,8 @@ struct CreateAccountParameters
 };
 struct PendingInvite
 {
-	PendingInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~PendingInvite() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	PendingInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~PendingInvite() {/*RakNet::OP_DELETE(binaryData);*/}
 	RakNet::RakString sender;
 	RakNet::RakString subject;
 	RakNet::RakString body;
@@ -851,8 +851,8 @@ struct FriendInfo
 };
 struct EmailResult
 {
-	EmailResult() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~EmailResult() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	EmailResult() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~EmailResult() {/*RakNet::OP_DELETE(binaryData);*/}
 	RakNet::RakString sender;
 	RakNet::RakString recipient;
 	RakNet::RakString subject;
@@ -877,8 +877,8 @@ struct MatchParticipant
 };
 struct SubmittedMatch
 {
-	SubmittedMatch() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~SubmittedMatch() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	SubmittedMatch() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~SubmittedMatch() {/*RakNet::OP_DELETE(binaryData);*/}
 	DataStructures::List<MatchParticipant> matchParticipants;
 	RakNet::RakString matchNote;
 	RakNetSmartPtr<BinaryDataBlock> binaryData;
@@ -890,8 +890,8 @@ struct SubmittedMatch
 };
 struct ClanInfo
 {
-	ClanInfo() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~ClanInfo() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	ClanInfo() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~ClanInfo() {/*RakNet::OP_DELETE(binaryData);*/}
 	RakNet::RakString clanName;
 	RakNet::RakString description;
 	RakNet::RakString clanLeader;
@@ -988,8 +988,8 @@ struct System_DestroyDatabase : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct System_CreateTitle : public Lobby2Message
 {
-	System_CreateTitle() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~System_CreateTitle() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	System_CreateTitle() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~System_CreateTitle() {/*RakNet::OP_DELETE(binaryData);*/}
 	__L2_MSG_BASE_IMPL(System_CreateTitle)
 	virtual bool RequiresAdmin(void) const {return true;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1042,8 +1042,8 @@ struct System_GetTitleRequiredAge : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct System_GetTitleBinaryData : public Lobby2Message
 {
-	System_GetTitleBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~System_GetTitleBinaryData() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	System_GetTitleBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~System_GetTitleBinaryData() {/*RakNet::OP_DELETE(binaryData);*/}
 	__L2_MSG_BASE_IMPL(System_GetTitleBinaryData)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1578,8 +1578,8 @@ struct Client_PerTitleIntegerStorage : public Lobby2Message
 struct Client_PerTitleBinaryStorage : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Client_PerTitleBinaryStorage)
-		Client_PerTitleBinaryStorage() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Client_PerTitleBinaryStorage() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+		Client_PerTitleBinaryStorage() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Client_PerTitleBinaryStorage() {/*RakNet::OP_DELETE(binaryData);*/}
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -1644,8 +1644,8 @@ struct Client_GetPresence : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Friends_SendInvite : public Lobby2Message
 {
-	Friends_SendInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Friends_SendInvite() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Friends_SendInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Friends_SendInvite() {/*RakNet::OP_DELETE(binaryData);*/}
 	__L2_MSG_BASE_IMPL(Friends_SendInvite)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1670,8 +1670,8 @@ struct Friends_SendInvite : public Lobby2Message
 struct Friends_AcceptInvite : public Lobby2Message
 {
 
-	Friends_AcceptInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Friends_AcceptInvite() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Friends_AcceptInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Friends_AcceptInvite() {/*RakNet::OP_DELETE(binaryData);*/}
 	__L2_MSG_BASE_IMPL(Friends_AcceptInvite)
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
@@ -1698,8 +1698,8 @@ struct Friends_RejectInvite : public Lobby2Message
 {
 	__L2_MSG_BASE_IMPL(Friends_RejectInvite)
 
-	Friends_RejectInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Friends_RejectInvite() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Friends_RejectInvite() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Friends_RejectInvite() {/*RakNet::OP_DELETE(binaryData);*/}
 		virtual bool RequiresAdmin(void) const {return false;}
 	virtual bool RequiresRankingPermission(void) const {return false;}
 	virtual bool CancelOnDisconnect(void) const {return false;}
@@ -1754,8 +1754,8 @@ struct Friends_GetFriends : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Friends_Remove : public Lobby2Message
 {
-	Friends_Remove() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Friends_Remove() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Friends_Remove() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Friends_Remove() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Friends_Remove)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -1836,8 +1836,8 @@ struct BookmarkedUsers_Get : public Lobby2Message
 struct Emails_Send : public Lobby2Message
 {
 
-	Emails_Send() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	virtual ~Emails_Send() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Emails_Send() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	virtual ~Emails_Send() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Emails_Send)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -1963,8 +1963,8 @@ struct Ranking_GetMatches : public Lobby2Message
 struct Ranking_GetMatchBinaryData : public Lobby2Message
 {
 
-	Ranking_GetMatchBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Ranking_GetMatchBinaryData() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Ranking_GetMatchBinaryData() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Ranking_GetMatchBinaryData() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Ranking_GetMatchBinaryData)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2125,8 +2125,8 @@ struct Ranking_GetRating : public Lobby2Message
 struct Clans_Create : public Lobby2Message
 {
 
-	Clans_Create() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_Create() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_Create() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_Create() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_Create)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2152,8 +2152,8 @@ struct Clans_Create : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_SetProperties : public Lobby2Message
 {
-	Clans_SetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_SetProperties() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_SetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_SetProperties() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_SetProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2173,8 +2173,8 @@ struct Clans_SetProperties : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetProperties : public Lobby2Message
 {
-	Clans_GetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_GetProperties() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_GetProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_GetProperties() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_GetProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2198,8 +2198,8 @@ struct Clans_GetProperties : public Lobby2Message
 struct Clans_SetMyMemberProperties : public Lobby2Message
 {
 
-	Clans_SetMyMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_SetMyMemberProperties() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_SetMyMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_SetMyMemberProperties() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_SetMyMemberProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2275,8 +2275,8 @@ struct Clans_SetMemberRank : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_GetMemberProperties : public Lobby2Message
 {
-	Clans_GetMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_GetMemberProperties() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_GetMemberProperties() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_GetMemberProperties() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_GetMemberProperties)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2323,8 +2323,8 @@ struct Clans_ChangeHandle : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_Leave : public Lobby2Message
 {
-	Clans_Leave() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_Leave() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_Leave() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_Leave() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_Leave)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2369,8 +2369,8 @@ struct Clans_Get : public Lobby2Message
 struct Clans_SendJoinInvitation : public Lobby2Message
 {
 	
-	Clans_SendJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-		~Clans_SendJoinInvitation() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_SendJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+		~Clans_SendJoinInvitation() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_SendJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2395,8 +2395,8 @@ struct Clans_SendJoinInvitation : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_WithdrawJoinInvitation : public Lobby2Message
 {
-	Clans_WithdrawJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_WithdrawJoinInvitation() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_WithdrawJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_WithdrawJoinInvitation() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_WithdrawJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2419,8 +2419,8 @@ struct Clans_WithdrawJoinInvitation : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_AcceptJoinInvitation : public Lobby2Message
 {
-	Clans_AcceptJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_AcceptJoinInvitation() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_AcceptJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_AcceptJoinInvitation() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_AcceptJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2445,8 +2445,8 @@ struct Clans_AcceptJoinInvitation : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_RejectJoinInvitation : public Lobby2Message
 {
-	Clans_RejectJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_RejectJoinInvitation() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_RejectJoinInvitation() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_RejectJoinInvitation() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_RejectJoinInvitation)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2488,8 +2488,8 @@ struct Clans_DownloadInvitationList : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_SendJoinRequest : public Lobby2Message
 {
-	Clans_SendJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_SendJoinRequest() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_SendJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_SendJoinRequest() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_SendJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2514,8 +2514,8 @@ struct Clans_SendJoinRequest : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_WithdrawJoinRequest : public Lobby2Message
 {
-	Clans_WithdrawJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_WithdrawJoinRequest() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_WithdrawJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_WithdrawJoinRequest() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_WithdrawJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2540,8 +2540,8 @@ struct Clans_WithdrawJoinRequest : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_AcceptJoinRequest : public Lobby2Message
 {
-	Clans_AcceptJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_AcceptJoinRequest() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_AcceptJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_AcceptJoinRequest() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_AcceptJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2567,8 +2567,8 @@ struct Clans_AcceptJoinRequest : public Lobby2Message
 /// \details 
 struct Clans_RejectJoinRequest : public Lobby2Message
 {
-	Clans_RejectJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_RejectJoinRequest() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_RejectJoinRequest() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_RejectJoinRequest() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_RejectJoinRequest)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2611,8 +2611,8 @@ struct Clans_DownloadRequestList : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_KickAndBlacklistUser : public Lobby2Message
 {
-	Clans_KickAndBlacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_KickAndBlacklistUser() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_KickAndBlacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_KickAndBlacklistUser() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_KickAndBlacklistUser)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2638,8 +2638,8 @@ struct Clans_KickAndBlacklistUser : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_UnblacklistUser : public Lobby2Message
 {
-	Clans_UnblacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_UnblacklistUser() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_UnblacklistUser() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_UnblacklistUser() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_UnblacklistUser)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2717,8 +2717,8 @@ struct Clans_GetList : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_CreateBoard : public Lobby2Message
 {
-	Clans_CreateBoard() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_CreateBoard() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_CreateBoard() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_CreateBoard() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_CreateBoard)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2762,8 +2762,8 @@ struct Clans_DestroyBoard : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_CreateNewTopic : public Lobby2Message
 {
-	Clans_CreateNewTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_CreateNewTopic() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_CreateNewTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_CreateNewTopic() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_CreateNewTopic)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -2788,8 +2788,8 @@ struct Clans_CreateNewTopic : public Lobby2Message
 /// \ingroup LOBBY_2_COMMANDS
 struct Clans_ReplyToTopic : public Lobby2Message
 {
-	Clans_ReplyToTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>(_FILE_AND_LINE_);}
-	~Clans_ReplyToTopic() {/*RakNet::OP_DELETE(binaryData,_FILE_AND_LINE_);*/}
+	Clans_ReplyToTopic() {binaryData=RakNet::OP_NEW<BinaryDataBlock>();}
+	~Clans_ReplyToTopic() {/*RakNet::OP_DELETE(binaryData);*/}
 
 	__L2_MSG_BASE_IMPL(Clans_ReplyToTopic)
 		virtual bool RequiresAdmin(void) const {return false;}
@@ -3762,7 +3762,7 @@ struct Notification_Console_Accepted_Room_Invite : public Lobby2Message
 };
 // --------------------------------------------- Base interface of factory class for all messages --------------------------------------------
 #define __L2_ALLOCATE_AND_DEFINE(FACTORY, __TYPE__,VAR_NAME) RakNet::__TYPE__ *VAR_NAME = (RakNet::__TYPE__ *) FACTORY->Alloc(L2MID_##__TYPE__); RakAssert(VAR_NAME);
-#define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >( _FILE_AND_LINE_ ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
+#define __L2_MSG_FACTORY_BASE(__NAME__) {case L2MID_##__NAME__ : Lobby2Message *m = RakNet::OP_NEW< __NAME__ >(  ) ; RakAssert(m->GetID()==L2MID_##__NAME__ ); m->requestId=nextRequestId++; return m;}
 /// \ingroup LOBBY_2_GROUP
 struct Lobby2MessageFactory
 {
@@ -3947,7 +3947,7 @@ struct Lobby2MessageFactory
 			// Only delete one message at a time or else GetRefCount may be called on the same message in two threads at the same time and not be accurate
 			deallocateLockMutex.Lock();
 			if (msg->GetRefCount()<=0)
-				RakNet::OP_DELETE<Lobby2Message>(msg, _FILE_AND_LINE_ );
+				RakNet::OP_DELETE<Lobby2Message>(msg );
 			deallocateLockMutex.Unlock();
 		}
 	}

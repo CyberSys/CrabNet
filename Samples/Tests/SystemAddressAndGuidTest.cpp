@@ -70,11 +70,11 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakString> params,boo
 {
 
 	RakPeerInterface *server,*client;
-	destroyList.Clear(false,_FILE_AND_LINE_);
+	destroyList.Clear(false);
 
 	printf("Testing IsActive\n");
 	client=RakPeerInterface::GetInstance();
-	destroyList.Push(	client,_FILE_AND_LINE_);
+	destroyList.Push(	client);
 	if (client->IsActive())
 	{
 
@@ -315,22 +315,22 @@ bool SystemAddressAndGuidTest::compareSystemAddresses(SystemAddress ad1,SystemAd
 SystemAddressAndGuidTest::SystemAddressAndGuidTest(void)
 {
 
-	errorList.Push("Client was active but shouldn't be yet",_FILE_AND_LINE_);
-	errorList.Push("Client was not active but should be",_FILE_AND_LINE_);
-	errorList.Push("Could not connect the client",_FILE_AND_LINE_);
-	errorList.Push("Mismatch between guidList size and systemList size ",_FILE_AND_LINE_);
-	errorList.Push("NumberOfConnections problem",_FILE_AND_LINE_);
-	errorList.Push("SystemList problem with GetSystemList",_FILE_AND_LINE_);
-	errorList.Push("Both SystemList and Number of connections have problems and report different results",_FILE_AND_LINE_);
-	errorList.Push("Both SystemList and Number of connections have problems and report same results",_FILE_AND_LINE_);
-	errorList.Push("Undefined Error",_FILE_AND_LINE_);
-	errorList.Push("System address from list is wrong.",_FILE_AND_LINE_);
-	errorList.Push("Guid from list is wrong",_FILE_AND_LINE_);
-	errorList.Push("GetSystemAddressFromIndex failed to return correct values",_FILE_AND_LINE_);
-	errorList.Push("GetSystemAddressFromGuid failed to return correct values",_FILE_AND_LINE_);
-	errorList.Push("GetGuidFromSystemAddress failed to return correct values",_FILE_AND_LINE_);
-	errorList.Push("GetGUIDFromIndex failed to return correct values",_FILE_AND_LINE_);
-	errorList.Push("GetExternalID failed to return correct values",_FILE_AND_LINE_);
+	errorList.Push("Client was active but shouldn't be yet");
+	errorList.Push("Client was not active but should be");
+	errorList.Push("Could not connect the client");
+	errorList.Push("Mismatch between guidList size and systemList size ");
+	errorList.Push("NumberOfConnections problem");
+	errorList.Push("SystemList problem with GetSystemList");
+	errorList.Push("Both SystemList and Number of connections have problems and report different results");
+	errorList.Push("Both SystemList and Number of connections have problems and report same results");
+	errorList.Push("Undefined Error");
+	errorList.Push("System address from list is wrong.");
+	errorList.Push("Guid from list is wrong");
+	errorList.Push("GetSystemAddressFromIndex failed to return correct values");
+	errorList.Push("GetSystemAddressFromGuid failed to return correct values");
+	errorList.Push("GetGuidFromSystemAddress failed to return correct values");
+	errorList.Push("GetGUIDFromIndex failed to return correct values");
+	errorList.Push("GetExternalID failed to return correct values");
 
 }
 

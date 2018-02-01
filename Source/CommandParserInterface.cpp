@@ -122,7 +122,7 @@ void CommandParserInterface::RegisterCommand(unsigned char parameterCount, const
     rc.command = command;
     rc.commandHelp = commandHelp;
     rc.parameterCount = parameterCount;
-    commandList.Insert(command, rc, true, _FILE_AND_LINE_);
+    commandList.Insert(command, rc, true);
 }
 
 bool CommandParserInterface::GetRegisteredCommand(const char *command, RegisteredCommand *rc)

@@ -279,14 +279,14 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(Packet *pac
         fw->timeRequestedPings=RakNet::GetTimeMS();
         unsigned int copyIndex;
         for (copyIndex=0; copyIndex < serverList.Size(); copyIndex++)
-            fw->remainingServersToTry.Push(serverList[copyIndex], _FILE_AND_LINE_ );
-        forwardingRequestList.InsertAtIndex(fw, insertionIndex, _FILE_AND_LINE_ );
+            fw->remainingServersToTry.Push(serverList[copyIndex] );
+        forwardingRequestList.InsertAtIndex(fw, insertionIndex );
     }
     else
     {
         fw->timeRequestedPings=0;
         fw->currentlyAttemptedServerAddress=serverList[0];
-        forwardingRequestList.InsertAtIndex(fw, insertionIndex, _FILE_AND_LINE_ );
+        forwardingRequestList.InsertAtIndex(fw, insertionIndex );
         SendForwardingRequest(sourceAddress, targetAddress, fw->currentlyAttemptedServerAddress, fw->timeoutOnNoDataMS);
     }
 }
@@ -338,7 +338,7 @@ void UDPProxyCoordinator::OnLoginRequestFromServerToCoordinator(Packet *packet)
         rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
         return;
     }
-    serverList.Push(packet->systemAddress, _FILE_AND_LINE_ );
+    serverList.Push(packet->systemAddress );
     outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
     outgoingBs.Write((MessageID)ID_UDP_PROXY_LOGIN_SUCCESS_FROM_COORDINATOR_TO_SERVER);
     outgoingBs.Write(password);
@@ -463,7 +463,7 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(Packet *pack
                 if (fw->sourceServerPings[index2].ping >= swp.ping )
                     break;
             }
-            fw->sourceServerPings.Insert(swp, index2, _FILE_AND_LINE_);
+            fw->sourceServerPings.Insert(swp, index2);
         }
     }
     else
@@ -479,7 +479,7 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(Packet *pack
                 if (fw->targetServerPings[index2].ping >= swp.ping )
                     break;
             }
-            fw->sourceServerPings.Insert(swp, index2, _FILE_AND_LINE_);
+            fw->sourceServerPings.Insert(swp, index2);
         }
     }
 
@@ -527,12 +527,12 @@ void UDPProxyCoordinator::SendAllBusy(SystemAddress senderClientAddress, SystemA
 }
 void UDPProxyCoordinator::Clear(void)
 {
-    serverList.Clear(true, _FILE_AND_LINE_);
+    serverList.Clear(true);
     for (unsigned int i=0; i < forwardingRequestList.Size(); i++)
     {
         delete forwardingRequestList[i];
     }
-    forwardingRequestList.Clear(false, _FILE_AND_LINE_);
+    forwardingRequestList.Clear(false);
 }
 void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry(void)
 {
@@ -557,12 +557,12 @@ void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry(void)
             swp.ping+=(unsigned short) (targetServerPings[idx].ping);
         else
             swp.ping+=(unsigned short) (DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME);
-        swpList.Insert(swp.ping, swp, false, _FILE_AND_LINE_);
+        swpList.Insert(swp.ping, swp, false);
     }
-    remainingServersToTry.Clear(_FILE_AND_LINE_ );
+    remainingServersToTry.Clear( );
     for (idx=0; idx < swpList.Size(); idx++)
     {
-        remainingServersToTry.Push(swpList[idx].serverAddress, _FILE_AND_LINE_ );
+        remainingServersToTry.Push(swpList[idx].serverAddress );
     }
 }
 

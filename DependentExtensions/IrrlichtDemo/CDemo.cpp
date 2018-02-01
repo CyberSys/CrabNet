@@ -1064,7 +1064,7 @@ void CDemo::UpdateRakNet(void)
 					
 					// Query cloud for other running game instances
 					RakNet::CloudQuery cloudQuery;
-					cloudQuery.keys.Push(RakNet::CloudKey("IrrlichtDemo",0),_FILE_AND_LINE_);
+					cloudQuery.keys.Push(RakNet::CloudKey("IrrlichtDemo",0));
 					cloudClient->Get(&cloudQuery, packet->guid);
 				}
 			}
@@ -1192,7 +1192,7 @@ KeyIsDown[KEY_KEY_D];
 }
 void CDemo::PushMessage(RakNet::RakString rs)
 {
-	outputMessages.Push(rs,_FILE_AND_LINE_);
+	outputMessages.Push(rs);
 	if (whenOutputMessageStarted==0)
 	{
 		whenOutputMessageStarted=RakNet::GetTimeMS();
@@ -1205,7 +1205,7 @@ const char *CDemo::GetCurrentMessage(void)
 	RakNet::TimeMS curTime = RakNet::GetTimeMS();
 	if (curTime-whenOutputMessageStarted>2500)
 	{
-		outputMessages.Pop(_FILE_AND_LINE_);
+		outputMessages.Pop();
 		whenOutputMessageStarted=curTime;
 	}
 

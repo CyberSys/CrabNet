@@ -189,7 +189,7 @@ IGNORERAKPEERANDINTERFACE(SetIncomingDatagramEventHandler( bool (*_incomingDatag
 %ignore RakNet::PluginInterface2::SetPacketizedTCP;
 
 //ByteQueue
-%ignore DataStructures::ByteQueue::WriteBytes(const char *in, unsigned length, const char *file, unsigned int line);
+%ignore DataStructures::ByteQueue::WriteBytes(const char *in, unsigned length);
 %ignore DataStructures::ByteQueue::ReadBytes(char *out, unsigned maxLengthToRead, bool peek);
 %ignore DataStructures::ByteQueue::PeekContiguousBytes(unsigned int *outLength) const;
 

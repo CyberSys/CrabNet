@@ -80,11 +80,11 @@ bool FullyConnectedMesh2::IsHostSystem(void) const
 }
 void FullyConnectedMesh2::GetHostOrder(DataStructures::List<RakNetGUID> &hostList)
 {
-    hostList.Clear(true, _FILE_AND_LINE_);
+    hostList.Clear(true);
 
     if (ourFCMGuid==0 || fcm2ParticipantList.Size()==0)
     {
-        hostList.Push(rakPeerInterface->GetMyGUID(), _FILE_AND_LINE_);
+        hostList.Push(rakPeerInterface->GetMyGUID());
         return;
     }
 
@@ -93,13 +93,13 @@ void FullyConnectedMesh2::GetHostOrder(DataStructures::List<RakNetGUID> &hostLis
     fcm2.rakNetGuid=rakPeerInterface->GetMyGUID();
 
     DataStructures::OrderedList<FCM2Participant*, FCM2Participant*, FCM2ParticipantComp> olist;
-    olist.Insert(&fcm2, &fcm2, true, _FILE_AND_LINE_);
+    olist.Insert(&fcm2, &fcm2, true);
     for (unsigned int i=0; i < fcm2ParticipantList.Size(); i++)
-        olist.Insert(fcm2ParticipantList[i], fcm2ParticipantList[i], true, _FILE_AND_LINE_);
+        olist.Insert(fcm2ParticipantList[i], fcm2ParticipantList[i], true);
 
     for (unsigned int i=0; i < olist.Size(); i++)
     {
-        hostList.Push(olist[i]->rakNetGuid, _FILE_AND_LINE_);
+        hostList.Push(olist[i]->rakNetGuid);
     }
 }
 bool FullyConnectedMesh2::IsConnectedHost(void) const
@@ -150,7 +150,7 @@ bool FullyConnectedMesh2::AddParticipantInternal( RakNetGUID rakNetGuid, FCM2Gui
         participant->userContext.Write(userContext);
     }
     */
-    fcm2ParticipantList.Push(participant,_FILE_AND_LINE_);
+    fcm2ParticipantList.Push(participant);
 
     SendFCMGuidRequest(rakNetGuid);
 
@@ -173,10 +173,10 @@ void FullyConnectedMesh2::AddParticipant( RakNetGUID rakNetGuid )
 }
 void FullyConnectedMesh2::GetParticipantList(DataStructures::List<RakNetGUID> &participantList)
 {
-    participantList.Clear(true, _FILE_AND_LINE_);
+    participantList.Clear(true);
     unsigned int i;
     for (i=0; i < fcm2ParticipantList.Size(); i++)
-        participantList.Push(fcm2ParticipantList[i]->rakNetGuid, _FILE_AND_LINE_);
+        participantList.Push(fcm2ParticipantList[i]->rakNetGuid);
 }
 bool FullyConnectedMesh2::HasParticipant(RakNetGUID participantGuid)
 {
@@ -415,7 +415,7 @@ void FullyConnectedMesh2::Clear(void)
     {
         delete fcm2ParticipantList[i];
     }
-    fcm2ParticipantList.Clear(false, _FILE_AND_LINE_);
+    fcm2ParticipantList.Clear(false);
 
     for (unsigned int i=0; i < joinsInProgress.Size(); i++)
     {
@@ -429,7 +429,7 @@ void FullyConnectedMesh2::Clear(void)
 
         delete joinsInProgress[i];
     }
-    joinsInProgress.Clear(true, _FILE_AND_LINE_);
+    joinsInProgress.Clear(true);
 
     totalConnectionCount=0;
     ourFCMGuid=0;
@@ -899,8 +899,8 @@ void FullyConnectedMesh2::RespondOnVerifiedJoinCapable(Packet *packet, bool acce
 }
 void FullyConnectedMesh2::GetVerifiedJoinRequiredProcessingList(RakNetGUID host, DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids, DataStructures::List<BitStream*> &userData)
 {
-    addresses.Clear(true, _FILE_AND_LINE_);
-    guids.Clear(true, _FILE_AND_LINE_);
+    addresses.Clear(true);
+    guids.Clear(true);
 
     unsigned int curIndex = GetJoinsInProgressIndex(host);
     if (curIndex!=(unsigned int) -1)
@@ -911,16 +911,16 @@ void FullyConnectedMesh2::GetVerifiedJoinRequiredProcessingList(RakNetGUID host,
         {
             if (vjip->vjipMembers[j].joinInProgressState==JIPS_PROCESSING)
             {
-                addresses.Push(vjip->vjipMembers[j].systemAddress, _FILE_AND_LINE_);
-                guids.Push(vjip->vjipMembers[j].guid, _FILE_AND_LINE_);
-                userData.Push(vjip->vjipMembers[j].userData, _FILE_AND_LINE_);
+                addresses.Push(vjip->vjipMembers[j].systemAddress);
+                guids.Push(vjip->vjipMembers[j].guid);
+                userData.Push(vjip->vjipMembers[j].userData);
             }
         }
     }
 }
 void FullyConnectedMesh2::GetVerifiedJoinAcceptedAdditionalData(Packet *packet, bool *thisSystemAccepted, DataStructures::List<RakNetGUID> &systemsAccepted, BitStream *additionalData)
 {
-    systemsAccepted.Clear(true, _FILE_AND_LINE_);
+    systemsAccepted.Clear(true);
 
     RakNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(sizeof(MessageID));
@@ -936,13 +936,13 @@ void FullyConnectedMesh2::GetVerifiedJoinAcceptedAdditionalData(Packet *packet, 
         for (unsigned short i=0; i < listSize; i++)
         {
             bsIn.Read(systemToAddGuid);
-            systemsAccepted.Push(systemToAddGuid, _FILE_AND_LINE_);
+            systemsAccepted.Push(systemToAddGuid);
         }
-        systemsAccepted.Push(packet->guid, _FILE_AND_LINE_);
+        systemsAccepted.Push(packet->guid);
     }
     else
     {
-        systemsAccepted.Push(systemToAddGuid, _FILE_AND_LINE_);
+        systemsAccepted.Push(systemToAddGuid);
         bsIn.IgnoreBytes(listSize*RakNetGUID::size());
     }
     if (additionalData)
@@ -1007,7 +1007,7 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinStart(Packet *packet)
                 // 11/13/2013 - ReadVerifiedJoinInProgressMember already sets joinInProgressState
                 // http://www.jenkinssoftware.com/forum/index.php?topic=5211.0
                 // vjipm.joinInProgressState=JIPS_PROCESSING;
-                vjip->vjipMembers.Push(vjipm, _FILE_AND_LINE_);
+                vjip->vjipMembers.Push(vjipm);
 
                 // Allow resend of ID_FCM2_VERIFIED_JOIN_CAPABLE
                 //vjip->sentResults=false;
@@ -1047,7 +1047,7 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinStart(Packet *packet)
         WriteVJCUserData(&bsOut);
         SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
         //vjip->sentResults=true;
-        joinsInProgress.Push(vjip, _FILE_AND_LINE_);
+        joinsInProgress.Push(vjip);
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
     }
 
@@ -1057,10 +1057,10 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinStart(Packet *packet)
     {
         VerifiedJoinInProgressMember vjipm;
         ReadVerifiedJoinInProgressMember(&bsIn, &vjipm);
-        vjip->vjipMembers.Push(vjipm, _FILE_AND_LINE_);
+        vjip->vjipMembers.Push(vjipm);
     }
 
-    joinsInProgress.Push(vjip, _FILE_AND_LINE_);
+    joinsInProgress.Push(vjip);
 
     // 11/13/2013 - ReadVerifiedJoinInProgressMember may set JIPS_CONNECTED, so this may already be done
     // http://www.jenkinssoftware.com/forum/index.php?topic=5211.0
@@ -1100,7 +1100,7 @@ void FullyConnectedMesh2::DecomposeJoinCapable(Packet *packet, VerifiedJoinInPro
         bsIn.ReadCasted<unsigned char>(member.joinInProgressState);
         member.userData = 0;
         member.workingFlag=false;
-        vjip->vjipMembers.Push(member, _FILE_AND_LINE_);
+        vjip->vjipMembers.Push(member);
     }
 }
 PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinCapable(Packet *packet)
@@ -1396,14 +1396,14 @@ void FullyConnectedMesh2::CategorizeVJIP(VerifiedJoinInProgress *vjip,
         unsigned int j = GetVerifiedJoinInProgressMemberIndex(fcm2ParticipantList[i]->rakNetGuid, vjip);
         if (j==(unsigned int)-1)
         {
-            participatingMembersNotOnClient.Push(fcm2ParticipantList[i]->rakNetGuid, _FILE_AND_LINE_);
+            participatingMembersNotOnClient.Push(fcm2ParticipantList[i]->rakNetGuid);
         }
         else
         {
             if (vjip->vjipMembers[j].joinInProgressState==JIPS_FAILED)
-                participatingMembersOnClientFailed.Push(fcm2ParticipantList[i]->rakNetGuid, _FILE_AND_LINE_);
+                participatingMembersOnClientFailed.Push(fcm2ParticipantList[i]->rakNetGuid);
             else
-                participatingMembersOnClientSucceeded.Push(fcm2ParticipantList[i]->rakNetGuid, _FILE_AND_LINE_);
+                participatingMembersOnClientSucceeded.Push(fcm2ParticipantList[i]->rakNetGuid);
             vjip->vjipMembers[j].workingFlag=true;
         }
     }
@@ -1414,9 +1414,9 @@ void FullyConnectedMesh2::CategorizeVJIP(VerifiedJoinInProgress *vjip,
         if (vjip->vjipMembers[j].workingFlag==false)
         {
             if (vjip->vjipMembers[j].joinInProgressState==JIPS_FAILED)
-                clientMembersNotParticipatingFailed.Push(vjip->vjipMembers[j].guid, _FILE_AND_LINE_);
+                clientMembersNotParticipatingFailed.Push(vjip->vjipMembers[j].guid);
             else
-                clientMembersNotParticipatingSucceeded.Push(vjip->vjipMembers[j].guid, _FILE_AND_LINE_);
+                clientMembersNotParticipatingSucceeded.Push(vjip->vjipMembers[j].guid);
         }
     }
 }

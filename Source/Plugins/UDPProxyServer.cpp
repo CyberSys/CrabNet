@@ -54,7 +54,7 @@ bool UDPProxyServer::LoginToCoordinator(RakNet::RakString password, SystemAddres
     outgoingBs.Write((MessageID)ID_UDP_PROXY_LOGIN_REQUEST_FROM_SERVER_TO_COORDINATOR);
     outgoingBs.Write(password);
     rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, coordinatorAddress, false);
-    loggingInCoordinators.InsertAtIndex(coordinatorAddress, insertionIndex, _FILE_AND_LINE_ );
+    loggingInCoordinators.InsertAtIndex(coordinatorAddress, insertionIndex );
     return true;
 }
 void UDPProxyServer::SetServerPublicIP(RakString ip)
@@ -111,7 +111,7 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet *packet)
                         break;
                     case ID_UDP_PROXY_LOGIN_SUCCESS_FROM_COORDINATOR_TO_SERVER:
                         // RakAssert(loggedInCoordinators.GetIndexOf(packet->systemAddress)==(unsigned int)-1);
-                        loggedInCoordinators.Insert(packet->systemAddress, packet->systemAddress, true, _FILE_AND_LINE_);
+                        loggedInCoordinators.Insert(packet->systemAddress, packet->systemAddress, true);
                         if (resultHandler)
                             resultHandler->OnLoginSuccess(password, this);
                         break;
@@ -140,8 +140,8 @@ void UDPProxyServer::OnRakPeerStartup(void)
 void UDPProxyServer::OnRakPeerShutdown(void)
 {
     udpForwarder.Shutdown();
-    loggingInCoordinators.Clear(true,_FILE_AND_LINE_);
-    loggedInCoordinators.Clear(true,_FILE_AND_LINE_);
+    loggingInCoordinators.Clear(true);
+    loggedInCoordinators.Clear(true);
 }
 void UDPProxyServer::OnAttach(void)
 {

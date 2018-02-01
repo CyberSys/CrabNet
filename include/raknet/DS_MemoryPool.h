@@ -54,9 +54,9 @@ namespace DataStructures
         MemoryPool();
         ~MemoryPool();
         void SetPageSize(int size); // Defaults to 16384 bytes
-        MemoryBlockType *Allocate(const char *file, unsigned int line);
-        void Release(MemoryBlockType *m, const char *file, unsigned int line);
-        void Clear(const char *file, unsigned int line);
+        MemoryBlockType *Allocate();
+        void Release(MemoryBlockType *m);
+        void Clear();
 
         int GetAvailablePagesSize(void) const {return availablePagesSize;}
         int GetUnavailablePagesSize(void) const {return unavailablePagesSize;}
@@ -64,7 +64,7 @@ namespace DataStructures
     protected:
         int BlocksPerPage(void) const;
         void AllocateFirst(void);
-        bool InitPage(Page *page, Page *prev, const char *file, unsigned int line);
+        bool InitPage(Page *page, Page *prev);
 
         // availablePages contains pages which have room to give the user new blocks.  We return these blocks from the head of the list
         // unavailablePages are pages which are totally full, and from which we do not return new blocks.
@@ -88,7 +88,7 @@ namespace DataStructures
     MemoryPool<MemoryBlockType>::~MemoryPool()
     {
 #ifndef _DISABLE_MEMORY_POOL
-        Clear(_FILE_AND_LINE_);
+        Clear();
 #endif
     }
 
@@ -99,10 +99,10 @@ namespace DataStructures
     }
 
     template<class MemoryBlockType>
-    MemoryBlockType* MemoryPool<MemoryBlockType>::Allocate(const char *file, unsigned int line)
+    MemoryBlockType* MemoryPool<MemoryBlockType>::Allocate()
     {
 #ifdef _DISABLE_MEMORY_POOL
-        return (MemoryBlockType*) rakMalloc_Ex(sizeof(MemoryBlockType), file, line);
+        return (MemoryBlockType*) rakMalloc_Ex(sizeof(MemoryBlockType));
 #else
 
         if (availablePagesSize>0)
@@ -142,7 +142,7 @@ namespace DataStructures
         if (availablePages==0)
             return 0;
         availablePagesSize=1;
-        if (InitPage(availablePages, availablePages, file, line)==false)
+        if (InitPage(availablePages, availablePages)==false)
             return 0;
         // If this assert hits, we couldn't allocate even 1 block per page. Increase the page size
         RakAssert(availablePages->availableStackSize>1);
@@ -151,7 +151,7 @@ namespace DataStructures
 #endif
     }
     template<class MemoryBlockType>
-    void MemoryPool<MemoryBlockType>::Release(MemoryBlockType *m, const char *file, unsigned int line)
+    void MemoryPool<MemoryBlockType>::Release(MemoryBlockType *m)
     {
 #ifdef _DISABLE_MEMORY_POOL
         free(m);
@@ -213,7 +213,7 @@ namespace DataStructures
 #endif
     }
     template<class MemoryBlockType>
-    void MemoryPool<MemoryBlockType>::Clear(const char *file, unsigned int line)
+    void MemoryPool<MemoryBlockType>::Clear()
     {
 #ifdef _DISABLE_MEMORY_POOL
         return;
@@ -271,7 +271,7 @@ namespace DataStructures
         return memoryPoolPageSize / sizeof(MemoryWithPage);
     }
     template<class MemoryBlockType>
-    bool MemoryPool<MemoryBlockType>::InitPage(Page *page, Page *prev, const char *file, unsigned int line)
+    bool MemoryPool<MemoryBlockType>::InitPage(Page *page, Page *prev)
     {
         int i=0;
         const int bpp = BlocksPerPage();
@@ -316,38 +316,38 @@ int main(void)
     DataStructures::List<TestMemoryPool*> returnList;
 
     for (int i=0; i < 100000; i++)
-        returnList.Push(memoryPool.Allocate(_FILE_AND_LINE_), _FILE_AND_LINE_);
+        returnList.Push(memoryPool.Allocate(), );
     for (int i=0; i < returnList.Size(); i+=2)
     {
-        memoryPool.Release(returnList[i], _FILE_AND_LINE_);
+        memoryPool.Release(returnList[i], );
         returnList.RemoveAtIndexFast(i);
     }
     for (int i=0; i < 100000; i++)
-        returnList.Push(memoryPool.Allocate(_FILE_AND_LINE_), _FILE_AND_LINE_);
+        returnList.Push(memoryPool.Allocate(), );
     while (returnList.Size())
     {
-        memoryPool.Release(returnList[returnList.Size()-1], _FILE_AND_LINE_);
+        memoryPool.Release(returnList[returnList.Size()-1], );
         returnList.RemoveAtIndex(returnList.Size()-1);
     }
     for (int i=0; i < 100000; i++)
-        returnList.Push(memoryPool.Allocate(_FILE_AND_LINE_), _FILE_AND_LINE_);
+        returnList.Push(memoryPool.Allocate(), );
     while (returnList.Size())
     {
-        memoryPool.Release(returnList[returnList.Size()-1], _FILE_AND_LINE_);
+        memoryPool.Release(returnList[returnList.Size()-1], );
         returnList.RemoveAtIndex(returnList.Size()-1);
     }
     for (int i=0; i < 100000; i++)
-        returnList.Push(memoryPool.Allocate(_FILE_AND_LINE_), _FILE_AND_LINE_);
+        returnList.Push(memoryPool.Allocate(), );
     for (int i=100000-1; i <= 0; i-=2)
     {
-        memoryPool.Release(returnList[i], _FILE_AND_LINE_);
+        memoryPool.Release(returnList[i], );
         returnList.RemoveAtIndexFast(i);
     }
     for (int i=0; i < 100000; i++)
-        returnList.Push(memoryPool.Allocate(_FILE_AND_LINE_), _FILE_AND_LINE_);
+        returnList.Push(memoryPool.Allocate(), );
     while (returnList.Size())
     {
-        memoryPool.Release(returnList[returnList.Size()-1], _FILE_AND_LINE_);
+        memoryPool.Release(returnList[returnList.Size()-1], );
         returnList.RemoveAtIndex(returnList.Size()-1);
     }
 

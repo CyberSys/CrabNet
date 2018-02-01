@@ -41,12 +41,12 @@ Lobby2MessageFactory* Lobby2Plugin::GetMessageFactory(void) const
 void Lobby2Plugin::SetCallbackInterface(Lobby2Callbacks *cb)
 {
 	ClearCallbackInterfaces();
-	callbacks.Insert(cb, _FILE_AND_LINE_ );
+	callbacks.Insert(cb );
 }
 void Lobby2Plugin::AddCallbackInterface(Lobby2Callbacks *cb)
 {
 	RemoveCallbackInterface(cb);
-	callbacks.Insert(cb, _FILE_AND_LINE_ );
+	callbacks.Insert(cb );
 }
 void Lobby2Plugin::RemoveCallbackInterface(Lobby2Callbacks *cb)
 {
@@ -56,5 +56,5 @@ void Lobby2Plugin::RemoveCallbackInterface(Lobby2Callbacks *cb)
 }
 void Lobby2Plugin::ClearCallbackInterfaces()
 {
-	callbacks.Clear(false, _FILE_AND_LINE_);
+	callbacks.Clear(false);
 }

@@ -493,7 +493,7 @@ bool AutopatcherMySQLRepository::UpdateApplicationFiles(const char *applicationN
 			RakAssert(mysql_fetch_lengths (result) [1] == HASH_LENGTH);  // check the data is sensible
 			memcpy (fi.contentHash, row [1], HASH_LENGTH);
 		}
-	    newestFiles.Insert (fi, _FILE_AND_LINE_ );
+	    newestFiles.Insert (fi );
 	}    
 	mysql_free_result(result);
 

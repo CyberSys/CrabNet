@@ -103,5 +103,5 @@ int ProfanityFilter::Count()
 }
 void ProfanityFilter::AddWord(RakNet::RakString newWord)
 {
-	words.Insert(newWord, _FILE_AND_LINE_ );
+	words.Insert(newWord );
 }

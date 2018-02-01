@@ -260,25 +260,25 @@ void TCPInterface::Stop(void)
     delete[] remoteClients;
     remoteClients = nullptr;
 
-    incomingMessages.Clear(_FILE_AND_LINE_);
-    newIncomingConnections.Clear(_FILE_AND_LINE_);
-    newRemoteClients.Clear(_FILE_AND_LINE_);
-    lostConnections.Clear(_FILE_AND_LINE_);
-    requestedCloseConnections.Clear(_FILE_AND_LINE_);
-    failedConnectionAttempts.Clear(_FILE_AND_LINE_);
-    completedConnectionAttempts.Clear(_FILE_AND_LINE_);
-    failedConnectionAttempts.Clear(_FILE_AND_LINE_);
+    incomingMessages.Clear();
+    newIncomingConnections.Clear();
+    newRemoteClients.Clear();
+    lostConnections.Clear();
+    requestedCloseConnections.Clear();
+    failedConnectionAttempts.Clear();
+    completedConnectionAttempts.Clear();
+    failedConnectionAttempts.Clear();
     for (unsigned int i = 0; i < headPush.Size(); i++)
         DeallocatePacket(headPush[i]);
-    headPush.Clear(_FILE_AND_LINE_);
+    headPush.Clear();
     for (unsigned int i = 0; i < tailPush.Size(); i++)
         DeallocatePacket(tailPush[i]);
-    tailPush.Clear(_FILE_AND_LINE_);
+    tailPush.Clear();
 
 #if OPEN_SSL_CLIENT_SUPPORT == 1
     SSL_CTX_free (ctx);
-    startSSL.Clear(_FILE_AND_LINE_);
-    activeSSLConnections.Clear(false, _FILE_AND_LINE_);
+    startSSL.Clear();
+    activeSSLConnections.Clear(false);
 #endif
 
 #endif  // __native_client__
@@ -325,7 +325,7 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
             newRemoteClient.isActiveMutex.Unlock();
 
             failedConnectionAttemptMutex.Lock();
-            failedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_);
+            failedConnectionAttempts.Push(systemAddress);
             failedConnectionAttemptMutex.Unlock();
 
             return UNASSIGNED_SYSTEM_ADDRESS;
@@ -335,7 +335,7 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
         newRemoteClient.systemAddress = systemAddress;
 
         completedConnectionAttemptMutex.Lock();
-        completedConnectionAttempts.Push(newRemoteClient.systemAddress, _FILE_AND_LINE_);
+        completedConnectionAttempts.Push(newRemoteClient.systemAddress);
         completedConnectionAttemptMutex.Unlock();
 
         return newRemoteClient.systemAddress;
@@ -358,7 +358,7 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
         if (errorCode != 0)
         {
             delete s;
-            failedConnectionAttempts.Push(s->systemAddress, _FILE_AND_LINE_);
+            failedConnectionAttempts.Push(s->systemAddress);
         }
         return UNASSIGNED_SYSTEM_ADDRESS;
     }
@@ -378,12 +378,12 @@ void TCPInterface::StartSSLClient(SystemAddress systemAddress)
         sharedSslMutex.Unlock();
     }
 
-    SystemAddress *id = startSSL.Allocate( _FILE_AND_LINE_ );
+    SystemAddress *id = startSSL.Allocate(  );
     *id=systemAddress;
     startSSL.Push(id);
     unsigned index = activeSSLConnections.GetIndexOf(systemAddress);
     if (index==(unsigned)-1)
-        activeSSLConnections.Insert(systemAddress,_FILE_AND_LINE_);
+        activeSSLConnections.Insert(systemAddress,);
 }
 bool TCPInterface::IsSSLActive(SystemAddress systemAddress)
 {
@@ -494,7 +494,7 @@ void TCPInterface::AttachPlugin(PluginInterface2 *plugin)
 {
     if (messageHandlerList.GetIndexOf(plugin) == MAX_UNSIGNED_LONG)
     {
-        messageHandlerList.Insert(plugin, _FILE_AND_LINE_);
+        messageHandlerList.Insert(plugin);
         plugin->SetTCPInterface(this);
         plugin->OnAttach();
     }
@@ -563,7 +563,7 @@ void TCPInterface::DeallocatePacket(Packet *packet)
     if (packet->deleteData)
     {
         free(packet->data);
-        incomingMessages.Deallocate(packet, _FILE_AND_LINE_);
+        incomingMessages.Deallocate(packet);
     }
     else
     {
@@ -589,9 +589,9 @@ Packet *TCPInterface::AllocatePacket(unsigned dataSize)
 void TCPInterface::PushBackPacket(Packet *packet, bool pushAtHead)
 {
     if (pushAtHead)
-        headPush.Push(packet, _FILE_AND_LINE_);
+        headPush.Push(packet);
     else
-        tailPush.Push(packet, _FILE_AND_LINE_);
+        tailPush.Push(packet);
 }
 
 bool TCPInterface::WasStarted(void) const
@@ -647,7 +647,7 @@ SystemAddress TCPInterface::HasNewIncomingConnection(void)
     if (out)
     {
         SystemAddress out2 = *out;
-        newIncomingConnections.Deallocate(out, _FILE_AND_LINE_);
+        newIncomingConnections.Deallocate(out);
 
         for (unsigned int i = 0; i < messageHandlerList.Size(); i++)
             messageHandlerList[i]->OnNewConnection(out2, UNASSIGNED_RAKNET_GUID, true);
@@ -664,7 +664,7 @@ SystemAddress TCPInterface::HasLostConnection(void)
     if (out)
     {
         SystemAddress out2 = *out;
-        lostConnections.Deallocate(out, _FILE_AND_LINE_);
+        lostConnections.Deallocate(out);
 
         for (unsigned int i = 0; i < messageHandlerList.Size(); i++)
             messageHandlerList[i]->OnClosedConnection(out2, UNASSIGNED_RAKNET_GUID, LCR_DISCONNECTION_NOTIFICATION);
@@ -763,7 +763,7 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char *host, unsigned short remot
 
     memcpy((char *) &serverAddress.sin_addr.s_addr, (char *) server->h_addr, server->h_length);
     blockingSocketListMutex.Lock();
-    blockingSocketList.Insert(sockfd, _FILE_AND_LINE_);
+    blockingSocketList.Insert(sockfd);
     blockingSocketListMutex.Unlock();
 
     // This is blocking
@@ -779,7 +779,7 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char *host, unsigned short remot
     getaddrinfo(host, portStr, &hints, &res);
     int sockfd = socket__(res->ai_family, res->ai_socktype, res->ai_protocol);
     blockingSocketListMutex.Lock();
-    blockingSocketList.Insert(sockfd, _FILE_AND_LINE_);
+    blockingSocketList.Insert(sockfd);
     blockingSocketListMutex.Unlock();
     int connectResult = connect__(sockfd, res->ai_addr, res->ai_addrlen);
     freeaddrinfo(res); // free the linked-list
@@ -822,7 +822,7 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
         tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
 
         tcpInterface->failedConnectionAttemptMutex.Lock();
-        tcpInterface->failedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_);
+        tcpInterface->failedConnectionAttempts.Push(systemAddress);
         tcpInterface->failedConnectionAttemptMutex.Unlock();
         return 0;
     }
@@ -834,7 +834,7 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
     if (tcpInterface->threadRunning > 0)
     {
         tcpInterface->completedConnectionAttemptMutex.Lock();
-        tcpInterface->completedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_);
+        tcpInterface->completedConnectionAttempts.Push(systemAddress);
         tcpInterface->completedConnectionAttemptMutex.Unlock();
     }
     return 0;
@@ -888,7 +888,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                     sts->remoteClients[i].isActiveMutex.Unlock();
                 }
             }
-            sts->startSSL.Deallocate(sslSystemAddress,_FILE_AND_LINE_);
+            sts->startSSL.Deallocate(sslSystemAddress,);
         }
 #endif
 
@@ -977,7 +977,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                             newRemoteClient.SetActive(true);
                             newRemoteClient.isActiveMutex.Unlock();
 
-                            SystemAddress *newConnectionSystemAddress = sts->newIncomingConnections.Allocate(_FILE_AND_LINE_);
+                            SystemAddress *newConnectionSystemAddress = sts->newIncomingConnections.Allocate();
                             *newConnectionSystemAddress = newRemoteClient.systemAddress;
                             sts->newIncomingConnections.Push(newConnectionSystemAddress);
 
@@ -1021,7 +1021,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                 if (FD_ISSET(socketCopy, &exceptionFD))
                 {
                     // Connection lost abruptly
-                    SystemAddress *lostConnectionSystemAddress = sts->lostConnections.Allocate(_FILE_AND_LINE_);
+                    SystemAddress *lostConnectionSystemAddress = sts->lostConnections.Allocate();
                     *lostConnectionSystemAddress = sts->remoteClients[i].systemAddress;
                     sts->lostConnections.Push(lostConnectionSystemAddress);
                     sts->remoteClients[i].isActiveMutex.Lock();
@@ -1037,7 +1037,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 
                         if (len > 0)
                         {
-                            Packet *incomingMessage = sts->incomingMessages.Allocate(_FILE_AND_LINE_);
+                            Packet *incomingMessage = sts->incomingMessages.Allocate();
                             incomingMessage->data = (unsigned char *) malloc(len + 1);
                             memcpy(incomingMessage->data, data, len);
                             // Null terminate this so we can print it out as regular strings.  This is different from RakNet which does not do this.
@@ -1051,7 +1051,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                         else
                         {
                             // Connection lost gracefully
-                            SystemAddress *lostConnectionSystemAddress = sts->lostConnections.Allocate(_FILE_AND_LINE_);
+                            SystemAddress *lostConnectionSystemAddress = sts->lostConnections.Allocate();
                             *lostConnectionSystemAddress = sts->remoteClients[i].systemAddress;
                             sts->lostConnections.Push(lostConnectionSystemAddress);
                             sts->remoteClients[i].isActiveMutex.Lock();
@@ -1134,14 +1134,13 @@ void RemoteClient::SendOrBuffer(const char **data, const unsigned int *lengths, 
             {
                 // Push remainder
                 outgoingDataMutex.Lock();
-                outgoingData.WriteBytes(data[parameterIndex] + bytesSent, lengths[parameterIndex] - bytesSent,
-                                        _FILE_AND_LINE_);
+                outgoingData.WriteBytes(data[parameterIndex] + bytesSent, lengths[parameterIndex] - bytesSent);
                 outgoingDataMutex.Unlock();
             }
         }
         else
         {
-            outgoingData.WriteBytes(data[parameterIndex], lengths[parameterIndex], _FILE_AND_LINE_);
+            outgoingData.WriteBytes(data[parameterIndex], lengths[parameterIndex]);
             outgoingDataMutex.Unlock();
         }
     }

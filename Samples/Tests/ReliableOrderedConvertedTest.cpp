@@ -16,7 +16,7 @@ int memoryUsage=0;
 
 char lastError[512];
 
-void* ReliableOrderedConvertedTest::LoggedMalloc(size_t size, const char *file, unsigned int line)
+void* ReliableOrderedConvertedTest::LoggedMalloc(size_t size)
 {
 	memoryUsage+=(int)size;
 	if (fp)
@@ -25,7 +25,7 @@ void* ReliableOrderedConvertedTest::LoggedMalloc(size_t size, const char *file, 
 	memcpy(p,&size,sizeof(size));
 	return p+sizeof(size);
 }
-void ReliableOrderedConvertedTest::LoggedFree(void *p, const char *file, unsigned int line)
+void ReliableOrderedConvertedTest::LoggedFree(void *p)
 {
 	char *realP=(char*)p-sizeof(size_t);
 	size_t allocatedSize;
@@ -35,7 +35,7 @@ void ReliableOrderedConvertedTest::LoggedFree(void *p, const char *file, unsigne
 		fprintf(fp,"Free %s:%i %i bytes %i total\n", file,line,allocatedSize,memoryUsage);
 	free(realP);
 }
-void* ReliableOrderedConvertedTest::LoggedRealloc(void *p, size_t size, const char *file, unsigned int line)
+void* ReliableOrderedConvertedTest::LoggedRealloc(void *p, size_t size)
 {
 	char *realP=(char*)p-sizeof(size_t);
 	size_t allocatedSize;
@@ -98,10 +98,10 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakString> params
 	else
 	*/
 	fp=0;
-	destroyList.Clear(false,_FILE_AND_LINE_);
+	destroyList.Clear(false);
 
 	sender =RakPeerInterface::GetInstance();
-	destroyList.Push(	sender ,_FILE_AND_LINE_);
+	destroyList.Push(	sender );
 	//sender->ApplyNetworkSimulator(.02, 100, 50);
 
 	/*
@@ -138,7 +138,7 @@ int ReliableOrderedConvertedTest::RunTest(DataStructures::List<RakString> params
 	sender->Connect(ip, remotePort, 0, 0);
 
 	receiver =RakPeerInterface::GetInstance();
-	destroyList.Push(	receiver ,_FILE_AND_LINE_);
+	destroyList.Push(	receiver );
 
 	/*
 	printf("Enter local port: ");

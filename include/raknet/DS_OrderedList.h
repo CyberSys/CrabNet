@@ -49,15 +49,15 @@ namespace DataStructures
         unsigned GetIndexFromKey(const key_type &key, bool *objectExists, int (*cf)(const key_type&, const data_type&)=default_comparison_function) const;
         data_type GetElementFromKey(const key_type &key, int (*cf)(const key_type&, const data_type&)=default_comparison_function) const;
         bool GetElementFromKey(const key_type &key, data_type &element, int (*cf)(const key_type&, const data_type&)=default_comparison_function) const;
-        unsigned Insert(const key_type &key, const data_type &data, bool assertOnDuplicate, const char *file, unsigned int line, int (*cf)(const key_type&, const data_type&)=default_comparison_function);
+        unsigned Insert(const key_type &key, const data_type &data, bool assertOnDuplicate, int (*cf)(const key_type&, const data_type&)=default_comparison_function);
         unsigned Remove(const key_type &key, int (*cf)(const key_type&, const data_type&)=default_comparison_function);
         unsigned RemoveIfExists(const key_type &key, int (*cf)(const key_type&, const data_type&)=default_comparison_function);
         data_type& operator[] ( const unsigned int position ) const;
         void RemoveAtIndex(const unsigned index);
-        void InsertAtIndex(const data_type &data, const unsigned index, const char *file, unsigned int line);
-        void InsertAtEnd(const data_type &data, const char *file, unsigned int line);
+        void InsertAtIndex(const data_type &data, const unsigned index);
+        void InsertAtEnd(const data_type &data);
         void RemoveFromEnd(const unsigned num=1);
-        void Clear(bool doNotDeallocate, const char *file, unsigned int line);
+        void Clear(bool doNotDeallocate);
         unsigned Size(void) const;
 
     protected:
@@ -72,7 +72,7 @@ namespace DataStructures
     template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
     OrderedList<key_type, data_type, default_comparison_function>::~OrderedList()
     {
-        Clear(false, _FILE_AND_LINE_);
+        Clear(false);
     }
 
     template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
@@ -171,7 +171,7 @@ namespace DataStructures
     }
 
     template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
-    unsigned OrderedList<key_type, data_type, default_comparison_function>::Insert(const key_type &key, const data_type &data, bool assertOnDuplicate, const char *file, unsigned int line, int (*cf)(const key_type&, const data_type&))
+    unsigned OrderedList<key_type, data_type, default_comparison_function>::Insert(const key_type &key, const data_type &data, bool assertOnDuplicate, int (*cf)(const key_type&, const data_type&))
     {
         (void) assertOnDuplicate;
         bool objectExists;
@@ -188,12 +188,12 @@ namespace DataStructures
 
         if (index>=orderedList.Size())
         {
-            orderedList.Insert(data, file, line);
+            orderedList.Insert(data);
             return orderedList.Size()-1;
         }
         else
         {
-            orderedList.Insert(data,index, file, line);
+            orderedList.Insert(data,index);
             return index;
         }
     }
@@ -239,15 +239,15 @@ namespace DataStructures
     }
 
     template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
-    void OrderedList<key_type, data_type, default_comparison_function>::InsertAtIndex(const data_type &data, const unsigned index, const char *file, unsigned int line)
+    void OrderedList<key_type, data_type, default_comparison_function>::InsertAtIndex(const data_type &data, const unsigned index)
     {
-        orderedList.Insert(data, index, file, line);
+        orderedList.Insert(data, index);
     }
 
     template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
-        void OrderedList<key_type, data_type, default_comparison_function>::InsertAtEnd(const data_type &data, const char *file, unsigned int line)
+        void OrderedList<key_type, data_type, default_comparison_function>::InsertAtEnd(const data_type &data)
     {
-        orderedList.Insert(data, file, line);
+        orderedList.Insert(data);
     }
 
     template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
@@ -257,9 +257,9 @@ namespace DataStructures
     }
 
     template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
-    void OrderedList<key_type, data_type, default_comparison_function>::Clear(bool doNotDeallocate, const char *file, unsigned int line)
+    void OrderedList<key_type, data_type, default_comparison_function>::Clear(bool doNotDeallocate)
     {
-        orderedList.Clear(doNotDeallocate, file, line);
+        orderedList.Clear(doNotDeallocate);
     }
 
     template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>

@@ -673,7 +673,7 @@ struct RoomMemberLeftRoom_Notification : public RoomsPluginNotification {
 /// \ingroup ROOMS_NOTIFICATIONS
 struct RoomMemberJoinedRoom_Notification : public RoomsPluginNotification {
 	RoomMemberJoinedRoom_Notification() {joinedRoomResult=0;}
-	~RoomMemberJoinedRoom_Notification() {if (joinedRoomResult!=0) RakNet::OP_DELETE(joinedRoomResult, _FILE_AND_LINE_);}
+	~RoomMemberJoinedRoom_Notification() {if (joinedRoomResult!=0) RakNet::OP_DELETE(joinedRoomResult);}
 	RoomID roomId;
 	JoinedRoomResult *joinedRoomResult;
 	virtual void Serialize(bool writeToBitstream, RakNet::BitStream *bitStream);
