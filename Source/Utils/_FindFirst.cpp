@@ -45,9 +45,9 @@ long _findfirst(const char *name, _finddata_t *f)
     if (!dir)
         return -1;
 
-    _findinfo_t *fi = new _findinfo_t;
-    fi->filter = filter.c_str();
-    fi->dirName = nameCopy.c_str();  // we need to remember this for stat()
+    auto *fi = new _findinfo_t;
+    fi->filter = filter;
+    fi->dirName = nameCopy;  // we need to remember this for stat()
     fi->openedDir = dir;
     fileInfo.Insert(fi, _FILE_AND_LINE_);
 
@@ -69,7 +69,7 @@ int _findnext(intptr_t h, _finddata_t *f)
     _findinfo_t *fi = fileInfo[h];
 
     dirent *entry;
-    while ((entry = readdir(fi->openedDir)) != NULL)
+    while ((entry = readdir(fi->openedDir)) != nullptr)
     {
         // Only report stuff matching our filter
         if (fnmatch(fi->filter.c_str(), entry->d_name, FNM_PATHNAME) != 0) continue;
@@ -77,7 +77,7 @@ int _findnext(intptr_t h, _finddata_t *f)
         // To reliably determine the entry's type, we must do
         // a stat...  don't rely on entry->d_type, as this
         // might be unavailable!
-        struct stat filestat;
+        struct stat filestat{};
         std::string fullPath = fi->dirName + entry->d_name;
 
         if (stat(fullPath.c_str(), &filestat) != 0)

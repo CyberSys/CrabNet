@@ -106,11 +106,11 @@
 #define SHA1_H_A545E61D43E9404E8D736869AB3CBFE7
 
 // KevinJ:
-#include <stdio.h> // Needed for file access
+#include <cstdio> // Needed for file access
 
 #include <memory.h> // Needed for memset and memcpy
 
-#include <string.h> // Needed for strcat and strcpy
+#include <cstring> // Needed for strcat and strcpy
 #include "Export.h"
 //#define MAX_FILE_READ_BUFFER 8000 
 #define SHA1_LENGTH 20
@@ -131,11 +131,12 @@
 
 #include <memory.h>
 
-#include <limits.h>
+#include <climits>
 
 #ifdef SHA1_UTILITY_FUNCTIONS
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
+
 #endif
 
 #ifdef SHA1_STL_FUNCTIONS
@@ -143,7 +144,7 @@
 #endif
 
 #ifdef _MSC_VER
-#include <stdlib.h>
+#include <cstdlib>
 #endif
 
 // You can define the endian mode in your files without modifying the SHA-1
@@ -274,14 +275,13 @@ public:
 #endif
 
 #ifdef SHA1_STL_FUNCTIONS
-    bool ReportHashStl(std::basic_string<TCHAR>& strOut, REPORT_TYPE rtReportType =
-        REPORT_HEX) const;
+    bool ReportHashStl(std::basic_string<TCHAR>& strOut, REPORT_TYPE rtReportType = REPORT_HEX) const;
 #endif
 
     // Get the raw message digest (20 bytes)
     bool GetHash(UINT_8* pbDest20) const;
 
-unsigned char * GetHash( void ) const;
+unsigned char * GetHash() const;
 // KevinJ: http://cseweb.ucsd.edu/~mihir/papers/hmac-cb.pdf
     static void HMAC(unsigned char *sharedKey, int sharedKeyLength, unsigned char *data, int dataLength, unsigned char output[SHA1_LENGTH]);
 

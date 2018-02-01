@@ -17,10 +17,10 @@
 
 char *_strlwr(char *str)
 {
-    if (str == 0)
-        return 0;
+    if (str == nullptr)
+        return nullptr;
     for (int i = 0; str[i]; ++i)
-        str[i] = tolower(str[i]);
+        str[i] = static_cast<char>(tolower(str[i]));
     return str;
 }
 

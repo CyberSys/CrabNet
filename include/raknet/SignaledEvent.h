@@ -33,9 +33,9 @@ public:
     SignaledEvent();
     ~SignaledEvent();
 
-    void InitEvent(void);
-    void CloseEvent(void);
-    void SetEvent(void);
+    void InitEvent();
+    void CloseEvent();
+    void SetEvent();
     void WaitOnEvent(int timeoutMs);
 
 protected:

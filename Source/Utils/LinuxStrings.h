@@ -14,7 +14,7 @@
 
 #if ((defined(__GNUC__)  || defined(__GCCXML__) || defined(__S3E__) ) && !defined(_WIN32)) || defined(__native_client__)
         #ifndef _stricmp
-            #include <string.h>
+            #include <cstring>
             #define _stricmp strcasecmp
         #endif
         #define _strnicmp strncasecmp

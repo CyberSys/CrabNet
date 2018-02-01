@@ -38,34 +38,34 @@ SimpleMutex::~SimpleMutex()
 #endif
 #endif
 
-void SimpleMutex::Lock(void)
+void SimpleMutex::Lock()
 {
 #ifdef _WIN32
     EnterCriticalSection(&criticalSection);
 #else
     int error = pthread_mutex_lock(&hMutex);
     (void) error;
-    RakAssert(error==0);
+    RakAssert(error == 0);
 #endif
 }
 
-void SimpleMutex::Unlock(void)
+void SimpleMutex::Unlock()
 {
 #ifdef _WIN32
     LeaveCriticalSection(&criticalSection);
 #else
     int error = pthread_mutex_unlock(&hMutex);
-    RakAssert(error==0);
+    RakAssert(error == 0);
 #endif
 }
 
-void SimpleMutex::Init(void)
+void SimpleMutex::Init()
 {
 #if defined(_WIN32)
     InitializeCriticalSection(&criticalSection);
 #else
-    int error = pthread_mutex_init(&hMutex, 0);
-    RakAssert(error==0);
+    int error = pthread_mutex_init(&hMutex, nullptr);
+    RakAssert(error == 0);
 #endif
-//    isInitialized=true;
+//    isInitialized = true;
 }

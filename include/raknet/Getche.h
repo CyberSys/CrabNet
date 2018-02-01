@@ -13,7 +13,7 @@
 #include <conio.h> /* getche() */
 #else
 #include <termios.h>
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 int getche();
 #define _getche getche

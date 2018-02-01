@@ -31,12 +31,12 @@ namespace DataStructures
         ~ByteQueue();
         void WriteBytes(const char *in, unsigned length, const char *file, unsigned int line);
         bool ReadBytes(char *out, unsigned maxLengthToRead, bool peek);
-        unsigned GetBytesWritten(void) const;
+        unsigned GetBytesWritten() const;
         char* PeekContiguousBytes(unsigned int *outLength) const;
         void IncrementReadOffset(unsigned length);
         void DecrementReadOffset(unsigned length);
         void Clear(const char *file, unsigned int line);
-        void Print(void);
+        void Print();
 
     protected:
         char *data;

@@ -19,7 +19,7 @@
 
 #include "Export.h"
 
-RAK_DLL_EXPORT char * EpochTimeToString(long long time);
+RAK_DLL_EXPORT char *EpochTimeToString(long long time);
 
 #endif
 

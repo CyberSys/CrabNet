@@ -48,13 +48,13 @@ public:
     ~SimpleMutex();
 
     // Locks the mutex.  Slow!
-    void Lock(void);
+    void Lock();
 
     // Unlocks the mutex.
-    void Unlock(void);
+    void Unlock();
 
 private:
-    void Init(void);
+    void Init();
 #ifdef _WIN32
     CRITICAL_SECTION criticalSection; /// Docs say this is faster than a mutex for single process access
 #else

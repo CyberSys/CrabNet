@@ -21,46 +21,44 @@
 #define get16bits(d) (*((const uint16_t *) (d)))
 #else
 #define get16bits(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
-    +(uint32_t)(((const uint8_t *)(d))[0]) )
+    +(uint32_t)(((const uint8_t *)(d))[0]))
 #endif
 
 static const int INCREMENTAL_READ_BLOCK=65536;
 
-uint32_t SuperFastHash (const char * data, int length)
+uint32_t SuperFastHash(const char * data, int length)
 {
     // All this is necessary or the hash does not match SuperFastHashIncremental
-    int bytesRemaining=length;
-    unsigned int lastHash = length;
-    int offset=0;
-    while (bytesRemaining>=INCREMENTAL_READ_BLOCK)
+    int bytesRemaining = length;
+    auto lastHash = static_cast<unsigned int>(length);
+    int offset = 0;
+    while (bytesRemaining >= INCREMENTAL_READ_BLOCK)
     {
-        lastHash=SuperFastHashIncremental (data+offset, INCREMENTAL_READ_BLOCK, lastHash );
-        bytesRemaining-=INCREMENTAL_READ_BLOCK;
-        offset+=INCREMENTAL_READ_BLOCK;
+        lastHash = SuperFastHashIncremental(data + offset, INCREMENTAL_READ_BLOCK, lastHash);
+        bytesRemaining -= INCREMENTAL_READ_BLOCK;
+        offset += INCREMENTAL_READ_BLOCK;
     }
-    if (bytesRemaining>0)
-    {
-        lastHash=SuperFastHashIncremental (data+offset, bytesRemaining, lastHash );
-    }
+    if (bytesRemaining > 0)
+        lastHash = SuperFastHashIncremental(data + offset, bytesRemaining, lastHash);
+
     return lastHash;
 
 //    return SuperFastHashIncremental(data,len,len);
 }
-uint32_t SuperFastHashIncremental (const char * data, int len, unsigned int lastHash )
+uint32_t SuperFastHashIncremental(const char * data, int len, unsigned int lastHash)
 {
-    uint32_t hash = (uint32_t) lastHash;
-    uint32_t tmp;
-    int rem;
+    auto hash = (uint32_t) lastHash;
 
-    if (len <= 0 || data == NULL) return 0;
+    if (len <= 0 || data == nullptr) return 0;
 
-    rem = len & 3;
+    int rem = len & 3;
     len >>= 2;
 
     /* Main loop */
-    for (;len > 0; len--) {
-        hash  += get16bits (data);
-        tmp    = (get16bits (data+2) << 11) ^ hash;
+    for (;len > 0; --len) {
+        uint32_t tmp;
+        hash  += get16bits(data);
+        tmp    = (get16bits(data+2) << 11) ^ hash;
         hash   = (hash << 16) ^ tmp;
         data  += 2*sizeof (uint16_t);
         hash  += hash >> 11;
@@ -68,18 +66,21 @@ uint32_t SuperFastHashIncremental (const char * data, int len, unsigned int last
 
     /* Handle end cases */
     switch (rem) {
-        case 3: hash += get16bits (data);
+        case 3: hash += get16bits(data);
             hash ^= hash << 16;
             hash ^= data[sizeof (uint16_t)] << 18;
             hash += hash >> 11;
             break;
-        case 2: hash += get16bits (data);
+        case 2: hash += get16bits(data);
             hash ^= hash << 11;
             hash += hash >> 17;
             break;
         case 1: hash += *data;
             hash ^= hash << 10;
             hash += hash >> 1;
+            break;
+        default:
+            break;
     }
 
     /* Force "avalanching" of final 127 bits */
@@ -94,36 +95,38 @@ uint32_t SuperFastHashIncremental (const char * data, int len, unsigned int last
 
 }
 
-uint32_t SuperFastHashFile (const char * filename)
+uint32_t SuperFastHashFile(const char * filename)
 {
     FILE *fp = fopen(filename, "rb");
-    if (fp==0)
+    if (fp == nullptr)
         return 0;
     uint32_t hash = SuperFastHashFilePtr(fp);
     fclose(fp);
     return hash;
 }
 
-uint32_t SuperFastHashFilePtr (FILE *fp)
+uint32_t SuperFastHashFilePtr(FILE *fp)
 {
     fseek(fp, 0, SEEK_END);
     int length = ftell(fp);
     fseek(fp, 0, SEEK_SET);
-    int bytesRemaining=length;
+    int bytesRemaining = length;
     unsigned int lastHash = length;
     char readBlock[INCREMENTAL_READ_BLOCK];
-    while (bytesRemaining>=(int) sizeof(readBlock))
+
+    while (bytesRemaining >= (int) sizeof(readBlock))
     {
         size_t ret = fread(readBlock, sizeof(readBlock), 1, fp);
         RakAssert(ret == sizeof(readBlock));
-        lastHash=SuperFastHashIncremental (readBlock, (int) sizeof(readBlock), lastHash );
-        bytesRemaining-=(int) sizeof(readBlock);
+        lastHash=SuperFastHashIncremental (readBlock, (int) sizeof(readBlock), lastHash);
+        bytesRemaining -= (int) sizeof(readBlock);
     }
+
     if (bytesRemaining>0)
     {
         size_t ret = fread(readBlock, bytesRemaining, 1, fp);
         RakAssert(ret == (size_t)bytesRemaining);
-        lastHash=SuperFastHashIncremental (readBlock, bytesRemaining, lastHash );
+        lastHash=SuperFastHashIncremental (readBlock, bytesRemaining, lastHash);
     }
     return lastHash;
 }

@@ -23,9 +23,9 @@ using namespace RakNet;
 SignaledEvent::SignaledEvent()
 {
 #ifdef _WIN32
-    eventList=INVALID_HANDLE_VALUE;
+    eventList = INVALID_HANDLE_VALUE;
 #else
-    isSignaled=false;
+    isSignaled = false;
 #endif
 }
 SignaledEvent::~SignaledEvent()
@@ -33,25 +33,25 @@ SignaledEvent::~SignaledEvent()
     // Intentionally do not close event, so it doesn't close twice on linux
 }
 
-void SignaledEvent::InitEvent(void)
+void SignaledEvent::InitEvent()
 {
 #if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
-        eventList=CreateEventEx(0, 0, 0, 0);
+        eventList = CreateEventEx(0, 0, 0, 0);
 #elif defined(_WIN32)
-        eventList=CreateEvent(0, false, false, 0);
+        eventList = CreateEvent(0, false, false, 0);
 #else
 #if !defined(ANDROID)
-        pthread_condattr_init( &condAttr );
+        pthread_condattr_init(&condAttr);
         pthread_cond_init(&eventList, &condAttr);
 #else
         pthread_cond_init(&eventList, 0);
 #endif
-        pthread_mutexattr_init( &mutexAttr    );
+        pthread_mutexattr_init(&mutexAttr);
         pthread_mutex_init(&hMutex, &mutexAttr);
 #endif
 }
 
-void SignaledEvent::CloseEvent(void)
+void SignaledEvent::CloseEvent()
 {
 #ifdef _WIN32
     if (eventList!=INVALID_HANDLE_VALUE)
@@ -63,13 +63,13 @@ void SignaledEvent::CloseEvent(void)
     pthread_cond_destroy(&eventList);
     pthread_mutex_destroy(&hMutex);
 #if !defined(ANDROID)
-    pthread_condattr_destroy( &condAttr );
+    pthread_condattr_destroy(&condAttr);
 #endif
-    pthread_mutexattr_destroy( &mutexAttr );
+    pthread_mutexattr_destroy(&mutexAttr);
 #endif
 }
 
-void SignaledEvent::SetEvent(void)
+void SignaledEvent::SetEvent()
 {
 #ifdef _WIN32
     ::SetEvent(eventList);
@@ -77,7 +77,7 @@ void SignaledEvent::SetEvent(void)
     // Different from SetEvent which stays signaled.
     // We have to record manually that the event was signaled
     isSignaledMutex.Lock();
-    isSignaled=true;
+    isSignaled = true;
     isSignaledMutex.Unlock();
 
     // Unblock waiting threads
@@ -93,7 +93,7 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
 //        eventList,
 //        false,
 //        timeoutMs);
-    WaitForSingleObjectEx(eventList,timeoutMs,FALSE);
+    WaitForSingleObjectEx(eventList, timeoutMs, FALSE);
 #else
 
     // If was previously set signaled, just unset and return
@@ -106,9 +106,9 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
     }
     isSignaledMutex.Unlock();
 
-    struct timespec   ts;
-    struct timeval    tp;
-    gettimeofday(&tp, NULL);
+    struct timespec   ts{};
+    struct timeval    tp{};
+    gettimeofday(&tp, nullptr);
     ts.tv_sec  = tp.tv_sec;
     ts.tv_nsec = tp.tv_usec * 1000;
 
@@ -136,12 +136,13 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
         timeoutMs-=30;
 
         isSignaledMutex.Lock();
-        if (isSignaled==true)
+        if (isSignaled)
         {
             isSignaled=false;
             isSignaledMutex.Unlock();
             return;
         }
+
         isSignaledMutex.Unlock();
     }
 
