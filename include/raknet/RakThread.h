@@ -25,9 +25,9 @@ namespace RakNet
 #define RAK_THREAD_DECLARATION(functionName) DWORD WINAPI functionName(LPVOID arguments)
 
 #elif defined(_WIN32)
-#define RAK_THREAD_DECLARATION(functionName) (unsigned __stdcall functionName(void* arguments))
+#define RAK_THREAD_DECLARATION(functionName) unsigned __stdcall functionName(void* arguments)
 #else
-#define RAK_THREAD_DECLARATION(functionName) (void* functionName(void* arguments))
+#define RAK_THREAD_DECLARATION(functionName) void* functionName(void* arguments)
 #endif
 
 class RAK_DLL_EXPORT RakThread
