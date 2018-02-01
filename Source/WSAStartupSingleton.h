@@ -12,6 +12,7 @@
 #ifndef __WSA_STARTUP_SINGLETON_H
 #define __WSA_STARTUP_SINGLETON_H
 
+#ifdef _WIN32
 class WSAStartupSingleton
 {
 public:
@@ -23,5 +24,6 @@ public:
 protected:
     static int refCount;
 };
+#endif
 
 #endif
