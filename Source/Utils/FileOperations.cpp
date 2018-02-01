@@ -13,9 +13,9 @@
 
 #if _RAKNET_SUPPORT_FileOperations == 1
 
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
 
 #ifdef _WIN32
 // For mkdir
@@ -33,12 +33,10 @@
 
 bool WriteFileWithDirectories(const char *path, char *data, unsigned dataLength)
 {
-    int index;
-    FILE *fp;
     char pathCopy[MAX_PATH];
     int res;
 
-    if (path == 0 || path[0] == 0)
+    if (path == nullptr || path[0] == 0)
         return false;
 
     strcpy(pathCopy, path);
@@ -46,7 +44,7 @@ bool WriteFileWithDirectories(const char *path, char *data, unsigned dataLength)
     // Ignore first / if there is one
     if (pathCopy[0])
     {
-        index = 1;
+        int index = 1;
         while (pathCopy[index])
         {
             if (pathCopy[index] == '/' || pathCopy[index] == '\\')
@@ -71,9 +69,9 @@ bool WriteFileWithDirectories(const char *path, char *data, unsigned dataLength)
 
     if (data)
     {
-        fp = fopen(path, "wb");
+        FILE *fp = fopen(path, "wb");
 
-        if (fp == 0)
+        if (fp == nullptr)
             return false;
 
         fwrite(data, 1, dataLength, fp);
@@ -103,7 +101,7 @@ bool IsSlash(unsigned char c)
 
 void AddSlash(char *input)
 {
-    if (input == 0 || input[0] == 0)
+    if (input == nullptr || input[0] == 0)
         return;
 
     int lastCharIndex = (int) strlen(input) - 1;
@@ -118,13 +116,12 @@ void AddSlash(char *input)
 
 bool DirectoryExists(const char *directory)
 {
-    _finddata_t fileInfo;
-    intptr_t dir;
+    _finddata_t fileInfo{};
     char baseDirWithStars[560];
     strcpy(baseDirWithStars, directory);
     AddSlash(baseDirWithStars);
     strcat(baseDirWithStars, "*.*");
-    dir = _findfirst(baseDirWithStars, &fileInfo);
+    intptr_t dir = _findfirst(baseDirWithStars, &fileInfo);
     if (dir == -1)
         return false;
     _findclose(dir);
@@ -155,7 +152,7 @@ void QuoteIfSpaces(char *str)
 long GetFileLength(const char *path)
 {
     FILE *fp = fopen(path, "rb");
-    if (fp == 0) return 0;
+    if (fp == nullptr) return 0;
     fseek(fp, 0, SEEK_END);
     long fileLength = ftell(fp);
     fclose(fp);

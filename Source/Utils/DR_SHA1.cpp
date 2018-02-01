@@ -11,7 +11,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "DR_SHA1.h"
-#include <stdlib.h>
+#include <cstdlib>
 
 #ifdef _WIN32
 #include <windows.h>

@@ -9,25 +9,26 @@
  *
  */
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-char * Gets ( char * str, int num )
+char *Gets(char *str, int num)
 {
     char *ret = fgets(str, num, stdin);
-    if(ret == NULL)
+    if (ret == nullptr)
         return str;
-    if (str[0]=='\n' || str[0]=='\r')
-        str[0]=0;
+    if (str[0] == '\n' || str[0] == '\r')
+        str[0] = 0;
 
-    size_t len=strlen(str);
-    if (len>0 && (str[len-1]=='\n' || str[len-1]=='\r'))
-        str[len-1]=0;
-    if (len>1 && (str[len-2]=='\n' || str[len-2]=='\r'))
-        str[len-2]=0;
+    size_t len = strlen(str);
+    if (len > 0 && (str[len - 1] == '\n' || str[len - 1] == '\r'))
+        str[len - 1] = 0;
+    if (len > 1 && (str[len - 2] == '\n' || str[len - 2] == '\r'))
+        str[len - 2] = 0;
 
     return str;
 }

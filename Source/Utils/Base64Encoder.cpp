@@ -38,8 +38,8 @@ int Base64Encoding(const unsigned char *inputData, int dataLength, char *outputD
 
     int outputOffset = 0;
     int write3Count = dataLength / 3;
-    int j;
-    for (j = 0; j < write3Count; j++)
+    int j = 0;
+    for (; j < write3Count; ++j)
     {
         // 6 leftmost bits from first byte, shifted to bits 7,8 are 0
         fnWriteBase64(outputData, base64Map[inputData[j * 3 + 0] >> 2], outputOffset);

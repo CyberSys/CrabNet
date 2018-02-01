@@ -48,17 +48,17 @@ RakNet::TimeUS NormalizeTime(RakNet::TimeUS timeIn)
 }
 #endif // #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
 
-RakNet::Time RakNet::GetTime(void)
+RakNet::Time RakNet::GetTime()
 {
     return (RakNet::Time) (GetTimeUS() / 1000);
 }
 
-RakNet::TimeMS RakNet::GetTimeMS(void)
+RakNet::TimeMS RakNet::GetTimeMS()
 {
     return (RakNet::TimeMS) (GetTimeUS() / 1000);
 }
 
-RakNet::TimeUS RakNet::GetTimeUS(void)
+RakNet::TimeUS RakNet::GetTimeUS()
 {
     using namespace std::chrono;
     static auto initialTime = steady_clock::now();
@@ -71,16 +71,16 @@ RakNet::TimeUS RakNet::GetTimeUS(void)
 #endif
 }
 
+constexpr RakNet::Time halfSpan = ((RakNet::Time) (const RakNet::Time) -1) / (RakNet::Time) 2;
+
 bool RakNet::GreaterThan(RakNet::Time a, RakNet::Time b)
 {
     // a > b?
-    const RakNet::Time halfSpan = (RakNet::Time) (((RakNet::Time) (const RakNet::Time) -1) / (RakNet::Time) 2);
     return b != a && b - a > halfSpan;
 }
 
 bool RakNet::LessThan(RakNet::Time a, RakNet::Time b)
 {
     // a < b?
-    const RakNet::Time halfSpan = ((RakNet::Time) (const RakNet::Time) -1) / (RakNet::Time) 2;
     return b != a && b - a < halfSpan;
 }
