@@ -41,11 +41,11 @@ namespace DataStructures
     class RAK_DLL_EXPORT Map
     {
     public:
-        static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultMapKeyComparison<key_type>(key_type(),key_type());}
+        static void IMPLEMENT_DEFAULT_COMPARISON() {DataStructures::defaultMapKeyComparison<key_type>(key_type(),key_type());}
 
         struct MapNode
         {
-            MapNode() {}
+            MapNode() = default;
             MapNode(key_type _key, data_type _data) : mapNodeKey(_key), mapNodeData(_data) {}
             MapNode& operator = ( const MapNode& input ) {mapNodeKey=input.mapNodeKey; mapNodeData=input.mapNodeData; return *this;}
             MapNode( const MapNode & input) {mapNodeKey=input.mapNodeKey; mapNodeData=input.mapNodeData;}
@@ -77,18 +77,15 @@ namespace DataStructures
         void SetNew(const key_type &key, const data_type &data);
         bool Has(const key_type &key) const;
         bool Delete(const key_type &key);
-        data_type& operator[] ( const unsigned int position ) const;
-        key_type GetKeyAtIndex( const unsigned int position ) const;
-        unsigned GetIndexAtKey( const key_type &key );
-        void RemoveAtIndex(const unsigned index);
-        void Clear(void);
-        unsigned Size(void) const;
+        data_type& operator[] (unsigned int position) const;
+        key_type GetKeyAtIndex(unsigned int position) const;
+        unsigned GetIndexAtKey(const key_type &key);
+        void RemoveAtIndex(unsigned index);
+        void Clear();
+        unsigned Size() const;
 
     protected:
         DataStructures::OrderedList< key_type,MapNode,&Map::NodeComparisonFunc > mapNodeList;
-
-        void SaveLastSearch(const key_type &key, unsigned index) const;
-        bool HasSavedSearchResult(const key_type &key) const;
 
         unsigned lastSearchIndex;
         key_type lastSearchKey;
@@ -129,31 +126,18 @@ namespace DataStructures
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
     data_type& Map<key_type, data_type, key_comparison_func>::Get(const key_type &key) const
     {
-        if (HasSavedSearchResult(key))
-            return mapNodeList[lastSearchIndex].mapNodeData;
-
         bool objectExists;
-        unsigned index;
-        index=mapNodeList.GetIndexFromKey(key, &objectExists);
+        unsigned index = mapNodeList.GetIndexFromKey(key, &objectExists);
         RakAssert(objectExists);
-        SaveLastSearch(key,index);
         return mapNodeList[index].mapNodeData;
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
     unsigned Map<key_type, data_type, key_comparison_func>::GetIndexAtKey( const key_type &key )
     {
-        if (HasSavedSearchResult(key))
-            return lastSearchIndex;
-
         bool objectExists;
-        unsigned index;
-        index=mapNodeList.GetIndexFromKey(key, &objectExists);
-        if (objectExists==false)
-        {
-            RakAssert(objectExists);
-        }
-        SaveLastSearch(key,index);
+        unsigned index = mapNodeList.GetIndexFromKey(key, &objectExists);
+        RakAssert(objectExists);
         return index;
     }
 
@@ -161,24 +145,19 @@ namespace DataStructures
     void Map<key_type, data_type, key_comparison_func>::RemoveAtIndex(const unsigned index)
     {
         mapNodeList.RemoveAtIndex(index);
-        lastSearchIndexValid=false;
+        lastSearchIndexValid = false;
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
         data_type Map<key_type, data_type, key_comparison_func>::Pop(const key_type &key)
     {
         bool objectExists;
-        unsigned index;
-        if (HasSavedSearchResult(key))
-            index=lastSearchIndex;
-        else
-        {
-            index=mapNodeList.GetIndexFromKey(key, &objectExists);
-            RakAssert(objectExists);
-        }
+        unsigned index = mapNodeList.GetIndexFromKey(key, &objectExists);
+        RakAssert(objectExists);
+
         data_type tmp = mapNodeList[index].mapNodeData;
         mapNodeList.RemoveAtIndex(index);
-        lastSearchIndexValid=false;
+        lastSearchIndexValid = false;
         return tmp;
     }
 
@@ -186,43 +165,18 @@ namespace DataStructures
     void Map<key_type, data_type, key_comparison_func>::Set(const key_type &key, const data_type &data)
     {
         bool objectExists;
-        unsigned index;
+        unsigned index = mapNodeList.GetIndexFromKey(key, &objectExists);
 
-        if (HasSavedSearchResult(key))
-        {
-            mapNodeList[lastSearchIndex].mapNodeData=data;
-            return;
-        }
-
-        index=mapNodeList.GetIndexFromKey(key, &objectExists);
-
-        if (objectExists)
-        {
-            SaveLastSearch(key,index);
-            mapNodeList[index].mapNodeData=data;
-        }
-        else
-        {
-            SaveLastSearch(key,mapNodeList.Insert(key,MapNode(key,data), true, _FILE_AND_LINE_));
-        }
+        mapNodeList[index].mapNodeData=data;
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
     void Map<key_type, data_type, key_comparison_func>::SetExisting(const key_type &key, const data_type &data)
     {
         bool objectExists;
-        unsigned index;
 
-        if (HasSavedSearchResult(key))
-        {
-            index=lastSearchIndex;
-        }
-        else
-        {
-            index=mapNodeList.GetIndexFromKey(key, &objectExists);
-            RakAssert(objectExists);
-            SaveLastSearch(key,index);
-        }
+        unsigned index = mapNodeList.GetIndexFromKey(key, &objectExists);
+        RakAssert(objectExists);
 
         mapNodeList[index].mapNodeData=data;
     }
@@ -233,38 +187,23 @@ namespace DataStructures
 #ifdef _DEBUG
         bool objectExists;
         mapNodeList.GetIndexFromKey(key, &objectExists);
-        RakAssert(objectExists==false);
+        RakAssert(!objectExists);
 #endif
-        SaveLastSearch(key,mapNodeList.Insert(key,MapNode(key,data), true, _FILE_AND_LINE_));
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
     bool Map<key_type, data_type, key_comparison_func>::Has(const key_type &key) const
     {
-        if (HasSavedSearchResult(key))
-            return true;
-
         bool objectExists;
-        unsigned index;
-        index=mapNodeList.GetIndexFromKey(key, &objectExists);
-        if (objectExists)
-            SaveLastSearch(key,index);
+        unsigned index = mapNodeList.GetIndexFromKey(key, &objectExists);
         return objectExists;
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
     bool Map<key_type, data_type, key_comparison_func>::Delete(const key_type &key)
     {
-        if (HasSavedSearchResult(key))
-        {
-            lastSearchIndexValid=false;
-            mapNodeList.RemoveAtIndex(lastSearchIndex);
-            return true;
-        }
-
         bool objectExists;
-        unsigned index;
-        index=mapNodeList.GetIndexFromKey(key, &objectExists);
+        unsigned index = mapNodeList.GetIndexFromKey(key, &objectExists);
         if (objectExists)
         {
             lastSearchIndexValid=false;
@@ -276,9 +215,9 @@ namespace DataStructures
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
-    void Map<key_type, data_type, key_comparison_func>::Clear(void)
+    void Map<key_type, data_type, key_comparison_func>::Clear()
     {
-        lastSearchIndexValid=false;
+        lastSearchIndexValid = false;
         mapNodeList.Clear(false, _FILE_AND_LINE_);
     }
 
@@ -295,32 +234,9 @@ namespace DataStructures
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
-    unsigned Map<key_type, data_type, key_comparison_func>::Size(void) const
+    unsigned Map<key_type, data_type, key_comparison_func>::Size() const
     {
         return mapNodeList.Size();
-    }
-
-    template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
-    void Map<key_type, data_type, key_comparison_func>::SaveLastSearch(const key_type &key, const unsigned index) const
-    {
-        (void) key;
-        (void) index;
-
-        /*
-        lastSearchIndex=index;
-        lastSearchKey=key;
-        lastSearchIndexValid=true;
-        */
-    }
-
-    template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
-    bool Map<key_type, data_type, key_comparison_func>::HasSavedSearchResult(const key_type &key) const
-    {
-        (void) key;
-
-        // Not threadsafe!
-        return false;
-        // return lastSearchIndexValid && key_comparison_func(key,lastSearchKey)==0;
     }
 }
 
