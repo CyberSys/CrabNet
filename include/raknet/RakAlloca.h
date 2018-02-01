@@ -8,15 +8,14 @@
  *
  */
 
-#if defined(__FreeBSD__)
-#include <stdlib.h>
-#elif defined ( __APPLE__ ) || defined ( __APPLE_CC__ )
-#include <malloc/malloc.h>
-#include <alloca.h>
-#elif defined(_WIN32)
+#if defined(_WIN32)
 #include <malloc.h>
+#ifndef alloca
+#define alloca _alloca
+#endif
 #else
-#include <malloc.h>
-// Alloca needed on Ubuntu apparently
+#if defined (__APPLE__) || defined (__APPLE_CC__) || defined(__linux__)
 #include <alloca.h>
+#endif
+#include <cstdlib>
 #endif

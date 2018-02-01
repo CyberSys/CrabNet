@@ -15,18 +15,13 @@
 
 #include "StringCompressor.h"
 #include "DS_HuffmanEncodingTree.h"
+#include "RakAlloca.h"
 #include "BitStream.h"
 #include "RakString.h"
 #include "RakAssert.h"
 #include <string.h>
 
 #include <memory.h>
-#include <cstdlib>
-#include <malloc.h>
-
-#ifndef alloca
-#define alloca _alloca
-#endif
 
 using namespace RakNet;
 
@@ -205,14 +200,14 @@ bool StringCompressor::DecodeString(RakString *output, size_t maxCharsToWrite, R
 #if USE_ALLOCA == 1
     if (maxCharsToWrite < MAX_ALLOCA_STACK_ALLOCATION)
     {
-        char *destinationBlock = (char *) alloca(maxCharsToWrite);
+        auto destinationBlock = (char *) alloca(maxCharsToWrite);
         out = DecodeString(destinationBlock, maxCharsToWrite, input, languageId);
         *output = destinationBlock;
     }
     else
 #endif
     {
-        char *destinationBlock = (char *) malloc(maxCharsToWrite);
+        auto destinationBlock = (char *) malloc(maxCharsToWrite);
         out = DecodeString(destinationBlock, maxCharsToWrite, input, languageId);
         *output = destinationBlock;
         free(destinationBlock);
