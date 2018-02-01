@@ -30,7 +30,7 @@
 #endif
 
 #include <memory.h>
-#include <float.h>
+#include <cfloat>
 #include <algorithm>
 
 // MSWin uses _copysign, others use copysign...
@@ -102,7 +102,7 @@ BitStream::BitStream(unsigned char *_data, unsigned int lengthInBytes, bool _cop
             memcpy(data, _data, (size_t) lengthInBytes);
         }
         else
-            data = 0;
+            data = nullptr;
     }
     else
         data = _data;
@@ -121,7 +121,7 @@ BitStream::~BitStream()
         free(data);  // Use realloc and free so we are more efficient than delete and new for resizing
 }
 
-void BitStream::Reset(void)
+void BitStream::Reset()
 {
     // Note:  Do NOT reallocate memory because BitStream is used
     // in places to serialize/deserialize a buffer. Reallocation
@@ -263,19 +263,19 @@ bool BitStream::Read(char *outByteArray, unsigned int numberOfBytes)
 }
 
 // Sets the read pointer back to the beginning of your data.
-void BitStream::ResetReadPointer(void)
+void BitStream::ResetReadPointer()
 {
     readOffset = 0;
 }
 
 // Sets the write pointer back to the beginning of your data.
-void BitStream::ResetWritePointer(void)
+void BitStream::ResetWritePointer()
 {
     numberOfBitsUsed = 0;
 }
 
 // Write a 0
-void BitStream::Write0(void)
+void BitStream::Write0()
 {
     AddBitsAndReallocate(1);
 
@@ -287,7 +287,7 @@ void BitStream::Write0(void)
 }
 
 // Write a 1
-void BitStream::Write1(void)
+void BitStream::Write1()
 {
     AddBitsAndReallocate(1);
 
@@ -302,7 +302,7 @@ void BitStream::Write1(void)
 }
 
 // Returns true if the next data read is a 1, false if it is a 0
-bool BitStream::ReadBit(void)
+bool BitStream::ReadBit()
 {
     bool result = (data[readOffset >> 3] & (0x80 >> (readOffset & 7))) != 0;
     readOffset++;
@@ -374,7 +374,7 @@ bool BitStream::ReadAlignedBytesSafe(char *inOutByteArray, unsigned int &inputLe
 bool BitStream::ReadAlignedBytesSafeAlloc(char **outByteArray, unsigned int &inputLength, unsigned int maxBytesToRead)
 {
     free(*outByteArray);
-    *outByteArray = 0;
+    *outByteArray = nullptr;
     if (!ReadCompressed(inputLength))
         return false;
     if (inputLength > maxBytesToRead)
@@ -669,7 +669,7 @@ void BitStream::AddBitsAndReallocate(BitSize_t numberOfBitsToWrite)
         numberOfBitsAllocated = newNumberOfBitsAllocated;
 }
 
-BitSize_t BitStream::GetNumberOfBitsAllocated(void) const
+BitSize_t BitStream::GetNumberOfBitsAllocated() const
 {
     return numberOfBitsAllocated;
 }
@@ -713,7 +713,7 @@ int nlz10b(unsigned x) {
 */
 
 // Should hit if reads didn't match writes
-void BitStream::AssertStreamEmpty(void)
+void BitStream::AssertStreamEmpty()
 {
     RakAssert(readOffset == numberOfBitsUsed);
 }
@@ -755,7 +755,7 @@ void BitStream::PrintBits(char *out) const
     out[strIndex] = 0;
 }
 
-void BitStream::PrintBits(void) const
+void BitStream::PrintBits() const
 {
     char out[2048];
     PrintBits(out);
@@ -768,7 +768,7 @@ void BitStream::PrintHex(char *out) const
         sprintf(out + i * 3, "%02x ", data[i]);
 }
 
-void BitStream::PrintHex(void) const
+void BitStream::PrintHex() const
 {
     char out[2048];
     PrintHex(out);
@@ -848,7 +848,7 @@ return data;
 
 */
 // If we used the constructor version with copy data off, this makes sure it is set to on and the data pointed to is copied.
-void BitStream::AssertCopyData(void)
+void BitStream::AssertCopyData()
 {
     if (!copyData)
     {
@@ -856,7 +856,7 @@ void BitStream::AssertCopyData(void)
 
         if (numberOfBitsAllocated > 0)
         {
-            unsigned char *newdata = (unsigned char *) malloc((size_t) BITS_TO_BYTES(numberOfBitsAllocated));
+            auto newdata = (unsigned char *) malloc((size_t) BITS_TO_BYTES(numberOfBitsAllocated));
 
             RakAssert(data);
 
@@ -865,11 +865,11 @@ void BitStream::AssertCopyData(void)
         }
 
         else
-            data = 0;
+            data = nullptr;
     }
 }
 
-bool BitStream::IsNetworkOrderInternal(void)
+bool BitStream::IsNetworkOrderInternal()
 {
     static bool htonlValue = htonl(12345) == 12345UL;
     return htonlValue;
@@ -901,7 +901,7 @@ void BitStream::WriteAlignedVar8(const char *inByteArray)
 {
     RakAssert((numberOfBitsUsed & 7) == 0);
     AddBitsAndReallocate(1 * 8);
-    data[(numberOfBitsUsed >> 3) + 0] = inByteArray[0];
+    data[(numberOfBitsUsed >> 3) + 0] = (unsigned char) inByteArray[0];
     numberOfBitsUsed += 1 * 8;
 }
 
@@ -923,14 +923,14 @@ void BitStream::WriteAlignedVar16(const char *inByteArray)
 #ifndef __BITSTREAM_NATIVE_END
     if (DoEndianSwap())
     {
-        data[(numberOfBitsUsed >> 3) + 0] = inByteArray[1];
-        data[(numberOfBitsUsed >> 3) + 1] = inByteArray[0];
+        data[(numberOfBitsUsed >> 3) + 0] = (unsigned char) inByteArray[1];
+        data[(numberOfBitsUsed >> 3) + 1] = (unsigned char) inByteArray[0];
     }
     else
 #endif
     {
-        data[(numberOfBitsUsed >> 3) + 0] = inByteArray[0];
-        data[(numberOfBitsUsed >> 3) + 1] = inByteArray[1];
+        data[(numberOfBitsUsed >> 3) + 0] = (unsigned char) inByteArray[0];
+        data[(numberOfBitsUsed >> 3) + 1] = (unsigned char) inByteArray[1];
     }
 
     numberOfBitsUsed += 2 * 8;
@@ -965,18 +965,18 @@ void BitStream::WriteAlignedVar32(const char *inByteArray)
 #ifndef __BITSTREAM_NATIVE_END
     if (DoEndianSwap())
     {
-        data[(numberOfBitsUsed >> 3) + 0] = inByteArray[3];
-        data[(numberOfBitsUsed >> 3) + 1] = inByteArray[2];
-        data[(numberOfBitsUsed >> 3) + 2] = inByteArray[1];
-        data[(numberOfBitsUsed >> 3) + 3] = inByteArray[0];
+        data[(numberOfBitsUsed >> 3) + 0] = (unsigned char) inByteArray[3];
+        data[(numberOfBitsUsed >> 3) + 1] = (unsigned char) inByteArray[2];
+        data[(numberOfBitsUsed >> 3) + 2] = (unsigned char) inByteArray[1];
+        data[(numberOfBitsUsed >> 3) + 3] = (unsigned char) inByteArray[0];
     }
     else
 #endif
     {
-        data[(numberOfBitsUsed >> 3) + 0] = inByteArray[0];
-        data[(numberOfBitsUsed >> 3) + 1] = inByteArray[1];
-        data[(numberOfBitsUsed >> 3) + 2] = inByteArray[2];
-        data[(numberOfBitsUsed >> 3) + 3] = inByteArray[3];
+        data[(numberOfBitsUsed >> 3) + 0] = (unsigned char) inByteArray[0];
+        data[(numberOfBitsUsed >> 3) + 1] = (unsigned char) inByteArray[1];
+        data[(numberOfBitsUsed >> 3) + 2] = (unsigned char) inByteArray[2];
+        data[(numberOfBitsUsed >> 3) + 3] = (unsigned char) inByteArray[3];
     }
 
     numberOfBitsUsed += 4 * 8;

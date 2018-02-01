@@ -533,9 +533,9 @@ namespace RakNet
 
         /// \brief RAKNET_DEBUG_PRINTF the bits in the stream.  Great for debugging.
         void PrintBits(char *out) const;
-        void PrintBits(void) const;
+        void PrintBits() const;
         void PrintHex(char *out) const;
-        void PrintHex(void) const;
+        void PrintHex() const;
 
         /// \brief Ignore data we don't intend to read
         /// \param[in] numberOfBits The number of bits to ignore
@@ -553,24 +553,24 @@ namespace RakNet
         void SetWriteOffset(BitSize_t offset);
 
         /// \brief Returns the length in bits of the stream
-        inline BitSize_t GetNumberOfBitsUsed(void) const
+        inline BitSize_t GetNumberOfBitsUsed() const
         {
             return GetWriteOffset();
         }
 
-        inline BitSize_t GetWriteOffset(void) const
+        inline BitSize_t GetWriteOffset() const
         {
             return numberOfBitsUsed;
         }
 
         /// \brief Returns the length in bytes of the stream
-        inline BitSize_t GetNumberOfBytesUsed(void) const
+        inline BitSize_t GetNumberOfBytesUsed() const
         {
             return BITS_TO_BYTES(numberOfBitsUsed);
         }
 
         /// \brief Returns the number of bits into the stream that we have read
-        inline BitSize_t GetReadOffset(void) const
+        inline BitSize_t GetReadOffset() const
         {
             return readOffset;
         }
@@ -582,7 +582,7 @@ namespace RakNet
         }
 
         /// \brief Returns the number of bits left in the stream that haven't been read
-        inline BitSize_t GetNumberOfUnreadBits(void) const
+        inline BitSize_t GetNumberOfUnreadBits() const
         {
             return numberOfBitsUsed - readOffset;
         }
@@ -600,7 +600,7 @@ namespace RakNet
         /// Gets the data that BitStream is writing to / reading from.
         /// Partial bytes are left aligned.
         /// \return A pointer to the internal state
-        inline unsigned char *GetData(void) const
+        inline unsigned char *GetData() const
         {
             return data;
         }
@@ -661,7 +661,7 @@ namespace RakNet
         /// can also be used to force coalesced bitstreams to start on byte
         /// boundaries so so WriteAlignedBits and ReadAlignedBits both
         /// calculate the same offset when aligning.
-        inline void AlignWriteToByteBoundary(void)
+        inline void AlignWriteToByteBoundary()
         {
             numberOfBitsUsed += 8 - (((numberOfBitsUsed - 1) & 7) + 1);
         }
@@ -671,7 +671,7 @@ namespace RakNet
         /// can also be used to force coalesced bitstreams to start on byte
         /// boundaries so so WriteAlignedBits and ReadAlignedBits both
         /// calculate the same offset when aligning.
-        inline void AlignReadToByteBoundary(void)
+        inline void AlignReadToByteBoundary()
         {
             readOffset += 8 - (((readOffset - 1) & 7) + 1);
         }
