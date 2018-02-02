@@ -167,8 +167,8 @@ namespace DataStructures
     {
         bool objectExists;
         unsigned index = mapNodeList.GetIndexFromKey(key, &objectExists);
-
-        mapNodeList[index].mapNodeData=data;
+        if(objectExists)
+            mapNodeList[index].mapNodeData=data;
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
