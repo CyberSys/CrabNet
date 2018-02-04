@@ -167,8 +167,10 @@ namespace DataStructures
     {
         bool objectExists;
         unsigned index = mapNodeList.GetIndexFromKey(key, &objectExists);
-        if(objectExists)
+        if (objectExists)
             mapNodeList[index].mapNodeData=data;
+        else
+            mapNodeList.Insert(key, MapNode(key, data), true);
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
@@ -190,6 +192,7 @@ namespace DataStructures
         mapNodeList.GetIndexFromKey(key, &objectExists);
         RakAssert(!objectExists);
 #endif
+        mapNodeList.Insert(key, MapNode(key, data), true);
     }
 
     template <class key_type, class data_type, int (*key_comparison_func)(const key_type&,const key_type&)>
