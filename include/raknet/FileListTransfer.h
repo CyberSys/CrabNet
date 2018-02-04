@@ -14,6 +14,7 @@
 ///
 
 
+#include <atomic>
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_FileListTransfer==1 && _RAKNET_SUPPORT_FileOperations==1
 
@@ -62,28 +63,33 @@ public:
     STATIC_FACTORY_DECLARATIONS(FileListTransfer)
 
     FileListTransfer();
-    virtual ~FileListTransfer();
+    ~FileListTransfer() override;
 
     /// \brief Optionally start worker threads when using _incrementalReadInterface for the Send() operation
     /// \param[in] numThreads how many worker threads to start
-    /// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
+    /// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows.
+    /// For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
     void StartIncrementalReadThreads(int numThreads, int threadPriority=-99999);
 
     /// \brief Allows one corresponding Send() call from another system to arrive.
     /// \param[in] handler The class to call on each file
     /// \param[in] deleteHandler True to delete the handler when it is no longer needed.  False to not do so.
     /// \param[in] allowedSender Which system to allow files from.
-    /// \return A set ID value, which should be passed as the \a setID value to the Send() call on the other system.  This value will be returned in the callback and is unique per file set.  Returns 65535 on failure (not connected to sender)
+    /// \return A set ID value, which should be passed as the \a setID value to the Send() call on the other system.
+    /// This value will be returned in the callback and is unique per file set.  Returns 65535 on failure (not connected to sender)
     unsigned short SetupReceive(FileListTransferCBInterface *handler, bool deleteHandler, SystemAddress allowedSender);
 
     /// \brief Send the FileList structure to another system, which must have previously called SetupReceive().
-    /// \param[in] fileList A list of files.  The data contained in FileList::data will be sent incrementally and compressed among all files in the set
-    /// \param[in] rakPeer The instance of RakNet to use to send the message. Pass 0 to use the instance the plugin is attached to
+    /// \param[in] fileList A list of files.  The data contained in FileList::data will be sent incrementally
+    /// and compressed among all files in the set
+    /// \param[in] rakPeer The instance of RakNet to use to send the message. Pass 0 to use the instance
+    /// the plugin is attached to
     /// \param[in] recipient The address of the system to send to
     /// \param[in] setID The return value of SetupReceive() which was previously called on \a recipient
     /// \param[in] priority Passed to RakPeerInterface::Send()
     /// \param[in] orderingChannel Passed to RakPeerInterface::Send()
-    /// \param[in] _incrementalReadInterface If a file in \a fileList has no data, _incrementalReadInterface will be used to read the file in chunks of size \a chunkSize
+    /// \param[in] _incrementalReadInterface If a file in \a fileList has no data, _incrementalReadInterface will be
+    /// used to read the file in chunks of size \a chunkSize
     /// \param[in] _chunkSize How large of a block of a file to read/send at once. Large values use more memory but transfer slightly faster.
     void Send(FileList *fileList, RakNet::RakPeerInterface *rakPeer, SystemAddress recipient, unsigned short setID, PacketPriority priority, char orderingChannel, IncrementalReadInterface *_incrementalReadInterface=0, unsigned int _chunkSize=262144*4*16);
 
@@ -100,7 +106,8 @@ public:
     bool IsHandlerActive(unsigned short setId);
 
     /// \brief Adds a callback to get progress reports about what the file list instances do.
-    /// \param[in] cb A pointer to an externally defined instance of FileListProgress. This pointer is held internally, so should remain valid as long as this class is valid.
+    /// \param[in] cb A pointer to an externally defined instance of FileListProgress.
+    /// This pointer is held internally, so should remain valid as long as this class is valid.
     void AddCallback(FileListProgress *cb);
 
     /// \brief Removes a callback
@@ -108,26 +115,26 @@ public:
     void RemoveCallback(FileListProgress *cb);
 
     /// \brief Removes all callbacks
-    void ClearCallbacks(void);
+    void ClearCallbacks();
 
     /// Returns all callbacks added with AddCallback()
     /// \param[out] callbacks The list is set to the list of callbacks
     void GetCallbacks(DataStructures::List<FileListProgress*> &callbacks);
 
     /// \internal For plugin handling
-    virtual PluginReceiveResult OnReceive(Packet *packet);
+    PluginReceiveResult OnReceive(Packet *packet) override;
     /// \internal For plugin handling
-    virtual void OnRakPeerShutdown(void);
+    void OnRakPeerShutdown() override;
     /// \internal For plugin handling
-    virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+    void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason ) override;
     /// \internal For plugin handling
-    virtual void Update(void);
+    void Update() override;
 
 protected:
     bool DecodeSetHeader(Packet *packet);
     bool DecodeFile(Packet *packet, bool fullFile);
 
-    void Clear(void);
+    void Clear();
 
     void OnReferencePush(Packet *packet, bool fullFile);
     void OnReferencePushAck(Packet *packet);
@@ -150,11 +157,10 @@ protected:
     };
     struct FileToPushRecipient
     {
-        unsigned int refCount;
-        SimpleMutex refCountMutex;
-        void DeleteThis(void);
-        void AddRef(void);
-        void Deref(void);
+        std::atomic_uint32_t refCount;
+        void DeleteThis();
+        void AddRef();
+        void Deref();
 
         SystemAddress systemAddress;
         unsigned short setId;

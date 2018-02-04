@@ -106,27 +106,24 @@ void NatTypeDetectionClient::Update(void)
     if (IsInProgress())
     {
         RNS2RecvStruct *recvStruct;
-        bufferedPacketsMutex.Lock();
-        if (bufferedPackets.Size()>0)
-            recvStruct=bufferedPackets.Pop();
-        else
-            recvStruct=0;
-        bufferedPacketsMutex.Unlock();
+        {
+            std::lock_guard<RakNet::SimpleMutex> lock(bufferedPacketsMutex);
+            recvStruct = bufferedPackets.Size() > 0 ? bufferedPackets.Pop() : 0;
+        }
+
         while (recvStruct)
         {
             if (recvStruct->bytesRead==1 && recvStruct->data[0]==NAT_TYPE_NONE)
             {
                 OnCompletion(NAT_TYPE_NONE);
-                RakAssert(IsInProgress()==false);
+                RakAssert(!IsInProgress());
             }
+
             DeallocRNS2RecvStruct(recvStruct);
 
-            bufferedPacketsMutex.Lock();
-            if (bufferedPackets.Size()>0)
-                recvStruct=bufferedPackets.Pop();
-            else
-                recvStruct=0;
-            bufferedPacketsMutex.Unlock();
+            std::lock_guard<RakNet::SimpleMutex> lock(bufferedPacketsMutex);
+            recvStruct = bufferedPackets.Size() > 0 ? bufferedPackets.Pop() : nullptr;
+
         }
     }
 }
@@ -219,10 +216,9 @@ void NatTypeDetectionClient::Shutdown(void)
         c2=0;
     }
 
-    bufferedPacketsMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(bufferedPacketsMutex);
     while (bufferedPackets.Size())
         delete bufferedPackets.Pop();
-    bufferedPacketsMutex.Unlock();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -237,9 +233,8 @@ RNS2RecvStruct *NatTypeDetectionClient::AllocRNS2RecvStruct()
 }
 void NatTypeDetectionClient::OnRNS2Recv(RNS2RecvStruct *recvStruct)
 {
-    bufferedPacketsMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(bufferedPacketsMutex);
     bufferedPackets.Push(recvStruct);
-    bufferedPacketsMutex.Unlock();
 }
 
 #endif // _RAKNET_SUPPORT_*

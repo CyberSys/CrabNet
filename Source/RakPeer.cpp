@@ -155,10 +155,8 @@ Packet *RakPeer::AllocPacket(unsigned dataSize)
 //     p->guid=UNASSIGNED_RAKNET_GUID;
 //     return p;
 
-    RakNet::Packet *p;
-    packetAllocationPoolMutex.Lock();
-    p = packetAllocationPool.Allocate();
-    packetAllocationPoolMutex.Unlock();
+    std::lock_guard<RakNet::SimpleMutex> lock(packetAllocationPoolMutex);
+    RakNet::Packet *p = packetAllocationPool.Allocate();
     p = new((void *) p) Packet;
     p->data = (unsigned char *) malloc(dataSize);
     p->length = dataSize;
@@ -172,10 +170,8 @@ Packet *RakPeer::AllocPacket(unsigned dataSize)
 Packet *RakPeer::AllocPacket(unsigned dataSize, unsigned char *data)
 {
     // Packet *p = (Packet *)malloc(sizeof(Packet));
-    RakNet::Packet *p;
-    packetAllocationPoolMutex.Lock();
-    p = packetAllocationPool.Allocate();
-    packetAllocationPoolMutex.Unlock();
+    std::lock_guard<RakNet::SimpleMutex> lock(packetAllocationPoolMutex);
+    RakNet::Packet *p = packetAllocationPool.Allocate();
     p = new((void *) p) Packet;
     RakAssert(p);
     p->data = data;
@@ -258,9 +254,10 @@ RakPeer::RakPeer()
     bufferedCommands.SetPageSize(sizeof(BufferedCommandStruct) * 16);
     socketQueryOutput.SetPageSize(sizeof(SocketQueryOutput) * 8);
 
-    packetAllocationPoolMutex.Lock();
-    packetAllocationPool.SetPageSize(sizeof(DataStructures::MemoryPool<Packet>::MemoryWithPage) * 32);
-    packetAllocationPoolMutex.Unlock();
+    {
+        std::lock_guard<RakNet::SimpleMutex> lock(packetAllocationPoolMutex);
+        packetAllocationPool.SetPageSize(sizeof(DataStructures::MemoryPool<Packet>::MemoryWithPage) * 32);
+    }
 
     remoteSystemIndexPool.SetPageSize(sizeof(DataStructures::MemoryPool<RemoteSystemIndex>::MemoryWithPage) * 32);
 
@@ -752,9 +749,8 @@ void RakPeer::DisableSecurity(void)
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::AddToSecurityExceptionList(const char *ip)
 {
-    securityExceptionMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(securityExceptionMutex);
     securityExceptionList.Insert(RakString(ip));
-    securityExceptionMutex.Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -763,17 +759,13 @@ void RakPeer::RemoveFromSecurityExceptionList(const char *ip)
     if (securityExceptionList.Size() == 0)
         return;
 
-    if (ip == 0)
-    {
-        securityExceptionMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(securityExceptionMutex);
+    if (ip == nullptr)
         securityExceptionList.Clear(false);
-        securityExceptionMutex.Unlock();
-    }
     else
     {
-        unsigned i = 0;
-        securityExceptionMutex.Lock();
-        while (i < securityExceptionList.Size())
+
+        for (unsigned i = 0; i < securityExceptionList.Size();)
         {
             if (securityExceptionList[i].IPAddressMatch(ip))
             {
@@ -783,7 +775,6 @@ void RakPeer::RemoveFromSecurityExceptionList(const char *ip)
             else
                 i++;
         }
-        securityExceptionMutex.Unlock();
     }
 }
 
@@ -793,17 +784,12 @@ bool RakPeer::IsInSecurityExceptionList(const char *ip)
     if (securityExceptionList.Size() == 0)
         return false;
 
-    unsigned i = 0;
-    securityExceptionMutex.Lock();
-    for (; i < securityExceptionList.Size(); i++)
+    std::lock_guard<SimpleMutex> lock(securityExceptionMutex);
+    for (unsigned i = 0; i < securityExceptionList.Size(); i++)
     {
         if (securityExceptionList[i].IPAddressMatch(ip))
-        {
-            securityExceptionMutex.Unlock();
             return true;
-        }
     }
-    securityExceptionMutex.Unlock();
     return false;
 }
 
@@ -1102,14 +1088,17 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
     //remoteSystemListSize = 0;
 
     // Free any packets the user didn't deallocate
-    packetReturnMutex.Lock();
-    for (i = 0; i < packetReturnQueue.Size(); i++)
-        DeallocatePacket(packetReturnQueue[i]);
-    packetReturnQueue.Clear();
-    packetReturnMutex.Unlock();
-    packetAllocationPoolMutex.Lock();
-    packetAllocationPool.Clear();
-    packetAllocationPoolMutex.Unlock();
+    {
+        std::lock_guard<RakNet::SimpleMutex> lock(packetReturnMutex);
+        for (i = 0; i < packetReturnQueue.Size(); i++)
+            DeallocatePacket(packetReturnQueue[i]);
+        packetReturnQueue.Clear();
+    }
+
+    {
+        std::lock_guard<RakNet::SimpleMutex> lock(packetAllocationPoolMutex);
+        packetAllocationPool.Clear();
+    }
 
     /*
     if (isRecvFromLoopThreadActive.GetValue()>0)
@@ -1134,10 +1123,10 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
 
     // Clear out the reliability layer list in case we want to reallocate it in a successive call to Init.
     RemoteSystemStruct *temp = remoteSystemList;
-    remoteSystemList = 0;
+    remoteSystemList = nullptr;
     delete[] temp;
     delete[] activeSystemList;
-    activeSystemList = 0;
+    activeSystemList = nullptr;
 
     ClearRemoteSystemLookup();
 
@@ -1196,22 +1185,17 @@ bool RakPeer::GetConnectionList(SystemAddress *remoteSystems, unsigned short *nu
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-uint32_t RakPeer::GetNextSendReceipt(void)
+uint32_t RakPeer::GetNextSendReceipt()
 {
-    sendReceiptSerialMutex.Lock();
-    uint32_t retVal = sendReceiptSerial;
-    sendReceiptSerialMutex.Unlock();
-    return retVal;
+    return sendReceiptSerial;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-uint32_t RakPeer::IncrementNextSendReceipt(void)
+uint32_t RakPeer::IncrementNextSendReceipt()
 {
-    sendReceiptSerialMutex.Lock();
     uint32_t returned = sendReceiptSerial;
     if (++sendReceiptSerial == 0)
         sendReceiptSerial = 1;
-    sendReceiptSerialMutex.Unlock();
     return returned;
 }
 
@@ -1245,13 +1229,13 @@ uint32_t RakPeer::Send(const char *data, const int length, PacketPriority priori
     RakAssert(!(priority > NUMBER_OF_PRIORITIES || priority < 0));
     RakAssert(!(orderingChannel >= NUMBER_OF_ORDERED_STREAMS));
 
-    if (data == 0 || length < 0)
+    if (data == nullptr || length < 0)
         return 0;
 
-    if (remoteSystemList == 0 || endThreads == true)
+    if (remoteSystemList == nullptr || endThreads == true)
         return 0;
 
-    if (broadcast == false && systemIdentifier.IsUndefined())
+    if (!broadcast && systemIdentifier.IsUndefined())
         return 0;
 
     uint32_t usedSendReceipt;
@@ -1260,7 +1244,7 @@ uint32_t RakPeer::Send(const char *data, const int length, PacketPriority priori
     else
         usedSendReceipt = IncrementNextSendReceipt();
 
-    if (broadcast == false && IsLoopbackAddress(systemIdentifier, true))
+    if (!broadcast && IsLoopbackAddress(systemIdentifier, true))
     {
         SendLoopback(data, length);
 
@@ -1268,9 +1252,8 @@ uint32_t RakPeer::Send(const char *data, const int length, PacketPriority priori
         {
             char buff[5];
             buff[0] = ID_SND_RECEIPT_ACKED;
-            sendReceiptSerialMutex.Lock();
-            memcpy(buff + 1, &sendReceiptSerial, 4);
-            sendReceiptSerialMutex.Unlock();
+                memcpy(buff + 1, &sendReceiptSerial, 4);
+
             SendLoopback(buff, 5);
         }
 
@@ -1310,10 +1293,10 @@ uint32_t RakPeer::Send(const RakNet::BitStream *bitStream, PacketPriority priori
     if (bitStream->GetNumberOfBytesUsed() == 0)
         return 0;
 
-    if (remoteSystemList == 0 || endThreads == true)
+    if (remoteSystemList == nullptr || endThreads == true)
         return 0;
 
-    if (broadcast == false && systemIdentifier.IsUndefined())
+    if (!broadcast && systemIdentifier.IsUndefined())
         return 0;
 
     uint32_t usedSendReceipt;
@@ -1322,16 +1305,15 @@ uint32_t RakPeer::Send(const RakNet::BitStream *bitStream, PacketPriority priori
     else
         usedSendReceipt = IncrementNextSendReceipt();
 
-    if (broadcast == false && IsLoopbackAddress(systemIdentifier, true))
+    if (!broadcast && IsLoopbackAddress(systemIdentifier, true))
     {
         SendLoopback((const char *) bitStream->GetData(), bitStream->GetNumberOfBytesUsed());
         if (reliability >= UNRELIABLE_WITH_ACK_RECEIPT)
         {
             char buff[5];
             buff[0] = ID_SND_RECEIPT_ACKED;
-            sendReceiptSerialMutex.Lock();
-            memcpy(buff + 1, &sendReceiptSerial, 4);
-            sendReceiptSerialMutex.Unlock();
+                memcpy(buff + 1, &sendReceiptSerial, 4);
+
             SendLoopback(buff, 5);
         }
         return usedSendReceipt;
@@ -1476,14 +1458,15 @@ Packet *RakPeer::Receive(void)
 
     do
     {
-        packetReturnMutex.Lock();
-        if (packetReturnQueue.IsEmpty())
-            packet = 0;
-        else
-            packet = packetReturnQueue.Pop();
-        packetReturnMutex.Unlock();
-        if (packet == 0)
-            return 0;
+        {
+            std::lock_guard<RakNet::SimpleMutex> lock(packetReturnMutex);
+            if (packetReturnQueue.IsEmpty())
+                packet = nullptr;
+            else
+                packet = packetReturnQueue.Pop();
+            if (packet == nullptr)
+                return nullptr;
+        }
 
 //        unsigned char msgId;
         if ((packet->length >= sizeof(unsigned char) + sizeof(RakNet::Time)) &&
@@ -1552,28 +1535,25 @@ Packet *RakPeer::Receive(void)
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::DeallocatePacket(Packet *packet)
 {
-    if (packet == 0)
+    if (packet == nullptr)
         return;
 
     if (packet->deleteData)
     {
         free(packet->data);
         packet->~Packet();
-        packetAllocationPoolMutex.Lock();
+        std::lock_guard<RakNet::SimpleMutex> lock(packetAllocationPoolMutex);
         packetAllocationPool.Release(packet);
-        packetAllocationPoolMutex.Unlock();
     }
     else
-    {
         free(packet);
-    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Description:
 // Return the total number of connections we are allowed
 // ---------------------------------------------------------------------------------------------------------------------
-unsigned int RakPeer::GetMaximumNumberOfPeers(void) const
+unsigned int RakPeer::GetMaximumNumberOfPeers() const
 {
     return maximumNumberOfPeers;
 }
@@ -1631,12 +1611,10 @@ RakPeer::CloseConnection(const AddressOrGUID target, bool sendDisconnectionNotif
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::CancelConnectionAttempt(const SystemAddress target)
 {
-    unsigned int i;
-
     // Cancel pending connection attempt, if there is one
-    i = 0;
-    requestedConnectionQueueMutex.Lock();
-    while (i < requestedConnectionQueue.Size())
+
+    std::lock_guard<SimpleMutex> lock(requestedConnectionQueueMutex);
+    for (unsigned int i = 0; i < requestedConnectionQueue.Size();)
     {
         if (requestedConnectionQueue[i]->systemAddress == target)
         {
@@ -1650,9 +1628,8 @@ void RakPeer::CancelConnectionAttempt(const SystemAddress target)
             break;
         }
         else
-            i++;
+            ++i;
     }
-    requestedConnectionQueueMutex.Unlock();
 
 }
 
@@ -1666,33 +1643,24 @@ ConnectionState RakPeer::GetConnectionState(const AddressOrGUID systemIdentifier
 {
     if (systemIdentifier.systemAddress != UNASSIGNED_SYSTEM_ADDRESS)
     {
-        unsigned int i = 0;
-        requestedConnectionQueueMutex.Lock();
-        for (; i < requestedConnectionQueue.Size(); i++)
+        std::lock_guard<SimpleMutex> lock(requestedConnectionQueueMutex);
+        for (unsigned int i = 0; i < requestedConnectionQueue.Size(); i++)
         {
             if (requestedConnectionQueue[i]->systemAddress == systemIdentifier.systemAddress)
-            {
-                requestedConnectionQueueMutex.Unlock();
                 return IS_PENDING;
-            }
         }
-        requestedConnectionQueueMutex.Unlock();
     }
 
     int index;
     if (systemIdentifier.systemAddress != UNASSIGNED_SYSTEM_ADDRESS)
-    {
         index = GetIndexFromSystemAddress(systemIdentifier.systemAddress, false);
-    }
     else
-    {
         index = GetIndexFromGuid(systemIdentifier.rakNetGuid);
-    }
 
     if (index == -1)
         return IS_NOT_CONNECTED;
 
-    if (remoteSystemList[index].isActive == false)
+    if (!remoteSystemList[index].isActive)
         return IS_DISCONNECTED;
 
     switch (remoteSystemList[index].connectMode)
@@ -1811,18 +1779,14 @@ RakPeer::GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStruc
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::AddToBanList(const char *IP, RakNet::TimeMS milliseconds)
 {
-    unsigned index;
     RakNet::TimeMS time = RakNet::GetTimeMS();
 
-    if (IP == 0 || IP[0] == 0 || strlen(IP) > 15)
+    if (IP == nullptr || IP[0] == 0 || strlen(IP) > 15)
         return;
 
-    // If this guy is already in the ban list, do nothing
-    index = 0;
+    std::lock_guard<SimpleMutex> lock(banListMutex);
 
-    banListMutex.Lock();
-
-    for (; index < banList.Size(); index++)
+    for (unsigned index = 0; index < banList.Size(); index++)
     {
         if (strcmp(IP, banList[index]->IP) == 0)
         {
@@ -1831,23 +1795,18 @@ void RakPeer::AddToBanList(const char *IP, RakNet::TimeMS milliseconds)
                 banList[index]->timeout = 0; // Infinite
             else
                 banList[index]->timeout = time + milliseconds;
-            banListMutex.Unlock();
             return;
         }
     }
 
-    banListMutex.Unlock();
-
-    BanStruct *banStruct = new BanStruct;
+    auto banStruct = new BanStruct;
     banStruct->IP = (char *) malloc(16);
     if (milliseconds == 0)
         banStruct->timeout = 0; // Infinite
     else
         banStruct->timeout = time + milliseconds;
     strcpy(banStruct->IP, IP);
-    banListMutex.Lock();
     banList.Insert(banStruct);
-    banListMutex.Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1860,18 +1819,14 @@ void RakPeer::AddToBanList(const char *IP, RakNet::TimeMS milliseconds)
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::RemoveFromBanList(const char *IP)
 {
-    unsigned index;
-    BanStruct *temp;
-
-    if (IP == 0 || IP[0] == 0 || strlen(IP) > 15)
+    if (IP == nullptr || IP[0] == 0 || strlen(IP) > 15)
         return;
 
-    index = 0;
-    temp = 0;
+    BanStruct *temp = nullptr;
 
-    banListMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(banListMutex);
 
-    for (; index < banList.Size(); index++)
+    for (unsigned index = 0; index < banList.Size(); index++)
     {
         if (strcmp(IP, banList[index]->IP) == 0)
         {
@@ -1881,8 +1836,6 @@ void RakPeer::RemoveFromBanList(const char *IP)
             break;
         }
     }
-
-    banListMutex.Unlock();
 
     if (temp)
     {
@@ -1896,21 +1849,17 @@ void RakPeer::RemoveFromBanList(const char *IP)
 // Description:
 // Allows all previously banned IPs to connect.
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ClearBanList(void)
+void RakPeer::ClearBanList()
 {
-    unsigned index;
-    index = 0;
-    banListMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(banListMutex);
 
-    for (; index < banList.Size(); index++)
+    for (unsigned index = 0; index < banList.Size(); index++)
     {
         free(banList[index]->IP);
         delete banList[index];
     }
 
     banList.Clear(false);
-
-    banListMutex.Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1932,21 +1881,19 @@ void RakPeer::SetLimitIPConnectionFrequency(bool b)
 // ---------------------------------------------------------------------------------------------------------------------
 bool RakPeer::IsBanned(const char *IP)
 {
-    unsigned banListIndex, characterIndex;
-    RakNet::TimeMS time;
     BanStruct *temp;
 
-    if (IP == 0 || IP[0] == 0 || strlen(IP) > 15)
+    if (IP == nullptr || IP[0] == 0 || strlen(IP) > 15)
         return false;
 
-    banListIndex = 0;
+    unsigned banListIndex = 0;
 
     if (banList.Size() == 0)
         return false; // Skip the mutex if possible
 
-    time = RakNet::GetTimeMS();
+    RakNet::TimeMS time = RakNet::GetTimeMS();
 
-    banListMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(banListMutex);
 
     while (banListIndex < banList.Size())
     {
@@ -1961,12 +1908,7 @@ bool RakPeer::IsBanned(const char *IP)
         }
         else
         {
-            characterIndex = 0;
-
-#ifdef _MSC_VER
-#pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
-#endif
-            while (true)
+            for (unsigned characterIndex = 0;;)
             {
                 if (banList[banListIndex]->IP[characterIndex] == IP[characterIndex])
                 {
@@ -1974,43 +1916,27 @@ bool RakPeer::IsBanned(const char *IP)
 
                     if (IP[characterIndex] == 0)
                     {
-                        banListMutex.Unlock();
                         // End of the string and the strings match
-
                         return true;
                     }
 
                     characterIndex++;
                 }
-
                 else
                 {
                     if (banList[banListIndex]->IP[characterIndex] == 0 || IP[characterIndex] == 0)
-                    {
-                        // End of one of the strings
-                        break;
-                    }
+                        break;  // End of one of the strings
 
                     // Characters do not match
                     if (banList[banListIndex]->IP[characterIndex] == '*')
-                    {
-                        banListMutex.Unlock();
+                        return true; // Domain is banned.
 
-                        // Domain is banned.
-                        return true;
-                    }
-
-                    // Characters do not match and it is not a *
-                    break;
+                    break;  // Characters do not match and it is not a *
                 }
             }
-
             banListIndex++;
         }
     }
-
-    banListMutex.Unlock();
-
     // No match found.
     return false;
 }
@@ -2225,13 +2151,11 @@ void RakPeer::SetOfflinePingResponse(const char *data, const unsigned int length
 {
     RakAssert(length < 400);
 
-    rakPeerMutexes[offlinePingResponse_Mutex].Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(rakPeerMutexes[offlinePingResponse_Mutex]);
     offlinePingResponse.Reset();
 
     if (data && length > 0)
         offlinePingResponse.Write(data, length);
-
-    rakPeerMutexes[offlinePingResponse_Mutex].Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -2242,10 +2166,9 @@ void RakPeer::SetOfflinePingResponse(const char *data, const unsigned int length
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::GetOfflinePingResponse(char **data, unsigned int *length)
 {
-    rakPeerMutexes[offlinePingResponse_Mutex].Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(rakPeerMutexes[offlinePingResponse_Mutex]);
     *data = (char *) offlinePingResponse.GetData();
     *length = (int) offlinePingResponse.GetNumberOfBytesUsed();
-    rakPeerMutexes[offlinePingResponse_Mutex].Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -2777,21 +2700,19 @@ void RakPeer::DetachPlugin(PluginInterface2 *plugin)
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::PushBackPacket(Packet *packet, bool pushAtHead)
 {
-    if (packet == 0)
+    if (packet == nullptr)
         return;
 
-    unsigned i;
-    for (i = 0; i < pluginListTS.Size(); i++)
+    for (unsigned i = 0; i < pluginListTS.Size(); i++)
         pluginListTS[i]->OnPushBackPacket((const char *) packet->data, packet->bitSize, packet->systemAddress);
-    for (i = 0; i < pluginListNTS.Size(); i++)
+    for (unsigned i = 0; i < pluginListNTS.Size(); i++)
         pluginListNTS[i]->OnPushBackPacket((const char *) packet->data, packet->bitSize, packet->systemAddress);
 
-    packetReturnMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(packetReturnMutex);
     if (pushAtHead)
         packetReturnQueue.PushAtHead(packet, 0);
     else
         packetReturnQueue.Push(packet);
-    packetReturnMutex.Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -2800,7 +2721,7 @@ void RakPeer::ChangeSystemAddress(RakNetGUID guid, const SystemAddress &systemAd
     BufferedCommandStruct *bcs;
 
     bcs = bufferedCommands.Allocate();
-    bcs->data = 0;
+    bcs->data = nullptr;
     bcs->systemIdentifier.systemAddress = systemAddress;
     bcs->systemIdentifier.rakNetGuid = guid;
     bcs->command = BufferedCommandStruct::BCS_CHANGE_SYSTEM_ADDRESS;
@@ -3095,12 +3016,13 @@ bool RakPeer::GetStatistics(const unsigned int index, RakNetStatistics *rns)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-unsigned int RakPeer::GetReceiveBufferSize(void)
+unsigned int RakPeer::GetReceiveBufferSize()
 {
     unsigned int size;
-    packetReturnMutex.Lock();
-    size = packetReturnQueue.Size();
-    packetReturnMutex.Unlock();
+    {
+        std::lock_guard<RakNet::SimpleMutex> lock(packetReturnMutex);
+        size = packetReturnQueue.Size();
+    }
     return size;
 }
 
@@ -3270,12 +3192,11 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
 #endif
 
     // Return false if already pending, else push on queue
-    requestedConnectionQueueMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(requestedConnectionQueueMutex);
     for (unsigned i = 0; i < requestedConnectionQueue.Size(); i++)
     {
         if (requestedConnectionQueue[i]->systemAddress == systemAddress)
         {
-            requestedConnectionQueueMutex.Unlock();
             // Not necessary
             //delete rcs->client_handshake;
             delete rcs;
@@ -3283,7 +3204,6 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
         }
     }
     requestedConnectionQueue.Push(rcs);
-    requestedConnectionQueueMutex.Unlock();
 
     return CONNECTION_ATTEMPT_STARTED;
 }
@@ -3329,12 +3249,11 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
 #endif
 
     // Return false if already pending, else push on queue
-    requestedConnectionQueueMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(requestedConnectionQueueMutex);
     for (unsigned i = 0; i < requestedConnectionQueue.Size(); i++)
     {
         if (requestedConnectionQueue[i]->systemAddress == systemAddress)
         {
-            requestedConnectionQueueMutex.Unlock();
             // Not necessary
             //delete rcs->client_handshake;
             delete rcs;
@@ -3342,12 +3261,11 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
         }
     }
     requestedConnectionQueue.Push(rcs);
-    requestedConnectionQueueMutex.Unlock();
 
     return CONNECTION_ATTEMPT_STARTED;
 }
 
-void RakPeer::ValidateRemoteSystemLookup(void) const
+void RakPeer::ValidateRemoteSystemLookup() const
 {
 }
 
@@ -3886,67 +3804,59 @@ bool RakPeer::AllowIncomingConnections(void) const
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::DeallocRNS2RecvStruct(RNS2RecvStruct *s)
 {
-    bufferedPacketsFreePoolMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(bufferedPacketsFreePoolMutex);
     bufferedPacketsFreePool.Push(s);
-    bufferedPacketsFreePoolMutex.Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 RNS2RecvStruct *RakPeer::AllocRNS2RecvStruct()
 {
-    bufferedPacketsFreePoolMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(bufferedPacketsFreePoolMutex);
     if (bufferedPacketsFreePool.Size() > 0)
     {
         RNS2RecvStruct *s = bufferedPacketsFreePool.Pop();
-        bufferedPacketsFreePoolMutex.Unlock();
         return s;
     }
     else
-    {
-        bufferedPacketsFreePoolMutex.Unlock();
         return new RNS2RecvStruct;
-    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ClearBufferedPackets(void)
+void RakPeer::ClearBufferedPackets()
 {
-    bufferedPacketsFreePoolMutex.Lock();
-    while (bufferedPacketsFreePool.Size() > 0)
-        delete bufferedPacketsFreePool.Pop();
-    bufferedPacketsFreePoolMutex.Unlock();
-
-    bufferedPacketsQueueMutex.Lock();
+    {
+        std::lock_guard<SimpleMutex> lock(bufferedPacketsFreePoolMutex);
+        while (bufferedPacketsFreePool.Size() > 0)
+            delete bufferedPacketsFreePool.Pop();
+    }
+    std::lock_guard<SimpleMutex> lock(bufferedPacketsQueueMutex);
     while (bufferedPacketsQueue.Size() > 0)
         delete bufferedPacketsQueue.Pop();
-    bufferedPacketsQueueMutex.Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::SetupBufferedPackets(void)
+void RakPeer::SetupBufferedPackets()
 {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::PushBufferedPacket(RNS2RecvStruct *p)
 {
-    bufferedPacketsQueueMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(bufferedPacketsQueueMutex);
     bufferedPacketsQueue.Push(p);
-    bufferedPacketsQueueMutex.Unlock();
+
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-RNS2RecvStruct *RakPeer::PopBufferedPacket(void)
+RNS2RecvStruct *RakPeer::PopBufferedPacket()
 {
-    bufferedPacketsQueueMutex.Lock();
+    std::lock_guard<SimpleMutex> lock(bufferedPacketsQueueMutex);
     if (bufferedPacketsQueue.Size() > 0)
     {
         RNS2RecvStruct *s = bufferedPacketsQueue.Pop();
-        bufferedPacketsQueueMutex.Unlock();
         return s;
     }
-    bufferedPacketsQueueMutex.Unlock();
-    return 0;
+    return nullptr;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -4226,11 +4136,9 @@ bool RakPeer::SendImmediate(char *data, BitSize_t numberOfBitsToSend, PacketPrio
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ResetSendReceipt(void)
+void RakPeer::ResetSendReceipt()
 {
-    sendReceiptSerialMutex.Lock();
     sendReceiptSerial = 1;
-    sendReceiptSerialMutex.Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -4280,13 +4188,15 @@ void RakPeer::ClearSocketQueryOutput(void)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ClearRequestedConnectionList(void)
+void RakPeer::ClearRequestedConnectionList()
 {
     DataStructures::Queue<RequestedConnectionStruct *> freeQueue;
-    requestedConnectionQueueMutex.Lock();
-    while (requestedConnectionQueue.Size())
-        freeQueue.Push(requestedConnectionQueue.Pop());
-    requestedConnectionQueueMutex.Unlock();
+
+    {
+        std::lock_guard<SimpleMutex> lock(requestedConnectionQueueMutex);
+        while (requestedConnectionQueue.Size())
+            freeQueue.Push(requestedConnectionQueue.Pop());
+    }
 
     for (unsigned i = 0; i < freeQueue.Size(); i++)
     {
@@ -4301,13 +4211,12 @@ void RakPeer::ClearRequestedConnectionList(void)
 
 inline void RakPeer::AddPacketToProducer(RakNet::Packet *p)
 {
-    packetReturnMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(packetReturnMutex);
     packetReturnQueue.Push(p);
-    packetReturnMutex.Unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::GenerateGUID(void)
+void RakPeer::GenerateGUID()
 {
     myGuid.g = Get64BitUniqueRandomNumber();
 }
@@ -4434,11 +4343,11 @@ namespace RakNet
                     outBitStream.Write(rakPeer->myGuid);
                     outBitStream.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 
-                    rakPeer->rakPeerMutexes[RakPeer::offlinePingResponse_Mutex].Lock();
-                    // They are connected, so append offline ping data
-                    outBitStream.Write((char *) rakPeer->offlinePingResponse.GetData(),
-                                       rakPeer->offlinePingResponse.GetNumberOfBytesUsed());
-                    rakPeer->rakPeerMutexes[RakPeer::offlinePingResponse_Mutex].Unlock();
+                    {
+                        std::lock_guard<RakNet::SimpleMutex> lock(rakPeer->rakPeerMutexes[RakPeer::offlinePingResponse_Mutex]);
+                        // They are connected, so append offline ping data
+                        outBitStream.Write((char *) rakPeer->offlinePingResponse.GetData(), rakPeer->offlinePingResponse.GetNumberOfBytesUsed());
+                    }
 
                     for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                         rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char *) outBitStream.GetData(),
@@ -4453,7 +4362,7 @@ namespace RakNet
                     // SocketLayer::SendTo( rakNetSocket, (const char*)outBitStream.GetData(), (unsigned int) outBitStream.GetNumberOfBytesUsed(), systemAddress );
 
                     packet = rakPeer->AllocPacket(sizeof(MessageID));
-                    packet->data[0] = data[0];
+                    packet->data[0] = (unsigned char) data[0];
                     packet->systemAddress = systemAddress;
                     packet->guid = remoteGuid;
                     packet->systemAddress.systemIndex = (SystemIndex) rakPeer->GetIndexFromSystemAddress(systemAddress, true);
@@ -4549,7 +4458,7 @@ namespace RakNet
                 if (serverHasSecurity)
                     bsOut.Write(cookie);
 
-                rakPeer->requestedConnectionQueueMutex.Lock();
+                rakPeer->requestedConnectionQueueMutex.lock();
                 for (unsigned i = 0; i < rakPeer->requestedConnectionQueue.Size(); i++)
                 {
                     RakPeer::RequestedConnectionStruct *rcs = rakPeer->requestedConnectionQueue[i];
@@ -4630,7 +4539,7 @@ namespace RakNet
 
                         // Binding address
                         bsOut.Write(rcs->systemAddress);
-                        rakPeer->requestedConnectionQueueMutex.Unlock();
+                        rakPeer->requestedConnectionQueueMutex.unlock();
                         // MTU
                         bsOut.Write(mtu);
                         // Our guid
@@ -4651,7 +4560,7 @@ namespace RakNet
                         return true;
                     }
                 }
-                rakPeer->requestedConnectionQueueMutex.Unlock();
+                rakPeer->requestedConnectionQueueMutex.unlock();
             }
             else if ((unsigned char) (data)[0] == (MessageID) ID_OPEN_CONNECTION_REPLY_2)
             {
@@ -4685,7 +4594,7 @@ namespace RakNet
 #endif // LIBCAT_SECURITY
 
                 bool unlock = true;
-                rakPeer->requestedConnectionQueueMutex.Lock();
+                rakPeer->requestedConnectionQueueMutex.lock();
                 for (unsigned i = 0; i < rakPeer->requestedConnectionQueue.Size(); i++)
                 {
                     RakPeer::RequestedConnectionStruct *rcs = rakPeer->requestedConnectionQueue[i];
@@ -4717,7 +4626,7 @@ namespace RakNet
 
 #endif // LIBCAT_SECURITY
 
-                        rakPeer->requestedConnectionQueueMutex.Unlock();
+                        rakPeer->requestedConnectionQueueMutex.unlock();
                         unlock = false;
 
                         RakAssert(rcs->actionToTake == RakPeer::RequestedConnectionStruct::CONNECT);
@@ -4817,7 +4726,7 @@ namespace RakNet
                             }
                         }
 
-                        rakPeer->requestedConnectionQueueMutex.Lock();
+                        rakPeer->requestedConnectionQueueMutex.lock();
                         for (unsigned k = 0; k < rakPeer->requestedConnectionQueue.Size(); k++)
                         {
                             if (rakPeer->requestedConnectionQueue[k]->systemAddress == systemAddress)
@@ -4826,7 +4735,7 @@ namespace RakNet
                                 break;
                             }
                         }
-                        rakPeer->requestedConnectionQueueMutex.Unlock();
+                        rakPeer->requestedConnectionQueueMutex.unlock();
 
 #ifdef LIBCAT_SECURITY
                         CAT_AUDIT_PRINTF("AUDIT: Deleting client_handshake object %x and rcs->client_handshake object %x\n",
@@ -4841,7 +4750,7 @@ namespace RakNet
                 }
 
                 if (unlock)
-                    rakPeer->requestedConnectionQueueMutex.Unlock();
+                    rakPeer->requestedConnectionQueueMutex.unlock();
 
                 return true;
             }
@@ -4864,7 +4773,7 @@ namespace RakNet
                 bs.Read(guid);
 
                 bool connectionAttemptCancelled = false;
-                rakPeer->requestedConnectionQueueMutex.Lock();
+                rakPeer->requestedConnectionQueueMutex.lock();
                 for (unsigned i = 0; i < rakPeer->requestedConnectionQueue.Size(); i++)
                 {
                     RakPeer::RequestedConnectionStruct *rcs = rakPeer->requestedConnectionQueue[i];
@@ -4881,7 +4790,7 @@ namespace RakNet
                         break;
                     }
                 }
-                rakPeer->requestedConnectionQueueMutex.Unlock();
+                rakPeer->requestedConnectionQueueMutex.unlock();
 
                 if (connectionAttemptCancelled)
                 {
@@ -5417,7 +5326,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
         }
 
 #ifdef _DEBUG
-        bcs->data = 0;
+        bcs->data = nullptr;
 #endif
 
         bufferedCommands.Deallocate(bcs);
@@ -5432,11 +5341,11 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
         }
 
         unsigned requestedConnectionQueueIndex = 0;
-        requestedConnectionQueueMutex.Lock();
+        requestedConnectionQueueMutex.lock();
         while (requestedConnectionQueueIndex < requestedConnectionQueue.Size())
         {
             RequestedConnectionStruct *rcs = requestedConnectionQueue[requestedConnectionQueueIndex];
-            requestedConnectionQueueMutex.Unlock();
+            requestedConnectionQueueMutex.unlock();
             if (rcs->nextRequestTime < timeMS)
             {
                 bool condition1 = rcs->requestsMade == rcs->sendConnectionAttemptCount + 1;
@@ -5466,7 +5375,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
 #endif
                     delete rcs;
 
-                    requestedConnectionQueueMutex.Lock();
+                    requestedConnectionQueueMutex.lock();
                     for (unsigned int k = 0; k < requestedConnectionQueue.Size(); k++)
                     {
                         if (requestedConnectionQueue[k] == rcs)
@@ -5475,7 +5384,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                             break;
                         }
                     }
-                    requestedConnectionQueueMutex.Unlock();
+                    requestedConnectionQueueMutex.unlock();
                 }
                 else
                 {
@@ -5555,9 +5464,9 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
             else
                 requestedConnectionQueueIndex++;
 
-            requestedConnectionQueueMutex.Lock();
+            requestedConnectionQueueMutex.lock();
         }
-        requestedConnectionQueueMutex.Unlock();
+        requestedConnectionQueueMutex.unlock();
     }
 
     // remoteSystemList in network thread

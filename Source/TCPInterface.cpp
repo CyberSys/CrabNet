@@ -235,10 +235,11 @@ void TCPInterface::Stop(void)
     }
 
     // Abort waiting connect calls
-    blockingSocketListMutex.Lock();
-    for (unsigned int i = 0; i < blockingSocketList.Size(); i++)
-        closesocket__(blockingSocketList[i]);
-    blockingSocketListMutex.Unlock();
+    {
+        std::lock_guard<RakNet::SimpleMutex> lock(blockingSocketListMutex);
+        for (unsigned int i = 0; i < blockingSocketList.Size(); i++)
+            closesocket__(blockingSocketList[i]);
+    }
 
     // Wait for the thread to stop
     while (threadRunning > 0)
@@ -295,14 +296,11 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
     for (newRemoteClientIndex = 0; newRemoteClientIndex < remoteClientsLength; newRemoteClientIndex++)
     {
         auto &newRemoteClient = remoteClients[newRemoteClientIndex];
-        newRemoteClient.isActiveMutex.Lock();
         if (!remoteClients[newRemoteClientIndex].isActive)
         {
             newRemoteClient.SetActive(true);
-            newRemoteClient.isActiveMutex.Unlock();
             break;
         }
-        newRemoteClient.isActiveMutex.Unlock();
     }
     if (newRemoteClientIndex == -1)
         return UNASSIGNED_SYSTEM_ADDRESS;
@@ -320,13 +318,10 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
         __TCPSOCKET__ sockfd = SocketConnect(buffout, remotePort, socketFamily, bindAddress);
         if (sockfd == 0)
         {
-            newRemoteClient.isActiveMutex.Lock();
             newRemoteClient.SetActive(false);
-            newRemoteClient.isActiveMutex.Unlock();
 
-            failedConnectionAttemptMutex.Lock();
+            std::lock_guard<RakNet::SimpleMutex> lock(failedConnectionAttemptMutex);
             failedConnectionAttempts.Push(systemAddress);
-            failedConnectionAttemptMutex.Unlock();
 
             return UNASSIGNED_SYSTEM_ADDRESS;
         }
@@ -334,15 +329,14 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
         newRemoteClient.socket = sockfd;
         newRemoteClient.systemAddress = systemAddress;
 
-        completedConnectionAttemptMutex.Lock();
+        std::lock_guard<RakNet::SimpleMutex> lock(completedConnectionAttemptMutex);
         completedConnectionAttempts.Push(newRemoteClient.systemAddress);
-        completedConnectionAttemptMutex.Unlock();
 
         return newRemoteClient.systemAddress;
     }
     else
     {
-        ThisPtrPlusSysAddr *s = new ThisPtrPlusSysAddr;
+        auto s = new ThisPtrPlusSysAddr;
         s->systemAddress.FromStringExplicitPort(host, remotePort);
         s->systemAddress.systemIndex = (SystemIndex) newRemoteClientIndex;
         if (bindAddress)
@@ -529,22 +523,17 @@ void TCPInterface::CloseConnection(SystemAddress systemAddress)
     if (systemAddress.systemIndex < remoteClientsLength &&
         remoteClients[systemAddress.systemIndex].systemAddress == systemAddress)
     {
-        remoteClients[systemAddress.systemIndex].isActiveMutex.Lock();
         remoteClients[systemAddress.systemIndex].SetActive(false);
-        remoteClients[systemAddress.systemIndex].isActiveMutex.Unlock();
     }
     else
     {
         for (int i = 0; i < remoteClientsLength; i++)
         {
-            remoteClients[i].isActiveMutex.Lock();
             if (remoteClients[i].isActive && remoteClients[i].systemAddress == systemAddress)
             {
                 remoteClients[systemAddress.systemIndex].SetActive(false);
-                remoteClients[i].isActiveMutex.Unlock();
                 break;
             }
-            remoteClients[i].isActiveMutex.Unlock();
         }
     }
 
@@ -594,36 +583,38 @@ void TCPInterface::PushBackPacket(Packet *packet, bool pushAtHead)
         tailPush.Push(packet);
 }
 
-bool TCPInterface::WasStarted(void) const
+bool TCPInterface::WasStarted() const
 {
     return threadRunning > 0;
 }
 
-SystemAddress TCPInterface::HasCompletedConnectionAttempt(void)
+SystemAddress TCPInterface::HasCompletedConnectionAttempt()
 {
     SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
-    completedConnectionAttemptMutex.Lock();
-    if (!completedConnectionAttempts.IsEmpty())
-        sysAddr = completedConnectionAttempts.Pop();
-    completedConnectionAttemptMutex.Unlock();
+
+    {
+        std::lock_guard<RakNet::SimpleMutex> lock(completedConnectionAttemptMutex);
+        if (!completedConnectionAttempts.IsEmpty())
+            sysAddr = completedConnectionAttempts.Pop();
+    }
 
     if (sysAddr != UNASSIGNED_SYSTEM_ADDRESS)
     {
-        unsigned int i;
-        for (i = 0; i < messageHandlerList.Size(); i++)
+        for (unsigned i = 0; i < messageHandlerList.Size(); i++)
             messageHandlerList[i]->OnNewConnection(sysAddr, UNASSIGNED_RAKNET_GUID, true);
     }
 
     return sysAddr;
 }
 
-SystemAddress TCPInterface::HasFailedConnectionAttempt(void)
+SystemAddress TCPInterface::HasFailedConnectionAttempt()
 {
     SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
-    failedConnectionAttemptMutex.Lock();
-    if (!failedConnectionAttempts.IsEmpty())
-        sysAddr = failedConnectionAttempts.Pop();
-    failedConnectionAttemptMutex.Unlock();
+    {
+        std::lock_guard<RakNet::SimpleMutex> lock(failedConnectionAttemptMutex);
+        if (!failedConnectionAttempts.IsEmpty())
+            sysAddr = failedConnectionAttempts.Pop();
+    }
 
     if (sysAddr != UNASSIGNED_SYSTEM_ADDRESS)
     {
@@ -691,7 +682,7 @@ void TCPInterface::GetConnectionList(SystemAddress *remoteSystems, unsigned shor
     *numberOfSystems = systemCount;
 }
 
-unsigned short TCPInterface::GetConnectionCount(void) const
+unsigned short TCPInterface::GetConnectionCount() const
 {
     unsigned short systemCount = 0;
     for (int i = 0; i < remoteClientsLength; i++)
@@ -709,9 +700,8 @@ unsigned int TCPInterface::GetOutgoingDataBufferSize(SystemAddress systemAddress
         remoteClients[systemAddress.systemIndex].isActive &&
         remoteClients[systemAddress.systemIndex].systemAddress == systemAddress)
     {
-        remoteClients[systemAddress.systemIndex].outgoingDataMutex.Lock();
+        std::lock_guard<RakNet::SimpleMutex> lock(remoteClients[systemAddress.systemIndex].outgoingDataMutex);
         bytesWritten = remoteClients[systemAddress.systemIndex].outgoingData.GetBytesWritten();
-        remoteClients[systemAddress.systemIndex].outgoingDataMutex.Unlock();
         return bytesWritten;
     }
 
@@ -719,9 +709,8 @@ unsigned int TCPInterface::GetOutgoingDataBufferSize(SystemAddress systemAddress
     {
         if (remoteClients[i].isActive && remoteClients[i].systemAddress == systemAddress)
         {
-            remoteClients[i].outgoingDataMutex.Lock();
+            std::lock_guard<RakNet::SimpleMutex> lock(remoteClients[i].outgoingDataMutex);
             bytesWritten += remoteClients[i].outgoingData.GetBytesWritten();
-            remoteClients[i].outgoingDataMutex.Unlock();
         }
     }
     return bytesWritten;
@@ -762,9 +751,11 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char *host, unsigned short remot
 
 
     memcpy((char *) &serverAddress.sin_addr.s_addr, (char *) server->h_addr, server->h_length);
-    blockingSocketListMutex.Lock();
-    blockingSocketList.Insert(sockfd);
-    blockingSocketListMutex.Unlock();
+
+    {
+        std::lock_guard<RakNet::SimpleMutex> lock(blockingSocketListMutex);
+        blockingSocketList.Insert(sockfd);
+    }
 
     // This is blocking
     int connectResult = connect__(sockfd, (struct sockaddr *) &serverAddress, sizeof(struct sockaddr));
@@ -788,11 +779,11 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char *host, unsigned short remot
 
     if (connectResult == -1)
     {
-        blockingSocketListMutex.Lock();
+        std::lock_guard<RakNet::SimpleMutex> lock(blockingSocketListMutex);
+
         unsigned sockfdIndex = blockingSocketList.GetIndexOf(sockfd);
         if (sockfdIndex != (unsigned) -1)
             blockingSocketList.RemoveAtIndexFast(sockfdIndex);
-        blockingSocketListMutex.Unlock();
 
         closesocket__(sockfd);
         return 0;
@@ -817,14 +808,11 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
     __TCPSOCKET__ sockfd = tcpInterface->SocketConnect(str1, systemAddress.GetPort(), socketFamily, s->bindAddress);
     if (sockfd == 0)
     {
-        tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
         tcpInterface->remoteClients[newRemoteClientIndex].SetActive(false);
-        tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
 
-        tcpInterface->failedConnectionAttemptMutex.Lock();
+        std::lock_guard<RakNet::SimpleMutex> lock(tcpInterface->failedConnectionAttemptMutex);
         tcpInterface->failedConnectionAttempts.Push(systemAddress);
-        tcpInterface->failedConnectionAttemptMutex.Unlock();
-        return 0;
+        return nullptr;
     }
 
     tcpInterface->remoteClients[newRemoteClientIndex].socket = sockfd;
@@ -833,11 +821,10 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
     // Notify user that the connection attempt has completed.
     if (tcpInterface->threadRunning > 0)
     {
-        tcpInterface->completedConnectionAttemptMutex.Lock();
+        std::lock_guard<RakNet::SimpleMutex> lock(tcpInterface->completedConnectionAttemptMutex);
         tcpInterface->completedConnectionAttempts.Push(systemAddress);
-        tcpInterface->completedConnectionAttemptMutex.Unlock();
     }
-    return 0;
+    return nullptr;
 
 }
 
@@ -917,7 +904,6 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 
             for (unsigned int i = 0; i < (unsigned int) sts->remoteClientsLength; i++)
             {
-                sts->remoteClients[i].isActiveMutex.Lock();
                 if (sts->remoteClients[i].isActive)
                 {
                     // calling FD_ISSET with -1 as socket (that�s what 0 is set to) produces a bus error under Linux 64-Bit
@@ -932,7 +918,6 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                             largestDescriptor = socketCopy;
                     }
                 }
-                sts->remoteClients[i].isActiveMutex.Unlock();
             }
 
 #ifdef _MSC_VER
@@ -952,7 +937,6 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                     for (newRemoteClientIndex = 0; newRemoteClientIndex < sts->remoteClientsLength; newRemoteClientIndex++)
                     {
                         auto &newRemoteClient = sts->remoteClients[newRemoteClientIndex];
-                        newRemoteClient.isActiveMutex.Lock();
                         if (!newRemoteClient.isActive)
                         {
                             newRemoteClient.socket = newSock;
@@ -975,7 +959,6 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 
 #endif // #if RAKNET_SUPPORT_IPV6!=1
                             newRemoteClient.SetActive(true);
-                            newRemoteClient.isActiveMutex.Unlock();
 
                             SystemAddress *newConnectionSystemAddress = sts->newIncomingConnections.Allocate();
                             *newConnectionSystemAddress = newRemoteClient.systemAddress;
@@ -983,7 +966,6 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 
                             break;
                         }
-                        newRemoteClient.isActiveMutex.Unlock();
                     }
                     if (newRemoteClientIndex == -1)
                         closesocket__(sts->listenSocket);
@@ -1024,9 +1006,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                     SystemAddress *lostConnectionSystemAddress = sts->lostConnections.Allocate();
                     *lostConnectionSystemAddress = sts->remoteClients[i].systemAddress;
                     sts->lostConnections.Push(lostConnectionSystemAddress);
-                    sts->remoteClients[i].isActiveMutex.Lock();
                     sts->remoteClients[i].SetActive(false);
-                    sts->remoteClients[i].isActiveMutex.Unlock();
                 }
                 else
                 {
@@ -1054,16 +1034,14 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                             SystemAddress *lostConnectionSystemAddress = sts->lostConnections.Allocate();
                             *lostConnectionSystemAddress = sts->remoteClients[i].systemAddress;
                             sts->lostConnections.Push(lostConnectionSystemAddress);
-                            sts->remoteClients[i].isActiveMutex.Lock();
                             sts->remoteClients[i].SetActive(false);
-                            sts->remoteClients[i].isActiveMutex.Unlock();
                             continue;
                         }
                     }
                     if (FD_ISSET(socketCopy, &writeFD))
                     {
                         RemoteClient *rc = &sts->remoteClients[i];
-                        rc->outgoingDataMutex.Lock();
+                        std::lock_guard<RakNet::SimpleMutex> lock(rc->outgoingDataMutex);
                         unsigned int bytesInBuffer = rc->outgoingData.GetBytesWritten();
                         if (bytesInBuffer > 0)
                         {
@@ -1082,7 +1060,6 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                             if (bytesSent > 0)
                                 rc->outgoingData.IncrementReadOffset(bytesSent);
                         }
-                        rc->outgoingDataMutex.Unlock();
                     }
 
                     i++; // Nothing deleted so increment the index
@@ -1125,23 +1102,22 @@ void RemoteClient::SendOrBuffer(const char **data, const unsigned int *lengths, 
         return;
     for (int parameterIndex = 0; parameterIndex < numParameters; parameterIndex++)
     {
-        outgoingDataMutex.Lock();
+        outgoingDataMutex.lock();
         if (ALLOW_SEND_FROM_USER_THREAD && outgoingData.GetBytesWritten() == 0)
         {
-            outgoingDataMutex.Unlock();
+            outgoingDataMutex.unlock();
             int bytesSent = Send(data[parameterIndex], lengths[parameterIndex]);
             if (bytesSent < (int) lengths[parameterIndex])
             {
                 // Push remainder
-                outgoingDataMutex.Lock();
+                std::lock_guard<RakNet::SimpleMutex> lock(outgoingDataMutex);
                 outgoingData.WriteBytes(data[parameterIndex] + bytesSent, lengths[parameterIndex] - bytesSent);
-                outgoingDataMutex.Unlock();
             }
         }
         else
         {
             outgoingData.WriteBytes(data[parameterIndex], lengths[parameterIndex]);
-            outgoingDataMutex.Unlock();
+            outgoingDataMutex.unlock();
         }
     }
 }

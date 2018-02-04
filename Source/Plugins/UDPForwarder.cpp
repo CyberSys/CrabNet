@@ -146,18 +146,15 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
     sfis->inputId=inputId;
     startForwardingInput.Push(sfis);
 
-#ifdef _MSC_VER
-#pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
-#endif
-    while (1)
+    for(;;)
     {
         RakSleep(0);
-        startForwardingOutputMutex.Lock();
-        for (unsigned int i=0; i < startForwardingOutput.Size(); i++)
+        std::lock_guard<RakNet::SimpleMutex> lock(startForwardingOutputMutex);
+        for (unsigned int i = 0; i < startForwardingOutput.Size(); i++)
         {
-            if (startForwardingOutput[i].inputId==inputId)
+            if (startForwardingOutput[i].inputId == inputId)
             {
-                if (startForwardingOutput[i].result==UDPFORWARDER_SUCCESS)
+                if (startForwardingOutput[i].result == UDPFORWARDER_SUCCESS)
                 {
                     if (forwardingPort)
                         *forwardingPort = startForwardingOutput[i].forwardingPort;
@@ -166,11 +163,9 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source, SystemAdd
                 }
                 UDPForwarderResult res = startForwardingOutput[i].result;
                 startForwardingOutput.RemoveAtIndex(i);
-                startForwardingOutputMutex.Unlock();
                 return res;
             }
         }
-        startForwardingOutputMutex.Unlock();
     }
 
     return UDPFORWARDER_RESULT_COUNT;
@@ -507,10 +502,10 @@ void UDPForwarder::UpdateUDPForwarder(void)
 
         // Push result
         sfos.inputId=sfis->inputId;
-        startForwardingOutputMutex.Lock();
-        startForwardingOutput.Push(sfos);
-        startForwardingOutputMutex.Unlock();
-
+        {
+            std::lock_guard<RakNet::SimpleMutex> lock(startForwardingOutputMutex);
+            startForwardingOutput.Push(sfos);
+        }
         startForwardingInput.Deallocate(sfis);
     }
 

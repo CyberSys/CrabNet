@@ -29,7 +29,7 @@
 #include <sys/types.h>
 #endif
 #include "Export.h"
-
+#include <mutex>
 namespace RakNet
 {
 
@@ -48,10 +48,10 @@ public:
     ~SimpleMutex();
 
     // Locks the mutex.  Slow!
-    void Lock();
+    void lock();
 
     // Unlocks the mutex.
-    void Unlock();
+    void unlock();
 
 private:
     void Init();

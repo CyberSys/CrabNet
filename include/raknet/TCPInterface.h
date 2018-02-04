@@ -224,9 +224,8 @@ struct RemoteClient
     __TCPSOCKET__ socket;
     SystemAddress systemAddress;
     DataStructures::ByteQueue outgoingData;
-    bool isActive;
+    std::atomic_bool isActive;
     SimpleMutex outgoingDataMutex;
-    SimpleMutex isActiveMutex;
 
 #if OPEN_SSL_CLIENT_SUPPORT==1
     SSL*     ssl;
@@ -237,16 +236,15 @@ struct RemoteClient
     int Recv(char *data, const int dataSize);
 #else
     int Send(const char *data, unsigned int length);
-    int Recv(char *data, const int dataSize);
+    int Recv(char *data, int dataSize);
 #endif
-    void Reset(void)
+    void Reset()
     {
-        outgoingDataMutex.Lock();
+        std::lock_guard<RakNet::SimpleMutex> lock(outgoingDataMutex);
         outgoingData.Clear();
-        outgoingDataMutex.Unlock();
     }
     void SetActive(bool a);
-    void SendOrBuffer(const char **data, const unsigned int *lengths, const int numParameters);
+    void SendOrBuffer(const char **data, const unsigned int *lengths, int numParameters);
 };
 
 } // namespace RakNet

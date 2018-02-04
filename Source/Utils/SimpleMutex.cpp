@@ -19,7 +19,7 @@ using namespace RakNet;
 
 SimpleMutex::SimpleMutex() //: isInitialized(false)
 {
-    // Prior implementation of Initializing in Lock() was not threadsafe
+    // Prior implementation of Initializing in lock() was not threadsafe
     Init();
 }
 
@@ -38,7 +38,7 @@ SimpleMutex::~SimpleMutex()
 #endif
 #endif
 
-void SimpleMutex::Lock()
+void SimpleMutex::lock()
 {
 #ifdef _WIN32
     EnterCriticalSection(&criticalSection);
@@ -49,7 +49,7 @@ void SimpleMutex::Lock()
 #endif
 }
 
-void SimpleMutex::Unlock()
+void SimpleMutex::unlock()
 {
 #ifdef _WIN32
     LeaveCriticalSection(&criticalSection);

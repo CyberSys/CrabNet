@@ -16,6 +16,7 @@
 #include "DS_List.h"
 #include "RakNetTypes.h" // int64_t
 #include <stdio.h>
+#include <atomic>
 #include "stdarg.h"
 
 #ifdef _WIN32
@@ -25,7 +26,6 @@
 namespace RakNet
 {
 /// Forward declarations
-class SimpleMutex;
 class BitStream;
 
 /// \brief String class
@@ -300,12 +300,11 @@ public:
     /// \internal
     struct SharedString
     {
-        SimpleMutex *refCountMutex;
-        unsigned int refCount;
-        size_t bytesUsed;
-        char *bigString;
-        char *c_str;
-        char smallString[128-sizeof(unsigned int)-sizeof(size_t)-sizeof(char*)*2];
+        size_t bytesUsed {0};
+        char *bigString { (char*)("")};
+        char *c_str {(char*)("")};
+        char smallString[128-sizeof(unsigned int)-sizeof(size_t)-sizeof(char*)*2] {""};
+        std::atomic_uint32_t refCount {0};
     };
 
     /// \internal

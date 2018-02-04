@@ -463,7 +463,7 @@ namespace DataStructures
     }
 
     template <class list_type>
-    void List<list_type>::Compress(  )
+    void List<list_type>::Compress()
     {
         list_type * new_array;
 

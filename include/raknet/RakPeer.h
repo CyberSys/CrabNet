@@ -788,7 +788,7 @@ protected:
     void DereferenceRemoteSystem(const SystemAddress &sa);
     RemoteSystemStruct* GetRemoteSystem(const SystemAddress &sa) const;
     unsigned int GetRemoteSystemIndex(const SystemAddress &sa) const;
-    void ClearRemoteSystemLookup(void);
+    void ClearRemoteSystemLookup();
     DataStructures::MemoryPool<RemoteSystemIndex> remoteSystemIndexPool;
 
     void AddToActiveSystemList(unsigned int remoteSystemListIndex);
@@ -805,7 +805,7 @@ protected:
         offlinePingResponse_Mutex,
         NUMBER_OF_RAKPEER_MUTEXES
     };
-    SimpleMutex rakPeerMutexes[ NUMBER_OF_RAKPEER_MUTEXES ];
+    SimpleMutex rakPeerMutexes[NUMBER_OF_RAKPEER_MUTEXES];
     ///RunUpdateCycle is not thread safe but we don't need to mutex calls. Just skip calls if it is running already
 
     bool updateCycleIsRunning;
@@ -905,9 +905,9 @@ protected:
 
     virtual void DeallocRNS2RecvStruct(RNS2RecvStruct *s);
     virtual RNS2RecvStruct *AllocRNS2RecvStruct();
-    void SetupBufferedPackets(void);
+    void SetupBufferedPackets();
     void PushBufferedPacket(RNS2RecvStruct * p);
-    RNS2RecvStruct *PopBufferedPacket(void);
+    RNS2RecvStruct *PopBufferedPacket();
 
     struct SocketQueryOutput
     {
@@ -919,21 +919,21 @@ protected:
     DataStructures::ThreadsafeAllocatingQueue<SocketQueryOutput> socketQueryOutput;
 
 
-    bool AllowIncomingConnections(void) const;
+    bool AllowIncomingConnections() const;
 
-    void PingInternal( const SystemAddress target, bool performImmediate, PacketReliability reliability );
+    void PingInternal(SystemAddress target, bool performImmediate, PacketReliability reliability);
     // This stores the user send calls to be handled by the update thread.  This way we don't have thread contention over systemAddresss
     void CloseConnectionInternal( const AddressOrGUID& systemIdentifier, bool sendDisconnectionNotification, bool performImmediate, unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority );
-    void SendBuffered( const char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode, uint32_t receipt );
-    void SendBufferedList( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode, uint32_t receipt );
-    bool SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, bool useCallerDataAllocation, RakNet::TimeUS currentTime, uint32_t receipt );
+    void SendBuffered( const char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, AddressOrGUID systemIdentifier, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode, uint32_t receipt );
+    void SendBufferedList( const char **data, const int *lengths, int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode, uint32_t receipt );
+    bool SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, AddressOrGUID systemIdentifier, bool broadcast, bool useCallerDataAllocation, RakNet::TimeUS currentTime, uint32_t receipt );
     //bool HandleBufferedRPC(BufferedCommandStruct *bcs, RakNet::TimeMS time);
-    void ClearBufferedCommands(void);
-    void ClearBufferedPackets(void);
-    void ClearSocketQueryOutput(void);
-    void ClearRequestedConnectionList(void);
+    void ClearBufferedCommands();
+    void ClearBufferedPackets();
+    void ClearSocketQueryOutput();
+    void ClearRequestedConnectionList();
     void AddPacketToProducer(RakNet::Packet *p);
-    unsigned int GenerateSeedFromGuid(void);
+    unsigned int GenerateSeedFromGuid();
     RakNet::Time GetClockDifferentialInt(RemoteSystemStruct *remoteSystem) const;
     SimpleMutex securityExceptionMutex;
 
@@ -943,7 +943,7 @@ protected:
 
     // Smart pointer so I can return the object to the user
     DataStructures::List<RakNetSocket2* > socketList;
-    void DerefAllSockets(void);
+    void DerefAllSockets();
     unsigned int GetRakNetSocketFromUserConnectionSocketIndex(unsigned int userIndex) const;
     // Used for RPC replies
     RakNet::BitStream *replyFromTargetBS;
@@ -953,8 +953,8 @@ protected:
     RakNet::TimeMS defaultTimeoutTime;
 
     // Generate and store a unique GUID
-    void GenerateGUID(void);
-    unsigned int GetSystemIndexFromGuid( const RakNetGUID input ) const;
+    void GenerateGUID();
+    unsigned int GetSystemIndexFromGuid(RakNetGUID input ) const;
     RakNetGUID myGuid;
 
     unsigned maxOutgoingBPS;
@@ -1001,9 +1001,8 @@ protected:
     /// This is used to return a number to the user when they call Send identifying the message
     /// This number will be returned back with ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS and is only returned
     /// with the reliability types that contain RECEIPT in the name
-    SimpleMutex sendReceiptSerialMutex;
-    uint32_t sendReceiptSerial;
-    void ResetSendReceipt(void);
+    std::atomic_uint32_t sendReceiptSerial;
+    void ResetSendReceipt();
     void OnConnectedPong(RakNet::Time sendPingTime, RakNet::Time sendPongTime, RemoteSystemStruct *remoteSystem);
     void CallPluginCallbacks(DataStructures::List<PluginInterface2*> &pluginList, Packet *packet);
 

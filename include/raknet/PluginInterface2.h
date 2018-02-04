@@ -35,7 +35,8 @@ struct InternalPacket;
 /// \defgroup PLUGINS_GROUP Plugins
 /// \ingroup PLUGIN_INTERFACE_GROUP
 
-/// For each message that arrives on an instance of RakPeer, the plugins get an opportunity to process them first. This enumeration represents what to do with the message
+/// For each message that arrives on an instance of RakPeer, the plugins get an opportunity to process them first.
+/// This enumeration represents what to do with the message
 /// \ingroup PLUGIN_INTERFACE_GROUP
 enum PluginReceiveResult
 {
@@ -94,13 +95,13 @@ public:
     virtual ~PluginInterface2();
 
     /// Called when the interface is attached
-    virtual void OnAttach(void) {}
+    virtual void OnAttach() {}
 
     /// Called when the interface is detached
-    virtual void OnDetach(void) {}
+    virtual void OnDetach() {}
 
     /// Update is called every time a packet is checked for .
-    virtual void Update(void) {}
+    virtual void Update() {}
 
     /// OnReceive is called for every packet.
     /// \param[in] packet the packet that is being returned to the user
@@ -108,52 +109,86 @@ public:
     virtual PluginReceiveResult OnReceive(Packet *packet) {(void) packet; return RR_CONTINUE_PROCESSING;}
 
     /// Called when RakPeer is initialized
-    virtual void OnRakPeerStartup(void) {}
+    virtual void OnRakPeerStartup() {}
 
     /// Called when RakPeer is shutdown
-    virtual void OnRakPeerShutdown(void) {}
+    virtual void OnRakPeerShutdown() {}
 
     /// Called when a connection is dropped because the user called RakPeer::CloseConnection() for a particular system
     /// \param[in] systemAddress The system whose connection was closed
     /// \param[in] rakNetGuid The guid of the specified system
     /// \param[in] lostConnectionReason How the connection was closed: manually, connection lost, or notification of disconnection
-    virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason ){(void) systemAddress; (void) rakNetGUID; (void) lostConnectionReason;}
+    virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason)
+    {
+        (void) systemAddress;
+        (void) rakNetGUID;
+        (void) lostConnectionReason;
+    }
 
     /// Called when we got a new connection
     /// \param[in] systemAddress Address of the new connection
     /// \param[in] rakNetGuid The guid of the specified system
     /// \param[in] isIncoming If true, this is ID_NEW_INCOMING_CONNECTION, or the equivalent
-    virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming) {(void) systemAddress; (void) rakNetGUID; (void) isIncoming;}
+    virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+    {
+        (void) systemAddress;
+        (void) rakNetGUID;
+        (void) isIncoming;
+    }
 
     /// Called when a connection attempt fails
     /// \param[in] packet Packet to be returned to the user
     /// \param[in] failedConnectionReason Why the connection failed
-    virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) {(void) packet; (void) failedConnectionAttemptReason;}
+    virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
+    {
+        (void) packet;
+        (void) failedConnectionAttemptReason;
+    }
 
     /// Queried when attached to RakPeer
     /// Return true to call OnDirectSocketSend(), OnDirectSocketReceive(), OnReliabilityLayerNotification(), OnInternalPacket(), and OnAck()
     /// If true, then you cannot call RakPeer::AttachPlugin() or RakPeer::DetachPlugin() for this plugin, while RakPeer is active
-    virtual bool UsesReliabilityLayer(void) const {return false;}
+    virtual bool UsesReliabilityLayer() const
+    {
+        return false;
+    }
 
     /// Called on a send to the socket, per datagram, that does not go through the reliability layer
     /// \pre To be called, UsesReliabilityLayer() must return true
     /// \param[in] data The data being sent
     /// \param[in] bitsUsed How many bits long \a data is
     /// \param[in] remoteSystemAddress Which system this message is being sent to
-    virtual void OnDirectSocketSend(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress) {(void) data; (void) bitsUsed; (void) remoteSystemAddress;}
+    virtual void OnDirectSocketSend(const char *data, BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
+    {
+        (void) data;
+        (void) bitsUsed;
+        (void) remoteSystemAddress;
+    }
 
     /// Called on a receive from the socket, per datagram, that does not go through the reliability layer
     /// \pre To be called, UsesReliabilityLayer() must return true
     /// \param[in] data The data being sent
     /// \param[in] bitsUsed How many bits long \a data is
     /// \param[in] remoteSystemAddress Which system this message is being sent to
-    virtual void OnDirectSocketReceive(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress) {(void) data; (void) bitsUsed; (void) remoteSystemAddress;}
+    virtual void OnDirectSocketReceive(const char *data, BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
+    {
+        (void) data;
+        (void) bitsUsed;
+        (void) remoteSystemAddress;
+    }
 
     /// Called when the reliability layer rejects a send or receive
     /// \pre To be called, UsesReliabilityLayer() must return true
     /// \param[in] bitsUsed How many bits long \a data is
     /// \param[in] remoteSystemAddress Which system this message is being sent to
-    virtual void OnReliabilityLayerNotification(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress, bool isError)  {(void) errorMessage; (void) bitsUsed; (void) remoteSystemAddress; (void) isError;}
+    virtual void OnReliabilityLayerNotification(const char *errorMessage, BitSize_t bitsUsed,
+                                                SystemAddress remoteSystemAddress, bool isError)
+    {
+        (void) errorMessage;
+        (void) bitsUsed;
+        (void) remoteSystemAddress;
+        (void) isError;
+    }
 
     /// Called on a send or receive of a message within the reliability layer
     /// \pre To be called, UsesReliabilityLayer() must return true
@@ -162,38 +197,60 @@ public:
     /// \param[in] remoteSystemAddress The player we sent or got this packet from
     /// \param[in] time The current time as returned by RakNet::GetTimeMS()
     /// \param[in] isSend Is this callback representing a send event or receive event?
-    virtual void OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time, int isSend) {(void) internalPacket; (void) frameNumber; (void) remoteSystemAddress; (void) time; (void) isSend;}
+    virtual void
+    OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress,
+                     RakNet::TimeMS time, int isSend)
+    {
+        (void) internalPacket;
+        (void) frameNumber;
+        (void) remoteSystemAddress;
+        (void) time;
+        (void) isSend;
+    }
 
     /// Called when we get an ack for a message we reliably sent
     /// \pre To be called, UsesReliabilityLayer() must return true
     /// \param[in] messageNumber The numerical identifier for which message this is
     /// \param[in] remoteSystemAddress The player we sent or got this packet from
     /// \param[in] time The current time as returned by RakNet::GetTimeMS()
-    virtual void OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time) {(void) messageNumber; (void) remoteSystemAddress; (void) time;}
+    virtual void OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time)
+    {
+        (void) messageNumber;
+        (void) remoteSystemAddress;
+        (void) time;
+    }
 
     /// System called RakPeerInterface::PushBackPacket
     /// \param[in] data The data being sent
     /// \param[in] bitsUsed How many bits long \a data is
     /// \param[in] remoteSystemAddress The player we sent or got this packet from
-    virtual void OnPushBackPacket(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress) {(void) data; (void) bitsUsed; (void) remoteSystemAddress;}
+    virtual void OnPushBackPacket(const char *data, BitSize_t bitsUsed, SystemAddress remoteSystemAddress)
+    {
+        (void) data;
+        (void) bitsUsed;
+        (void) remoteSystemAddress;
+    }
 
-    RakPeerInterface *GetRakPeerInterface(void) const {return rakPeerInterface;}
+    RakPeerInterface *GetRakPeerInterface() const {return rakPeerInterface;}
 
-    RakNetGUID GetMyGUIDUnified(void) const;
+    RakNetGUID GetMyGUIDUnified() const;
 
     /// \internal
     void SetRakPeerInterface( RakPeerInterface *ptr );
 
 #if _RAKNET_SUPPORT_TCPInterface==1
     /// \internal
-    void SetTCPInterface( TCPInterface *ptr );
+    void SetTCPInterface(TCPInterface *ptr);
 #endif
 
 protected:
     // Send through either rakPeerInterface or tcpInterface, whichever is available
-    void SendUnified( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
-    void SendUnified( const char * data, const int length, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
-    bool SendListUnified( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast );
+    void SendUnified(const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability,
+                     char orderingChannel, AddressOrGUID systemIdentifier, bool broadcast);
+    void SendUnified(const char * data, int length, PacketPriority priority, PacketReliability reliability,
+                     char orderingChannel, AddressOrGUID systemIdentifier, bool broadcast);
+    bool SendListUnified(const char **data, const int *lengths, int numParameters, PacketPriority priority,
+                         PacketReliability reliability, char orderingChannel, AddressOrGUID systemIdentifier, bool broadcast);
 
     Packet *AllocatePacketUnified(unsigned dataSize);
     void PushBackPacketUnified(Packet *packet, bool pushAtHead);

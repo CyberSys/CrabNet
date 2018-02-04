@@ -36,13 +36,13 @@ class RAK_DLL_EXPORT ThreadsafeAllocatingQueue
 public:
     // Queue operations
     void Push(structureType *s);
-    structureType *PopInaccurate(void);
-    structureType *Pop(void);
+    structureType *PopInaccurate();
+    structureType *Pop();
     void SetPageSize(int size);
-    bool IsEmpty(void);
+    bool IsEmpty();
     structureType * operator[] ( unsigned int position );
     void RemoveAtIndex( unsigned int position );
-    unsigned int Size( void );
+    unsigned int Size();
 
     // Memory pool operations
     structureType *Allocate();
@@ -59,38 +59,35 @@ protected:
 template <class structureType>
 void ThreadsafeAllocatingQueue<structureType>::Push(structureType *s)
 {
-    queueMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(queueMutex);
     queue.Push(s);
-    queueMutex.Unlock();
 }
 
 template <class structureType>
-structureType *ThreadsafeAllocatingQueue<structureType>::PopInaccurate(void)
+structureType *ThreadsafeAllocatingQueue<structureType>::PopInaccurate()
 {
     structureType *s;
+
     if (queue.IsEmpty())
         return 0;
-    queueMutex.Lock();
-    if (queue.IsEmpty()==false)
+
+    std::lock_guard<RakNet::SimpleMutex> lock(queueMutex);
+    if (!queue.IsEmpty())
         s=queue.Pop();
     else
         s=0;
-    queueMutex.Unlock();
     return s;
 }
 
 template <class structureType>
-structureType *ThreadsafeAllocatingQueue<structureType>::Pop(void)
+structureType *ThreadsafeAllocatingQueue<structureType>::Pop()
 {
     structureType *s;
-    queueMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(queueMutex);
     if (queue.IsEmpty())
-    {
-        queueMutex.Unlock();
         return 0;
-    }
-    s=queue.Pop();
-    queueMutex.Unlock();
+
+    s = queue.Pop();
     return s;
 }
 
@@ -98,9 +95,10 @@ template <class structureType>
 structureType *ThreadsafeAllocatingQueue<structureType>::Allocate()
 {
     structureType *s;
-    memoryPoolMutex.Lock();
-    s=memoryPool.Allocate();
-    memoryPoolMutex.Unlock();
+    {
+        std::lock_guard<RakNet::SimpleMutex> lock(memoryPoolMutex);
+        s = memoryPool.Allocate();
+    }
     // Call new operator, memoryPool doesn't do this
     s = new ((void*)s) structureType;
     return s;
@@ -110,25 +108,21 @@ void ThreadsafeAllocatingQueue<structureType>::Deallocate(structureType *s)
 {
     // Call delete operator, memory pool doesn't do this
     s->~structureType();
-    memoryPoolMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(memoryPoolMutex);
     memoryPool.Release(s);
-    memoryPoolMutex.Unlock();
 }
 
 template <class structureType>
 void ThreadsafeAllocatingQueue<structureType>::Clear()
 {
-    memoryPoolMutex.Lock();
-    for (unsigned int i=0; i < queue.Size(); i++)
+    std::lock_guard<RakNet::SimpleMutex> lock(memoryPoolMutex);
+    for (unsigned int i = 0; i < queue.Size(); i++)
     {
         queue[i]->~structureType();
         memoryPool.Release(queue[i]);
     }
     queue.Clear();
-    memoryPoolMutex.Unlock();
-    memoryPoolMutex.Lock();
     memoryPool.Clear();
-    memoryPoolMutex.Unlock();
 }
 
 template <class structureType>
@@ -138,40 +132,36 @@ void ThreadsafeAllocatingQueue<structureType>::SetPageSize(int size)
 }
 
 template <class structureType>
-bool ThreadsafeAllocatingQueue<structureType>::IsEmpty(void)
+bool ThreadsafeAllocatingQueue<structureType>::IsEmpty()
 {
     bool isEmpty;
-    queueMutex.Lock();
-    isEmpty=queue.IsEmpty();
-    queueMutex.Unlock();
+    std::lock_guard<RakNet::SimpleMutex> lock(queueMutex);
+    isEmpty = queue.IsEmpty();
     return isEmpty;
 }
 
 template <class structureType>
-structureType * ThreadsafeAllocatingQueue<structureType>::operator[] ( unsigned int position )
+structureType * ThreadsafeAllocatingQueue<structureType>::operator[] (unsigned int position)
 {
     structureType *s;
-    queueMutex.Lock();
-    s=queue[position];
-    queueMutex.Unlock();
+    std::lock_guard<RakNet::SimpleMutex> lock(queueMutex);
+    s = queue[position];
     return s;
 }
 
 template <class structureType>
-void ThreadsafeAllocatingQueue<structureType>::RemoveAtIndex( unsigned int position )
+void ThreadsafeAllocatingQueue<structureType>::RemoveAtIndex(unsigned int position)
 {
-    queueMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(queueMutex);
     queue.RemoveAtIndex(position);
-    queueMutex.Unlock();
 }
 
 template <class structureType>
-unsigned int ThreadsafeAllocatingQueue<structureType>::Size( void )
+unsigned int ThreadsafeAllocatingQueue<structureType>::Size()
 {
     unsigned int s;
-    queueMutex.Lock();
-    s=queue.Size();
-    queueMutex.Unlock();
+    std::lock_guard<RakNet::SimpleMutex> lock(queueMutex);
+    s = queue.Size();
     return s;
 }
 

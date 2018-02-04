@@ -81,23 +81,18 @@ void FileListTransfer::FileToPushRecipient::DeleteThis(void)
 ////    filesToPushMutex.Unlock();
     delete this;
 }
-void FileListTransfer::FileToPushRecipient::AddRef(void)
+void FileListTransfer::FileToPushRecipient::AddRef()
 {
-    refCountMutex.Lock();
     ++refCount;
-    refCountMutex.Unlock();
 }
-void FileListTransfer::FileToPushRecipient::Deref(void)
+void FileListTransfer::FileToPushRecipient::Deref()
 {
-    refCountMutex.Lock();
     --refCount;
     if (refCount==0)
     {
-        refCountMutex.Unlock();
         DeleteThis();
         return;
     }
-    refCountMutex.Unlock();
 }
 FileListTransfer::FileListTransfer()
 {
@@ -151,13 +146,12 @@ void FileListTransfer::Send(FileList *fileList, RakNet::RakPeerInterface *rakPee
     for (unsigned int flpcIndex=0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
         fileList->AddCallback(fileListProgressCallbacks[flpcIndex]);
 
-    unsigned int i, totalLength;
     RakNet::BitStream outBitstream;
     bool sendReference;
     const char *dataBlocks[2];
     int lengths[2];
-    totalLength=0;
-    for (i=0; i < fileList->fileList.Size(); i++)
+    unsigned totalLength = 0;
+    for (unsigned i = 0; i < fileList->fileList.Size(); i++)
     {
         const FileListNode &fileListNode = fileList->fileList[i];
         totalLength+=fileListNode.dataLengthBytes;
@@ -181,7 +175,7 @@ void FileListTransfer::Send(FileList *fileList, RakNet::RakPeerInterface *rakPee
 
         DataStructures::Queue<FileToPush*> filesToPush;
 
-        for (i=0; i < fileList->fileList.Size(); i++)
+        for (unsigned i = 0; i < fileList->fileList.Size(); i++)
         {
             sendReference = fileList->fileList[i].isAReference && _incrementalReadInterface!=0;
             if (sendReference)
@@ -224,37 +218,34 @@ void FileListTransfer::Send(FileList *fileList, RakNet::RakPeerInterface *rakPee
             }
         }
 
-        if (filesToPush.IsEmpty()==false)
+        if (!filesToPush.IsEmpty())
         {
             FileToPushRecipient *ftpr;
 
-            fileToPushRecipientListMutex.Lock();
-            for (unsigned int i=0; i < fileToPushRecipientList.Size(); i++)
             {
-                if (fileToPushRecipientList[i]->systemAddress==recipient && fileToPushRecipientList[i]->setId==setId)
+                std::lock_guard<RakNet::SimpleMutex> lock(fileToPushRecipientListMutex);
+                for (unsigned int i = 0; i < fileToPushRecipientList.Size(); i++)
                 {
-//                     ftpr=fileToPushRecipientList[i];
-//                     ftpr->AddRef();
-//                     break;
-                    RakAssert("setId already in use for this recipient" && 0);
+                    if (fileToPushRecipientList[i]->systemAddress == recipient &&
+                        fileToPushRecipientList[i]->setId == setId)
+                    {
+                        RakAssert("setId already in use for this recipient" && 0);
+                    }
                 }
             }
-            fileToPushRecipientListMutex.Unlock();
 
-            //if (ftpr==0)
-            //{
-                ftpr =new FileToPushRecipient;
-                ftpr->systemAddress=recipient;
-                ftpr->setId=setID;
-                ftpr->refCount=2; // Allocated and in the list
-                fileToPushRecipientList.Push(ftpr);
-            //}
-            while (filesToPush.IsEmpty()==false)
+
+            ftpr = new FileToPushRecipient;
+            ftpr->systemAddress = recipient;
+            ftpr->setId = setID;
+            ftpr->refCount = 2; // Allocated and in the list
+            fileToPushRecipientList.Push(ftpr);
+
+            while (!filesToPush.IsEmpty())
             {
-                ////ftpr->filesToPushMutex.Lock();
                 ftpr->filesToPush.Push(filesToPush.Pop());
-                ////ftpr->filesToPushMutex.Unlock();
             }
+
             // ftpr out of scope
             ftpr->Deref();
             SendIRIToAddress(recipient, setID);
@@ -268,7 +259,7 @@ void FileListTransfer::Send(FileList *fileList, RakNet::RakPeerInterface *rakPee
     }
     else
     {
-        for (unsigned int flpcIndex=0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
+        for (unsigned int flpcIndex = 0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
             fileListProgressCallbacks[flpcIndex]->OnFilePushesComplete(recipient, setID);
 
         if (rakPeer)
@@ -531,10 +522,9 @@ void FileListTransfer::OnRakPeerShutdown(void)
     threadPool.ClearInput();
     Clear();
 }
-void FileListTransfer::Clear(void)
+void FileListTransfer::Clear()
 {
-    unsigned i;
-    for (i=0; i < fileListReceivers.Size(); i++)
+    for (unsigned int i=0; i < fileListReceivers.Size(); i++)
     {
         fileListReceivers[i]->downloadHandler->OnDereference();
         if (fileListReceivers[i]->deleteDownloadHandler)
@@ -543,7 +533,7 @@ void FileListTransfer::Clear(void)
     }
     fileListReceivers.Clear();
 
-    fileToPushRecipientListMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(fileToPushRecipientListMutex);
     for (unsigned int i=0; i < fileToPushRecipientList.Size(); i++)
     {
         FileToPushRecipient *ftpr = fileToPushRecipientList[i];
@@ -551,7 +541,6 @@ void FileListTransfer::Clear(void)
         ftpr->Deref();
     }
     fileToPushRecipientList.Clear(false);
-    fileToPushRecipientListMutex.Unlock();
 
     //filesToPush.Clear(false);
 }
@@ -580,22 +569,18 @@ void FileListTransfer::CancelReceive(unsigned short setId)
 }
 void FileListTransfer::RemoveReceiver(SystemAddress systemAddress)
 {
-    unsigned i;
-    i=0;
+
     threadPool.LockInput();
-    while (i < threadPool.InputSize())
+    for (unsigned i = 0; i < threadPool.InputSize();)
     {
-        if (threadPool.GetInputAtIndex(i).systemAddress==systemAddress)
-        {
+        if (threadPool.GetInputAtIndex(i).systemAddress == systemAddress)
             threadPool.RemoveInputAtIndex(i);
-        }
         else
-            i++;
+            ++i;
     }
     threadPool.UnlockInput();
 
-    i=0;
-    while (i < fileListReceivers.Size())
+    for (unsigned i = 0; i < fileListReceivers.Size();)
     {
         if (fileListReceivers[i]->allowedSender==systemAddress)
         {
@@ -609,16 +594,15 @@ void FileListTransfer::RemoveReceiver(SystemAddress systemAddress)
             i++;
     }
 
-    fileToPushRecipientListMutex.Lock();
-    i=0;
-    while (i < fileToPushRecipientList.Size())
+    std::lock_guard<RakNet::SimpleMutex> lock(fileToPushRecipientListMutex);
+    for (unsigned i = 0; i < fileToPushRecipientList.Size();)
     {
-        if (fileToPushRecipientList[i]->systemAddress==systemAddress)
+        if (fileToPushRecipientList[i]->systemAddress == systemAddress)
         {
             FileToPushRecipient *ftpr = fileToPushRecipientList[i];
 
             // Tell the user that this recipient was lost
-            for (unsigned int flpcIndex=0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
+            for (unsigned flpcIndex = 0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
                 fileListProgressCallbacks[flpcIndex]->OnSendAborted(ftpr->systemAddress);
 
             fileToPushRecipientList.RemoveAtIndex(i);
@@ -626,11 +610,8 @@ void FileListTransfer::RemoveReceiver(SystemAddress systemAddress)
             ftpr->Deref();
         }
         else
-        {
             i++;
-        }
     }
-    fileToPushRecipientListMutex.Unlock();
 }
 bool FileListTransfer::IsHandlerActive(unsigned short setId)
 {
@@ -941,24 +922,23 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
     FileListTransfer *fileListTransfer = threadData.fileListTransfer;
     SystemAddress systemAddress = threadData.systemAddress;
     unsigned short setId = threadData.setId;
-    *returnOutput=false;
+    *returnOutput = false;
 
     // Was previously using GetStatistics to get outgoing buffer size, but TCP with UnifiedSend doesn't have this
     unsigned int bytesRead;
     const char *dataBlocks[2];
     int lengths[2];
-    unsigned int smallFileTotalSize=0;
+    unsigned int smallFileTotalSize = 0;
     RakNet::BitStream outBitstream;
-    unsigned int ftpIndex;
 
-    fileListTransfer->fileToPushRecipientListMutex.Lock();
-    for (ftpIndex=0; ftpIndex < fileListTransfer->fileToPushRecipientList.Size(); ftpIndex++)
+    fileListTransfer->fileToPushRecipientListMutex.lock();
+    for (unsigned ftpIndex = 0; ftpIndex < fileListTransfer->fileToPushRecipientList.Size(); ftpIndex++)
     {
         FileListTransfer::FileToPushRecipient *ftpr = fileListTransfer->fileToPushRecipientList[ftpIndex];
         // Referenced by both ftpr and list
         ftpr->AddRef();
 
-        fileListTransfer->fileToPushRecipientListMutex.Unlock();
+        fileListTransfer->fileToPushRecipientListMutex.unlock();
 
         if (ftpr->systemAddress==systemAddress && ftpr->setId==setId)
         {
@@ -1092,11 +1072,11 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
         else
         {
             ftpr->Deref();
-            fileListTransfer->fileToPushRecipientListMutex.Lock();
+            fileListTransfer->fileToPushRecipientListMutex.lock();
         }
     }
 
-    fileListTransfer->fileToPushRecipientListMutex.Unlock();
+    fileListTransfer->fileToPushRecipientListMutex.unlock();
 
     return 0;
 }
@@ -1128,33 +1108,26 @@ void FileListTransfer::OnReferencePushAck(Packet *packet)
 }
 void FileListTransfer::RemoveFromList(FileToPushRecipient *ftpr)
 {
-    fileToPushRecipientListMutex.Lock();
-    for (unsigned int i=0; i < fileToPushRecipientList.Size(); i++)
+    std::lock_guard<RakNet::SimpleMutex> lock(fileToPushRecipientListMutex);
+    for (unsigned int i = 0; i < fileToPushRecipientList.Size(); i++)
     {
         if (fileToPushRecipientList[i]==ftpr)
         {
             fileToPushRecipientList.RemoveAtIndex(i);
             // List no longer references
             ftpr->Deref();
-            fileToPushRecipientListMutex.Unlock();
             return;
         }
     }
-    fileToPushRecipientListMutex.Unlock();
 }
 unsigned int FileListTransfer::GetPendingFilesToAddress(SystemAddress recipient)
 {
-    fileToPushRecipientListMutex.Lock();
+    std::lock_guard<RakNet::SimpleMutex> lock(fileToPushRecipientListMutex);
     for (unsigned int i=0; i < fileToPushRecipientList.Size(); i++)
     {
         if (fileToPushRecipientList[i]->systemAddress==recipient)
-        {
-            unsigned int size = fileToPushRecipientList[i]->filesToPush.Size();
-            fileToPushRecipientListMutex.Unlock();
-            return size;
-        }
+            return fileToPushRecipientList[i]->filesToPush.Size();
     }
-    fileToPushRecipientListMutex.Unlock();
 
     return 0;
 }
