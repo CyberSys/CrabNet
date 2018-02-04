@@ -43,41 +43,41 @@ public:
     RakString(const unsigned char *format, ...);
     RakString(const char *format, ...);
     ~RakString();
-    RakString( const RakString & rhs);
+    RakString(const RakString & rhs);
 
     /// Implicit return of const char*
     operator const char* () const {return sharedString->c_str;}
 
     /// Same as std::string::c_str
-    const char *C_String(void) const {return sharedString->c_str;}
+    const char *C_String() const {return sharedString->c_str;}
 
     // Lets you modify the string. Do not make the string longer - however, you can make it shorter, or change the contents.
     // Pointer is only valid in the scope of RakString itself
-    char *C_StringUnsafe(void) {Clone(); return sharedString->c_str;}
+    char *C_StringUnsafe() {Clone(); return sharedString->c_str;}
 
     /// Assigment operators
-    RakString& operator = ( const RakString& rhs );
-    RakString& operator = ( const char *str );
-    RakString& operator = ( char *str );
-    RakString& operator = ( const unsigned char *str );
-    RakString& operator = ( char unsigned *str );
-    RakString& operator = ( const char c );
+    RakString& operator = (const RakString& rhs);
+    RakString& operator = (const char *str);
+    RakString& operator = (char *str);
+    RakString& operator = (const unsigned char *str);
+    RakString& operator = (char unsigned *str);
+    RakString& operator = (char c);
 
     /// Concatenation
-    RakString& operator +=( const RakString& rhs);
-    RakString& operator += ( const char *str );
-    RakString& operator += ( char *str );
-    RakString& operator += ( const unsigned char *str );
-    RakString& operator += ( char unsigned *str );
-    RakString& operator += ( const char c );
+    RakString& operator +=(const RakString& rhs);
+    RakString& operator += (const char *str);
+    RakString& operator += (char *str);
+    RakString& operator += (const unsigned char *str);
+    RakString& operator += (char unsigned *str);
+    RakString& operator += (char c);
 
     /// Character index. Do not use to change the string however.
-    unsigned char operator[] ( const unsigned int position ) const;
+    unsigned char operator[] (unsigned int position) const;
 
 #ifdef _WIN32
     // Return as Wide char
     // Deallocate with DeallocWideChar
-    WCHAR * ToWideChar(void);
+    WCHAR * ToWideChar();
     void DeallocWideChar(WCHAR * w);
 
     void FromWideChar(const wchar_t *source);
@@ -90,7 +90,7 @@ public:
     /// \param[in] stringToFind The string to find inside of this object's string
     /// \param[in] pos The position in the string to start the search
     /// \return Returns the position of the first occurrence in the string.
-    size_t Find(const char *stringToFind,size_t pos = 0 );
+    size_t Find(const char *stringToFind,size_t pos = 0);
 
     /// Equality
     bool operator==(const RakString &rhs) const;
@@ -98,10 +98,10 @@ public:
     bool operator==(char *str) const;
 
     // Comparison
-    bool operator < ( const RakString& right ) const;
-    bool operator <= ( const RakString& right ) const;
-    bool operator > ( const RakString& right ) const;
-    bool operator >= ( const RakString& right ) const;
+    bool operator < (const RakString& right) const;
+    bool operator <= (const RakString& right) const;
+    bool operator > (const RakString& right) const;
+    bool operator >= (const RakString& right) const;
 
     /// Inequality
     bool operator!=(const RakString &rhs) const;
@@ -109,10 +109,10 @@ public:
     bool operator!=(char *str) const;
 
     /// Change all characters to lowercase
-    const char * ToLower(void);
+    const char * ToLower();
 
     /// Change all characters to uppercase
-    const char * ToUpper(void);
+    const char * ToUpper();
 
     /// Set the value of the string
     void Set(const char *format, ...);
@@ -124,23 +124,23 @@ public:
     /// \param[in] pos The position on str to start the copy
     /// \param[in] n How many chars to copy
     /// \return Returns the string, note that the current string is set to that value as well
-    RakString Assign(const char *str,size_t pos, size_t n );
+    RakString Assign(const char *str,size_t pos, size_t n);
 
     /// Returns if the string is empty. Also, C_String() would return ""
-    bool IsEmpty(void) const;
+    bool IsEmpty() const;
 
     /// Returns the length of the string
-    size_t GetLength(void) const;
-    size_t GetLengthUTF8(void) const;
+    size_t GetLength() const;
+    size_t GetLengthUTF8() const;
 
     /// Replace character(s) in starting at index, for count, with c
     void Replace(unsigned index, unsigned count, unsigned char c);
 
     /// Replace character at index with c
-    void SetChar( unsigned index, unsigned char c );
+    void SetChar(unsigned index, unsigned char c);
 
     /// Replace character at index with string s
-    void SetChar( unsigned index, RakNet::RakString s );
+    void SetChar(unsigned index, RakNet::RakString s);
 
     /// Make sure string is no longer than \a length
     void Truncate(unsigned int length);
@@ -193,10 +193,10 @@ public:
     int StrICmp(const RakString &rhs) const;
 
     /// Clear the string
-    void Clear(void);
+    void Clear();
 
     /// Print the string to the screen
-    void Printf(void);
+    void Printf();
 
     /// Print the string to a file
     void FPrintf(FILE *fp);
@@ -205,22 +205,22 @@ public:
     bool IPAddressMatch(const char *IP);
 
     /// Does the string contain non-printable characters other than spaces?
-    bool ContainsNonprintableExceptSpaces(void) const;
+    bool ContainsNonprintableExceptSpaces() const;
 
     /// Is this a valid email address?
-    bool IsEmailAddress(void) const;
+    bool IsEmailAddress() const;
 
     /// URL Encode the string. See http://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4029/
-    RakNet::RakString& URLEncode(void);
+    RakNet::RakString& URLEncode();
 
     /// URL decode the string
-    RakNet::RakString& URLDecode(void);
+    RakNet::RakString& URLDecode();
 
     /// https://servers.api.rackspacecloud.com/v1.0 to https://,  servers.api.rackspacecloud.com, /v1.0
     void SplitURI(RakNet::RakString &header, RakNet::RakString &domain, RakNet::RakString &path);
 
     /// Scan for quote, double quote, and backslash and prepend with backslash
-    RakNet::RakString& SQLEscape(void);
+    RakNet::RakString& SQLEscape();
 
     /// Format as a POST command that can be sent to a webserver
     /// \param[in] uri For example, masterserver2.raknet.com/testServer
@@ -241,13 +241,13 @@ public:
     static RakNet::RakString FormatForDELETE(const char* uri, const char* extraHeaders="");
 
     /// Fix to be a file path, ending with /
-    RakNet::RakString& MakeFilePath(void);
+    RakNet::RakString& MakeFilePath();
 
     /// RakString uses a freeList of old no-longer used strings
     /// Call this function to clear this memory on shutdown
-    static void FreeMemory(void);
+    static void FreeMemory();
     /// \internal
-    static void FreeMemoryNoMutex(void);
+    static void FreeMemoryNoMutex();
 
     /// Serialize to a bitstream, uncompressed (slightly faster)
     /// \param[out] bs Bitstream to serialize to
@@ -308,7 +308,7 @@ public:
     };
 
     /// \internal
-    RakString( SharedString *_sharedString );
+    RakString(SharedString *_sharedString);
 
     /// \internal
     SharedString *sharedString;
@@ -324,10 +324,10 @@ public:
     /// List of free objects to reduce memory reallocations
     static DataStructures::List<SharedString*> freeList;
 
-    static int RakStringComp( RakString const &key, RakString const &data );
+    static int RakStringComp(RakString const &key, RakString const &data);
 
-    static void LockMutex(void);
-    static void UnlockMutex(void);
+    static void LockMutex();
+    static void UnlockMutex();
 
 protected:
     static RakNet::RakString FormatForPUTOrPost(const char* type, const char* uri, const char* contentType, const char* body, const char* extraHeaders);
@@ -335,8 +335,8 @@ protected:
     void Assign(const char *str);
     void Assign(const char *str, va_list ap);
 
-    void Clone(void);
-    void Free(void);
+    void Clone();
+    void Free();
     unsigned char ToLower(unsigned char c);
     unsigned char ToUpper(unsigned char c);
     void Realloc(SharedString *sharedString, size_t bytes);
