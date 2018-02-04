@@ -15,13 +15,13 @@
 
 #if   defined(_WIN32)
 #include "WindowsIncludes.h"
-
 #else
     #include <pthread.h>
     #include <sys/types.h>
-#include <atomic>
 #include "SimpleMutex.h"
 #endif
+
+#include <atomic>
 
 #include "Export.h"
 

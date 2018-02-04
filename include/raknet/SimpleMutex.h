@@ -22,10 +22,7 @@
 
 #if   defined(_WIN32)
 #include "WindowsIncludes.h"
-
-
 #else
-#include <pthread.h>
 #include <sys/types.h>
 #endif
 #include "Export.h"
@@ -36,7 +33,10 @@ namespace RakNet
 /// \brief An easy to use mutex.
 /// 
 /// I wrote this because the version that comes with Windows is too complicated and requires too much code to use.
-/// @remark Previously I used this everywhere, and in fact for a year or two RakNet was totally threadsafe.  While doing profiling, I saw that this function was incredibly slow compared to the blazing performance of everything else, so switched to single producer / consumer everywhere.  Now the user thread of RakNet is not threadsafe, but it's 100X faster than before.
+/// @remark Previously I used this everywhere, and in fact for a year or two RakNet was totally threadsafe.
+/// While doing profiling, I saw that this function was incredibly slow compared to the blazing performance of
+/// everything else, so switched to single producer / consumer everywhere.
+/// Now the user thread of RakNet is not threadsafe, but it's 100X faster than before.
 class RAK_DLL_EXPORT SimpleMutex
 {
 public:
@@ -54,14 +54,7 @@ public:
     void unlock();
 
 private:
-    void Init();
-#ifdef _WIN32
-    CRITICAL_SECTION criticalSection; /// Docs say this is faster than a mutex for single process access
-#else
-    pthread_mutex_t hMutex;
-#endif
-    // Not threadsafe
-    //    bool isInitialized;
+    std::mutex mutex;
 };
 
 } // namespace RakNet

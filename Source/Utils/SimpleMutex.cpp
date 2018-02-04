@@ -17,55 +17,20 @@
 
 using namespace RakNet;
 
-SimpleMutex::SimpleMutex() //: isInitialized(false)
+SimpleMutex::SimpleMutex()
 {
-    // Prior implementation of Initializing in lock() was not threadsafe
-    Init();
 }
 
 SimpleMutex::~SimpleMutex()
 {
-#ifdef _WIN32
-    DeleteCriticalSection(&criticalSection);
-#else
-    pthread_mutex_destroy(&hMutex);
-#endif
 }
-
-#ifdef _WIN32
-#ifdef _DEBUG
-#include <stdio.h>
-#endif
-#endif
 
 void SimpleMutex::lock()
 {
-#ifdef _WIN32
-    EnterCriticalSection(&criticalSection);
-#else
-    int error = pthread_mutex_lock(&hMutex);
-    (void) error;
-    RakAssert(error == 0);
-#endif
+    mutex.lock();
 }
 
 void SimpleMutex::unlock()
 {
-#ifdef _WIN32
-    LeaveCriticalSection(&criticalSection);
-#else
-    int error = pthread_mutex_unlock(&hMutex);
-    RakAssert(error == 0);
-#endif
-}
-
-void SimpleMutex::Init()
-{
-#if defined(_WIN32)
-    InitializeCriticalSection(&criticalSection);
-#else
-    int error = pthread_mutex_init(&hMutex, nullptr);
-    RakAssert(error == 0);
-#endif
-//    isInitialized = true;
+    mutex.unlock();
 }

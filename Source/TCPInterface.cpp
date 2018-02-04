@@ -26,7 +26,6 @@ typedef int socklen_t;
 #else
 #include <sys/time.h>
 #include <unistd.h>
-#include <pthread.h>
 #endif
 
 #include <string.h>
