@@ -1282,24 +1282,20 @@ void RakString::Clear()
 
 void RakString::Allocate(size_t len)
 {
-    RakString::LockMutex();
-    // sharedString = RakString::pool.Allocate(  );
-    if (RakString::freeList.Size() == 0)
     {
-        //RakString::sharedStringFreeList=(RakString::SharedString*) realloc(RakString::sharedStringFreeList,(RakString::sharedStringFreeListAllocationCount+1024)*sizeof(RakString::SharedString));
-        for (unsigned i = 0; i < 128; i++)
+        std::lock_guard<RakNet::SimpleMutex> lock(GetPoolMutex());
+        if (RakString::freeList.Size() == 0)
         {
-            //    RakString::freeList.Insert(RakString::sharedStringFreeList+i+RakString::sharedStringFreeListAllocationCount);
-            //        RakString::freeList.Insert((RakString::SharedString*)malloc(sizeof(RakString::SharedString));
+            for (unsigned i = 0; i < 128; i++)
+            {
 
-            auto ss = (RakString::SharedString *) malloc(sizeof(RakString::SharedString));
-            RakString::freeList.Insert(ss);
+                auto ss = (RakString::SharedString *) malloc(sizeof(RakString::SharedString));
+                RakString::freeList.Insert(ss);
+            }
         }
-        //RakString::sharedStringFreeListAllocationCount+=1024;
+        sharedString = RakString::freeList[RakString::freeList.Size() - 1];
+        RakString::freeList.RemoveAtIndex(RakString::freeList.Size() - 1);
     }
-    sharedString = RakString::freeList[RakString::freeList.Size() - 1];
-    RakString::freeList.RemoveAtIndex(RakString::freeList.Size() - 1);
-    RakString::UnlockMutex();
 
     const size_t smallStringSize = 128 - sizeof(unsigned int) - sizeof(size_t) - sizeof(char *) * 2;
     sharedString->refCount = 1;
