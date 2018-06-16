@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_PacketLogger==1
+#if _CRABNET_SUPPORT_PacketLogger==1
 
 #include "PacketLogger.h"
 #include "BitStream.h"
@@ -234,7 +234,7 @@ void PacketLogger::AddToLog(const char *str)
 }
 void PacketLogger::WriteLog(const char *str)
 {
-    RAKNET_DEBUG_PRINTF("%s\n", str);
+    CRABNET_DEBUG_PRINTF("%s\n", str);
 }
 void PacketLogger::WriteMiscellaneous(const char *type, const char *msg)
 {
@@ -478,4 +478,4 @@ void PacketLogger::SetLogDirectMessages(bool send)
 #pragma warning( pop )
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

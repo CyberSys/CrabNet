@@ -11,7 +11,7 @@
 
 #include "NativeFeatureIncludes.h"
 
-#if _RAKNET_SUPPORT_TCPInterface == 1
+#if _CRABNET_SUPPORT_TCPInterface == 1
 
 /// \file
 /// \brief A simple TCP based server allowing sends and receives.  Can be connected to by a telnet client.
@@ -92,7 +92,7 @@ TCPInterface::~TCPInterface()
 bool TCPInterface::CreateListenSocket(unsigned short port, unsigned short maxIncomingConnections,
                                       unsigned short socketFamily, const char *bindAddress)
 {
-#if RAKNET_SUPPORT_IPV6 != 1
+#if CRABNET_SUPPORT_IPV6 != 1
     (void) socketFamily;
     listenSocket = socket__(AF_INET, SOCK_STREAM, 0);
     if ((int) listenSocket == -1)
@@ -148,7 +148,7 @@ bool TCPInterface::CreateListenSocket(unsigned short port, unsigned short maxInc
     SocketLayer::SetSocketOptions(listenSocket, false, false);
 
     listen__(listenSocket, maxIncomingConnections);
-#endif // #if RAKNET_SUPPORT_IPV6!=1
+#endif // #if CRABNET_SUPPORT_IPV6!=1
 
     return true;
 }
@@ -524,7 +524,7 @@ void TCPInterface::CloseConnection(SystemAddress systemAddress)
         return;
 
     for (unsigned int i = 0; i < messageHandlerList.Size(); i++)
-        messageHandlerList[i]->OnClosedConnection(systemAddress, UNASSIGNED_RAKNET_GUID, LCR_CLOSED_BY_USER);
+        messageHandlerList[i]->OnClosedConnection(systemAddress, UNASSIGNED_CRABNET_GUID, LCR_CLOSED_BY_USER);
 
     if (systemAddress.systemIndex < remoteClientsLength &&
         remoteClients[systemAddress.systemIndex].systemAddress == systemAddress)
@@ -580,7 +580,7 @@ Packet *TCPInterface::AllocatePacket(unsigned dataSize)
     p->length = dataSize;
     p->bitSize = BYTES_TO_BITS(dataSize);
     p->deleteData = false;
-    p->guid = UNASSIGNED_RAKNET_GUID;
+    p->guid = UNASSIGNED_CRABNET_GUID;
     p->systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
     p->systemAddress.systemIndex = (SystemIndex) -1;
     return p;
@@ -611,7 +611,7 @@ SystemAddress TCPInterface::HasCompletedConnectionAttempt(void)
     {
         unsigned int i;
         for (i = 0; i < messageHandlerList.Size(); i++)
-            messageHandlerList[i]->OnNewConnection(sysAddr, UNASSIGNED_RAKNET_GUID, true);
+            messageHandlerList[i]->OnNewConnection(sysAddr, UNASSIGNED_CRABNET_GUID, true);
     }
 
     return sysAddr;
@@ -650,7 +650,7 @@ SystemAddress TCPInterface::HasNewIncomingConnection(void)
         newIncomingConnections.Deallocate(out);
 
         for (unsigned int i = 0; i < messageHandlerList.Size(); i++)
-            messageHandlerList[i]->OnNewConnection(out2, UNASSIGNED_RAKNET_GUID, true);
+            messageHandlerList[i]->OnNewConnection(out2, UNASSIGNED_CRABNET_GUID, true);
 
         return *out;
     }
@@ -667,7 +667,7 @@ SystemAddress TCPInterface::HasLostConnection(void)
         lostConnections.Deallocate(out);
 
         for (unsigned int i = 0; i < messageHandlerList.Size(); i++)
-            messageHandlerList[i]->OnClosedConnection(out2, UNASSIGNED_RAKNET_GUID, LCR_DISCONNECTION_NOTIFICATION);
+            messageHandlerList[i]->OnClosedConnection(out2, UNASSIGNED_CRABNET_GUID, LCR_DISCONNECTION_NOTIFICATION);
 
         return *out;
     }
@@ -734,7 +734,7 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char *host, unsigned short remot
     return 0;
 #else
 
-#if RAKNET_SUPPORT_IPV6 != 1
+#if CRABNET_SUPPORT_IPV6 != 1
     (void) socketFamily;
 
     struct hostent *server = gethostbyname(host);
@@ -784,7 +784,7 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char *host, unsigned short remot
     int connectResult = connect__(sockfd, res->ai_addr, res->ai_addrlen);
     freeaddrinfo(res); // free the linked-list
 
-#endif // #if RAKNET_SUPPORT_IPV6!=1
+#endif // #if CRABNET_SUPPORT_IPV6!=1
 
     if (connectResult == -1)
     {
@@ -848,7 +848,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
     const unsigned int BUFF_SIZE = 1048576;
     auto data = (char *) malloc(BUFF_SIZE);
 
-#if RAKNET_SUPPORT_IPV6 != 1
+#if CRABNET_SUPPORT_IPV6 != 1
     sockaddr_in sockAddr;
     int sockAddrSize = sizeof(sockAddr);
 #else
@@ -957,7 +957,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                         {
                             newRemoteClient.socket = newSock;
 
-#if RAKNET_SUPPORT_IPV6 != 1
+#if CRABNET_SUPPORT_IPV6 != 1
                             newRemoteClient.systemAddress.address.addr4.sin_addr.s_addr = sockAddr.sin_addr.s_addr;
                             newRemoteClient.systemAddress.SetPortNetworkOrder(sockAddr.sin_port);
                             newRemoteClient.systemAddress.systemIndex = newRemoteClientIndex;
@@ -973,7 +973,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                             //    newRemoteClient.systemAddress.address.addr6.sin6_port=ntohs( newRemoteClient.systemAddress.address.addr6.sin6_port );
                             }
 
-#endif // #if RAKNET_SUPPORT_IPV6!=1
+#endif // #if CRABNET_SUPPORT_IPV6!=1
                             newRemoteClient.SetActive(true);
                             newRemoteClient.isActiveMutex.Unlock();
 
@@ -990,7 +990,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                 }
 #ifdef _DO_PRINTF
                 else
-                    RAKNET_DEBUG_PRINTF("Error: connection failed\n");
+                    CRABNET_DEBUG_PRINTF("Error: connection failed\n");
 #endif
             }
 #ifdef _DO_PRINTF
@@ -999,7 +999,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                 int err;
                 int errlen = sizeof(err);
                 getsockopt__(sts->listenSocket, SOL_SOCKET, SO_ERROR,(char*)&err, &errlen);
-                RAKNET_DEBUG_PRINTF("Socket error %s on listening socket\n", err);
+                CRABNET_DEBUG_PRINTF("Socket error %s on listening socket\n", err);
             }
 #endif
 
@@ -1277,4 +1277,4 @@ int RemoteClient::Recv(char *data, const int dataSize)
 #pragma warning( pop )
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

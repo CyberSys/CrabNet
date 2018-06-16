@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef __RAKNET_SOCKET_2_H
-#define __RAKNET_SOCKET_2_H
+#ifndef __CRABNET_SOCKET_2_H
+#define __CRABNET_SOCKET_2_H
 
 #include <atomic>
 #include "RakNetTypes.h"
@@ -46,7 +46,7 @@ typedef int RNS2Socket;
 enum RNS2BindResult
 {
     BR_SUCCESS,
-    BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE,
+    BR_REQUIRES_CRABNET_SUPPORT_IPV6_DEFINE,
     BR_FAILED_TO_BIND_SOCKET,
     BR_FAILED_SEND_TEST
 };
@@ -343,4 +343,4 @@ protected:
 
 } // namespace RakNet
 
-#endif // __RAKNET_SOCKET_2_H
+#endif // __CRABNET_SOCKET_2_H

@@ -74,7 +74,7 @@ public:
     /// \param[in] socketDescriptors An array of SocketDescriptor structures to force RakNet to listen on a particular IP address or port (or both).  Each SocketDescriptor will represent one unique socket.  Do not pass redundant structures.  To listen on a specific port, you can pass SocketDescriptor(myPort,0); such as for a server.  For a client, it is usually OK to just pass SocketDescriptor(); However, on the XBOX be sure to use IPPROTO_VDP
     /// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
     /// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
-    /// \return RAKNET_STARTED on success, otherwise appropriate failure enumeration.
+    /// \return CRABNET_STARTED on success, otherwise appropriate failure enumeration.
     StartupResult Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999 );
 
     /// If you accept connections, you must call this or else security will not be enabled for incoming connections.
@@ -432,14 +432,14 @@ public:
     /// This will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different.
     /// Complexity is O(log2(n)).
     /// If \a input is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID
-    /// \pre Call Startup() first, or the function will return UNASSIGNED_RAKNET_GUID
+    /// \pre Call Startup() first, or the function will return UNASSIGNED_CRABNET_GUID
     /// \param[in] input The system address of the target system we are connected to.
     const RakNetGUID& GetGuidFromSystemAddress( const SystemAddress input ) const;
 
     /// \brief Gives the system address of a connected system, given its GUID.
     /// The GUID will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different.
     /// Currently O(log(n)), but this may be improved in the future
-    /// If \a input is UNASSIGNED_RAKNET_GUID, UNASSIGNED_SYSTEM_ADDRESS is returned.
+    /// If \a input is UNASSIGNED_CRABNET_GUID, UNASSIGNED_SYSTEM_ADDRESS is returned.
     /// \param[in] input The RakNetGUID of the target system.
     SystemAddress GetSystemAddressFromGuid( const RakNetGUID input ) const;
 

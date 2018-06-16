@@ -16,7 +16,7 @@
 
 #include "NativeFeatureIncludes.h"
 
-#if _RAKNET_SUPPORT_Rackspace==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_Rackspace==1 && _CRABNET_SUPPORT_TCPInterface==1
 
 #include "Export.h"
 #include "DS_List.h"
@@ -411,4 +411,4 @@ namespace RakNet
 
 #endif // __RACKSPACE_API_H
 
-#endif // _RAKNET_SUPPORT_Rackspace
+#endif // _CRABNET_SUPPORT_Rackspace

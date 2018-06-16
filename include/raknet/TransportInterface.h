@@ -50,8 +50,8 @@ public:
     /// If your transport method requires particular formatting of the outgoing data (e.g. you don't just send strings) you can do it here
     /// and parse it out in Receive().
     /// \param[in] systemAddress The player to send the string to
-    /// \param[in] data format specifier - same as RAKNET_DEBUG_PRINTF
-    /// \param[in] ... format specification arguments - same as RAKNET_DEBUG_PRINTF
+    /// \param[in] data format specifier - same as CRABNET_DEBUG_PRINTF
+    /// \param[in] ... format specification arguments - same as CRABNET_DEBUG_PRINTF
     virtual void Send( SystemAddress systemAddress, const char *data, ... )=0;
 
     /// Disconnect \a systemAddress .  The binary address and port defines the SystemAddress structure.

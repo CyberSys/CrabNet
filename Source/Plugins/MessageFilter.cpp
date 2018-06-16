@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_MessageFilter==1
+#if _CRABNET_SUPPORT_MessageFilter==1
 
 #include "MessageFilter.h"
 #include "RakAssert.h"
@@ -278,7 +278,7 @@ void MessageFilter::OnInvalidMessage(FilterSet *filterSet, AddressOrGUID systemA
     {
         if (rakPeerInterface)
             rakPeerInterface->CloseConnection(systemAddress, true, 0);
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_PacketizedTCP==1 && _CRABNET_SUPPORT_TCPInterface==1
         else
             tcpInterface->CloseConnection(systemAddress.systemAddress);
 #endif
@@ -312,7 +312,7 @@ void MessageFilter::Update(void)
                 }
                 if (rakPeerInterface)
                     rakPeerInterface->CloseConnection(keyList[index], true, 0);
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_PacketizedTCP==1 && _CRABNET_SUPPORT_TCPInterface==1
                 else
                     tcpInterface->CloseConnection(keyList[index].systemAddress);
 #endif
@@ -416,4 +416,4 @@ void MessageFilter::OnClosedConnection(const SystemAddress &systemAddress, RakNe
 #pragma warning( pop )
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

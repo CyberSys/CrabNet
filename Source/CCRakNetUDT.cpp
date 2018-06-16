@@ -285,7 +285,7 @@ BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateDataArrivalRate(CCTimeType cur
     */
 
 
-    if (packetArrivalHistoryWriteCount<CC_RAKNET_UDT_PACKET_HISTORY_LENGTH)
+    if (packetArrivalHistoryWriteCount<CC_CRABNET_UDT_PACKET_HISTORY_LENGTH)
         return UNDEFINED_TRANSFER_RATE;
 
     BytesPerMicrosecond median = ReceiverCalculateDataArrivalRateMedian();
@@ -295,7 +295,7 @@ BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateDataArrivalRate(CCTimeType cur
     BytesPerMicrosecond medianListLength=0.0;
     BytesPerMicrosecond sum=0.0;
     // Find average of acceptedMedianValues
-    for (i=0; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
+    for (i=0; i < CC_CRABNET_UDT_PACKET_HISTORY_LENGTH; i++)
     {
         if (packetArrivalHistory[i]>=oneEighthMedian &&
             packetArrivalHistory[i]<eightTimesMedian)
@@ -311,12 +311,12 @@ BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateDataArrivalRate(CCTimeType cur
 // ----------------------------------------------------------------------------------------------------------------------------
 BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateDataArrivalRateMedian(void) const
 {
-    return CalculateListMedianRecursive(packetArrivalHistory, CC_RAKNET_UDT_PACKET_HISTORY_LENGTH, 0, 0);
+    return CalculateListMedianRecursive(packetArrivalHistory, CC_CRABNET_UDT_PACKET_HISTORY_LENGTH, 0, 0);
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-BytesPerMicrosecond CCRakNetUDT::CalculateListMedianRecursive(const BytesPerMicrosecond inputList[CC_RAKNET_UDT_PACKET_HISTORY_LENGTH], int inputListLength, int lessThanSum, int greaterThanSum)
+BytesPerMicrosecond CCRakNetUDT::CalculateListMedianRecursive(const BytesPerMicrosecond inputList[CC_CRABNET_UDT_PACKET_HISTORY_LENGTH], int inputListLength, int lessThanSum, int greaterThanSum)
 {
-    BytesPerMicrosecond lessThanMedian[CC_RAKNET_UDT_PACKET_HISTORY_LENGTH], greaterThanMedian[CC_RAKNET_UDT_PACKET_HISTORY_LENGTH];
+    BytesPerMicrosecond lessThanMedian[CC_CRABNET_UDT_PACKET_HISTORY_LENGTH], greaterThanMedian[CC_CRABNET_UDT_PACKET_HISTORY_LENGTH];
     int lessThanMedianListLength=0, greaterThanMedianListLength=0;
     BytesPerMicrosecond median=inputList[0];
     int i;
@@ -328,7 +328,7 @@ BytesPerMicrosecond CCRakNetUDT::CalculateListMedianRecursive(const BytesPerMicr
         else
             greaterThanMedian[greaterThanMedianListLength++]=inputList[i];
     }
-    RakAssert(CC_RAKNET_UDT_PACKET_HISTORY_LENGTH%2==0);
+    RakAssert(CC_CRABNET_UDT_PACKET_HISTORY_LENGTH%2==0);
     if (lessThanMedianListLength+lessThanSum==greaterThanMedianListLength+greaterThanSum+1 ||
         lessThanMedianListLength+lessThanSum==greaterThanMedianListLength+greaterThanSum-1)
         return median;
@@ -519,13 +519,13 @@ bool CCRakNetUDT::OnGotPacket(DatagramSequenceNumberType datagramSequenceNumber,
             //        }
 
             packetArrivalHistoryContinuousGaps[packetArrivalHistoryContinuousGapsIndex++]=(int) interval;
-            packetArrivalHistoryContinuousGapsIndex&=(CC_RAKNET_UDT_PACKET_HISTORY_LENGTH-1);
+            packetArrivalHistoryContinuousGapsIndex&=(CC_CRABNET_UDT_PACKET_HISTORY_LENGTH-1);
 
             packetArrivalHistoryWriteCount++;
             packetArrivalHistory[packetArrivalHistoryWriteIndex++]=mostRecentPacketArrivalHistory;
             // Wrap to 0 at the end of the range
-            // Assumes power of 2 for CC_RAKNET_UDT_PACKET_HISTORY_LENGTH
-            packetArrivalHistoryWriteIndex&=(CC_RAKNET_UDT_PACKET_HISTORY_LENGTH-1);
+            // Assumes power of 2 for CC_CRABNET_UDT_PACKET_HISTORY_LENGTH
+            packetArrivalHistoryWriteIndex&=(CC_CRABNET_UDT_PACKET_HISTORY_LENGTH-1);
         }
         else
         {
@@ -708,7 +708,7 @@ double CCRakNetUDT::BytesPerMicrosecondToPacketsPerMillisecond(BytesPerMicroseco
 void CCRakNetUDT::InitPacketArrivalHistory(void)
 {
     unsigned int i;
-    for (i=0; i < CC_RAKNET_UDT_PACKET_HISTORY_LENGTH; i++)
+    for (i=0; i < CC_CRABNET_UDT_PACKET_HISTORY_LENGTH; i++)
     {
         packetArrivalHistory[i]=UNDEFINED_TRANSFER_RATE;
         packetArrivalHistoryContinuousGaps[i]=0;

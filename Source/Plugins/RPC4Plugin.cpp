@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_RPC4Plugin==1
+#if _CRABNET_SUPPORT_RPC4Plugin==1
 
 #include "RPC4Plugin.h"
 #include "MessageIdentifiers.h"
@@ -262,16 +262,16 @@ void RPC4::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStream )
     {
         if (rakPeerInterface)
             p=AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned char)+(unsigned int) strlen(uniqueID)+1);
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_PacketizedTCP==1 && _CRABNET_SUPPORT_TCPInterface==1
         else
             p=tcpInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)+(unsigned int) strlen(uniqueID)+1);
 #endif
 
         if (rakPeerInterface)
             p->guid=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_PacketizedTCP==1 && _CRABNET_SUPPORT_TCPInterface==1
         else
-            p->guid=UNASSIGNED_RAKNET_GUID;
+            p->guid=UNASSIGNED_CRABNET_GUID;
 #endif
 
         p->systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
@@ -298,16 +298,16 @@ void RPC4::CallLoopback( const char* uniqueID, RakNet::BitStream * bitStream )
     }
     if (rakPeerInterface)
         p=AllocatePacketUnified(out.GetNumberOfBytesUsed());
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_PacketizedTCP==1 && _CRABNET_SUPPORT_TCPInterface==1
     else
         p=tcpInterface->AllocatePacket(out.GetNumberOfBytesUsed());
 #endif
 
     if (rakPeerInterface)
         p->guid=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_PacketizedTCP==1 && _CRABNET_SUPPORT_TCPInterface==1
     else
-        p->guid=UNASSIGNED_RAKNET_GUID;
+        p->guid=UNASSIGNED_CRABNET_GUID;
 #endif
     p->systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
     p->systemAddress.systemIndex=(SystemIndex)-1;
@@ -368,7 +368,7 @@ bool RPC4::CallBlocking( const char* uniqueID, RakNet::BitStream * bitStream, Pa
         {
             if (
                 (packet->data[0]==ID_CONNECTION_LOST || packet->data[0]==ID_DISCONNECTION_NOTIFICATION) &&
-                ((systemIdentifier.rakNetGuid!=UNASSIGNED_RAKNET_GUID && packet->guid==systemIdentifier.rakNetGuid) ||
+                ((systemIdentifier.rakNetGuid!=UNASSIGNED_CRABNET_GUID && packet->guid==systemIdentifier.rakNetGuid) ||
                 (systemIdentifier.systemAddress!=UNASSIGNED_SYSTEM_ADDRESS && packet->systemAddress==systemIdentifier.systemAddress))
                 )
             {
@@ -627,4 +627,4 @@ DataStructures::HashIndex RPC4::GetLocalSlotIndex(const char *sharedIdentifier)
     return localSlots.GetIndexOf(sharedIdentifier);
 }
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

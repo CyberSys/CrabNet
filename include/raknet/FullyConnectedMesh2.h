@@ -16,7 +16,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_FullyConnectedMesh2==1
+#if _CRABNET_SUPPORT_FullyConnectedMesh2==1
 
 #ifndef __FULLY_CONNECTED_MESH_2_H
 #define __FULLY_CONNECTED_MESH_2_H
@@ -56,7 +56,7 @@ public:
     void SetConnectOnNewRemoteConnection(bool attemptConnection, RakNet::RakString pw);
 
     /// \brief The connected host is whichever system we are connected to that has been running the longest.
-    /// \details Will return UNASSIGNED_RAKNET_GUID if we are not connected to anyone, or if we are connected and are calculating the host
+    /// \details Will return UNASSIGNED_CRABNET_GUID if we are not connected to anyone, or if we are connected and are calculating the host
     /// If includeCalculating is true, will return the estimated calculated host as long as the calculation is nearly complete
     /// includeCalculating should be true if you are taking action based on another system becoming host, because not all host calculations may complete at the exact same time
     /// \sa ConnectionGraph2::GetLowestAveragePingSystem() . If you need one system in the peer to peer group to relay data, have the host call this function after host migration, and use that system
@@ -421,4 +421,4 @@ AssignTheirGuid()
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_PacketizedTCP==1 && _CRABNET_SUPPORT_TCPInterface==1
 
 #include "PacketizedTCP.h"
 #include <stdint.h>
@@ -184,7 +184,7 @@ Packet* PacketizedTCP::Receive( void )
                         outgoingPacket =new Packet;
                         outgoingPacket->length=dataLength;
                         outgoingPacket->bitSize=BYTES_TO_BITS(dataLength);
-                        outgoingPacket->guid=UNASSIGNED_RAKNET_GUID;
+                        outgoingPacket->guid=UNASSIGNED_CRABNET_GUID;
                         outgoingPacket->systemAddress=systemAddressFromPacket;
                         outgoingPacket->deleteData=false; // Did not come from the network
                         outgoingPacket->data=(unsigned char*) malloc(dataLength);
@@ -223,7 +223,7 @@ Packet* PacketizedTCP::Receive( void )
                             sizeof(unsigned int) +
                             65536;
                         outgoingPacket->bitSize=BYTES_TO_BITS(incomingPacket->length);
-                        outgoingPacket->guid=UNASSIGNED_RAKNET_GUID;
+                        outgoingPacket->guid=UNASSIGNED_CRABNET_GUID;
                         outgoingPacket->systemAddress=incomingPacket->systemAddress;
                         outgoingPacket->deleteData=false;
                         outgoingPacket->data=(unsigned char*) malloc(outgoingPacket->length);
@@ -354,4 +354,4 @@ SystemAddress PacketizedTCP::HasLostConnection(void)
     return UNASSIGNED_SYSTEM_ADDRESS;
 }
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

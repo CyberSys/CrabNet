@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_EmailSender==1 && _RAKNET_SUPPORT_TCPInterface==1 && _RAKNET_SUPPORT_FileOperations==1
+#if _CRABNET_SUPPORT_EmailSender==1 && _CRABNET_SUPPORT_TCPInterface==1 && _CRABNET_SUPPORT_FileOperations==1
 
 // Useful sites
 // http://www.faqs.org\rfcs\rfc2821.html
@@ -54,7 +54,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
         {
             if (doPrintf)
             {
-                RAKNET_DEBUG_PRINTF("%s", packet->data);
+                CRABNET_DEBUG_PRINTF("%s", packet->data);
                 tcpInterface.DeallocatePacket(packet);
             }
             break;
@@ -305,7 +305,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
         packet = tcpInterface.Receive();
         while (packet)
         {
-            RAKNET_DEBUG_PRINTF("%s", packet->data);
+            CRABNET_DEBUG_PRINTF("%s", packet->data);
             tcpInterface.DeallocatePacket(packet);
             packet = tcpInterface.Receive();
         }
@@ -331,7 +331,7 @@ const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAdd
         {
             if (doPrintf)
             {
-                RAKNET_DEBUG_PRINTF("%s", packet->data);
+                CRABNET_DEBUG_PRINTF("%s", packet->data);
             }
 #if OPEN_SSL_CLIENT_SUPPORT==1
             if (strstr((const char*)packet->data, "220"))
@@ -370,4 +370,4 @@ const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAdd
 }
 
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

@@ -55,21 +55,21 @@ AddressOrGUID::AddressOrGUID(Packet *packet)
 
 unsigned long AddressOrGUID::ToInteger(const AddressOrGUID &aog)
 {
-    if (aog.rakNetGuid != UNASSIGNED_RAKNET_GUID)
+    if (aog.rakNetGuid != UNASSIGNED_CRABNET_GUID)
         return RakNetGUID::ToUint32(aog.rakNetGuid);
     return SystemAddress::ToInteger(aog.systemAddress);
 }
 
 const char *AddressOrGUID::ToString(bool writePort) const
 {
-    if (rakNetGuid != UNASSIGNED_RAKNET_GUID)
+    if (rakNetGuid != UNASSIGNED_CRABNET_GUID)
         return rakNetGuid.ToString();
     return systemAddress.ToString(writePort);
 }
 
 void AddressOrGUID::ToString(bool writePort, char *dest) const
 {
-    if (rakNetGuid != UNASSIGNED_RAKNET_GUID)
+    if (rakNetGuid != UNASSIGNED_CRABNET_GUID)
         return rakNetGuid.ToString(dest);
     return systemAddress.ToString(writePort, dest);
 }
@@ -136,7 +136,7 @@ SystemAddress &SystemAddress::operator=(const SystemAddress &input)
 bool SystemAddress::EqualsExcludingPort(const SystemAddress &right) const
 {
     return (address.addr4.sin_family == AF_INET && address.addr4.sin_addr.s_addr == right.address.addr4.sin_addr.s_addr)
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
         || (address.addr4.sin_family==AF_INET6 && memcmp(address.addr6.sin6_addr.s6_addr, right.address.addr6.sin6_addr.s6_addr, sizeof(address.addr6.sin6_addr.s6_addr))==0)
 #endif
             ;
@@ -178,7 +178,7 @@ bool SystemAddress::operator>(const SystemAddress &right) const
 {
     if (address.addr4.sin_port == right.address.addr4.sin_port)
     {
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
         if (address.addr4.sin_family == AF_INET)
             return address.addr4.sin_addr.s_addr>right.address.addr4.sin_addr.s_addr;
         return memcmp(address.addr6.sin6_addr.s6_addr, right.address.addr6.sin6_addr.s6_addr, sizeof(address.addr6.sin6_addr.s6_addr)) > 0;
@@ -193,7 +193,7 @@ bool SystemAddress::operator<(const SystemAddress &right) const
 {
     if (address.addr4.sin_port == right.address.addr4.sin_port)
     {
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
         if (address.addr4.sin_family == AF_INET)
             return address.addr4.sin_addr.s_addr<right.address.addr4.sin_addr.s_addr;
         return memcmp(address.addr6.sin6_addr.s6_addr, right.address.addr6.sin6_addr.s6_addr, sizeof(address.addr6.sin6_addr.s6_addr)) > 0;
@@ -206,7 +206,7 @@ bool SystemAddress::operator<(const SystemAddress &right) const
 
 int SystemAddress::size()
 {
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
     return sizeof(sockaddr_in6) + sizeof(char);
 #else
     return sizeof(uint32_t) + sizeof(unsigned short) + sizeof(char);
@@ -217,7 +217,7 @@ unsigned long SystemAddress::ToInteger(const SystemAddress &sa)
 {
     unsigned int lastHash = SuperFastHashIncremental((const char *) &sa.address.addr4.sin_port,
                                                      sizeof(sockaddr_in::sin_port), sizeof(sockaddr_in::sin_port));
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
     if (sa.address.addr4.sin_family==AF_INET)
         return SuperFastHashIncremental ((const char*) & sa.address.addr4.sin_addr.s_addr, sizeof(sa.address.addr4.sin_addr.s_addr), lastHash );
     else
@@ -236,7 +236,7 @@ unsigned char SystemAddress::GetIPVersion() const
 
 unsigned int SystemAddress::GetIPPROTO() const
 {
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
     if (address.addr4.sin_family == AF_INET)
         return IPPROTO_IP;
     return IPPROTO_IPV6;
@@ -265,7 +265,7 @@ bool SystemAddress::IsLoopback() const
         if (address.addr4.sin_addr.s_addr == 0)
             return true;
     }
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
     else
     {
         const static char localhost[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
@@ -300,7 +300,7 @@ void SystemAddress::ToString_Old(bool writePort, char *dest, char portDelineator
 const char *SystemAddress::ToString(bool writePort, char portDelineator) const
 {
     static unsigned char strIndex = 0;
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
     static char str[8][INET6_ADDRSTRLEN+5+1];
 #else
     static char str[8][22 + 5 + 1];
@@ -310,7 +310,7 @@ const char *SystemAddress::ToString(bool writePort, char portDelineator) const
     return (char *) str[strIndex++ & 7];
 }
 
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
 void SystemAddress::ToString_New(bool writePort, char *dest, char portDelineator) const
 {
     int ret;
@@ -345,16 +345,16 @@ void SystemAddress::ToString_New(bool writePort, char *dest, char portDelineator
     }
 
 }
-#endif // #if RAKNET_SUPPORT_IPV6!=1
+#endif // #if CRABNET_SUPPORT_IPV6!=1
 
 void SystemAddress::ToString(bool writePort, char *dest, char portDelineator) const
 {
 
-#if RAKNET_SUPPORT_IPV6 != 1
+#if CRABNET_SUPPORT_IPV6 != 1
     ToString_Old(writePort, dest, portDelineator);
 #else
     ToString_New(writePort,dest,portDelineator);
-#endif // #if RAKNET_SUPPORT_IPV6!=1
+#endif // #if CRABNET_SUPPORT_IPV6!=1
 }
 
 SystemAddress::SystemAddress()
@@ -393,7 +393,7 @@ void SystemAddress::FixForIPVersion(const SystemAddress &boundAddressToSocket)
     // TODO - what about 255.255.255.255?
     if (strcmp(str, IPV6_LOOPBACK) == 0 && boundAddressToSocket.GetIPVersion() == 4)
         FromString(IPV4_LOOPBACK, 0, 4);
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
     else if (strcmp(str, IPV4_LOOPBACK) == 0 && boundAddressToSocket.GetIPVersion()==6)
     {
         FromString(IPV6_LOOPBACK,0,6);
@@ -495,7 +495,7 @@ bool SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 
 bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersion)
 {
-#if RAKNET_SUPPORT_IPV6 != 1
+#if CRABNET_SUPPORT_IPV6 != 1
     (void) ipVersion;
     return SetBinaryAddress(str, portDelineator);
 #else
@@ -505,7 +505,7 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
         address.addr4.sin_family=AF_INET;
         return true;
     }
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     char ipPart[INET6_ADDRSTRLEN];
 #else
     char ipPart[INET_ADDRSTRLEN];
@@ -582,7 +582,7 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
     RakAssert(servinfo);
 
     unsigned short oldPort = address.addr4.sin_port;
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     if (servinfo->ai_family == AF_INET)
     {
 //         if (ipVersion==6)
@@ -621,7 +621,7 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
     else
         address.addr4.sin_port=oldPort;
     return true;
-#endif // #if RAKNET_SUPPORT_IPV6!=1
+#endif // #if CRABNET_SUPPORT_IPV6!=1
 
 }
 
@@ -647,7 +647,7 @@ RakNetGUID::RakNetGUID()
 {
     g = 0;
     systemIndex = (SystemIndex) -1;
-    *this = UNASSIGNED_RAKNET_GUID;
+    *this = UNASSIGNED_CRABNET_GUID;
 }
 
 bool RakNetGUID::operator==(const RakNetGUID &right) const
@@ -683,8 +683,8 @@ const char *RakNetGUID::ToString() const
 
 void RakNetGUID::ToString(char *dest) const
 {
-    if (*this == UNASSIGNED_RAKNET_GUID)
-        strcpy(dest, "UNASSIGNED_RAKNET_GUID");
+    if (*this == UNASSIGNED_CRABNET_GUID)
+        strcpy(dest, "UNASSIGNED_CRABNET_GUID");
     else
         //sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
         sprintf(dest, "%" PRINTF_64_BIT_MODIFIER "u", (long long unsigned int) g);

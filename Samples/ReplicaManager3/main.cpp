@@ -511,7 +511,7 @@ int main(void)
 				replicaManager.GetReplicasCreatedByMe(replicaListOut);
 				replicaManager.BroadcastDestructionList(replicaListOut, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 				for (unsigned int i=0; i < replicaListOut.Size(); i++)
-					RakNet::OP_DELETE(replicaListOut[i]);
+					delete replicaListOut[i];
 			}
 
 		}

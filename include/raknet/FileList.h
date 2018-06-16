@@ -14,7 +14,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_FileOperations==1
+#if _CRABNET_SUPPORT_FileOperations==1
 
 #ifndef __FILE_LIST
 #define __FILE_LIST
@@ -129,7 +129,7 @@ public:
     }
 };
 
-/// Implementation of FileListProgress to use RAKNET_DEBUG_PRINTF
+/// Implementation of FileListProgress to use CRABNET_DEBUG_PRINTF
 class RAK_DLL_EXPORT FLP_Printf : public FileListProgress
 {
 public:
@@ -263,4 +263,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_FileOperations
+#endif // _CRABNET_SUPPORT_FileOperations

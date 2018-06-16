@@ -152,7 +152,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize)
 //     p->length=dataSize;
 //     p->bitSize=BYTES_TO_BITS(dataSize);
 //     p->deleteData=false;
-//     p->guid=UNASSIGNED_RAKNET_GUID;
+//     p->guid=UNASSIGNED_CRABNET_GUID;
 //     return p;
 
     RakNet::Packet *p;
@@ -164,7 +164,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize)
     p->length = dataSize;
     p->bitSize = BYTES_TO_BITS(dataSize);
     p->deleteData = true;
-    p->guid = UNASSIGNED_RAKNET_GUID;
+    p->guid = UNASSIGNED_CRABNET_GUID;
     p->wasGeneratedLocally = false;
     return p;
 }
@@ -182,7 +182,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize, unsigned char *data)
     p->length = dataSize;
     p->bitSize = BYTES_TO_BITS(dataSize);
     p->deleteData = true;
-    p->guid = UNASSIGNED_RAKNET_GUID;
+    p->guid = UNASSIGNED_CRABNET_GUID;
     p->wasGeneratedLocally = false;
     return p;
 }
@@ -238,7 +238,7 @@ RakPeer::RakPeer()
     unreliableTimeout = 1000;
     maxOutgoingBPS = 0;
     firstExternalID = UNASSIGNED_SYSTEM_ADDRESS;
-    myGuid = UNASSIGNED_RAKNET_GUID;
+    myGuid = UNASSIGNED_CRABNET_GUID;
     userUpdateThreadPtr = 0;
     userUpdateThreadData = 0;
 
@@ -317,7 +317,7 @@ RakPeer::Startup(unsigned int maxConnections, SocketDescriptor *socketDescriptor
                  int threadPriority)
 {
     if (IsActive())
-        return RAKNET_ALREADY_STARTED;
+        return CRABNET_ALREADY_STARTED;
 
     // If getting the guid failed in the constructor, try again
     if (myGuid.g == 0)
@@ -340,7 +340,7 @@ RakPeer::Startup(unsigned int maxConnections, SocketDescriptor *socketDescriptor
 
     FillIPList();
 
-    if (myGuid == UNASSIGNED_RAKNET_GUID)
+    if (myGuid == UNASSIGNED_CRABNET_GUID)
     {
         rnr.SeedMT(GenerateSeedFromGuid());
     }
@@ -377,7 +377,7 @@ RakPeer::Startup(unsigned int maxConnections, SocketDescriptor *socketDescriptor
             */
 
         /*
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
         if (SocketLayer::IsSocketFamilySupported(addrToBind, socketDescriptors[i].socketFamily)==false)
             return SOCKET_FAMILY_NOT_SUPPORTED;
 #endif
@@ -433,10 +433,10 @@ RakPeer::Startup(unsigned int maxConnections, SocketDescriptor *socketDescriptor
             RNS2BindResult br = ((RNS2_Berkley *) r2)->Bind(&bbp);
 
             if (
-#if RAKNET_SUPPORT_IPV6 == 0
+#if CRABNET_SUPPORT_IPV6 == 0
 socketDescriptors[i].socketFamily != AF_INET ||
 #endif
-br == BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE)
+br == BR_REQUIRES_CRABNET_SUPPORT_IPV6_DEFINE)
             {
                 RakNetSocket2Allocator::DeallocRNS2(r2);
                 DerefAllSockets();
@@ -475,7 +475,7 @@ br == BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE)
         rns->SetUserConnectionSocketIndex(i);
         rns->SetBlockingSocket(socketDescriptors[i].blockingSocket);
 
-#if RAKNET_SUPPORT_IPV6==0
+#if CRABNET_SUPPORT_IPV6==0
         if (addrToBind==0)
             rns->SetBoundAddressToLoopback(4);
 #endif
@@ -547,7 +547,7 @@ br == BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE)
             // remoteSystemList in Single thread
             remoteSystemList[i].isActive = false;
             remoteSystemList[i].systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
-            remoteSystemList[i].guid = UNASSIGNED_RAKNET_GUID;
+            remoteSystemList[i].guid = UNASSIGNED_CRABNET_GUID;
             remoteSystemList[i].myExternalSystemAddress = UNASSIGNED_SYSTEM_ADDRESS;
             remoteSystemList[i].connectMode = RemoteSystemStruct::NO_ACTION;
             remoteSystemList[i].MTUSize = defaultMTUSize;
@@ -652,7 +652,7 @@ br == BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE)
     RakNet::SendToThread::AddRef();
 #endif
 
-    return RAKNET_STARTED;
+    return CRABNET_STARTED;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1599,7 +1599,7 @@ RakPeer::CloseConnection(const AddressOrGUID target, bool sendDisconnectionNotif
     {
         messageHandlerList[j]->OnClosedConnection(
             target.systemAddress==UNASSIGNED_SYSTEM_ADDRESS ? GetSystemAddressFromGuid(target.rakNetGuid) : target.systemAddress,
-            target.rakNetGuid==UNASSIGNED_RAKNET_GUID ? GetGuidFromSystemAddress(target.systemAddress) : target.rakNetGuid,
+            target.rakNetGuid==UNASSIGNED_CRABNET_GUID ? GetGuidFromSystemAddress(target.systemAddress) : target.rakNetGuid,
             LCR_CLOSED_BY_USER);
     }
     */
@@ -1612,7 +1612,7 @@ RakPeer::CloseConnection(const AddressOrGUID target, bool sendDisconnectionNotif
     {
         Packet *packet = AllocPacket(sizeof(char));
         packet->data[0] = ID_CONNECTION_LOST; // DeadConnection
-        packet->guid = target.rakNetGuid == UNASSIGNED_RAKNET_GUID ? GetGuidFromSystemAddress(target.systemAddress)
+        packet->guid = target.rakNetGuid == UNASSIGNED_CRABNET_GUID ? GetGuidFromSystemAddress(target.systemAddress)
                                                                    : target.rakNetGuid;
         packet->systemAddress =
                 target.systemAddress == UNASSIGNED_SYSTEM_ADDRESS ? GetSystemAddressFromGuid(target.rakNetGuid)
@@ -1770,7 +1770,7 @@ RakNetGUID RakPeer::GetGUIDFromIndex(unsigned int index)
                                                 RakPeer::RemoteSystemStruct::CONNECTED) // Don't give the user players that aren't fully connected, since sends will fail
             return remoteSystemList[index].guid;
 
-    return UNASSIGNED_RAKNET_GUID;
+    return UNASSIGNED_CRABNET_GUID;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -2368,14 +2368,14 @@ const RakNetGUID &RakPeer::GetGuidFromSystemAddress(const SystemAddress input) c
         }
     }
 
-    return UNASSIGNED_RAKNET_GUID;
+    return UNASSIGNED_CRABNET_GUID;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 unsigned int RakPeer::GetSystemIndexFromGuid(const RakNetGUID input) const
 {
-    if (input == UNASSIGNED_RAKNET_GUID)
+    if (input == UNASSIGNED_CRABNET_GUID)
         return (unsigned int) -1;
 
     if (input == myGuid)
@@ -2404,7 +2404,7 @@ unsigned int RakPeer::GetSystemIndexFromGuid(const RakNetGUID input) const
 
 SystemAddress RakPeer::GetSystemAddressFromGuid(const RakNetGUID input) const
 {
-    if (input == UNASSIGNED_RAKNET_GUID)
+    if (input == UNASSIGNED_CRABNET_GUID)
         return UNASSIGNED_SYSTEM_ADDRESS;
 
     if (input == myGuid)
@@ -3136,7 +3136,7 @@ int RakPeer::GetIndexFromSystemAddress(const SystemAddress systemAddress, bool c
 // ---------------------------------------------------------------------------------------------------------------------
 int RakPeer::GetIndexFromGuid(const RakNetGUID guid)
 {
-    if (guid == UNASSIGNED_RAKNET_GUID)
+    if (guid == UNASSIGNED_CRABNET_GUID)
         return -1;
 
     if (guid.systemIndex != (SystemIndex) -1 && guid.systemIndex < maximumNumberOfPeers &&
@@ -3353,7 +3353,7 @@ void RakPeer::ValidateRemoteSystemLookup(void) const
 
 RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystem(const AddressOrGUID systemIdentifier, bool calledFromNetworkThread, bool onlyActive) const
 {
-    if (systemIdentifier.rakNetGuid != UNASSIGNED_RAKNET_GUID)
+    if (systemIdentifier.rakNetGuid != UNASSIGNED_CRABNET_GUID)
         return GetRemoteSystemFromGUID(systemIdentifier.rakNetGuid, onlyActive);
     else
         return GetRemoteSystemFromSystemAddress(systemIdentifier.systemAddress, calledFromNetworkThread, onlyActive);
@@ -3402,7 +3402,7 @@ RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystemFromSystemAddress(const Sys
 
 RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystemFromGUID(const RakNetGUID guid, bool onlyActive) const
 {
-    if (guid == UNASSIGNED_RAKNET_GUID)
+    if (guid == UNASSIGNED_CRABNET_GUID)
         return 0;
 
     for (unsigned i = 0; i < maximumNumberOfPeers; i++)
@@ -3850,7 +3850,7 @@ unsigned int RakPeer::FirstFreeRemoteSystemLookupIndex(const SystemAddress &sa) 
 // ---------------------------------------------------------------------------------------------------------------------
 bool RakPeer::IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matchPort) const
 {
-    if (systemIdentifier.rakNetGuid != UNASSIGNED_RAKNET_GUID)
+    if (systemIdentifier.rakNetGuid != UNASSIGNED_CRABNET_GUID)
         return systemIdentifier.rakNetGuid == myGuid;
 
     for (int i = 0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS && ipList[i] != UNASSIGNED_SYSTEM_ADDRESS; i++)
@@ -4004,7 +4004,7 @@ void RakPeer::CloseConnectionInternal(const AddressOrGUID &systemIdentifier, boo
                     // printf("--- Address %s has become inactive\n", remoteSystemList[index].systemAddress.ToString());
                     remoteSystemList[index].isActive = false;
 
-                    remoteSystemList[index].guid = UNASSIGNED_RAKNET_GUID;
+                    remoteSystemList[index].guid = UNASSIGNED_CRABNET_GUID;
 
                     // Reserve this reliability layer for ourselves
                     //remoteSystemList[ remoteSystemLookup[index].index ].systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
@@ -4136,7 +4136,7 @@ bool RakPeer::SendImmediate(char *data, BitSize_t numberOfBitsToSend, PacketPrio
     unsigned remoteSystemIndex; // Iterates into the list of remote systems
     if (systemIdentifier.systemAddress != UNASSIGNED_SYSTEM_ADDRESS)
         remoteSystemIndex = GetIndexFromSystemAddress(systemIdentifier.systemAddress, true);
-    else if (systemIdentifier.rakNetGuid != UNASSIGNED_RAKNET_GUID)
+    else if (systemIdentifier.rakNetGuid != UNASSIGNED_CRABNET_GUID)
         remoteSystemIndex = GetSystemIndexFromGuid(systemIdentifier.rakNetGuid);
     else
         remoteSystemIndex = (unsigned int) -1;
@@ -4425,7 +4425,7 @@ namespace RakNet
                     RakNet::Time sendPingTime;
                     inBitStream.Read(sendPingTime);
                     inBitStream.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
-                    RakNetGUID remoteGuid = UNASSIGNED_RAKNET_GUID;
+                    RakNetGUID remoteGuid = UNASSIGNED_CRABNET_GUID;
                     inBitStream.Read(remoteGuid);
 
                     RakNet::BitStream outBitStream;
@@ -4897,11 +4897,11 @@ namespace RakNet
             else if ((unsigned char) (data)[0] == ID_OPEN_CONNECTION_REQUEST_1 && length > (int) (1 + sizeof(OFFLINE_MESSAGE_DATA_ID)))
             {
                 char remoteProtocol = data[1 + sizeof(OFFLINE_MESSAGE_DATA_ID)];
-                if (remoteProtocol != RAKNET_PROTOCOL_VERSION)
+                if (remoteProtocol != CRABNET_PROTOCOL_VERSION)
                 {
                     RakNet::BitStream bs;
                     bs.Write((MessageID) ID_INCOMPATIBLE_PROTOCOL_VERSION);
-                    bs.Write((unsigned char) RAKNET_PROTOCOL_VERSION);
+                    bs.Write((unsigned char) CRABNET_PROTOCOL_VERSION);
                     bs.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID,
                                          sizeof(OFFLINE_MESSAGE_DATA_ID));
                     bs.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
@@ -5490,13 +5490,13 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                     //WriteOutOfBandHeader(&bitStream, ID_USER_PACKET_ENUM);
                     bitStream.Write((MessageID) ID_OPEN_CONNECTION_REQUEST_1);
                     bitStream.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
-                    bitStream.Write((MessageID) RAKNET_PROTOCOL_VERSION);
+                    bitStream.Write((MessageID) CRABNET_PROTOCOL_VERSION);
                     bitStream.PadWithZeroToByteLength(mtuSizes[MTUSizeIndex] - UDP_HEADER_SIZE);
 
                     char str[256];
                     rcs->systemAddress.ToString(true, str);
 
-                    //RAKNET_DEBUG_PRINTF("%i:IOCR, ", __LINE__);
+                    //CRABNET_DEBUG_PRINTF("%i:IOCR, ", __LINE__);
 
                     for (unsigned i = 0; i < pluginListNTS.Size(); i++)
                         pluginListNTS[i]->OnDirectSocketSend((const char *) bitStream.GetData(), bitStream.GetNumberOfBitsUsed(), rcs->systemAddress);
@@ -5582,7 +5582,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
         {
             timeNS = RakNet::GetTimeUS();
             timeMS = (RakNet::TimeMS) (timeNS / (RakNet::TimeUS) 1000);
-            //RAKNET_DEBUG_PRINTF("timeNS = %I64i timeMS=%i\n", timeNS, timeMS);
+            //CRABNET_DEBUG_PRINTF("timeNS = %I64i timeMS=%i\n", timeNS, timeMS);
         }
 
 
@@ -5618,7 +5618,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                remoteSystem->connectMode == RemoteSystemStruct::UNVERIFIED_SENDER) &&
               timeMS > remoteSystem->connectionTime && timeMS - remoteSystem->connectionTime > 10000)))
         {
-            //    RAKNET_DEBUG_PRINTF("timeMS=%i remoteSystem->connectionTime=%i\n", timeMS, remoteSystem->connectionTime );
+            //    CRABNET_DEBUG_PRINTF("timeMS=%i remoteSystem->connectionTime=%i\n", timeMS, remoteSystem->connectionTime );
 
             // Failed.  Inform the user?
             // TODO - RakNet 4.0 - Return a different message identifier for DISCONNECT_ASAP_SILENTLY and DISCONNECT_ASAP than for DISCONNECT_ON_NO_ACK
@@ -5653,7 +5653,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
             // else connection shutting down, don't bother telling the user
 
 #ifdef _DO_PRINTF
-            RAKNET_DEBUG_PRINTF("Connection dropped for player %i:%i\n", systemAddress);
+            CRABNET_DEBUG_PRINTF("Connection dropped for player %i:%i\n", systemAddress);
 #endif
             CloseConnectionInternal(systemAddress, false, true, 0, LOW_PRIORITY);
             continue;
@@ -5703,7 +5703,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                 {
                     CloseConnectionInternal(systemAddress, false, true, 0, LOW_PRIORITY);
 #ifdef _DO_PRINTF
-                    RAKNET_DEBUG_PRINTF("Temporarily banning %i:%i for sending nonsense data\n", systemAddress);
+                    CRABNET_DEBUG_PRINTF("Temporarily banning %i:%i for sending nonsense data\n", systemAddress);
 #endif
 
                     char str1[64];

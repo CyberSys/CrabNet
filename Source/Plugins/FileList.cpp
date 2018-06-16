@@ -11,9 +11,9 @@
 
 #include "FileList.h"
 
-#if _RAKNET_SUPPORT_FileOperations==1
+#if _CRABNET_SUPPORT_FileOperations==1
 
-#include <stdio.h> // RAKNET_DEBUG_PRINTF
+#include <stdio.h> // CRABNET_DEBUG_PRINTF
 #include "RakAssert.h"
 #if defined(ANDROID)
 #include <asm/io.h>
@@ -85,25 +85,25 @@ STATIC_FACTORY_DEFINITIONS(FileList,FileList)
 /// First callback called when FileList::AddFilesFromDirectory() starts
 void FLP_Printf::OnAddFilesFromDirectoryStarted(FileList *fileList, char *dir) {
     (void) fileList;
-    RAKNET_DEBUG_PRINTF("Adding files from directory %s\n",dir);}
+    CRABNET_DEBUG_PRINTF("Adding files from directory %s\n",dir);}
 
 /// Called for each directory, when that directory begins processing
 void FLP_Printf::OnDirectory(FileList *fileList, char *dir, unsigned int directoriesRemaining) {
     (void) fileList;
-    RAKNET_DEBUG_PRINTF("Adding %s. %i remaining.\n", dir, directoriesRemaining);}
+    CRABNET_DEBUG_PRINTF("Adding %s. %i remaining.\n", dir, directoriesRemaining);}
 void FLP_Printf::OnFilePushesComplete( SystemAddress systemAddress, unsigned short setID )
 {
     (void) setID;
 
     char str[32];
     systemAddress.ToString(true, (char*) str);
-    RAKNET_DEBUG_PRINTF("File pushes complete to %s\n", str);
+    CRABNET_DEBUG_PRINTF("File pushes complete to %s\n", str);
 }
 void FLP_Printf::OnSendAborted( SystemAddress systemAddress )
 {
     char str[32];
     systemAddress.ToString(true, (char*) str);
-    RAKNET_DEBUG_PRINTF("Send aborted to %s\n", str);
+    CRABNET_DEBUG_PRINTF("Send aborted to %s\n", str);
 }
 FileList::FileList()
 {
@@ -261,7 +261,7 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
     }
     for (unsigned int flpcIndex=0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
         fileListProgressCallbacks[flpcIndex]->OnAddFilesFromDirectoryStarted(this, dirSoFar);
-    // RAKNET_DEBUG_PRINTF("Adding files from directory %s\n",dirSoFar);
+    // CRABNET_DEBUG_PRINTF("Adding files from directory %s\n",dirSoFar);
     dirList.Push(dirSoFar );
     while (dirList.Size())
     {
@@ -282,7 +282,7 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
             return;
         }
 
-//        RAKNET_DEBUG_PRINTF("Adding %s. %i remaining.\n", fullPath, dirList.Size());
+//        CRABNET_DEBUG_PRINTF("Adding %s. %i remaining.\n", fullPath, dirList.Size());
         for (unsigned int flpcIndex=0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
             fileListProgressCallbacks[flpcIndex]->OnDirectory(this, fullPath, dirList.Size());
 
@@ -767,7 +767,7 @@ void FileList::DeleteFiles(const char *applicationDirectory)
 
         if (result!=0)
         {
-            RAKNET_DEBUG_PRINTF("FileList::DeleteFiles: unlink (%s) failed.\n", fullPath);
+            CRABNET_DEBUG_PRINTF("FileList::DeleteFiles: unlink (%s) failed.\n", fullPath);
         }
     }
 
@@ -820,4 +820,4 @@ bool FileList::FixEndingSlash(char *str)
 #pragma warning( pop )
 #endif
 
-#endif // _RAKNET_SUPPORT_FileOperations
+#endif // _CRABNET_SUPPORT_FileOperations

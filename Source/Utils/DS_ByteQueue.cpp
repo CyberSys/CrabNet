@@ -131,6 +131,6 @@ void ByteQueue::DecrementReadOffset(unsigned length)
 void ByteQueue::Print()
 {
     for (unsigned i= readOffset; i != writeOffset; i++)
-        RAKNET_DEBUG_PRINTF("%i ", data[i]);
-    RAKNET_DEBUG_PRINTF("\n");
+        CRABNET_DEBUG_PRINTF("%i ", data[i]);
+    CRABNET_DEBUG_PRINTF("\n");
 }

@@ -145,11 +145,11 @@ void main(void)
     table.SortTable(queries, 4, rows);
     unsigned i;
     char out[256];
-    RAKNET_DEBUG_PRINTF("Sort: Ascending except for column index 3\n");
+    CRABNET_DEBUG_PRINTF("Sort: Ascending except for column index 3\n");
     for (i=0; i < table.GetRowCount(); i++)
     {
         table.PrintRow(out,256,',',true, rows[i]);
-        RAKNET_DEBUG_PRINTF("%s\n", out);
+        CRABNET_DEBUG_PRINTF("%s\n", out);
     }
 
     // Test query:
@@ -161,11 +161,11 @@ void main(void)
     columnsToReturn[3]=4;
     DataStructures::Table resultsTable;
     table.QueryTable(columnsToReturn,4,0,0,&resultsTable);
-    RAKNET_DEBUG_PRINTF("Query: Don't return column 3, and swap columns 0 and 2:\n");
+    CRABNET_DEBUG_PRINTF("Query: Don't return column 3, and swap columns 0 and 2:\n");
     for (i=0; i < resultsTable.GetRowCount(); i++)
     {
         resultsTable.PrintRow(out,256,',',true, resultsTable.GetRowByIndex(i));
-        RAKNET_DEBUG_PRINTF("%s\n", out);
+        CRABNET_DEBUG_PRINTF("%s\n", out);
     }
 
     // Test filter:
@@ -175,11 +175,11 @@ void main(void)
     inclusionFilters[0].operation=DataStructures::Table::QF_IS_EMPTY;
     // inclusionFilters[0].cellValue; // Unused for IS_EMPTY
     table.QueryTable(0,0,inclusionFilters,1,&resultsTable);
-    RAKNET_DEBUG_PRINTF("Filter: Only return rows with column index 4 empty:\n");
+    CRABNET_DEBUG_PRINTF("Filter: Only return rows with column index 4 empty:\n");
     for (i=0; i < resultsTable.GetRowCount(); i++)
     {
         resultsTable.PrintRow(out,256,',',true, resultsTable.GetRowByIndex(i));
-        RAKNET_DEBUG_PRINTF("%s\n", out);
+        CRABNET_DEBUG_PRINTF("%s\n", out);
     }
 
     // Column 5 empty and column 0 == Kevin Jenkins
@@ -189,29 +189,29 @@ void main(void)
     inclusionFilters[1].operation=DataStructures::Table::QF_EQUAL;
     inclusionFilters[1].cellValue.Set("Kevin Jenkins");
     table.QueryTable(0,0,inclusionFilters,2,&resultsTable);
-    RAKNET_DEBUG_PRINTF("Filter: Column 5 empty and column 0 == Kevin Jenkins:\n");
+    CRABNET_DEBUG_PRINTF("Filter: Column 5 empty and column 0 == Kevin Jenkins:\n");
     for (i=0; i < resultsTable.GetRowCount(); i++)
     {
         resultsTable.PrintRow(out,256,',',true, resultsTable.GetRowByIndex(i));
-        RAKNET_DEBUG_PRINTF("%s\n", out);
+        CRABNET_DEBUG_PRINTF("%s\n", out);
     }
 
     RakNet::BitStream bs;
-    RAKNET_DEBUG_PRINTF("PreSerialize:\n");
+    CRABNET_DEBUG_PRINTF("PreSerialize:\n");
     for (i=0; i < table.GetRowCount(); i++)
     {
         table.PrintRow(out,256,',',true, table.GetRowByIndex(i));
-        RAKNET_DEBUG_PRINTF("%s\n", out);
+        CRABNET_DEBUG_PRINTF("%s\n", out);
     }
     StringCompressor::AddReference();
     TableSerializer::Serialize(&table, &bs);
     TableSerializer::Deserialize(&bs, &table);
     StringCompressor::RemoveReference();
-    RAKNET_DEBUG_PRINTF("PostDeserialize:\n");
+    CRABNET_DEBUG_PRINTF("PostDeserialize:\n");
     for (i=0; i < table.GetRowCount(); i++)
     {
         table.PrintRow(out,256,',',true, table.GetRowByIndex(i));
-        RAKNET_DEBUG_PRINTF("%s\n", out);
+        CRABNET_DEBUG_PRINTF("%s\n", out);
     }
     int a=5;
 }

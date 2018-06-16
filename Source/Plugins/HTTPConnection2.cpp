@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_HTTPConnection2==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_HTTPConnection2==1 && _CRABNET_SUPPORT_TCPInterface==1
 
 #include "HTTPConnection2.h"
 #include "TCPInterface.h"
@@ -90,10 +90,10 @@ bool HTTPConnection2::TransmitRequest(const char* stringToTransmit, const char* 
         }
         else
         {
-            #if RAKNET_SUPPORT_IPV6
+            #if CRABNET_SUPPORT_IPV6
                 tcpInterface->Connect(host, port, false, AF_INET6);
             #else
-                RakAssert("HTTPConnection2::TransmitRequest needs define  RAKNET_SUPPORT_IPV6" && 0);
+                RakAssert("HTTPConnection2::TransmitRequest needs define  CRABNET_SUPPORT_IPV6" && 0);
             #endif
         }
     }
@@ -522,10 +522,10 @@ void HTTPConnection2::SendNextPendingRequest(void)
         }
         else
         {
-#if RAKNET_SUPPORT_IPV6
+#if CRABNET_SUPPORT_IPV6
             tcpInterface->Connect(pendingRequest->host.C_String(), pendingRequest->port, false, AF_INET6);
 #else
-            RakAssert("HTTPConnection2::TransmitRequest needs define  RAKNET_SUPPORT_IPV6" && 0);
+            RakAssert("HTTPConnection2::TransmitRequest needs define  CRABNET_SUPPORT_IPV6" && 0);
 #endif
         }
     }
@@ -619,4 +619,4 @@ void HTTPConnection2::SendRequest(Request *request)
     tcpInterface->Send(request->stringToTransmit.C_String(), (unsigned int) request->stringToTransmit.GetLength(), request->hostCompletedAddress, false);
 }
 
-#endif // #if _RAKNET_SUPPORT_HTTPConnection2==1 && _RAKNET_SUPPORT_TCPInterface==1
+#endif // #if _CRABNET_SUPPORT_HTTPConnection2==1 && _CRABNET_SUPPORT_TCPInterface==1

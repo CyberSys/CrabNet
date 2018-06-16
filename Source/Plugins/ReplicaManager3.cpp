@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_ReplicaManager3==1
+#if _CRABNET_SUPPORT_ReplicaManager3==1
 
 #include "ReplicaManager3.h"
 #include "GetTime.h"
@@ -322,7 +322,7 @@ unsigned int ReplicaManager3::ReferenceInternal(RakNet::Replica3 *replica3, Worl
         RakAssert(world->networkIDManager);
         replica3->SetNetworkIDManager(world->networkIDManager);
         // If it crashes on rakPeerInterface==0 then you didn't call RakPeerInterface::AttachPlugin()
-        if (replica3->creatingSystemGUID==UNASSIGNED_RAKNET_GUID)
+        if (replica3->creatingSystemGUID==UNASSIGNED_CRABNET_GUID)
             replica3->creatingSystemGUID=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
         replica3->replicaManager=this;
         if (replica3->referenceIndex==(uint32_t)-1)
@@ -1386,7 +1386,7 @@ void ReplicaManager3::BroadcastDestructionList(DataStructures::List<Replica3*> &
 
     for (i=0; i < replicaList.Size(); i++)
     {
-        if (replicaList[i]->deletingSystemGUID==UNASSIGNED_RAKNET_GUID)
+        if (replicaList[i]->deletingSystemGUID==UNASSIGNED_CRABNET_GUID)
             replicaList[i]->deletingSystemGUID=GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
     }
 
@@ -2380,8 +2380,8 @@ void Connection_RM3::SendValidation(RakNet::RakPeerInterface *rakPeer, WorldId w
 
 Replica3::Replica3()
 {
-    creatingSystemGUID=UNASSIGNED_RAKNET_GUID;
-    deletingSystemGUID=UNASSIGNED_RAKNET_GUID;
+    creatingSystemGUID=UNASSIGNED_CRABNET_GUID;
+    deletingSystemGUID=UNASSIGNED_CRABNET_GUID;
     replicaManager=0;
     forceSendUntilNextUpdate=false;
     lsr=0;
@@ -2589,4 +2589,4 @@ RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_PeerToPeer(RakNet:
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

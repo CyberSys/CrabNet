@@ -15,7 +15,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_TelnetTransport==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_TelnetTransport==1 && _CRABNET_SUPPORT_TCPInterface==1
 
 #ifndef __TELNET_TRANSPORT
 #define __TELNET_TRANSPORT
@@ -78,4 +78,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

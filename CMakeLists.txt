@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(RakNet)
+project(CrabNet)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -19,20 +19,20 @@ IF (WIN32 AND NOT UNIX)
 ENDIF(WIN32 AND NOT UNIX)
 
 IF (WIN32 AND NOT UNIX)
-    set(RAKNET_LIBRARY_LIBS ws2_32.lib)
-    set(RAKNET_LIBRARY_SO_NAME RakNetDLL)
+    set(CRABNET_LIBRARY_LIBS ws2_32.lib)
+    set(CRABNET_LIBRARY_SO_NAME RakNetDLL)
 ELSE(WIN32 AND NOT UNIX)
-    set(RAKNET_LIBRARY_LIBS pthread)
-    set(RAKNET_LIBRARY_SO_NAME raknet)
+    set(CRABNET_LIBRARY_LIBS pthread)
+    set(CRABNET_LIBRARY_SO_NAME raknet)
 ENDIF(WIN32 AND NOT UNIX)
 
 
 # Options
-option(RAKNET_ENABLE_SAMPLES "Generate RakNet sample projects." FALSE)
-option(RAKNET_ENABLE_DLL "Generate the DLL project." TRUE)
-option(RAKNET_ENABLE_STATIC "Generate the static library project." TRUE)
+option(CRABNET_ENABLE_SAMPLES "Generate RakNet sample projects." FALSE)
+option(CRABNET_ENABLE_DLL "Generate the DLL project." TRUE)
+option(CRABNET_ENABLE_STATIC "Generate the static library project." TRUE)
 
-option(RAKNET_ENABLE_LIBCAT_SECURITY "Enable secure connection support." FALSE)
+option(CRABNET_ENABLE_LIBCAT_SECURITY "Enable secure connection support." FALSE)
 
 include(CmakeIncludes/CmakeMacros.cmake)
 
@@ -46,9 +46,9 @@ include_directories(SYSTEM include/raknet DependentExtensions)
 
 add_subdirectory(lib)
 
-set(RAKNET_COMMON_LIBS RakNetLibStatic)
+set(CRABNET_COMMON_LIBS RakNetLibStatic)
 
-if(RAKNET_GENERATE_SAMPLES)
+if(CRABNET_ENABLE_SAMPLES)
     add_subdirectory(Samples)
 endif()
 

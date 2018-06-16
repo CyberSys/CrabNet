@@ -761,7 +761,7 @@ int RakString::StrICmp(const RakString &rhs) const
 
 void RakString::Printf(void)
 {
-    RAKNET_DEBUG_PRINTF("%s", sharedString->c_str);
+    CRABNET_DEBUG_PRINTF("%s", sharedString->c_str);
 }
 
 void RakString::FPrintf(FILE *fp)
@@ -1460,8 +1460,6 @@ void RakString::AppendBytes(const char *bytes, unsigned int count)
         memcpy(sharedString->c_str + length, bytes, count);
         sharedString->c_str[length + count] = 0;
     }
-
-
 }
 
 void RakString::Clone()
@@ -1580,7 +1578,7 @@ int main(void)
     s5.Clear();
     s6.Printf();
     s7.Printf();
-    RAKNET_DEBUG_PRINTF("\n");
+    CRABNET_DEBUG_PRINTF("\n");
 
     static const int repeatCount=750;
     DataStructures::List<RakString> rakStringList;
@@ -1608,7 +1606,7 @@ int main(void)
         for (i=0; i < repeatCount; i++)
             stdStringList.Insert("Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
         afterStdString=RakNet::GetTimeMS();
-        RAKNET_DEBUG_PRINTF("Insertion 1 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
+        CRABNET_DEBUG_PRINTF("Insertion 1 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
         beforeReferenceList=RakNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
@@ -1623,7 +1621,7 @@ int main(void)
         for (i=0; i < repeatCount; i++)
             stdStringList.RemoveAtIndex(0);
         afterStdString=RakNet::GetTimeMS();
-        RAKNET_DEBUG_PRINTF("RemoveHead Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
+        CRABNET_DEBUG_PRINTF("RemoveHead Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
         beforeReferenceList=RakNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
@@ -1639,7 +1637,7 @@ int main(void)
         for (i=0; i < repeatCount; i++)
             stdStringList.Insert("Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
         afterStdString=RakNet::GetTimeMS();
-        RAKNET_DEBUG_PRINTF("Insertion 2 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
+        CRABNET_DEBUG_PRINTF("Insertion 2 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
         beforeReferenceList=RakNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
@@ -1654,7 +1652,7 @@ int main(void)
         for (i=0; i < repeatCount; i++)
             stdStringList.RemoveAtIndex(stdStringList.Size()-1);
         afterStdString=RakNet::GetTimeMS();
-        RAKNET_DEBUG_PRINTF("RemoveTail Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
+        CRABNET_DEBUG_PRINTF("RemoveTail Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
     }
 

@@ -15,7 +15,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_ReplicaManager3==1
+#if _CRABNET_SUPPORT_ReplicaManager3==1
 
 #ifndef __REPLICA_MANAGER_3
 #define __REPLICA_MANAGER_3
@@ -1135,4 +1135,4 @@ public:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

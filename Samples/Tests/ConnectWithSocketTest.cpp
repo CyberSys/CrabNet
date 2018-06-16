@@ -130,7 +130,7 @@ int ConnectWithSocketTest::RunTest(DataStructures::List<RakString> params,bool i
 
 		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
-			client->ConnectWithSocket("127.0.0.1",serverAddress.port,0,0,theSocket);
+			client->ConnectWithSocket("127.0.0.1",serverAddress.z,0,0,theSocket);
 		}
 
 		RakSleep(100);

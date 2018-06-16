@@ -132,7 +132,7 @@ RakWString &RakWString::operator=(const char *const str)
     c_strCharLength = mbstowcs(c_str, str, c_strCharLength + 1);
     if (c_strCharLength == (size_t) (-1))
     {
-        RAKNET_DEBUG_PRINTF("Couldn't convert string--invalid multibyte character.\n");
+        CRABNET_DEBUG_PRINTF("Couldn't convert string--invalid multibyte character.\n");
         Clear();
         return *this;
     }

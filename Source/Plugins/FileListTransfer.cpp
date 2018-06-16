@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_FileListTransfer==1 && _RAKNET_SUPPORT_FileOperations==1
+#if _CRABNET_SUPPORT_FileListTransfer==1 && _CRABNET_SUPPORT_FileOperations==1
 
 #include "FileListTransfer.h"
 #include "DS_HuffmanEncodingTree.h"
@@ -1163,4 +1163,4 @@ unsigned int FileListTransfer::GetPendingFilesToAddress(SystemAddress recipient)
 #pragma warning( pop )
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

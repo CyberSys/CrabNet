@@ -36,8 +36,8 @@ typedef double BytesPerMicrosecond;
 typedef double BytesPerSecond;
 typedef double MicrosecondsPerByte;
 
-/// CC_RAKNET_UDT_PACKET_HISTORY_LENGTH should be a power of 2 for the writeIndex variables to wrap properly
-#define CC_RAKNET_UDT_PACKET_HISTORY_LENGTH 64
+/// CC_CRABNET_UDT_PACKET_HISTORY_LENGTH should be a power of 2 for the writeIndex variables to wrap properly
+#define CC_CRABNET_UDT_PACKET_HISTORY_LENGTH 64
 #define RTT_HISTORY_LENGTH 64
 
 /// Sizeof an UDP header in byte
@@ -238,8 +238,8 @@ class CCRakNetUDT
     /// AS is sent to the sender and calculated every 10th ack
     /// Each node represents (curTime-lastPacketArrivalTime)/bytes
     /// Used with ReceiverCalculateDataArrivalRate();
-    BytesPerMicrosecond packetArrivalHistory[CC_RAKNET_UDT_PACKET_HISTORY_LENGTH];
-    BytesPerMicrosecond packetArrivalHistoryContinuousGaps[CC_RAKNET_UDT_PACKET_HISTORY_LENGTH];
+    BytesPerMicrosecond packetArrivalHistory[CC_CRABNET_UDT_PACKET_HISTORY_LENGTH];
+    BytesPerMicrosecond packetArrivalHistoryContinuousGaps[CC_CRABNET_UDT_PACKET_HISTORY_LENGTH];
     unsigned char packetArrivalHistoryContinuousGapsIndex;
     uint64_t continuousBytesReceived;
     CCTimeType continuousBytesReceivedStartTime;
@@ -321,7 +321,7 @@ class CCRakNetUDT
     /// If a sequence number is skipped, send a NAK for all skipped messages
     DatagramSequenceNumberType expectedNextSequenceNumber;
 
-    // How many times have we sent B and AS? Used to force it to send at least CC_RAKNET_UDT_PACKET_HISTORY_LENGTH times
+    // How many times have we sent B and AS? Used to force it to send at least CC_CRABNET_UDT_PACKET_HISTORY_LENGTH times
     // Otherwise, the default values in the array generate inaccuracy
     uint32_t sendBAndASCount;
 
@@ -348,7 +348,7 @@ class CCRakNetUDT
     BytesPerMicrosecond ReceiverCalculateDataArrivalRateMedian(void) const;
 
     /// Calculates the median an array of BytesPerMicrosecond
-    static BytesPerMicrosecond CalculateListMedianRecursive(const BytesPerMicrosecond inputList[CC_RAKNET_UDT_PACKET_HISTORY_LENGTH], int inputListLength, int lessThanSum, int greaterThanSum);
+    static BytesPerMicrosecond CalculateListMedianRecursive(const BytesPerMicrosecond inputList[CC_CRABNET_UDT_PACKET_HISTORY_LENGTH], int inputListLength, int lessThanSum, int greaterThanSum);
 //    static uint32_t CalculateListMedianRecursive(const uint32_t inputList[RTT_HISTORY_LENGTH], int inputListLength, int lessThanSum, int greaterThanSum);
 
     /// Same as GetRTOForRetransmission, but does not factor in ExpCount

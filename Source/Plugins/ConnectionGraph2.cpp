@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_ConnectionGraph2==1
+#if _CRABNET_SUPPORT_ConnectionGraph2==1
 
 #include "ConnectionGraph2.h"
 #include "RakPeerInterface.h"
@@ -48,7 +48,7 @@ ConnectionGraph2::~ConnectionGraph2()
 }
 bool ConnectionGraph2::GetConnectionListForRemoteSystem(RakNetGUID remoteSystemGuid, SystemAddress *saOut, RakNetGUID *guidOut, unsigned int *outLength)
 {
-    if ((saOut==0 && guidOut==0) || outLength==0 || *outLength==0 || remoteSystemGuid==UNASSIGNED_RAKNET_GUID)
+    if ((saOut==0 && guidOut==0) || outLength==0 || *outLength==0 || remoteSystemGuid==UNASSIGNED_CRABNET_GUID)
     {
         *outLength=0;
         return false;
@@ -307,4 +307,4 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
     return RR_CONTINUE_PROCESSING;
 }
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

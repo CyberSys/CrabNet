@@ -11,7 +11,7 @@
 
 #include "UDPForwarder.h"
 
-#if _RAKNET_SUPPORT_UDPForwarder==1
+#if _CRABNET_SUPPORT_UDPForwarder==1
 
 #include "GetTime.h"
 #include "MTUSize.h"
@@ -188,7 +188,7 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 #ifndef __native_client__
     char data[ MAXIMUM_MTU_SIZE ];
 
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     sockaddr_storage their_addr;
     memset(&their_addr,0,sizeof(their_addr));
     sockaddr* sockAddrPtr;
@@ -219,7 +219,7 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
     int receivedDataLen, len=0;
     //unsigned short portnum=0;
 
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     receivedDataLen = recvfrom__( forwardEntry->socket, data, MAXIMUM_MTU_SIZE, flag, sockAddrPtr, socketlenPtr );
 #else
     receivedDataLen = recvfrom__( forwardEntry->socket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sockAddrIn, ( socklen_t* ) & len2 );
@@ -237,7 +237,7 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
                 NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
                 ( LPTSTR ) & messageBuffer, 0, NULL );
             // something has gone wrong here...
-            RAKNET_DEBUG_PRINTF( "recvfrom failed:Error code - %d\n%s", dwIOError, messageBuffer );
+            CRABNET_DEBUG_PRINTF( "recvfrom failed:Error code - %d\n%s", dwIOError, messageBuffer );
 
             //Free the buffer.
             LocalFree( messageBuffer );
@@ -261,7 +261,7 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
         return;
 
     SystemAddress receivedAddr;
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     if (their_addr.ss_family==AF_INET)
     {
         sockAddrIn=(sockaddr_in *)&their_addr;
@@ -329,7 +329,7 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
 //     saOut.sin_family = AF_INET;
     do
     {
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
         if (forwardTarget.address.addr4.sin_family==AF_INET)
         {
             do
@@ -423,7 +423,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
                 fe->addr2Unconfirmed=sfis->destination;
                 fe->timeoutOnNoDataMS=sfis->timeoutOnNoDataMS;
 
-#if RAKNET_SUPPORT_IPV6!=1
+#if CRABNET_SUPPORT_IPV6!=1
                 fe->socket = socket__( AF_INET, SOCK_DGRAM, 0 );
                 listenerSocketAddress.sin_family = AF_INET;
                 if (sfis->forceHostAddress.IsEmpty()==false)
@@ -445,7 +445,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
                     sfos.result=UDPFORWARDER_SUCCESS;
                 }
 
-#else // RAKNET_SUPPORT_IPV6==1
+#else // CRABNET_SUPPORT_IPV6==1
                 struct addrinfo hints;
                 memset(&hints, 0, sizeof (addrinfo)); // make sure the struct is empty
                 hints.ai_family = sfis->socketFamily;
@@ -482,7 +482,7 @@ void UDPForwarder::UpdateUDPForwarder(void)
                     sfos.result=UDPFORWARDER_BIND_FAILED;
                 else
                     sfos.result=UDPFORWARDER_SUCCESS;
-#endif  // RAKNET_SUPPORT_IPV6==1
+#endif  // CRABNET_SUPPORT_IPV6==1
 
                 if (sfos.result==UDPFORWARDER_SUCCESS)
                 {
@@ -593,4 +593,4 @@ RAK_THREAD_DECLARATION(UpdateUDPForwarderGlobal)
 
 } // namespace RakNet
 
-#endif // #if _RAKNET_SUPPORT_FileOperations==1
+#endif // #if _CRABNET_SUPPORT_FileOperations==1

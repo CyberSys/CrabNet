@@ -16,7 +16,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_DirectoryDeltaTransfer==1 && _RAKNET_SUPPORT_FileOperations==1
+#if _CRABNET_SUPPORT_DirectoryDeltaTransfer==1 && _CRABNET_SUPPORT_FileOperations==1
 
 #ifndef __DIRECTORY_DELTA_TRANSFER_H
 #define __DIRECTORY_DELTA_TRANSFER_H
@@ -169,4 +169,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

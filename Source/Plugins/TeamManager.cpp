@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_TeamManager==1
+#if _CRABNET_SUPPORT_TeamManager==1
 
 #include "TeamManager.h"
 #include "BitStream.h"
@@ -134,7 +134,7 @@ bool TM_TeamMember::RequestTeam(TeamSelection teamSelection)
         bsOut.Write(world->GetWorldId());
         bsOut.Write(networkId);
         bsOut.Write(teamSelection.teamParameter.noTeamSubcategory);
-        world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
+        world->BroadcastToParticipants(&bsOut, UNASSIGNED_CRABNET_GUID);
 
         StoreLastTeams();
 
@@ -310,7 +310,7 @@ bool TM_TeamMember::CancelTeamRequest(TM_Team *specificTeamToCancel)
     {
         bsOut.Write(false);
     }
-    world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
+    world->BroadcastToParticipants(&bsOut, UNASSIGNED_CRABNET_GUID);
 
     world->GetTeamManager()->PushBitStream(&bsOut);
 
@@ -355,7 +355,7 @@ bool TM_TeamMember::LeaveTeam(TM_Team* team, NoTeamId _noTeamSubcategory)
     bsOut.Write(networkId);
     bsOut.Write(team->GetNetworkID());
     bsOut.Write(noTeamSubcategory);
-    world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
+    world->BroadcastToParticipants(&bsOut, UNASSIGNED_CRABNET_GUID);
 
     if (world->GetHost()==world->GetTeamManager()->GetMyGUIDUnified())
     {
@@ -1065,7 +1065,7 @@ TM_World::TM_World()
 {
     teamManager=0;
     balanceTeamsIsActive=false;
-    hostGuid=UNASSIGNED_RAKNET_GUID;
+    hostGuid=UNASSIGNED_CRABNET_GUID;
     worldId=0;
     autoAddParticipants=true;
     teamRequestIndex=0;
@@ -1331,7 +1331,7 @@ void TM_World::SetHost(RakNetGUID _hostGuid)
     if (hostGuid==_hostGuid)
         return;
 
-    RakAssert(_hostGuid!=UNASSIGNED_RAKNET_GUID);
+    RakAssert(_hostGuid!=UNASSIGNED_CRABNET_GUID);
 
     hostGuid=_hostGuid;
 
@@ -1452,7 +1452,7 @@ void TM_World::KickExcessMembers(NoTeamId noTeamId)
                 bsOut.Write(true);
                 bsOut.Write(true);
                 bsOut.Write(team->GetNetworkID());
-                BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
+                BroadcastToParticipants(&bsOut, UNASSIGNED_CRABNET_GUID);
             }
 
         }
@@ -1526,7 +1526,7 @@ void TM_World::FillRequestedSlots(void)
                     bsOut.Write(GetWorldId());
                     bsOut.Write(teamMember->GetNetworkID());
                     bsOut.Write(team->GetNetworkID());
-                    BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
+                    BroadcastToParticipants(&bsOut, UNASSIGNED_CRABNET_GUID);
                 }
             }
             else
@@ -1576,7 +1576,7 @@ void TM_World::FillRequestedSlots(void)
                     }
                     else
                         bsOut.Write(false);
-                    BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
+                    BroadcastToParticipants(&bsOut, UNASSIGNED_CRABNET_GUID);
                 }
             }
         }
@@ -1749,7 +1749,7 @@ int TM_World::JoinSpecificTeam(TM_TeamMember *teamMember, TM_Team *team, bool is
                     RakNet::BitStream bitStream;
                     bitStream.WriteCasted<MessageID>(ID_TEAM_BALANCER_TEAM_ASSIGNED);
                     teamManager->EncodeTeamAssigned(&bitStream, swappingMember);
-                    BroadcastToParticipants(&bitStream, UNASSIGNED_RAKNET_GUID);
+                    BroadcastToParticipants(&bitStream, UNASSIGNED_CRABNET_GUID);
 
                     return 1;
                 }
@@ -2326,7 +2326,7 @@ void TeamManager::PushBitStream(RakNet::BitStream *bitStream)
     memcpy(p->data, bitStream->GetData(), bitStream->GetNumberOfBytesUsed());
     p->systemAddress=UNASSIGNED_SYSTEM_ADDRESS;
     p->systemAddress.systemIndex=(SystemIndex)-1;
-    p->guid=UNASSIGNED_RAKNET_GUID;
+    p->guid=UNASSIGNED_CRABNET_GUID;
     p->wasGeneratedLocally=true;
     PushBackPacketUnified(p, true);
 }
@@ -2437,7 +2437,7 @@ void TeamManager::OnJoinAnyTeam(Packet *packet, TM_World *world)
                 EncodeTeamLocked(&bsOut, teamMember, newTeam);
             }
             // SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
-            world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
+            world->BroadcastToParticipants(&bsOut, UNASSIGNED_CRABNET_GUID);
             if (packet->guid!=GetMyGUIDUnified())
                 PushBitStream(&bsOut);
         }
@@ -2565,7 +2565,7 @@ void TeamManager::OnJoinRequestedTeam(Packet *packet, TM_World *world)
             }
             // SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
 
-            world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
+            world->BroadcastToParticipants(&bsOut, UNASSIGNED_CRABNET_GUID);
             if (packet->guid!=GetMyGUIDUnified())
                 PushBitStream(&bsOut);
         }
@@ -2777,7 +2777,7 @@ void TeamManager::OnSetMemberLimit(Packet *packet, TM_World *world)
             if (packet->guid==GetMyGUIDUnified())
                 world->BroadcastToParticipants(packet->data, packet->length, packet->guid);
             else
-                world->BroadcastToParticipants(packet->data, packet->length, UNASSIGNED_RAKNET_GUID);
+                world->BroadcastToParticipants(packet->data, packet->length, UNASSIGNED_CRABNET_GUID);
             world->FillRequestedSlots();
             world->KickExcessMembers(noTeamId);
         }
@@ -2805,7 +2805,7 @@ void TeamManager::OnSetJoinPermissions(Packet *packet, TM_World *world)
             if (packet->guid==GetMyGUIDUnified())
                 world->BroadcastToParticipants(packet->data, packet->length, packet->guid);
             else
-                world->BroadcastToParticipants(packet->data, packet->length, UNASSIGNED_RAKNET_GUID);
+                world->BroadcastToParticipants(packet->data, packet->length, UNASSIGNED_CRABNET_GUID);
             world->FillRequestedSlots();
         }
     }
@@ -2828,7 +2828,7 @@ void TeamManager::OnSetBalanceTeams(Packet *packet, TM_World *world)
         if (packet->guid==GetMyGUIDUnified())
             world->BroadcastToParticipants(packet->data, packet->length, packet->guid);
         else
-            world->BroadcastToParticipants(packet->data, packet->length, UNASSIGNED_RAKNET_GUID);
+            world->BroadcastToParticipants(packet->data, packet->length, UNASSIGNED_CRABNET_GUID);
 
         if (balanceTeams)
             world->EnforceTeamBalance(noTeamId);
@@ -2850,5 +2850,5 @@ void TeamManager::OnSetBalanceTeamsInitial(Packet *packet, TM_World *world)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#endif // _RAKNET_SUPPORT_TeamManager==1
+#endif // _CRABNET_SUPPORT_TeamManager==1
 

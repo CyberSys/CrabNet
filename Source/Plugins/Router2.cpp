@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_Router2==1 && _RAKNET_SUPPORT_UDPForwarder==1
+#if _CRABNET_SUPPORT_Router2==1 && _CRABNET_SUPPORT_UDPForwarder==1
 
 #include "Router2.h"
 #include "RakPeerInterface.h"
@@ -623,7 +623,7 @@ bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest)
 {
     connectionRequest->connectionRequestSystemsMutex.Lock();
 
- //   RAKNET_DEBUG_PRINTF(__FUNCTION__": connectionRequest->connectionRequestSystems.Size = %d", connectionRequest->connectionRequestSystems.Size());
+ //   CRABNET_DEBUG_PRINTF(__FUNCTION__": connectionRequest->connectionRequestSystems.Size = %d", connectionRequest->connectionRequestSystems.Size());
 
     if (connectionRequest->connectionRequestSystems.Size()==0)
     {
@@ -634,7 +634,7 @@ bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest)
             ReturnToUser(ID_CONNECTION_LOST, connectionRequest->endpointGuid, UNASSIGNED_SYSTEM_ADDRESS, true); // This is a connection which was previously established. Rerouting is not possible.
 //             bool sendDisconnectionNotification = false;
 //             rakPeerInterface->CloseConnection(rakPeerInterface->GetSystemAddressFromGuid(connectionRequest->endpointGuid), sendDisconnectionNotification);
-//             RAKNET_DEBUG_PRINTF(__FUNCTION__": call rakPeerInterface->CloseConnection(%I64d)" , connectionRequest->endpointGuid.g);
+//             CRABNET_DEBUG_PRINTF(__FUNCTION__": call rakPeerInterface->CloseConnection(%I64d)" , connectionRequest->endpointGuid.g);
         }
         else
             ReturnToUser(ID_ROUTER_2_FORWARDING_NO_PATH, connectionRequest->endpointGuid, UNASSIGNED_SYSTEM_ADDRESS, false);
@@ -932,7 +932,7 @@ void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress
     }
     else
     {
-        #if RAKNET_SUPPORT_IPV6==1
+        #if CRABNET_SUPPORT_IPV6==1
         sendto__( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), 0, ( const sockaddr* ) & sa.address.addr6, sizeof( sockaddr_in6 ) );
         #endif
     }
@@ -1291,7 +1291,7 @@ int Router2::GetLargestPingAmongConnectedSystems(void) const
     for (index=0; index < rakPeerInterface->GetMaximumNumberOfPeers(); index++)
     {
         RakNetGUID g = rakPeerInterface->GetGUIDFromIndex(index);
-        if (g!=UNASSIGNED_RAKNET_GUID)
+        if (g!=UNASSIGNED_CRABNET_GUID)
         {
             avePing=rakPeerInterface->GetAveragePing(rakPeerInterface->GetGUIDFromIndex(index));
             if (avePing>largestPing)
@@ -1352,4 +1352,4 @@ Router2DebugInterface *Router2::GetDebugInterface(void) const
     return debugInterface;
 }
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

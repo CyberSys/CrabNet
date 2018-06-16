@@ -14,10 +14,10 @@
 ///
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_RakNetCommandParser==1
+#if _CRABNET_SUPPORT_RakNetCommandParser==1
 
-#ifndef __RAKNET_COMMAND_PARSER
-#define __RAKNET_COMMAND_PARSER
+#ifndef __CRABNET_COMMAND_PARSER
+#define __CRABNET_COMMAND_PARSER
 
 #include "CommandParserInterface.h"
 #include "Export.h"
@@ -68,4 +68,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

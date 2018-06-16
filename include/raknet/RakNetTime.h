@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef __RAKNET_TIME_H
-#define __RAKNET_TIME_H
+#ifndef __CRABNET_TIME_H
+#define __CRABNET_TIME_H
 
 #include <stdint.h>
 #include "RakNetDefines.h"

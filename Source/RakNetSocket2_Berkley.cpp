@@ -9,7 +9,7 @@
  *
  */
 
-#ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_BERKLEY_CPP
 #define RAKNETSOCKET2_BERKLEY_CPP
@@ -95,7 +95,7 @@ void RNS2_Berkley::GetSystemAddressIPV4 (RNS2Socket rns2Socket, SystemAddress *s
 }
 void RNS2_Berkley::GetSystemAddressIPV4And6 (RNS2Socket rns2Socket, SystemAddress *systemAddressOut)
 {
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
 
     socklen_t slen;
     sockaddr_storage ss;
@@ -110,7 +110,7 @@ void RNS2_Berkley::GetSystemAddressIPV4And6 (RNS2Socket rns2Socket, SystemAddres
             NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
             ( LPTSTR ) & messageBuffer, 0, NULL );
         // something has gone wrong here...
-        RAKNET_DEBUG_PRINTF( "getsockname failed:Error code - %d\n%s", dwIOError, messageBuffer );
+        CRABNET_DEBUG_PRINTF( "getsockname failed:Error code - %d\n%s", dwIOError, messageBuffer );
 
         //Free the buffer.
         LocalFree( messageBuffer );
@@ -175,7 +175,7 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4(RNS2_BerkleyBindParameters *bindPara
     }
     else
     {
-        //        RAKNET_DEBUG_PRINTF("Binding any on port %i\n", port);
+        //        CRABNET_DEBUG_PRINTF("Binding any on port %i\n", port);
         boundAddress.address.addr4.sin_addr.s_addr = INADDR_ANY;
     }
 
@@ -193,34 +193,34 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4(RNS2_BerkleyBindParameters *bindPara
         switch (ret)
         {
         case EBADF:
-            RAKNET_DEBUG_PRINTF("bind__(): sockfd is not a valid descriptor.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): sockfd is not a valid descriptor.\n"); break;
 
         case ENOTSOCK:
-            RAKNET_DEBUG_PRINTF("bind__(): Argument is a descriptor for a file, not a socket.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): Argument is a descriptor for a file, not a socket.\n"); break;
 
         case EINVAL:
-            RAKNET_DEBUG_PRINTF("bind__(): The addrlen is wrong, or the socket was not in the AF_UNIX family.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): The addrlen is wrong, or the socket was not in the AF_UNIX family.\n"); break;
         case EROFS:
-            RAKNET_DEBUG_PRINTF("bind__(): The socket inode would reside on a read-only file system.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): The socket inode would reside on a read-only file system.\n"); break;
         case EFAULT:
-            RAKNET_DEBUG_PRINTF("bind__(): my_addr points outside the user's accessible address space.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): my_addr points outside the user's accessible address space.\n"); break;
         case ENAMETOOLONG:
-            RAKNET_DEBUG_PRINTF("bind__(): my_addr is too long.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): my_addr is too long.\n"); break;
         case ENOENT:
-            RAKNET_DEBUG_PRINTF("bind__(): The file does not exist.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): The file does not exist.\n"); break;
         case ENOMEM:
-            RAKNET_DEBUG_PRINTF("bind__(): Insufficient kernel memory was available.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): Insufficient kernel memory was available.\n"); break;
         case ENOTDIR:
-            RAKNET_DEBUG_PRINTF("bind__(): A component of the path prefix is not a directory.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): A component of the path prefix is not a directory.\n"); break;
         case EACCES:
             // Port reserved on PS4
-            RAKNET_DEBUG_PRINTF("bind__(): Search permission is denied on a component of the path prefix.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): Search permission is denied on a component of the path prefix.\n"); break;
 
         case ELOOP:
-            RAKNET_DEBUG_PRINTF("bind__(): Too many symbolic links were encountered in resolving my_addr.\n"); break;
+            CRABNET_DEBUG_PRINTF("bind__(): Too many symbolic links were encountered in resolving my_addr.\n"); break;
 
         default:
-            RAKNET_DEBUG_PRINTF("Unknown bind__() error %i.\n", ret); break;
+            CRABNET_DEBUG_PRINTF("Unknown bind__() error %i.\n", ret); break;
         }
 #endif
 
@@ -236,7 +236,7 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4And6(RNS2_BerkleyBindParameters *bind
 
     (void) bindParameters;
 
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
 
     int ret=0;
     struct addrinfo hints;
@@ -293,13 +293,13 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4And6(RNS2_BerkleyBindParameters *bind
     return BR_FAILED_TO_BIND_SOCKET;
 
 #else
-return BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE;
+return BR_REQUIRES_CRABNET_SUPPORT_IPV6_DEFINE;
 #endif
 }
 
 void RNS2_Berkley::RecvFromBlockingIPV4And6(RNS2RecvStruct *recvFromStruct)
 {
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
 
     sockaddr_storage their_addr;
     sockaddr* sockAddrPtr;
@@ -329,7 +329,7 @@ void RNS2_Berkley::RecvFromBlockingIPV4And6(RNS2RecvStruct *recvFromStruct)
                 NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
                 ( LPTSTR ) & messageBuffer, 0, NULL );
             // I see this hit on XP with IPV6 for some reason
-            RAKNET_DEBUG_PRINTF( "Warning: recvfrom failed:Error code - %d\n%s", dwIOError, messageBuffer );
+            CRABNET_DEBUG_PRINTF( "Warning: recvfrom failed:Error code - %d\n%s", dwIOError, messageBuffer );
             LocalFree( messageBuffer );
         }
     }
@@ -385,7 +385,7 @@ void RNS2_Berkley::RecvFromBlockingIPV4(RNS2RecvStruct *recvFromStruct)
         if ( dwIOError == WSAECONNRESET )
         {
 #if defined(_DEBUG)
-            RAKNET_DEBUG_PRINTF( "A previous send operation resulted in an ICMP Port Unreachable message.\n" );
+            CRABNET_DEBUG_PRINTF( "A previous send operation resulted in an ICMP Port Unreachable message.\n" );
 #endif
 
         }
@@ -397,7 +397,7 @@ void RNS2_Berkley::RecvFromBlockingIPV4(RNS2RecvStruct *recvFromStruct)
                 NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
                 ( LPTSTR ) & messageBuffer, 0, NULL );
             // something has gone wrong here...
-            RAKNET_DEBUG_PRINTF( "sendto failed:Error code - %d\n%s", dwIOError, messageBuffer );
+            CRABNET_DEBUG_PRINTF( "sendto failed:Error code - %d\n%s", dwIOError, messageBuffer );
 
             //Free the buffer.
             LocalFree( messageBuffer );
@@ -420,7 +420,7 @@ void RNS2_Berkley::RecvFromBlockingIPV4(RNS2RecvStruct *recvFromStruct)
 
 void RNS2_Berkley::RecvFromBlocking(RNS2RecvStruct *recvFromStruct)
 {
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     return RecvFromBlockingIPV4And6(recvFromStruct);
 #else
     return RecvFromBlockingIPV4(recvFromStruct);
@@ -431,4 +431,4 @@ void RNS2_Berkley::RecvFromBlocking(RNS2RecvStruct *recvFromStruct)
 
 #endif // file header
 
-#endif // #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#endif // #ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS

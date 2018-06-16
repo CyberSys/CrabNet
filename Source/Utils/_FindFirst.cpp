@@ -82,7 +82,7 @@ int _findnext(intptr_t h, _finddata_t *f)
 
         if (stat(fullPath.c_str(), &filestat) != 0)
         {
-            RAKNET_DEBUG_PRINTF("Cannot stat %s\n", fullPath.c_str());
+            CRABNET_DEBUG_PRINTF("Cannot stat %s\n", fullPath.c_str());
             continue;
         }
 

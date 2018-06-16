@@ -21,7 +21,7 @@
 #ifdef LIBCAT_SECURITY
 
 // If building a RakNet DLL, be sure to tweak the CAT_EXPORT macro meaning
-#if defined(_RAKNET_DLL)
+#if defined(_CRABNET_DLL)
 # define CAT_BUILD_DLL
 #else
 # define CAT_NEUTER_EXPORT

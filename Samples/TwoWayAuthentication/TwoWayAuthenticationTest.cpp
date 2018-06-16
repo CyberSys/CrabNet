@@ -38,7 +38,7 @@ int main(void)
 	// Initialize the message handlers
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
 	{
-		twoWayAuthenticationPlugin[peerIndex]=RakNet::OP_NEW<RakNet::TwoWayAuthentication>();
+		twoWayAuthenticationPlugin[peerIndex] = new RakNet::TwoWayAuthentication();
 		rakPeer[peerIndex]->AttachPlugin(twoWayAuthenticationPlugin[peerIndex]);
 		rakPeer[peerIndex]->SetMaximumIncomingConnections(NUM_PEERS);
 	}
@@ -186,7 +186,7 @@ int main(void)
 		RakNet::RakPeerInterface::DestroyInstance(rakPeer[i]);
 
 	for (peerIndex=0; peerIndex < NUM_PEERS; peerIndex++)
-		RakNet::OP_DELETE(twoWayAuthenticationPlugin[peerIndex]);
+		delete twoWayAuthenticationPlugin[peerIndex];
 
-	return 1;
+	return 0;
 }

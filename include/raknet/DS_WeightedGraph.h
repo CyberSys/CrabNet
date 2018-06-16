@@ -461,10 +461,10 @@ namespace DataStructures
             {
                 for (j=0; j < adjacencyLists.Size(); j++)
                 {
-                    RAKNET_DEBUG_PRINTF("%2i ", costMatrix[i*adjacencyLists.Size() + j]);
+                    CRABNET_DEBUG_PRINTF("%2i ", costMatrix[i*adjacencyLists.Size() + j]);
                 }
-                RAKNET_DEBUG_PRINTF("Node=%i", leastNodeArray[i]);
-                RAKNET_DEBUG_PRINTF("\n");
+                CRABNET_DEBUG_PRINTF("Node=%i", leastNodeArray[i]);
+                CRABNET_DEBUG_PRINTF("\n");
             }
             */
 
@@ -489,10 +489,10 @@ namespace DataStructures
         {
             for (j=0; j < adjacencyLists.Size(); j++)
             {
-                RAKNET_DEBUG_PRINTF("%2i ", costMatrix[i*adjacencyLists.Size() + j]);
+                CRABNET_DEBUG_PRINTF("%2i ", costMatrix[i*adjacencyLists.Size() + j]);
             }
-            RAKNET_DEBUG_PRINTF("Node=%i", leastNodeArray[i]);
-            RAKNET_DEBUG_PRINTF("\n");
+            CRABNET_DEBUG_PRINTF("Node=%i", leastNodeArray[i]);
+            CRABNET_DEBUG_PRINTF("\n");
         }
 #endif
         */
@@ -519,19 +519,19 @@ namespace DataStructures
         unsigned i,j;
         for (i=0; i < adjacencyLists.Size(); i++)
         {
-            //RAKNET_DEBUG_PRINTF("%i connected to ", i);
-            RAKNET_DEBUG_PRINTF("%s connected to ", adjacencyLists.GetKeyAtIndex(i).systemAddress.ToString());
+            //CRABNET_DEBUG_PRINTF("%i connected to ", i);
+            CRABNET_DEBUG_PRINTF("%s connected to ", adjacencyLists.GetKeyAtIndex(i).systemAddress.ToString());
 
             if (adjacencyLists[i]->Size()==0)
-                RAKNET_DEBUG_PRINTF("<Empty>");
+                CRABNET_DEBUG_PRINTF("<Empty>");
             else
             {
                 for (j=0; j < adjacencyLists[i]->Size(); j++)
-                //    RAKNET_DEBUG_PRINTF("%i (%.2f) ", adjacencyLists.GetIndexAtKey(adjacencyLists[i]->GetKeyAtIndex(j)), (float) adjacencyLists[i]->operator[](j) );
-                    RAKNET_DEBUG_PRINTF("%s (%.2f) ", adjacencyLists[i]->GetKeyAtIndex(j).systemAddress.ToString(), (float) adjacencyLists[i]->operator[](j) );
+                //    CRABNET_DEBUG_PRINTF("%i (%.2f) ", adjacencyLists.GetIndexAtKey(adjacencyLists[i]->GetKeyAtIndex(j)), (float) adjacencyLists[i]->operator[](j) );
+                    CRABNET_DEBUG_PRINTF("%s (%.2f) ", adjacencyLists[i]->GetKeyAtIndex(j).systemAddress.ToString(), (float) adjacencyLists[i]->operator[](j) );
             }
 
-            RAKNET_DEBUG_PRINTF("\n");
+            CRABNET_DEBUG_PRINTF("\n");
         }
 #endif
     }

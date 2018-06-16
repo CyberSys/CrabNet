@@ -9,7 +9,7 @@
  *
  */
 
-#ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_BERKLEY_NATIVE_CLIENT_CPP
 #define RAKNETSOCKET2_BERKLEY_NATIVE_CLIENT_CPP
@@ -23,7 +23,7 @@
 
 void DomainNameToIP_Berkley_IPV4And6( const char *domainName, char ip[65] )
 {
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     struct addrinfo hints, *res, *p;
     int status;
     memset(&hints, 0, sizeof hints);
@@ -62,7 +62,7 @@ void DomainNameToIP_Berkley_IPV4And6( const char *domainName, char ip[65] )
 #else
     (void) domainName;
     (void) ip;
-#endif // #if RAKNET_SUPPORT_IPV6==1
+#endif // #if CRABNET_SUPPORT_IPV6==1
 }
 
 
@@ -95,7 +95,7 @@ void DomainNameToIP_Berkley_IPV4( const char *domainName, char ip[65] )
 
 void DomainNameToIP_Berkley( const char *domainName, char ip[65] )
 {
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     return DomainNameToIP_Berkley_IPV4And6(domainName, ip);
 #else
     return DomainNameToIP_Berkley_IPV4(domainName, ip);
@@ -104,4 +104,4 @@ void DomainNameToIP_Berkley( const char *domainName, char ip[65] )
 
 #endif // file header
 
-#endif // #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#endif // #ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS

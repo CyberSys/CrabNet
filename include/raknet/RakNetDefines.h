@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef __RAKNET_DEFINES_H
-#define __RAKNET_DEFINES_H
+#ifndef __CRABNET_DEFINES_H
+#define __CRABNET_DEFINES_H
 
 // If you want to change these defines, put them in RakNetDefinesOverrides so your changes are not lost when updating RakNet
 // The user should not edit this file
@@ -66,9 +66,9 @@
 #define BITSTREAM_STACK_ALLOCATION_SIZE 256
 #endif
 
-// Redefine if you want to disable or change the target for debug RAKNET_DEBUG_PRINTF
-#ifndef RAKNET_DEBUG_PRINTF
-#define RAKNET_DEBUG_PRINTF printf
+// Redefine if you want to disable or change the target for debug CRABNET_DEBUG_PRINTF
+#ifndef CRABNET_DEBUG_PRINTF
+#define CRABNET_DEBUG_PRINTF printf
 #endif
 
 // Maximum number of local IP addresses supported
@@ -128,8 +128,8 @@
 #define PREALLOCATE_LARGE_MESSAGES 0
 #endif
 
-#ifndef RAKNET_SUPPORT_IPV6
-#define RAKNET_SUPPORT_IPV6 0
+#ifndef CRABNET_SUPPORT_IPV6
+#define CRABNET_SUPPORT_IPV6 0
 #endif
 
 #ifndef RAKSTRING_TYPE
@@ -177,4 +177,4 @@
 
 //#define USE_THREADED_SEND
 
-#endif // __RAKNET_DEFINES_H
+#endif // __CRABNET_DEFINES_H

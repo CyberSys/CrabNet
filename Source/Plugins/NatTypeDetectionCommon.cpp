@@ -11,7 +11,7 @@
 
 #include "NatTypeDetectionCommon.h"
 
-#if _RAKNET_SUPPORT_NatTypeDetectionServer==1 || _RAKNET_SUPPORT_NatTypeDetectionClient==1
+#if _CRABNET_SUPPORT_NatTypeDetectionServer==1 || _CRABNET_SUPPORT_NatTypeDetectionClient==1
 
 #include "SocketLayer.h"
 #include "SocketIncludes.h"
@@ -203,4 +203,4 @@ int RakNet::NatTypeRecvFrom(char *data, RakNetSocket2* socket, SystemAddress &se
 }
 */
 
-#endif // #if _RAKNET_SUPPORT_NatTypeDetectionServer==1 || _RAKNET_SUPPORT_NatTypeDetectionClient==1
+#endif // #if _CRABNET_SUPPORT_NatTypeDetectionServer==1 || _CRABNET_SUPPORT_NatTypeDetectionClient==1

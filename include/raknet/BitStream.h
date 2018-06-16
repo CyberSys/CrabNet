@@ -531,7 +531,7 @@ namespace RakNet
         /// sure you didn't leave any data left over void
         void AssertStreamEmpty();
 
-        /// \brief RAKNET_DEBUG_PRINTF the bits in the stream.  Great for debugging.
+        /// \brief CRABNET_DEBUG_PRINTF the bits in the stream.  Great for debugging.
         void PrintBits(char *out) const;
         void PrintBits() const;
         void PrintHex(char *out) const;
@@ -1099,7 +1099,7 @@ namespace RakNet
         }
         else
         {
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
             // Don't endian swap
             WriteBits((const unsigned char*) &inTemplateVar.address.addr6, sizeof(inTemplateVar.address.addr6)*8, true);
 #endif
@@ -1451,7 +1451,7 @@ namespace RakNet
         }
         else
         {
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
             bool b = ReadBits((unsigned char*) &outTemplateVar.address.addr6, sizeof(outTemplateVar.address.addr6)*8, true);
             outTemplateVar.debugPort=ntohs(outTemplateVar.address.addr6.sin6_port);
             return b;

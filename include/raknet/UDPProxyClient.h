@@ -14,7 +14,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_UDPProxyClient==1
+#if _CRABNET_SUPPORT_UDPProxyClient==1
 
 #ifndef __UDP_PROXY_CLIENT_H
 #define __UDP_PROXY_CLIENT_H
@@ -179,4 +179,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

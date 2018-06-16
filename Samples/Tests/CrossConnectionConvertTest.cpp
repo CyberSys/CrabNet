@@ -93,7 +93,7 @@ int CrossConnectionConvertTest::RunTest(DataStructures::List<RakString> params,b
 					printf("ID_PING\n");
 				connectionAttemptTime=GetTimeMS()+1000;
 				p->systemAddress.ToString(false,clientIP);
-				clientPort=p->systemAddress.port;
+				clientPort = p->systemAddress.GetPort();
 				gotNotification=false;
 			}
 			else if (p->data[0]==ID_UNCONNECTED_PONG)

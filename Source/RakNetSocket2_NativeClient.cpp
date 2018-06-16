@@ -9,7 +9,7 @@
  *
  */
 
-#ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_NATIVE_CLIENT_CPP
 #define RAKNETSOCKET2_NATIVE_CLIENT_CPP
@@ -25,7 +25,7 @@ RNS2BindResult RNS2_NativeClient::Bind( NativeClientBindParameters *bindParamete
     if(Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))
     {
         rns2Socket = ((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->Create(bindParameters->nativeClientInstance);
-        RAKNET_DEBUG_PRINTF("CreateChromeSocket(%d,%s,0x%08x,%d) ==> 0x%08x\n", bindParameters->port, bindParameters->forceHostAddress?bindParameters->forceHostAddress:"(null)",bindParameters->nativeClientInstance,bindParameters->is_ipv6, rns2Socket);
+        CRABNET_DEBUG_PRINTF("CreateChromeSocket(%d,%s,0x%08x,%d) ==> 0x%08x\n", bindParameters->port, bindParameters->forceHostAddress?bindParameters->forceHostAddress:"(null)",bindParameters->nativeClientInstance,bindParameters->is_ipv6, rns2Socket);
 
         // Enable the broadcast feature on the socket (must happen before the
         // bind call)
@@ -65,7 +65,7 @@ RNS2BindResult RNS2_NativeClient::Bind( NativeClientBindParameters *bindParamete
 
         bindState = BS_IN_PROGRESS;
 
-        RAKNET_DEBUG_PRINTF("attempting to bind to %s\n", NetAddressPrivate::Describe(client_addr, true).c_str());
+        CRABNET_DEBUG_PRINTF("attempting to bind to %s\n", NetAddressPrivate::Describe(client_addr, true).c_str());
         PP_CompletionCallback cc = PP_MakeCompletionCallback(RNS2_NativeClient::onSocketBound, this);
         ((PPB_UDPSocket_Private_0_4*) Module::Get()->GetBrowserInterface(PPB_UDPSOCKET_PRIVATE_INTERFACE_0_4))->Bind(rns2Socket, &client_addr, cc);
         return BR_SUCCESS;
@@ -77,7 +77,7 @@ void RNS2_NativeClient::SendImmediate(RNS2_SendParameters_NativeClient *sp)
 {
     // Assuming data does not have to remain valid until callback called
     PP_NetAddress_Private client_addr;
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     NetAddressPrivate::CreateFromIPv6Address(sp->systemAddress.address.addr6.sin6_addr.u.Byte,0,sp->systemAddress.GetPort(),&client_addr);
 #else
     NetAddressPrivate::CreateFromIPv4Address((const uint8_t*) &sp->systemAddress.address.addr4.sin_addr,sp->systemAddress.GetPort(),&client_addr);
@@ -106,11 +106,11 @@ void RNS2_NativeClient::onRecvFrom(void* pData, int32_t dataSize)
         // resource will be issued with PP_ERROR_ABORTED.
         if(dataSize==PP_ERROR_ABORTED)
         {
-            RAKNET_DEBUG_PRINTF("onRecvFrom error PP_ERROR_ABORTED, killing recvfrom loop\n");
+            CRABNET_DEBUG_PRINTF("onRecvFrom error PP_ERROR_ABORTED, killing recvfrom loop\n");
         }
         else
         {
-            RAKNET_DEBUG_PRINTF("onRecvFrom error %d\n", dataSize);
+            CRABNET_DEBUG_PRINTF("onRecvFrom error %d\n", dataSize);
 
             // Reissue call
             socket2->IssueReceiveCall();
@@ -132,7 +132,7 @@ void RNS2_NativeClient::onRecvFrom(void* pData, int32_t dataSize)
         {
             ok = NetAddressPrivate::GetAddress(addr, &recvStruct->systemAddress.address.addr4.sin_addr, sizeof(in_addr));
         }
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
         else
         {
             ok = NetAddressPrivate::GetAddress(addr, &recvStruct->systemAddress.address.addr6.sin6_addr, sizeof(in6_addr));
@@ -165,4 +165,4 @@ void RNS2_NativeClient::IssueReceiveCall(void)
 
 #endif // file header
 
-#endif // #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#endif // #ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS

@@ -14,7 +14,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_StatisticsHistory==1
+#if _CRABNET_SUPPORT_StatisticsHistory==1
 
 #ifndef __STATISTICS_HISTORY_H
 #define __STATISTICS_HISTORY_H
@@ -232,4 +232,4 @@ protected:
 
 #endif // __STATISTICS_HISTORY_H
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

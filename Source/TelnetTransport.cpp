@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_TelnetTransport==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_TelnetTransport==1 && _CRABNET_SUPPORT_TCPInterface==1
 
 #include "TelnetTransport.h"
 #include "TCPInterface.h"
@@ -114,9 +114,9 @@ Packet* TelnetTransport::Receive( void )
         unsigned i;
         for (i=0; i < p->length; i++)
         {
-            RAKNET_DEBUG_PRINTF("%i ", p->data[i]);
+            CRABNET_DEBUG_PRINTF("%i ", p->data[i]);
         }
-        RAKNET_DEBUG_PRINTF("\n");
+        CRABNET_DEBUG_PRINTF("\n");
         tcpInterface->DeallocatePacket(p);
         return 0;
     }
@@ -341,7 +341,7 @@ bool TelnetTransport::ReassembleLine(TelnetTransport::TelnetClient* remoteClient
         remoteClient->textInput[remoteClient->cursorPosition]=0;
         remoteClient->cursorPosition=0;
 #ifdef _PRINTF_DEBUG
-        RAKNET_DEBUG_PRINTF("[Done] %s\n", remoteClient->textInput);
+        CRABNET_DEBUG_PRINTF("[Done] %s\n", remoteClient->textInput);
 #endif
         return true;
     }
@@ -351,7 +351,7 @@ bool TelnetTransport::ReassembleLine(TelnetTransport::TelnetClient* remoteClient
         {
             remoteClient->textInput[--remoteClient->cursorPosition]=0;
 #ifdef _PRINTF_DEBUG
-            RAKNET_DEBUG_PRINTF("[Back] %s\n", remoteClient->textInput);
+            CRABNET_DEBUG_PRINTF("[Back] %s\n", remoteClient->textInput);
 #endif
         }
     }
@@ -361,7 +361,7 @@ bool TelnetTransport::ReassembleLine(TelnetTransport::TelnetClient* remoteClient
         {
             remoteClient->textInput[remoteClient->cursorPosition++]=c;
 #ifdef _PRINTF_DEBUG
-            RAKNET_DEBUG_PRINTF("[Norm] %s\n", remoteClient->textInput);
+            CRABNET_DEBUG_PRINTF("[Norm] %s\n", remoteClient->textInput);
 #endif
         }
     }
@@ -372,4 +372,4 @@ bool TelnetTransport::ReassembleLine(TelnetTransport::TelnetClient* remoteClient
 #pragma warning( pop )
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

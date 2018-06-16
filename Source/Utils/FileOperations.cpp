@@ -11,7 +11,7 @@
 
 #include "FileOperations.h"
 
-#if _RAKNET_SUPPORT_FileOperations == 1
+#if _CRABNET_SUPPORT_FileOperations == 1
 
 #include <cstdio>
 #include <cstring>
@@ -159,5 +159,5 @@ long GetFileLength(const char *path)
     return fileLength;
 }
 
-#endif // _RAKNET_SUPPORT_FileOperations
+#endif // _CRABNET_SUPPORT_FileOperations
 

@@ -15,7 +15,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_ReadyEvent==1
+#if _CRABNET_SUPPORT_ReadyEvent==1
 
 #ifndef __READY_EVENT_H
 #define __READY_EVENT_H
@@ -144,7 +144,7 @@ public:
 
     /// Removes systems from the wait list, which should have been previously added with AddToWaitList
     /// \note Systems that directly or indirectly disconnect from us are automatically removed from the wait list
-    /// \param[in] guid The system to remove from the wait list. Pass UNASSIGNED_RAKNET_GUID for all currently connected systems.
+    /// \param[in] guid The system to remove from the wait list. Pass UNASSIGNED_CRABNET_GUID for all currently connected systems.
     /// \return True on success, false on unknown eventId (this should be considered an error)
     bool RemoveFromWaitList(int eventId, RakNetGUID guid);
 
@@ -240,4 +240,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

@@ -37,13 +37,13 @@ using namespace RakNet;
 
 #ifdef TEST_NATIVE_CLIENT_ON_WINDOWS
 #else
-#define RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#define CRABNET_SOCKET_2_INLINE_FUNCTIONS
 #include "RakNetSocket2_Windows_Linux.cpp"
 #include "RakNetSocket2_Windows_Linux_360.cpp"
 #include "RakNetSocket2_NativeClient.cpp"
 #include "RakNetSocket2_Berkley.cpp"
 #include "RakNetSocket2_Berkley_NativeClient.cpp"
-#undef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#undef CRABNET_SOCKET_2_INLINE_FUNCTIONS
 
 #endif
 
@@ -113,7 +113,7 @@ RNS2_NativeClient::~RNS2_NativeClient()
 }
 void RNS2_NativeClient::onSocketBound(void* pData, int32_t dataSize)
 {
-    RAKNET_DEBUG_PRINTF("onSocketBound ==> %d\n", dataSize);
+    CRABNET_DEBUG_PRINTF("onSocketBound ==> %d\n", dataSize);
     RNS2_NativeClient *csc = (RNS2_NativeClient *)pData;
 
     //any error codes will be given to us in the dataSize value
@@ -181,7 +181,7 @@ RNS2_SendParameters_NativeClient* RNS2_NativeClient::CloneSP(RNS2_SendParameters
 void RNS2_NativeClient::onSendTo(void* pData, int32_t dataSize)
 {
     if(dataSize <= 0)
-        RAKNET_DEBUG_PRINTF("onSendTo: send failed with error %d\n", dataSize);
+        CRABNET_DEBUG_PRINTF("onSendTo: send failed with error %d\n", dataSize);
 
     RNS2_SendParameters_NativeClient *sp = (RNS2_SendParameters_NativeClient*) pData;
 
@@ -254,7 +254,7 @@ void SocketReadCallback(CFSocketRef s, CFSocketCallBackType type, CFDataRef addr
 
 RNS2BindResult RNS2_Berkley::BindShared( RNS2_BerkleyBindParameters *bindParameters ) {
     RNS2BindResult br;
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
     br=BindSharedIPV4And6(bindParameters);
 #else
     br=BindSharedIPV4(bindParameters);

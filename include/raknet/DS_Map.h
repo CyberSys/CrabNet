@@ -15,8 +15,8 @@
 ///
 
 
-#ifndef __RAKNET_MAP_H
-#define __RAKNET_MAP_H
+#ifndef __CRABNET_MAP_H
+#define __CRABNET_MAP_H
 
 #include "DS_OrderedList.h"
 #include "Export.h"

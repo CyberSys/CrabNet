@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_UDPProxyCoordinator==1 && _RAKNET_SUPPORT_UDPForwarder==1
+#if _CRABNET_SUPPORT_UDPProxyCoordinator==1 && _CRABNET_SUPPORT_UDPForwarder==1
 
 #include "UDPProxyCoordinator.h"
 #include "BitStream.h"
@@ -566,4 +566,4 @@ void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry(void)
     }
 }
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

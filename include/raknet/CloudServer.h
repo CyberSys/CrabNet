@@ -16,7 +16,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_CloudServer==1
+#if _CRABNET_SUPPORT_CloudServer==1
 
 #ifndef __CLOUD_SERVER_H
 #define __CLOUD_SERVER_H
@@ -381,4 +381,4 @@ protected:
 //
 // 4. For a given client (such as on disconnect), remove all records of their subscriptions
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

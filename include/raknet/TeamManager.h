@@ -21,7 +21,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_TeamManager==1
+#if _CRABNET_SUPPORT_TeamManager==1
 
 #ifndef __TEAM_MANAGER_H
 #define __TEAM_MANAGER_H
@@ -530,7 +530,7 @@ public:
     /// \param[in] _hostGuid The host, which is the system that will serialize and resolve team disputes and calculate team balancing.
     void SetHost(RakNetGUID _hostGuid);
 
-    /// \return Returns the current host, or UNASSIGNED_RAKNET_GUID if unknown
+    /// \return Returns the current host, or UNASSIGNED_CRABNET_GUID if unknown
     RakNetGUID GetHost(void) const;
 
     /// \return The \a worldId passed to TeamManagr::AddWorld()
@@ -753,5 +753,5 @@ protected:
 
 #endif // __TEAM_MANAGER_H
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*
 

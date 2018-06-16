@@ -759,7 +759,7 @@ void BitStream::PrintBits() const
 {
     char out[2048];
     PrintBits(out);
-    RAKNET_DEBUG_PRINTF("%s", out);
+    CRABNET_DEBUG_PRINTF("%s", out);
 }
 
 void BitStream::PrintHex(char *out) const
@@ -772,7 +772,7 @@ void BitStream::PrintHex() const
 {
     char out[2048];
     PrintHex(out);
-    RAKNET_DEBUG_PRINTF("%s", out);
+    CRABNET_DEBUG_PRINTF("%s", out);
 }
 
 // Exposes the data for you to look at, like PrintBits does.

@@ -40,7 +40,7 @@ bool CommonFunctions::ConnectionStateMatchesOptions(RakPeerInterface *peer,Syste
 		return isDisconnecting;
 		break;
 
-	case IS_LOOPBACK:
+	zcase IS_LOOPBACK:
 		return isLoopBack;
 		break;
 

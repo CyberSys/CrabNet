@@ -15,7 +15,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_ConnectionGraph2==1
+#if _CRABNET_SUPPORT_ConnectionGraph2==1
 
 #ifndef __CONNECTION_GRAPH_2_H
 #define __CONNECTION_GRAPH_2_H
@@ -123,4 +123,4 @@ protected:
 
 #endif // #ifndef __CONNECTION_GRAPH_2_H
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_ReadyEvent==1
+#if _CRABNET_SUPPORT_ReadyEvent==1
 
 #include "ReadyEvent.h"
 #include "RakPeerInterface.h"
@@ -170,12 +170,12 @@ bool ReadyEvent::AddToWaitList(int eventId, RakNetGUID guid)
 
     unsigned i;
     unsigned numAdded=0;
-    if (guid==UNASSIGNED_RAKNET_GUID)
+    if (guid==UNASSIGNED_CRABNET_GUID)
     {
         for (i=0; i < rakPeerInterface->GetMaximumNumberOfPeers(); i++)
         {
             RakNetGUID firstGuid = rakPeerInterface->GetGUIDFromIndex(i);
-            if (firstGuid!=UNASSIGNED_RAKNET_GUID)
+            if (firstGuid!=UNASSIGNED_CRABNET_GUID)
             {
                 numAdded+=AddToWaitListInternal(eventIndex, firstGuid);
             }
@@ -196,7 +196,7 @@ bool ReadyEvent::RemoveFromWaitList(int eventId, RakNetGUID guid)
     unsigned eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &eventExists);
     if (eventExists)
     {
-        if (guid==UNASSIGNED_RAKNET_GUID)
+        if (guid==UNASSIGNED_CRABNET_GUID)
         {
             // Remove all waiters
             readyEventNodeList[eventIndex]->systemList.Clear(false);
@@ -253,7 +253,7 @@ RakNetGUID ReadyEvent::GetFromWaitListAtIndex(int eventId, unsigned index) const
     {
         return readyEventNodeList[readyIndex]->systemList[index].rakNetGuid;
     }
-    return UNASSIGNED_RAKNET_GUID;
+    return UNASSIGNED_CRABNET_GUID;
 }
 ReadyEventSystemStatus ReadyEvent::GetReadyStatus(int eventId, RakNetGUID guid)
 {
@@ -291,14 +291,14 @@ PluginReceiveResult ReadyEvent::OnReceive(Packet *packet)
     case ID_READY_EVENT_UNSET:
     case ID_READY_EVENT_SET:
     case ID_READY_EVENT_ALL_SET:
-//        if (doPrint) {if (packet->systemAddress.GetPort()==60002)    RAKNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)    RAKNET_DEBUG_PRINTF("TO 60002: "); RAKNET_DEBUG_PRINTF("ID_READY_EVENT_SET\n");}
+//        if (doPrint) {if (packet->systemAddress.GetPort()==60002)    CRABNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)    CRABNET_DEBUG_PRINTF("TO 60002: "); CRABNET_DEBUG_PRINTF("ID_READY_EVENT_SET\n");}
         OnReadyEventPacketUpdate(packet);
         return RR_CONTINUE_PROCESSING;
     case ID_READY_EVENT_FORCE_ALL_SET:
         OnReadyEventForceAllSet(packet);
         return RR_CONTINUE_PROCESSING;
     case ID_READY_EVENT_QUERY:
-//        if (doPrint) {if (packet->systemAddress.GetPort()==60002)    RAKNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)    RAKNET_DEBUG_PRINTF("TO 60002: "); RAKNET_DEBUG_PRINTF("ID_READY_EVENT_QUERY\n");}
+//        if (doPrint) {if (packet->systemAddress.GetPort()==60002)    CRABNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)    CRABNET_DEBUG_PRINTF("TO 60002: "); CRABNET_DEBUG_PRINTF("ID_READY_EVENT_QUERY\n");}
         OnReadyEventQuery(packet);
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
     }
@@ -570,4 +570,4 @@ void ReadyEvent::PushCompletionPacket(unsigned eventId)
 #pragma warning( pop )
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

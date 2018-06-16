@@ -9,14 +9,14 @@
  *
  */
 
-#ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_WINDOWS_LINUX_CPP
 #define RAKNETSOCKET2_WINDOWS_LINUX_CPP
 
 #if !defined(__native_client__)
 
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
 
 void PrepareAddrInfoHints2(addrinfo *hints)
 {
@@ -100,12 +100,12 @@ void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTER
 
 }
 
-#endif // RAKNET_SUPPORT_IPV6==1
+#endif // CRABNET_SUPPORT_IPV6==1
 
 
 void GetMyIP_Windows_Linux( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
-    #if RAKNET_SUPPORT_IPV6==1
+    #if CRABNET_SUPPORT_IPV6==1
         GetMyIP_Windows_Linux_IPV4And6(addresses);
     #else
         GetMyIP_Windows_Linux_IPV4(addresses);
@@ -117,4 +117,4 @@ void GetMyIP_Windows_Linux( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_I
 
 #endif // file header
 
-#endif // #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#endif // #ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS

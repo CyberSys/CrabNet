@@ -17,7 +17,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_TwoWayAuthentication==1
+#if _CRABNET_SUPPORT_TwoWayAuthentication==1
 
 #ifndef __TWO_WAY_AUTHENTICATION_H
 #define __TWO_WAY_AUTHENTICATION_H
@@ -151,4 +151,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

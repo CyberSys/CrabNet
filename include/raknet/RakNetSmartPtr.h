@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef __RAKNET_SMART_PTR_H
-#define __RAKNET_SMART_PTR_H
+#ifndef __CRABNET_SMART_PTR_H
+#define __CRABNET_SMART_PTR_H
 
 // From http://www.codeproject.com/KB/cpp/SmartPointers.aspx
 // with bugs fixed

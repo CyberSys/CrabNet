@@ -15,10 +15,10 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_TelnetTransport==1
+#if _CRABNET_SUPPORT_TelnetTransport==1
 
-#ifndef __RAKNET_TRANSPORT_2
-#define __RAKNET_TRANSPORT_2
+#ifndef __CRABNET_TRANSPORT_2
+#define __CRABNET_TRANSPORT_2
 
 #include "TransportInterface.h"
 #include "DS_Queue.h"
@@ -33,7 +33,7 @@ class BitStream;
 class RakPeerInterface;
 class RakNetTransport;
 
-/// \defgroup RAKNET_TRANSPORT_GROUP RakNetTransport
+/// \defgroup CRABNET_TRANSPORT_GROUP RakNetTransport
 /// \brief UDP based transport implementation for the ConsoleServer
 /// \details
 /// \ingroup PLUGINS_GROUP
@@ -41,7 +41,7 @@ class RakNetTransport;
 /// \brief Use RakNetTransport if you need a secure connection between the client and the console server.
 /// \details RakNetTransport automatically initializes security for the system.  Use the project CommandConsoleClient to connect
 /// To the ConsoleServer if you use RakNetTransport
-/// \ingroup RAKNET_TRANSPORT_GROUP
+/// \ingroup CRABNET_TRANSPORT_GROUP
 class RAK_DLL_EXPORT RakNetTransport2 : public TransportInterface, public PluginInterface2
 {
 public:
@@ -64,8 +64,8 @@ public:
     /// If your transport method requires particular formatting of the outgoing data (e.g. you don't just send strings) you can do it here
     /// and parse it out in Receive().
     /// \param[in] systemAddress The player to send the string to
-    /// \param[in] data format specifier - same as RAKNET_DEBUG_PRINTF
-    /// \param[in] ... format specification arguments - same as RAKNET_DEBUG_PRINTF
+    /// \param[in] data format specifier - same as CRABNET_DEBUG_PRINTF
+    /// \param[in] ... format specification arguments - same as CRABNET_DEBUG_PRINTF
     void Send( SystemAddress systemAddress, const char *data, ... );
 
     /// Disconnect \a systemAddress .  The binary address and port defines the SystemAddress structure.
@@ -108,4 +108,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

@@ -16,8 +16,8 @@
 
 
 
-#ifndef __RAKNET_HEAP_H
-#define __RAKNET_HEAP_H
+#ifndef __CRABNET_HEAP_H
+#define __CRABNET_HEAP_H
 
 #include "DS_List.h"
 #include "Export.h"

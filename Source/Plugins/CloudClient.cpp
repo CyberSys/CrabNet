@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_CloudClient==1
+#if _CRABNET_SUPPORT_CloudClient==1
 
 #include "CloudClient.h"
 #include "GetTime.h"
@@ -93,7 +93,7 @@ bool CloudClient::Get(CloudQuery *keyQuery, DataStructures::List<CloudQueryRow*>
     RakAssert(specificSystems.Size() < (uint16_t)-1 );
     for (uint16_t i=0; i < specificSystems.Size(); i++)
     {
-        if (specificSystems[i]->clientGUID!=UNASSIGNED_RAKNET_GUID)
+        if (specificSystems[i]->clientGUID!=UNASSIGNED_CRABNET_GUID)
         {
             bsOut.Write(true);
             bsOut.Write(specificSystems[i]->clientGUID);
@@ -152,7 +152,7 @@ void CloudClient::Unsubscribe(DataStructures::List<CloudKey> &keys, DataStructur
     RakAssert(specificSystems.Size() < (uint16_t)-1 );
     for (uint16_t i=0; i < specificSystems.Size(); i++)
     {
-        if (specificSystems[i]->clientGUID!=UNASSIGNED_RAKNET_GUID)
+        if (specificSystems[i]->clientGUID!=UNASSIGNED_CRABNET_GUID)
         {
             bsOut.Write(true);
             bsOut.Write(specificSystems[i]->clientGUID);

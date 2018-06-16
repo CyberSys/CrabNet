@@ -14,7 +14,7 @@
 ///
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_LogCommandParser==1
+#if _CRABNET_SUPPORT_LogCommandParser==1
 
 #ifndef __LOG_COMMAND_PARSER
 #define __LOG_COMMAND_PARSER
@@ -63,8 +63,8 @@ public:
 
     /// Write a log to a channel.
     /// Logs are not buffered, so only remote consoles connected and subscribing at the time you write will get the output.
-    /// \param[in] format Same as RAKNET_DEBUG_PRINTF()
-    /// \param[in] ... Same as RAKNET_DEBUG_PRINTF()
+    /// \param[in] format Same as CRABNET_DEBUG_PRINTF()
+    /// \param[in] ... Same as CRABNET_DEBUG_PRINTF()
     void WriteLog(const char *channelName, const char *format, ...);
 
     /// A callback for when \a systemAddress has connected to us.
@@ -125,4 +125,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

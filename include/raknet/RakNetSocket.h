@@ -10,8 +10,8 @@
  */
 
 /*
-#ifndef __RAKNET_SOCKET_H
-#define __RAKNET_SOCKET_H
+#ifndef __CRABNET_SOCKET_H
+#define __CRABNET_SOCKET_H
 
 #include "RakNetTypes.h"
 #include "RakNetDefines.h"

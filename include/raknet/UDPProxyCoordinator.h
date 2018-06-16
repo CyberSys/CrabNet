@@ -15,7 +15,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_UDPProxyCoordinator==1 && _RAKNET_SUPPORT_UDPForwarder==1
+#if _CRABNET_SUPPORT_UDPProxyCoordinator==1 && _CRABNET_SUPPORT_UDPForwarder==1
 
 #ifndef __UDP_PROXY_COORDINATOR_H
 #define __UDP_PROXY_COORDINATOR_H
@@ -115,4 +115,4 @@ namespace RakNet
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

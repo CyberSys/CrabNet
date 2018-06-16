@@ -17,7 +17,7 @@
 #ifndef __MESSAGE_IDENTIFIERS_H
 #define __MESSAGE_IDENTIFIERS_H 
 
-#if defined(RAKNET_USE_CUSTOM_PACKET_IDS)
+#if defined(CRABNET_USE_CUSTOM_PACKET_IDS)
 #include "CustomPacketIdentifiers.h"
 #else
 
@@ -128,9 +128,9 @@ enum DefaultMessageIDTypes
     ID_CONNECTION_BANNED,
     /// RakPeer - The remote system is using a password and has refused our connection because we did not set the correct password.
     ID_INVALID_PASSWORD,
-    // RAKNET_PROTOCOL_VERSION in RakNetVersion.h does not match on the remote system what we have on our system
+    // CRABNET_PROTOCOL_VERSION in RakNetVersion.h does not match on the remote system what we have on our system
     // This means the two systems cannot communicate.
-    // The 2nd byte of the message contains the value of RAKNET_PROTOCOL_VERSION for the remote system
+    // The 2nd byte of the message contains the value of CRABNET_PROTOCOL_VERSION for the remote system
     ID_INCOMPATIBLE_PROTOCOL_VERSION,
     // Means that this IP address connected recently, and can't connect again as a security measure. See
     /// RakPeer::SetLimitIPConnectionFrequency()
@@ -285,7 +285,7 @@ enum DefaultMessageIDTypes
 
     /// Informs user of a new host GUID. Packet::Guid contains this new host RakNetGuid. The old host can be read out using BitStream->Read(RakNetGuid) starting on byte 1
     /// This is not returned until connected to a remote system
-    /// If the oldHost is UNASSIGNED_RAKNET_GUID, then this is the first time the host has been determined
+    /// If the oldHost is UNASSIGNED_CRABNET_GUID, then this is the first time the host has been determined
     ID_FCM2_NEW_HOST,
     /// \internal For FullyConnectedMesh2 plugin
     ID_FCM2_REQUEST_FCMGUID,
@@ -433,6 +433,6 @@ enum DefaultMessageIDTypes
  
 };
 
-#endif // RAKNET_USE_CUSTOM_PACKET_IDS
+#endif // CRABNET_USE_CUSTOM_PACKET_IDS
 
 #endif

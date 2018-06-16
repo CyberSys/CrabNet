@@ -9,7 +9,7 @@
  *
  */
 
-#ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_WINDOWS_LINUX_360_CPP
 #define RAKNETSOCKET2_WINDOWS_LINUX_360_CPP
@@ -40,14 +40,14 @@ RNS2SendResult RNS2_Windows_Linux_360::Send_Windows_Linux_360NoVDP( RNS2Socket r
         }
         else
         {
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
             len = sendto__( rns2Socket, sendParameters->data, sendParameters->length, 0, ( const sockaddr* ) & sendParameters->systemAddress.address.addr6, sizeof( sockaddr_in6 ) );
 #endif
         }
 
         if (len<0)
         {
-            RAKNET_DEBUG_PRINTF("sendto failed with code %i for char %i and length %i.\n", len, sendParameters->data[0], sendParameters->length);
+            CRABNET_DEBUG_PRINTF("sendto failed with code %i for char %i and length %i.\n", len, sendParameters->data[0], sendParameters->length);
         }
 
 
@@ -65,4 +65,4 @@ RNS2SendResult RNS2_Windows_Linux_360::Send_Windows_Linux_360NoVDP( RNS2Socket r
 
 #endif // file header
 
-#endif // #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
+#endif // #ifdef CRABNET_SOCKET_2_INLINE_FUNCTIONS

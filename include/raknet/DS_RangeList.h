@@ -95,9 +95,9 @@ namespace DataStructures
         RakNet::BitSize_t before=in->GetWriteOffset();
         in->Write(countWritten);
         bitsWritten+=in->GetWriteOffset()-before;
-    //    RAKNET_DEBUG_PRINTF("%i ", in->GetNumberOfBitsUsed());
+    //    CRABNET_DEBUG_PRINTF("%i ", in->GetNumberOfBitsUsed());
         in->Write(&tempBS, tempBS.GetNumberOfBitsUsed());
-    //    RAKNET_DEBUG_PRINTF("%i %i \n", tempBS.GetNumberOfBitsUsed(),in->GetNumberOfBitsUsed());
+    //    CRABNET_DEBUG_PRINTF("%i %i \n", tempBS.GetNumberOfBitsUsed(),in->GetNumberOfBitsUsed());
 
         if (clearSerialized && countWritten)
         {

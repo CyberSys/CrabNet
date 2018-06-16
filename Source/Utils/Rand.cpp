@@ -260,7 +260,7 @@ seedMT(4357U);
 // print the first 2,002 random numbers seven to a line as an example
 
 for(j=0; j<2002; j++)
-RAKNET_DEBUG_PRINTF(" %10lu%s", (unsigned int) randomMT(), (j%7)==6 ? "\n" : "");
+CRABNET_DEBUG_PRINTF(" %10lu%s", (unsigned int) randomMT(), (j%7)==6 ? "\n" : "");
 
 return(EXIT_SUCCESS);
 }

@@ -14,7 +14,7 @@
 ///
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_NatTypeDetectionServer==1
+#if _CRABNET_SUPPORT_NatTypeDetectionServer==1
 
 #ifndef __NAT_TYPE_DETECTION_SERVER_H
 #define __NAT_TYPE_DETECTION_SERVER_H
@@ -135,4 +135,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

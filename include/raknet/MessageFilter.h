@@ -14,7 +14,7 @@
 ///
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_MessageFilter==1
+#if _CRABNET_SUPPORT_MessageFilter==1
 
 #ifndef __MESSAGE_FILTER_PLUGIN_H
 #define __MESSAGE_FILTER_PLUGIN_H
@@ -196,4 +196,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

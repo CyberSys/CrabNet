@@ -15,7 +15,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_PacketLogger==1
+#if _CRABNET_SUPPORT_PacketLogger==1
 
 #ifndef __THREADSAFE_PACKET_LOGGER_H
 #define __THREADSAFE_PACKET_LOGGER_H
@@ -46,4 +46,4 @@ protected:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

@@ -121,6 +121,6 @@ void StringTable::LogStringNotFound(const char *strName)
     (void) strName;
 
 #ifdef _DEBUG
-    RAKNET_DEBUG_PRINTF("Efficiency Warning! Unregistered String %s sent to StringTable.\n", strName);
+    CRABNET_DEBUG_PRINTF("Efficiency Warning! Unregistered String %s sent to StringTable.\n", strName);
 #endif
 }

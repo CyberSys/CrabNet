@@ -998,9 +998,9 @@ namespace DataStructures
         void BPlusTree<KeyType, DataType, order>::PrintLeaf(Page<KeyType, DataType, order> * leaf, int index)
     {
         int i;
-        RAKNET_DEBUG_PRINTF("%i] SELF=%p\n", index+1, leaf);
+        CRABNET_DEBUG_PRINTF("%i] SELF=%p\n", index+1, leaf);
         for (i=0; i < leaf->size; i++)
-            RAKNET_DEBUG_PRINTF(" %i. %i\n", i+1, leaf->data[i]);
+            CRABNET_DEBUG_PRINTF(" %i. %i\n", i+1, leaf->data[i]);
     }
     template<class KeyType, class DataType, int order>
         void BPlusTree<KeyType, DataType, order>::PrintLeaves(void)
@@ -1038,35 +1038,35 @@ namespace DataStructures
         int i,j;
         if (root)
         {
-            RAKNET_DEBUG_PRINTF("%p(", root);
+            CRABNET_DEBUG_PRINTF("%p(", root);
             for (i=0; i < root->size; i++)
             {
-                RAKNET_DEBUG_PRINTF("%i ", root->keys[i]);
+                CRABNET_DEBUG_PRINTF("%i ", root->keys[i]);
             }
-            RAKNET_DEBUG_PRINTF(") ");
-            RAKNET_DEBUG_PRINTF("\n");
+            CRABNET_DEBUG_PRINTF(") ");
+            CRABNET_DEBUG_PRINTF("\n");
         }
         while (queue.Size())
         {
             ptr=queue.Pop();
             if (ptr==0)
-                RAKNET_DEBUG_PRINTF("\n");
+                CRABNET_DEBUG_PRINTF("\n");
             else if (ptr->isLeaf==false)
             {
                 for (i=0; i < ptr->size+1; i++)
                 {
-                    RAKNET_DEBUG_PRINTF("%p(", ptr->children[i]);
-                    //RAKNET_DEBUG_PRINTF("(", ptr->children[i]);
+                    CRABNET_DEBUG_PRINTF("%p(", ptr->children[i]);
+                    //CRABNET_DEBUG_PRINTF("(", ptr->children[i]);
                     for (j=0; j < ptr->children[i]->size; j++)
-                        RAKNET_DEBUG_PRINTF("%i ", ptr->children[i]->keys[j]);
-                    RAKNET_DEBUG_PRINTF(") ");
+                        CRABNET_DEBUG_PRINTF("%i ", ptr->children[i]->keys[j]);
+                    CRABNET_DEBUG_PRINTF(") ");
                     queue.Push(ptr->children[i]);
                 }
                  queue.Push(0);
-                RAKNET_DEBUG_PRINTF(" -- ");
+                CRABNET_DEBUG_PRINTF(" -- ");
             }
         }
-        RAKNET_DEBUG_PRINTF("\n");
+        CRABNET_DEBUG_PRINTF("\n");
     }
 }
 #ifdef _MSC_VER
@@ -1097,7 +1097,7 @@ void main(void)
 
     for (testSize=0; testSize < 514; testSize++)
     {
-        RAKNET_DEBUG_PRINTF("TestSize=%i\n", testSize);
+        CRABNET_DEBUG_PRINTF("TestSize=%i\n", testSize);
 
         for (i=0; i < testSize; i++)
             haveList.Insert(i);
@@ -1147,7 +1147,7 @@ void main(void)
         haveList.Clear();
     }
 
-    RAKNET_DEBUG_PRINTF("Done. %i\n", btree.Size());
+    CRABNET_DEBUG_PRINTF("Done. %i\n", btree.Size());
     char ch[256];
     Gets(ch, sizeof(ch));
 }

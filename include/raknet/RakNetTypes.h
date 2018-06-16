@@ -32,8 +32,8 @@ struct Packet;
 
 enum StartupResult
 {
-    RAKNET_STARTED,
-    RAKNET_ALREADY_STARTED,
+    CRABNET_STARTED,
+    CRABNET_ALREADY_STARTED,
     INVALID_SOCKET_DESCRIPTORS,
     INVALID_MAX_CONNECTIONS,
     SOCKET_FAMILY_NOT_SUPPORTED,
@@ -153,7 +153,7 @@ struct RAK_DLL_EXPORT SocketDescriptor
     /// Encoding takes 16 bytes instead of 4, so IPV6 is less efficient for bandwidth.
     /// On the positive side, NAT Punchthrough is not needed and should not be used with IPV6 because there are enough addresses that routers do not need to create address mappings.
     /// RakPeer::Startup() will fail if this IP version is not supported.
-    /// \pre RAKNET_SUPPORT_IPV6 must be set to 1 in RakNetDefines.h for AF_INET6
+    /// \pre CRABNET_SUPPORT_IPV6 must be set to 1 in RakNetDefines.h for AF_INET6
     short socketFamily;
 
     unsigned short remotePortRakNetWasStartedOn_PS3_PSP2;
@@ -182,10 +182,10 @@ struct RAK_DLL_EXPORT SystemAddress
     SystemAddress(const char *str);
     SystemAddress(const char *str, unsigned short port);
 
-    /// SystemAddress, with RAKNET_SUPPORT_IPV6 defined, holds both an sockaddr_in6 and a sockaddr_in
+    /// SystemAddress, with CRABNET_SUPPORT_IPV6 defined, holds both an sockaddr_in6 and a sockaddr_in
     union// In6OrIn4
     {
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
         struct sockaddr_storage sa_stor;
         sockaddr_in6 addr6;
 #endif
@@ -283,7 +283,7 @@ struct RAK_DLL_EXPORT SystemAddress
 
     private:
 
-#if RAKNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6==1
         void ToString_New(bool writePort, char *dest, char portDelineator) const;
 #endif
 };
@@ -335,7 +335,7 @@ struct RAK_DLL_EXPORT RakNetGUID
 //};
 #ifndef SWIG
 const SystemAddress UNASSIGNED_SYSTEM_ADDRESS;
-const RakNetGUID UNASSIGNED_RAKNET_GUID((uint64_t)-1);
+const RakNetGUID UNASSIGNED_CRABNET_GUID((uint64_t)-1);
 #endif
 //{
 //    {0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF}
@@ -348,9 +348,9 @@ struct RAK_DLL_EXPORT AddressOrGUID
     RakNetGUID rakNetGuid;
     SystemAddress systemAddress;
 
-    SystemIndex GetSystemIndex(void) const {if (rakNetGuid!=UNASSIGNED_RAKNET_GUID) return rakNetGuid.systemIndex; else return systemAddress.systemIndex;}
-    bool IsUndefined(void) const {return rakNetGuid==UNASSIGNED_RAKNET_GUID && systemAddress==UNASSIGNED_SYSTEM_ADDRESS;}
-    void SetUndefined(void) {rakNetGuid=UNASSIGNED_RAKNET_GUID; systemAddress=UNASSIGNED_SYSTEM_ADDRESS;}
+    SystemIndex GetSystemIndex(void) const {if (rakNetGuid!=UNASSIGNED_CRABNET_GUID) return rakNetGuid.systemIndex; else return systemAddress.systemIndex;}
+    bool IsUndefined(void) const {return rakNetGuid==UNASSIGNED_CRABNET_GUID && systemAddress==UNASSIGNED_SYSTEM_ADDRESS;}
+    void SetUndefined(void) {rakNetGuid=UNASSIGNED_CRABNET_GUID; systemAddress=UNASSIGNED_SYSTEM_ADDRESS;}
     static unsigned long ToInteger( const AddressOrGUID &aog );
     const char *ToString(bool writePort=true) const;
     void ToString(bool writePort, char *dest) const;
@@ -363,7 +363,7 @@ struct RAK_DLL_EXPORT AddressOrGUID
     }
     AddressOrGUID( const SystemAddress& input )
     {
-        rakNetGuid=UNASSIGNED_RAKNET_GUID;
+        rakNetGuid=UNASSIGNED_CRABNET_GUID;
         systemAddress=input;
     }
     AddressOrGUID( Packet *packet );
@@ -381,7 +381,7 @@ struct RAK_DLL_EXPORT AddressOrGUID
 
     AddressOrGUID& operator = ( const SystemAddress& input )
     {
-        rakNetGuid=UNASSIGNED_RAKNET_GUID;
+        rakNetGuid=UNASSIGNED_CRABNET_GUID;
         systemAddress=input;
         return *this;
     }
@@ -393,7 +393,7 @@ struct RAK_DLL_EXPORT AddressOrGUID
         return *this;
     }
 
-    inline bool operator==( const AddressOrGUID& right ) const {return (rakNetGuid!=UNASSIGNED_RAKNET_GUID && rakNetGuid==right.rakNetGuid) || (systemAddress!=UNASSIGNED_SYSTEM_ADDRESS && systemAddress==right.systemAddress);}
+    inline bool operator==( const AddressOrGUID& right ) const {return (rakNetGuid!=UNASSIGNED_CRABNET_GUID && rakNetGuid==right.rakNetGuid) || (systemAddress!=UNASSIGNED_SYSTEM_ADDRESS && systemAddress==right.systemAddress);}
 };
 
 typedef uint64_t NetworkID;
@@ -406,7 +406,7 @@ struct Packet
 
     /// A unique identifier for the system that sent this packet, regardless of IP address (internal / external / remote system)
     /// Only valid once a connection has been established (ID_CONNECTION_REQUEST_ACCEPTED, or ID_NEW_INCOMING_CONNECTION)
-    /// Until that time, will be UNASSIGNED_RAKNET_GUID
+    /// Until that time, will be UNASSIGNED_CRABNET_GUID
     RakNetGUID guid;
 
     /// The length of the data in bytes

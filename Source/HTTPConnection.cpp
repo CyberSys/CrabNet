@@ -14,7 +14,7 @@
 ///
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_HTTPConnection==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_HTTPConnection==1 && _CRABNET_SUPPORT_TCPInterface==1
 
 #include "TCPInterface.h"
 #include "HTTPConnection.h"
@@ -310,4 +310,4 @@ HTTPConnection::~HTTPConnection(void)
 }
 
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

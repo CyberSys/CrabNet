@@ -15,7 +15,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_CloudClient==1
+#if _CRABNET_SUPPORT_CloudClient==1
 
 #ifndef __CLOUD_CLIENT_H
 #define __CLOUD_CLIENT_H
@@ -168,4 +168,4 @@ public:
 
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

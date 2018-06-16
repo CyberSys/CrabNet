@@ -15,7 +15,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_RelayPlugin==1
+#if _CRABNET_SUPPORT_RelayPlugin==1
 
 #ifndef __RELAY_PLUGIN_H
 #define __RELAY_PLUGIN_H
@@ -164,4 +164,4 @@ protected:
 #pragma warning( pop )
 #endif
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

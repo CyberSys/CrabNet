@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_DynDNS==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _CRABNET_SUPPORT_DynDNS==1 && _CRABNET_SUPPORT_TCPInterface==1
 
 #include "TCPInterface.h"
 #include "RakNetSocket2.h"
@@ -247,4 +247,4 @@ void DynDNS::Update(void)
 }
 
 
-#endif // _RAKNET_SUPPORT_DynDNS
+#endif // _CRABNET_SUPPORT_DynDNS

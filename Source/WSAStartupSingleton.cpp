@@ -41,7 +41,7 @@ void WSAStartupSingleton::AddRef(void)
             NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
             ( LPTSTR ) & messageBuffer, 0, NULL );
         // something has gone wrong here...
-        RAKNET_DEBUG_PRINTF( "WSAStartup failed:Error code - %d\n%s", dwIOError, messageBuffer );
+        CRABNET_DEBUG_PRINTF( "WSAStartup failed:Error code - %d\n%s", dwIOError, messageBuffer );
         //Free the buffer.
         LocalFree( messageBuffer );
 #endif

@@ -81,7 +81,7 @@ namespace RakNet
 // http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#ip4to6
 // http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#getaddrinfo
 
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
 void PrepareAddrInfoHints(addrinfo *hints)
 {
     memset(hints, 0, sizeof (addrinfo)); // make sure the struct is empty
@@ -137,7 +137,7 @@ void SocketLayer::SetSocketOptions(__UDPSOCKET__ listenSocket, bool blockingSock
                 NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
                 ( LPTSTR ) & messageBuffer, 0, NULL );
             // something has gone wrong here...
-            RAKNET_DEBUG_PRINTF( "setsockopt__(SO_BROADCAST) failed:Error code - %d\n%s", dwIOError, messageBuffer );
+            CRABNET_DEBUG_PRINTF( "setsockopt__(SO_BROADCAST) failed:Error code - %d\n%s", dwIOError, messageBuffer );
             //Free the buffer.
             LocalFree( messageBuffer );
 #endif
@@ -228,7 +228,7 @@ void SocketLayer::GetMyIP(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS
             NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
             ( LPTSTR ) & messageBuffer, 0, NULL );
         // something has gone wrong here...
-        RAKNET_DEBUG_PRINTF( "gethostname failed:Error code - %d\n%s", dwIOError, messageBuffer );
+        CRABNET_DEBUG_PRINTF( "gethostname failed:Error code - %d\n%s", dwIOError, messageBuffer );
         //Free the buffer.
         LocalFree( messageBuffer );
 #endif
@@ -236,7 +236,7 @@ void SocketLayer::GetMyIP(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS
     }
 
     int idx = 0;
-#if RAKNET_SUPPORT_IPV6 == 1
+#if CRABNET_SUPPORT_IPV6 == 1
     struct addrinfo hints;
     struct addrinfo *servinfo=0, *aip;  // will point to the results
     PrepareAddrInfoHints(&hints);
@@ -270,7 +270,7 @@ void SocketLayer::GetMyIP(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS
             NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
             ( LPTSTR ) & messageBuffer, 0, NULL );
         // something has gone wrong here...
-        RAKNET_DEBUG_PRINTF( "gethostbyname failed:Error code - %d\n%s", dwIOError, messageBuffer );
+        CRABNET_DEBUG_PRINTF( "gethostbyname failed:Error code - %d\n%s", dwIOError, messageBuffer );
 
         //Free the buffer.
         LocalFree( messageBuffer );
@@ -285,7 +285,7 @@ void SocketLayer::GetMyIP(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS
         memcpy(&addresses[idx].address.addr4.sin_addr, phe->h_addr_list[idx], sizeof(struct in_addr));
 
     }
-#endif // else RAKNET_SUPPORT_IPV6==1
+#endif // else CRABNET_SUPPORT_IPV6==1
 
     for (;idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; idx++)
         addresses[idx] = UNASSIGNED_SYSTEM_ADDRESS;
@@ -323,7 +323,7 @@ void SocketLayer::GetSystemAddress_Old(__UDPSOCKET__ s, SystemAddress *systemAdd
             NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
             ( LPTSTR ) & messageBuffer, 0, NULL );
         // something has gone wrong here...
-        RAKNET_DEBUG_PRINTF( "getsockname failed:Error code - %d\n%s", dwIOError, messageBuffer );
+        CRABNET_DEBUG_PRINTF( "getsockname failed:Error code - %d\n%s", dwIOError, messageBuffer );
 
         //Free the buffer.
         LocalFree( messageBuffer );
@@ -345,7 +345,7 @@ void SocketLayer::GetSystemAddress_Old ( RakNetSocket *s, SystemAddress *systemA
 */
 void SocketLayer::GetSystemAddress(__UDPSOCKET__ s, SystemAddress *systemAddressOut)
 {
-#if RAKNET_SUPPORT_IPV6 != 1
+#if CRABNET_SUPPORT_IPV6 != 1
     GetSystemAddress_Old(s, systemAddressOut);
 #else
     sockaddr_storage ss;
@@ -360,7 +360,7 @@ void SocketLayer::GetSystemAddress(__UDPSOCKET__ s, SystemAddress *systemAddress
             NULL, dwIOError, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),  // Default language
             ( LPTSTR ) & messageBuffer, 0, NULL );
         // something has gone wrong here...
-        RAKNET_DEBUG_PRINTF( "getsockname failed:Error code - %d\n%s", dwIOError, messageBuffer );
+        CRABNET_DEBUG_PRINTF( "getsockname failed:Error code - %d\n%s", dwIOError, messageBuffer );
 
         //Free the buffer.
         LocalFree( messageBuffer );
@@ -391,7 +391,7 @@ void SocketLayer::GetSystemAddress(__UDPSOCKET__ s, SystemAddress *systemAddress
 
         //    systemAddressOut->address.addr6.sin6_port=ntohs(systemAddressOut->address.addr6.sin6_port);
     }
-#endif // #if RAKNET_SUPPORT_IPV6!=1
+#endif // #if CRABNET_SUPPORT_IPV6!=1
 }
 /*
 void SocketLayer::GetSystemAddress ( RakNetSocket *s, SystemAddress *systemAddressOut )

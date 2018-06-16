@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_CloudServer==1
+#if _CRABNET_SUPPORT_CloudServer==1
 
 #include "CloudServer.h"
 #include "GetTime.h"

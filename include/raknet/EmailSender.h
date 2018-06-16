@@ -14,7 +14,7 @@
 ///
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_EmailSender==1 && _RAKNET_SUPPORT_TCPInterface==1 && _RAKNET_SUPPORT_FileOperations==1
+#if _CRABNET_SUPPORT_EmailSender==1 && _CRABNET_SUPPORT_TCPInterface==1 && _CRABNET_SUPPORT_FileOperations==1
 
 #ifndef __EMAIL_SENDER_H
 #define __EMAIL_SENDER_H
@@ -62,4 +62,4 @@ protected:
 #endif
 
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

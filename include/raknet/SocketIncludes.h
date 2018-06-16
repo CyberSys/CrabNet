@@ -1,5 +1,5 @@
-#ifndef RAKNET_SOCKETINCLUDES_H
-#define RAKNET_SOCKETINCLUDES_H
+#ifndef CRABNET_SOCKETINCLUDES_H
+#define CRABNET_SOCKETINCLUDES_H
 
 // All this crap just to include type SOCKET
 
@@ -63,4 +63,4 @@
 
 #endif
 
-#endif  // RAKNET_SOCKETINCLUDES_H
+#endif  // CRABNET_SOCKETINCLUDES_H

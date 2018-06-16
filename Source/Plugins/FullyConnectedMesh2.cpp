@@ -14,7 +14,7 @@
 
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_FullyConnectedMesh2==1
+#if _CRABNET_SUPPORT_FullyConnectedMesh2==1
 
 #include "FullyConnectedMesh2.h"
 #include "RakPeerInterface.h"
@@ -49,7 +49,7 @@ FullyConnectedMesh2::FullyConnectedMesh2()
 
     connectOnNewRemoteConnections=true;
 
-    hostRakNetGuid=UNASSIGNED_RAKNET_GUID;
+    hostRakNetGuid=UNASSIGNED_CRABNET_GUID;
 }
 FullyConnectedMesh2::~FullyConnectedMesh2()
 {
@@ -58,7 +58,7 @@ FullyConnectedMesh2::~FullyConnectedMesh2()
 RakNetGUID FullyConnectedMesh2::GetConnectedHost(void) const
 {
     if (ourFCMGuid==0)
-        return UNASSIGNED_RAKNET_GUID;
+        return UNASSIGNED_CRABNET_GUID;
     return hostRakNetGuid;
 }
 SystemAddress FullyConnectedMesh2::GetConnectedHostAddr(void) const
@@ -112,7 +112,7 @@ void FullyConnectedMesh2::SetAutoparticipateConnections(bool b)
 }
 void FullyConnectedMesh2::ResetHostCalculation(void)
 {
-    hostRakNetGuid=UNASSIGNED_RAKNET_GUID;
+    hostRakNetGuid=UNASSIGNED_CRABNET_GUID;
     startupTime=RakNet::GetTimeUS();
     totalConnectionCount=0;
     ourFCMGuid=0;
@@ -285,11 +285,11 @@ PluginReceiveResult FullyConnectedMesh2::OnReceive(Packet *packet)
             RakNet::BitStream b(packet->data, packet->length, false);
             b.IgnoreBits(8); // Ignore the ID_...
             b.Read(g);
-            UpdateVerifiedJoinInProgressMember(g, UNASSIGNED_RAKNET_GUID, JIPS_FAILED);
+            UpdateVerifiedJoinInProgressMember(g, UNASSIGNED_CRABNET_GUID, JIPS_FAILED);
             return RR_CONTINUE_PROCESSING;
         }
     case ID_NAT_PUNCHTHROUGH_FAILED:
-        UpdateVerifiedJoinInProgressMember(packet->guid, UNASSIGNED_RAKNET_GUID, JIPS_FAILED);
+        UpdateVerifiedJoinInProgressMember(packet->guid, UNASSIGNED_CRABNET_GUID, JIPS_FAILED);
         return RR_CONTINUE_PROCESSING;
     }
 
@@ -349,7 +349,7 @@ void FullyConnectedMesh2::OnClosedConnection(const SystemAddress &systemAddress,
         }
     }
 
-    UpdateVerifiedJoinInProgressMember(rakNetGUID, UNASSIGNED_RAKNET_GUID, JIPS_FAILED);
+    UpdateVerifiedJoinInProgressMember(rakNetGUID, UNASSIGNED_CRABNET_GUID, JIPS_FAILED);
 
     for (idx=0; idx < fcm2ParticipantList.Size(); idx++)
     {
@@ -406,7 +406,7 @@ void FullyConnectedMesh2::OnFailedConnectionAttempt(Packet *packet, PI2_FailedCo
     }
     else
     {
-        UpdateVerifiedJoinInProgressMember(packet->systemAddress, UNASSIGNED_RAKNET_GUID, JIPS_FAILED);
+        UpdateVerifiedJoinInProgressMember(packet->systemAddress, UNASSIGNED_CRABNET_GUID, JIPS_FAILED);
     }
 }
 void FullyConnectedMesh2::Clear(void)
@@ -433,7 +433,7 @@ void FullyConnectedMesh2::Clear(void)
 
     totalConnectionCount=0;
     ourFCMGuid=0;
-    lastPushedHost=UNASSIGNED_RAKNET_GUID;
+    lastPushedHost=UNASSIGNED_CRABNET_GUID;
 }
 void FullyConnectedMesh2::PushNewHost(const RakNetGUID &guid, RakNetGUID oldHost)
 {
@@ -994,7 +994,7 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinStart(Packet *packet)
             ReadVerifiedJoinInProgressMember(&bsIn, &vjipm);
 
             unsigned int j;
-            if (vjipm.guid!=UNASSIGNED_RAKNET_GUID)
+            if (vjipm.guid!=UNASSIGNED_CRABNET_GUID)
                 j = GetVerifiedJoinInProgressMemberIndex(vjipm.guid, vjip);
             else
                 j = GetVerifiedJoinInProgressMemberIndex(vjipm.systemAddress, vjip);
@@ -1286,7 +1286,7 @@ void FullyConnectedMesh2::UpdateVerifiedJoinInProgressMember(const AddressOrGUID
         j = GetVerifiedJoinInProgressMemberIndex(systemIdentifier, vjip);
         if (j!=(unsigned int)-1)
         {
-            if (vjip->vjipMembers[j].guid==UNASSIGNED_RAKNET_GUID && guidToAssign!=UNASSIGNED_RAKNET_GUID)
+            if (vjip->vjipMembers[j].guid==UNASSIGNED_CRABNET_GUID && guidToAssign!=UNASSIGNED_CRABNET_GUID)
                 vjip->vjipMembers[j].guid = guidToAssign;
 
             if (vjip->vjipMembers[j].joinInProgressState==JIPS_PROCESSING)
@@ -1372,7 +1372,7 @@ unsigned int FullyConnectedMesh2::GetVerifiedJoinInProgressMemberIndex(const Add
 {
     for (unsigned int j=0; j < vjip->vjipMembers.Size(); j++)
     {
-        if ((systemIdentifier.rakNetGuid!=UNASSIGNED_RAKNET_GUID && vjip->vjipMembers[j].guid==systemIdentifier.rakNetGuid) ||
+        if ((systemIdentifier.rakNetGuid!=UNASSIGNED_CRABNET_GUID && vjip->vjipMembers[j].guid==systemIdentifier.rakNetGuid) ||
             (systemIdentifier.systemAddress!=UNASSIGNED_SYSTEM_ADDRESS && vjip->vjipMembers[j].systemAddress==systemIdentifier.systemAddress))
         {
             return j;
@@ -1421,4 +1421,4 @@ void FullyConnectedMesh2::CategorizeVJIP(VerifiedJoinInProgress *vjip,
     }
 }
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*

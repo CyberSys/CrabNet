@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_StatisticsHistory==1
+#if _CRABNET_SUPPORT_StatisticsHistory==1
 
 #include "StatisticsHistory.h"
 #include "GetTime.h"
@@ -818,4 +818,4 @@ void StatisticsHistoryPlugin::OnNewConnection(const SystemAddress &systemAddress
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#endif // _RAKNET_SUPPORT_StatisticsHistory==1
+#endif // _CRABNET_SUPPORT_StatisticsHistory==1

@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_UDPProxyClient==1
+#if _CRABNET_SUPPORT_UDPProxyClient==1
 
 #include "UDPProxyClient.h"
 #include "BitStream.h"
@@ -310,5 +310,5 @@ void UDPProxyClient::Clear(void)
 }
 
 
-#endif // _RAKNET_SUPPORT_*
+#endif // _CRABNET_SUPPORT_*
 

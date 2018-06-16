@@ -1,7 +1,7 @@
-RakNet 4.081
+CrabNet 1.001
 ============
 
-Copyright (c) 2014, Oculus VR, Inc.
+Copyright (c) 2014, Oculus VR, Inc. (original RakNet)
 
 Copyright (c) 2016-2018, TES3MP Team
 
@@ -16,10 +16,10 @@ You also need CMake 3.5 to generate project files.
 Package notes
 -------------
 * The Help directory contains index.html, which provides full documentation and help
-* The Source directory contain all files required for the core of RakNet and is used
+* The Source directory contain all files required for the core of CrabNet and is used
 if you want to use the source in your program or create your own dll
 * The Samples directory contains code samples and one game using an older version of RakNet.
-The code samples each demonstrate one feature of RakNet. The game samples cover several features.
+The code samples each demonstrate one feature of CrabNet. The game samples cover several features.
 
 Linux
 -----

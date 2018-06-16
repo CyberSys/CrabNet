@@ -10,7 +10,7 @@
  */
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_TwoWayAuthentication==1
+#if _CRABNET_SUPPORT_TwoWayAuthentication==1
 
 #include "TwoWayAuthentication.h"
 #include "Rand.h"
@@ -238,7 +238,7 @@ void TwoWayAuthentication::OnClosedConnection(const SystemAddress &systemAddress
     unsigned int i=0;
     while (i < outgoingChallenges.Size())
     {
-        if ((rakNetGUID!=UNASSIGNED_RAKNET_GUID && outgoingChallenges[i].remoteSystem.rakNetGuid==rakNetGUID) ||
+        if ((rakNetGUID!=UNASSIGNED_CRABNET_GUID && outgoingChallenges[i].remoteSystem.rakNetGuid==rakNetGUID) ||
             (systemAddress!=UNASSIGNED_SYSTEM_ADDRESS && outgoingChallenges[i].remoteSystem.systemAddress==systemAddress))
         {
             outgoingChallenges.RemoveAtIndex(i);
@@ -249,7 +249,7 @@ void TwoWayAuthentication::OnClosedConnection(const SystemAddress &systemAddress
         }
     }
 
-    if (rakNetGUID!=UNASSIGNED_RAKNET_GUID)
+    if (rakNetGUID!=UNASSIGNED_CRABNET_GUID)
         nonceGenerator.ClearByAddress(rakNetGUID);
     else
         nonceGenerator.ClearByAddress(systemAddress);
