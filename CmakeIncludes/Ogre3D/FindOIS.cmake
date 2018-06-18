@@ -1,6 +1,6 @@
 #This has been modified fron the original
-include(${RakNet_SOURCE_DIR}/CmakeIncludes/Ogre3D/PreprocessorUtils.cmake)
-include(${RakNet_SOURCE_DIR}/CmakeIncludes/Ogre3D/FindPkgMacros.cmake)
+include(${CrabNet_SOURCE_DIR}/CmakeIncludes/Ogre3D/PreprocessorUtils.cmake)
+include(${CrabNet_SOURCE_DIR}/CmakeIncludes/Ogre3D/FindPkgMacros.cmake)
 #-------------------------------------------------------------------
 # This file is part of the CMake build system for OGRE
 #     (Object-oriented Graphics Rendering Engine)

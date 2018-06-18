@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.6)
 project(AutopatcherClient)
 
-set(Autopatcher_SOURCE_DIR ${RakNet_SOURCE_DIR}/DependentExtensions/Autopatcher)
-set(BZip2_SOURCE_DIR ${RakNet_SOURCE_DIR}/DependentExtensions/bzip2-1.0.6)
+set(Autopatcher_SOURCE_DIR ${CrabNet_SOURCE_DIR}/DependentExtensions/Autopatcher)
+set(BZip2_SOURCE_DIR ${CrabNet_SOURCE_DIR}/DependentExtensions/bzip2-1.0.6)
 
 include_directories(${CRABNETHEADERFILES} ./ ${Autopatcher_SOURCE_DIR} ${BZip2_SOURCE_DIR} )
 FILE(GLOB AUTOSRC "${Autopatcher_SOURCE_DIR}/*.cpp" "${Autopatcher_SOURCE_DIR}/*.h")

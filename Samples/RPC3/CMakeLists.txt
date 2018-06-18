@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 GETCURRENTFOLDER()
 FINDBOOST()
 
-set(LibRPC3_SOURCE_DIR ${RakNet_SOURCE_DIR}/DependentExtensions/RPC3/)
+set(LibRPC3_SOURCE_DIR ${CrabNet_SOURCE_DIR}/DependentExtensions/RPC3/)
 
 project(RPC3)
 IF (WIN32 AND NOT UNIX)

@@ -98,4 +98,4 @@ MACRO(FINDREADMES)
 	FILE(GLOB READMES readme.txt)
 ENDMACRO(FINDREADMES)
 
-include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindMacros.cmake)#The macros for setting variables and performing finds
+include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindMacros.cmake)#The macros for setting variables and performing finds

@@ -1,5 +1,5 @@
 MACRO(FINDMYSQL)#A macro interface for finding a dependency
-	include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindMySQL.cmake)
+	include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindMySQL.cmake)
 	IF(NOT MYSQL_FOUND)
 		IF(WIN32)
 			set(MYSQL_LIBRARIES "${PROGRAMFILESX86}/MySQL/MySQL Server 5.1/lib/opt/libmysql.lib")
@@ -19,7 +19,7 @@ MACRO(FINDPOSTGRE)#A macro interface for finding a dependency
 	ELSE(WIN32)
 		set(CUSTOMPROGRAMFILES "")
 	ENDIF(WIN32)
-	include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindPostgreSQL.cmake)
+	include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindPostgreSQL.cmake)
 	IF(NOT POSTGRESQL_FOUND)
 		IF(WIN32)
 			set(POSTGRESQL_LIBRARIES "${PROGRAMFILESX86}/PostgreSQL/8.4/lib/libpq.lib")
@@ -39,7 +39,7 @@ MACRO(FINDPORTAUDIO)#A macro interface for finding a dependency
 		set(PORTAUDIO_LIBRARIES LibPortAudioV18_1)
 		set(PORTAUDIO_FOUND TRUE)
 	ELSE(WIN32)
-		include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindPortAudio.cmake)
+		include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindPortAudio.cmake)
 	ENDIF(WIN32)
 	IF(NOT PORTAUDIO_FOUND)
 		IF(NOT WIN32)
@@ -56,7 +56,7 @@ MACRO(FINDSPEEX)#A macro interface for finding a dependency
 		set(SPEEX_LIBRARIES LibSpeex)
 		set(SPEEX_FOUND TRUE)
 	ELSE(WIN32)
-		include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindSpeex.cmake)
+		include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindSpeex.cmake)
 		FINDSPEEXDSP()
 	ENDIF(WIN32)
 	IF(NOT SPEEX_FOUND)
@@ -72,7 +72,7 @@ MACRO(FINDSPEEX)#A macro interface for finding a dependency
 ENDMACRO(FINDSPEEX)
 
 MACRO(FINDBOOST)#A macro interface for finding a dependency
-	include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindBoost.cmake)
+	include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindBoost.cmake)
 	IF(NOT Boost_FOUND)
 		IF(WIN32)
 			set(Boost_INCLUDE_DIRS "${PROGRAMFILESX86}/boost/boost_1_35")
@@ -87,7 +87,7 @@ MACRO(FINDBOOST)#A macro interface for finding a dependency
 ENDMACRO(FINDBOOST)
 
 MACRO(FINDSPEEXDSP)#A macro interface for finding a dependency
-	include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindSpeexDSP.cmake)
+	include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindSpeexDSP.cmake)
 	IF(NOT SPEEXDSP_FOUND)
 		set(SPEEXDSP_INCLUDE_DIRS "/usr/include")
 		set(SPEEXDSP_LIBRARIES "/usr/lib/libspeexdsp.so")
@@ -135,7 +135,7 @@ MACRO(FINDSCALEGFX)
 ENDMACRO(FINDSCALEGFX)
 
 MACRO(FINDFMODEX)#A macro interface for finding a dependency
-	include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindFMODEx.cmake)
+	include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindFMODEx.cmake)
 	IF(NOT FMODEX_FOUND)
 		IF(WIN32)
 			set(FMODEX_LIBRARY "${PROGRAMFILESX86}/FMOD SoundSystem/FMOD Programmers API Win32/api/lib/${WINLIBNAME}.${WINLIBEXT}")
@@ -153,7 +153,7 @@ MACRO(FINDIRRLICHT)
 		message(STATUS "You are building with the Irrlicht option enabled,\n if irrlicht include location is not C:/irrlicht-1.6/include\n change IRRLICHT_INCLUDE_DIR with the GUI or -D command line option.\n NOTE: YOU MUST USE VERSION 1.6 for this demo.")
 		set(IRRLICHT_INCLUDE_DIR "C:/irrlicht-1.6/include" CACHE PATH "The Irrlicht unzip location")
 	ELSE(WIN32 AND NOT UNIX)
-		include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindIrrlicht.cmake)
+		include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindIrrlicht.cmake)
 		IF(NOT IRRLICHT_FOUND)
 			set(IRRLICHT_INCLUDE_DIR "/usr/include/irrlicht")
 			set(IRRLICHT_LIBRARIES "/usr/local/lib/libIrrlicht.so")
@@ -166,7 +166,7 @@ MACRO(FINDIRRKLANG)
 	IF(WIN32 AND NOT UNIX)
 		#currently not needed a space is here for future use
 	ELSE(WIN32 AND NOT UNIX)
-		include(${RakNet_SOURCE_DIR}/CmakeIncludes/FindIrrKlang.cmake)
+		include(${CrabNet_SOURCE_DIR}/CmakeIncludes/FindIrrKlang.cmake)
 		IF(NOT IRRKLANG_FOUND)
 			set(IRRKLANG_INCLUDE_DIR "/usr/include/irrklang")
 			set(IRRKLANG_LIBRARIES "/usr/local/lib/libIrrKlang.so")
@@ -176,7 +176,7 @@ MACRO(FINDIRRKLANG)
 ENDMACRO(FINDIRRKLANG)
 
 MACRO(FINDOGRE3D)#A macro interface for finding a dependency
-	include(${RakNet_SOURCE_DIR}/CmakeIncludes/Ogre3D/FindOGRE.cmake)
+	include(${CrabNet_SOURCE_DIR}/CmakeIncludes/Ogre3D/FindOGRE.cmake)
 	IF(NOT OGRE_FOUND)
 		IF(WIN32)
 			FILE(GLOB OGRE_LIBRARIES "C:/OgreSDK/lib/*.lib")
@@ -191,7 +191,7 @@ MACRO(FINDOGRE3D)#A macro interface for finding a dependency
 ENDMACRO(FINDOGRE3D)
 
 MACRO(FINDOIS)#A macro interface for finding a dependency
-	include(${RakNet_SOURCE_DIR}/CmakeIncludes/Ogre3D/FindOIS.cmake)
+	include(${CrabNet_SOURCE_DIR}/CmakeIncludes/Ogre3D/FindOIS.cmake)
 	IF(NOT OIS_FOUND)
 		IF(WIN32)
 			set(OIS_LIBRARIES "")

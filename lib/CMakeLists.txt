@@ -1,8 +1,8 @@
 FILE(GLOB ALL_CPP_SRCS
-        ${RakNet_SOURCE_DIR}/Source/*.cpp
-        ${RakNet_SOURCE_DIR}/Source/Utils/*.cpp
-        ${RakNet_SOURCE_DIR}/Source/Plugins/*.cpp
-        ${RakNet_SOURCE_DIR}/include/raknet/*.h
+        ${CrabNet_SOURCE_DIR}/Source/*.cpp
+        ${CrabNet_SOURCE_DIR}/Source/Utils/*.cpp
+        ${CrabNet_SOURCE_DIR}/Source/Plugins/*.cpp
+        ${CrabNet_SOURCE_DIR}/include/raknet/*.h
         )
 
 if(MSVC)
