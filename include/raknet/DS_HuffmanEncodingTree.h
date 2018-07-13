@@ -25,7 +25,8 @@
 namespace RakNet
 {
 
-/// This generates special cases of the huffman encoding tree using 8 bit keys with the additional condition that unused combinations of 8 bits are treated as a frequency of 1
+/// This generates special cases of the huffman encoding tree using 8 bit keys with the additional condition
+/// that unused combinations of 8 bits are treated as a frequency of 1
 class RAK_DLL_EXPORT HuffmanEncodingTree
 {
 
@@ -37,17 +38,17 @@ public:
     /// \param [in] input Array of bytes to encode
     /// \param [in] sizeInBytes size of \a input
     /// \param [out] output The bitstream to write to
-    void EncodeArray( unsigned char *input, size_t sizeInBytes, RakNet::BitStream * output );
+    void EncodeArray(unsigned char *input, size_t sizeInBytes, RakNet::BitStream * output);
 
     // \brief Decodes an array encoded by EncodeArray().
-    unsigned DecodeArray( RakNet::BitStream * input, BitSize_t sizeInBits, size_t maxCharsToWrite, unsigned char *output );
-    void DecodeArray( unsigned char *input, BitSize_t sizeInBits, RakNet::BitStream * output );
+    unsigned DecodeArray(RakNet::BitStream * input, BitSize_t sizeInBits, size_t maxCharsToWrite, unsigned char *output);
+    void DecodeArray(unsigned char *input, BitSize_t sizeInBits, RakNet::BitStream * output);
 
     /// \brief Given a frequency table of 256 elements, all with a frequency of 1 or more, generate the tree.
-    void GenerateFromFrequencyTable( unsigned int frequencyTable[ 256 ] );
+    void GenerateFromFrequencyTable(unsigned int frequencyTable[256]);
 
     /// \brief Free the memory used by the tree.
-    void FreeMemory( void );
+    void FreeMemory();
 
 private:
 
@@ -57,16 +58,15 @@ private:
 
     /// Used to hold bit encoding for one character
 
-
     struct CharacterEncoding
     {
         unsigned char* encoding;
         unsigned short bitLength;
     };
 
-    CharacterEncoding encodingTable[ 256 ];
+    CharacterEncoding encodingTable[256];
 
-    void InsertNodeIntoSortedList( HuffmanEncodingTreeNode * node, DataStructures::LinkedList<HuffmanEncodingTreeNode *> *huffmanEncodingTreeNodeList ) const;
+    void InsertNodeIntoSortedList(HuffmanEncodingTreeNode * node, DataStructures::LinkedList<HuffmanEncodingTreeNode *> *huffmanEncodingTreeNodeList) const;
 };
 
 } // namespace RakNet

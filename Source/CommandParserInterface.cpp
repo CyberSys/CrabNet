@@ -44,14 +44,6 @@ int RakNet::RegisteredCommandComp(const char *const &key, const RegisteredComman
     return _stricmp(key, data.command);
 }
 
-CommandParserInterface::CommandParserInterface()
-{
-}
-
-CommandParserInterface::~CommandParserInterface()
-{
-}
-
 void CommandParserInterface::ParseConsoleString(char *str, const char delineator, unsigned char delineatorToggle,
                                                 unsigned *numParameters, char **parameterList,
                                                 unsigned parameterListLength)

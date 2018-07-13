@@ -20,28 +20,29 @@ VariableListDeltaTracker::VariableListDeltaTracker()
 
 VariableListDeltaTracker::~VariableListDeltaTracker()
 {
-    for (unsigned int i = 0; i < variableList.Size(); i++)
+    for (unsigned i = 0; i < variableList.Size(); ++i)
         free(variableList[i].lastData);
 }
 
 // Call before using a series of WriteVar
-void VariableListDeltaTracker::StartWrite(void)
+void VariableListDeltaTracker::StartWrite()
 {
     nextWriteIndex = 0;
 }
 
-void VariableListDeltaTracker::FlagDirtyFromBitArray(unsigned char *bArray)
+void VariableListDeltaTracker::FlagDirtyFromBitArray(const unsigned char *bArray)
 {
-    for (unsigned short readOffset = 0; readOffset < variableList.Size(); readOffset++)
+    for (unsigned short readOffset = 0; readOffset < variableList.Size(); ++readOffset)
     {
         if ((bArray[readOffset >> 3] & (0x80 >> (readOffset & 7))) != 0)
             variableList[readOffset].isDirty = true;
     }
 }
 
-VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode()
+VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode() :
+        lastData(nullptr), byteLength(0), isDirty(false)
 {
-    lastData = 0;
+
 }
 
 VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode(const unsigned char *data, size_t _byteLength)
@@ -50,8 +51,4 @@ VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode(const uns
     memcpy(lastData, data, _byteLength);
     byteLength = _byteLength;
     isDirty = false;
-}
-
-VariableListDeltaTracker::VariableLastValueNode::~VariableLastValueNode()
-{
 }

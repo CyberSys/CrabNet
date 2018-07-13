@@ -16,15 +16,15 @@
 static const double UNSET_TIME_US = -1;
 
 #if CC_TIME_TYPE_BYTES == 4
-static const CCTimeType SYN=10;
+static const CCTimeType SYN = 10;
 #else
 static const CCTimeType SYN = 10000;
 #endif
 
 #include "MTUSize.h"
-#include <stdio.h>
+#include <cstdio>
 #include <cmath>
-#include <stdlib.h>
+#include <cstdlib>
 #include "RakAssert.h"
 #include "RakAlloca.h"
 
@@ -303,9 +303,9 @@ CCTimeType CCRakNetSlidingWindow::GetRTOForRetransmission(unsigned char timesSen
     (void) timesSent;
 
 #if CC_TIME_TYPE_BYTES == 4
-    const CCTimeType maxThreshold=2000;
+    const CCTimeType maxThreshold = 2000;
     //const CCTimeType minThreshold=100;
-    const CCTimeType additionalVariance=30;
+    const CCTimeType additionalVariance = 30;
 #else
     const CCTimeType maxThreshold = 2000000;
     //const CCTimeType minThreshold=100000;
@@ -348,7 +348,7 @@ BytesPerMicrosecond CCRakNetSlidingWindow::GetLocalReceiveRate(CCTimeType curren
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
-double CCRakNetSlidingWindow::GetRTT(void) const
+double CCRakNetSlidingWindow::GetRTT() const
 {
     if (lastRtt == UNSET_TIME_US)
         return 0.0;
@@ -374,13 +374,13 @@ bool CCRakNetSlidingWindow::LessThan(DatagramSequenceNumberType a, DatagramSeque
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
-uint64_t CCRakNetSlidingWindow::GetBytesPerSecondLimitByCongestionControl(void) const
+uint64_t CCRakNetSlidingWindow::GetBytesPerSecondLimitByCongestionControl() const
 {
     return 0; // TODO
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
-CCTimeType CCRakNetSlidingWindow::GetSenderRTOForACK(void) const
+CCTimeType CCRakNetSlidingWindow::GetSenderRTOForACK() const
 {
     if (lastRtt == UNSET_TIME_US)
         return (CCTimeType) UNSET_TIME_US;
@@ -388,7 +388,7 @@ CCTimeType CCRakNetSlidingWindow::GetSenderRTOForACK(void) const
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
-bool CCRakNetSlidingWindow::IsInSlowStart(void) const
+bool CCRakNetSlidingWindow::IsInSlowStart() const
 {
     return cwnd <= ssThresh || ssThresh == 0;
 }

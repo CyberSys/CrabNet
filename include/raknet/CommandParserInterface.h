@@ -45,8 +45,8 @@ int RAK_DLL_EXPORT RegisteredCommandComp( const char* const & key, const Registe
 class RAK_DLL_EXPORT CommandParserInterface
 {
 public:
-    CommandParserInterface();
-    virtual ~CommandParserInterface();
+    CommandParserInterface() = default;
+    virtual ~CommandParserInterface() = default;
 
     /// You are responsible for overriding this function and returning a static string, which will identifier your parser.
     /// This should return a static string
