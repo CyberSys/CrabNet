@@ -42,3 +42,8 @@ if(CRABNET_ENABLE_DLL)
     target_link_libraries (${CRABNET_LIBRARY_SO_NAME} ${CRABNET_LIBRARY_LIBS})
     SET_TARGET_PROPERTIES(${CRABNET_LIBRARY_SO_NAME} PROPERTIES SOVERSION 4.081)
 endif()
+
+pvs_studio_add_target(TARGET crabnet.analyze ALL
+        OUTPUT FORMAT errorfile
+        ANALYZE RakNetLibStatic
+        LOG target.err)

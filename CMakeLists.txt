@@ -35,6 +35,7 @@ option(CRABNET_ENABLE_STATIC "Generate the static library project." TRUE)
 option(CRABNET_ENABLE_LIBCAT_SECURITY "Enable secure connection support." FALSE)
 
 include(CmakeIncludes/CmakeMacros.cmake)
+include(PVS-Studio.cmake)
 
 if(MSVC)
     FIXLINKOPTIONS()
