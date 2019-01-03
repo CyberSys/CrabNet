@@ -176,12 +176,15 @@ void RakString::Realloc(SharedString *sharedString, size_t bytes)
     if (oldBytes <= (size_t) smallStringSize && newBytes > (size_t) smallStringSize)
     {
         sharedString->bigString = (char *) malloc(newBytes);
+        RakAssert(sharedString->bigString);
         strcpy(sharedString->bigString, sharedString->smallString);
         sharedString->c_str = sharedString->bigString;
     }
     else if (oldBytes > smallStringSize)
     {
-        sharedString->bigString = (char *) realloc(sharedString->bigString, newBytes);
+        auto tmp = (char *) realloc(sharedString->bigString, newBytes);
+        RakAssert(tmp);
+        sharedString->bigString = tmp;
         sharedString->c_str = sharedString->bigString;
     }
     sharedString->bytesUsed = newBytes;
@@ -343,6 +346,7 @@ const RakNet::RakString operator+(const RakNet::RakString &lhs, const RakNet::Ra
             // RakString::freeList.Insert(RakString::sharedStringFreeList+i+RakString::sharedStringFreeListAllocationCount);
             RakString::SharedString *ss;
             ss = (RakString::SharedString *) malloc(sizeof(RakString::SharedString));
+            RakAssert(ss);
             ss->refCountMutex = new SimpleMutex;
             RakString::freeList.Insert(ss);
 
@@ -1187,7 +1191,7 @@ void RakString::Serialize(BitStream *bs) const
 
 void RakString::Serialize(const char *str, BitStream *bs)
 {
-    auto l = (unsigned short) strlen(str);
+    auto l = (unsigned short) strlen(str); // -V1029 We probably want it
     bs->Write(l);
     bs->WriteAlignedBytes((const unsigned char *) str, (const unsigned int) l);
 }
@@ -1306,6 +1310,7 @@ void RakString::Allocate(size_t len)
             //        RakString::freeList.Insert((RakString::SharedString*)malloc(sizeof(RakString::SharedString));
 
             auto ss = (RakString::SharedString *) malloc(sizeof(RakString::SharedString));
+            RakAssert(ss);
             ss->refCountMutex = new SimpleMutex;
             RakString::freeList.Insert(ss);
         }
@@ -1391,15 +1396,15 @@ void RakString::Assign(const char *str, va_list ap)
 
 RakNet::RakString RakString::Assign(const char *str, size_t pos, size_t n)
 {
-    size_t incomingLen = strlen(str);
-
     Clone();
 
-    if (str == nullptr || str[0] == 0 || pos >= incomingLen)
+    if (str == nullptr || str[0] == 0 || pos >= strlen(str))
     {
         sharedString = &emptyString;
         return (*this);
     }
+
+    size_t incomingLen = strlen(str);
 
     if (pos + n >= incomingLen)
         n = incomingLen - pos;

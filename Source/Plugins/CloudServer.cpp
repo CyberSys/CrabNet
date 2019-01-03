@@ -309,16 +309,15 @@ void CloudServer::OnPostRequest(Packet *packet)
     CloudData *cloudData;
     bool keyDataListExists;
     unsigned int keyDataListIndex = cloudDataList->keyData.GetIndexFromKey(packet->guid, &keyDataListExists);
-    if (keyDataListExists==false)
+    if (!keyDataListExists)
     {
         if (maxUploadBytesPerClient>0 && remoteCloudClient->uploadedBytes+dataLengthBytes>maxUploadBytesPerClient)
         {
             // Undo prior insertion of cloudDataList into cloudData if needed
-            if (keyDataListExists==false)
-            {
-                delete cloudDataList;
-                dataRepository.RemoveAtIndex(dataRepositoryIndex);
-            }
+
+            delete cloudDataList;
+            dataRepository.RemoveAtIndex(dataRepositoryIndex);
+
 
             if (remoteCloudClient->IsUnused())
             {
@@ -535,7 +534,7 @@ void CloudServer::OnGetRequest(Packet *packet)
 
     // Create a new GetRequest
     GetRequest *getRequest;
-    getRequest =new GetRequest;
+    getRequest = new GetRequest;
     getRequest->cloudQueryWithAddresses.cloudQuery.Serialize(false, &bsIn);
     getRequest->requestingClient=packet->guid;
 
@@ -555,8 +554,14 @@ void CloudServer::OnGetRequest(Packet *packet)
 
     for (unsigned int filterIndex=0; filterIndex < queryFilters.Size(); filterIndex++)
     {
-        if (queryFilters[filterIndex]->OnGetRequest(packet->guid, packet->systemAddress, getRequest->cloudQueryWithAddresses.cloudQuery, getRequest->cloudQueryWithAddresses.specificSystems )==false)
+        if (!queryFilters[filterIndex]->OnGetRequest(packet->guid,
+                                                     packet->systemAddress,
+                                                     getRequest->cloudQueryWithAddresses.cloudQuery,
+                                                     getRequest->cloudQueryWithAddresses.specificSystems))
+        {
+            delete getRequest;
             return;
+        }
     }
 
     getRequest->requestStartTime=RakNet::GetTime();

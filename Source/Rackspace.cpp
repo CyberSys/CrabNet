@@ -608,25 +608,26 @@ void Rackspace::ReadLine(const char *data, const char *stringStart, RakNet::RakS
 
     char *result, *resultEnd;
 
-    result=strstr((char*) data, stringStart);
-    if (result==0)
+    result = strstr((char *) data, stringStart);
+    if (result == nullptr)
     {
         RakAssert(0);
         return;
     }
 
-    result+=strlen(stringStart);
-    if (result==0)
+    // WTF is this?!
+    /*result += strlen(stringStart);
+    if (result == nullptr)
     {
         RakAssert(0);
         return;
-    }
+    }*/
 
-    output=result;
-    resultEnd=result;
-    while (*resultEnd && (*resultEnd!='\r') && (*resultEnd!='\n') )
+    output = result;
+    resultEnd = result;
+    while (*resultEnd && (*resultEnd != '\r') && (*resultEnd != '\n'))
         resultEnd++;
-    output.Truncate((unsigned int) (resultEnd-result));
+    output.Truncate((unsigned int) (resultEnd - result));
 }
 
 

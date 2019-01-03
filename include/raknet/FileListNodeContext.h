@@ -20,12 +20,14 @@
 
 struct FileListNodeContext
 {
-    FileListNodeContext() {dataPtr=0; dataLength=0;}
-    FileListNodeContext(unsigned char o, uint32_t f1, uint32_t f2, uint32_t f3) : op(o), flnc_extraData1(f1), flnc_extraData2(f2), flnc_extraData3(f3) {dataPtr=0; dataLength=0;}
-    ~FileListNodeContext() {}
+  FileListNodeContext()
+      : op(0), flnc_extraData1(0), flnc_extraData2(0), flnc_extraData3(0), dataPtr(nullptr), dataLength(0) {}
+  FileListNodeContext(unsigned char o, uint32_t f1, uint32_t f2, uint32_t f3)
+      : op(o), flnc_extraData1(f1), flnc_extraData2(f2), flnc_extraData3(f3), dataPtr(nullptr), dataLength(0) {}
+  ~FileListNodeContext() {}
 
-    unsigned char op;
-    uint32_t flnc_extraData1;
+  unsigned char op;
+  uint32_t flnc_extraData1;
     uint32_t flnc_extraData2;
     uint32_t flnc_extraData3;
     void *dataPtr;

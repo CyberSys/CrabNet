@@ -107,12 +107,13 @@ PluginReceiveResult RakNetTransport2::OnReceive(Packet *packet)
             if (packet->length==sizeof(MessageID))
                 return RR_STOP_PROCESSING_AND_DEALLOCATE;
 
-            Packet *p =new Packet;
-            *p=*packet;
-            p->bitSize-=8;
+            Packet *p = new Packet;
+            *p = *packet;
+            p->bitSize -= 8;
             p->length--;
-            p->data=(unsigned char*) malloc(p->length);
-            memcpy(p->data, packet->data+1, p->length);
+            p->data = (unsigned char *) malloc(p->length);
+            RakAssert(p->data)
+            memcpy(p->data, packet->data + 1, p->length);
             packetQueue.Push(p);
 
         }

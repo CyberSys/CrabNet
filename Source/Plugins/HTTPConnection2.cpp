@@ -162,22 +162,23 @@ void ReadChunkBlock( size_t &currentChunkSize, size_t &bytesReadSoFar, char *txt
         bytesReadSoFar += bytesToRead;
         if (*txtIn == 0)
         {
-        //    currentChunkSize=0;
+            // currentChunkSize = 0;
             return;
         }
         // char *newLine = strstr(txtIn, "\r\n");
-        if (txtIn[0] && txtIn[0]=='\r' && txtIn[1] && txtIn[1]=='\n' )
+        if (txtIn[0] && txtIn[0] == '\r' && txtIn[1] && txtIn[1] == '\n')
             txtIn += 2; // Newline
         char *newLine;
         currentChunkSize = ReadChunkSize(txtIn, &newLine);
         RakAssert(currentChunkSize < 50000); // Sanity check
         if (currentChunkSize == 0)
             return;
-        if (newLine == 0)
+        if (newLine == nullptr)
             return;
-        bytesReadSoFar=0;
+        bytesReadSoFar = 0;
         txtIn = newLine + 2;
-    } while (txtIn);
+    }
+    while (txtIn);
 }
 PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
 {

@@ -158,7 +158,7 @@ public:
     // GetInstance() and DestroyInstance(instance*)
     STATIC_FACTORY_DECLARATIONS(FileList)
 
-    FileList();
+    FileList() = default;
     ~FileList();
     /// \brief Add all the files at a given directory.
     /// \param[in] applicationDirectory The first part of the path. This is not stored as part of the filename.  Use \ as the path delineator.

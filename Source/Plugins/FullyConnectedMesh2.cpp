@@ -39,6 +39,7 @@ STATIC_FACTORY_DEFINITIONS(FullyConnectedMesh2,FullyConnectedMesh2)
 
 FullyConnectedMesh2::FullyConnectedMesh2()
 {
+    hostFCM2Guid = 0;
     startupTime=0;
     totalConnectionCount=0;
     ourFCMGuid=0;

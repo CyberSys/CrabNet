@@ -120,6 +120,7 @@ public:
 
     struct OutgoingCommand
     {
+        OutgoingCommand() : isPost(false) {}
         RakNet::RakString remotePath;
         RakNet::RakString data;
         RakNet::RakString contentType;

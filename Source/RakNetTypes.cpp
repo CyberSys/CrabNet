@@ -93,6 +93,7 @@ SocketDescriptor::SocketDescriptor()
     blockingSocket = false;
 #else
     blockingSocket = true;
+    chromeInstance = 0;
 #endif
     port = 0;
     hostAddress[0] = 0;
@@ -107,6 +108,7 @@ SocketDescriptor::SocketDescriptor(unsigned short _port, const char *_hostAddres
     blockingSocket = false;
 #else
     blockingSocket = true;
+    chromeInstance = 0;
 #endif
     remotePortRakNetWasStartedOn_PS3_PSP2 = 0;
     port = _port;

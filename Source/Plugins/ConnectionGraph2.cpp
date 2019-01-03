@@ -123,14 +123,14 @@ RakNetGUID ConnectionGraph2::GetLowestAveragePingSystem(void) const
     unsigned int lowestPingIdx=(unsigned int) -1;
     float thisAvePing=0.0f;
     unsigned int idx, idx2;
-    int ap, count=0;
+    int ap, count = 0;
 
     for (idx=0; idx<remoteSystems.Size(); idx++)
     {
         thisAvePing=0.0f;
 
         ap = rakPeerInterface->GetAveragePing(remoteSystems[idx]->guid);
-        if (ap!=-1)
+        if (ap != -1)
         {
             thisAvePing+=(float) ap;
             count++;
@@ -148,14 +148,11 @@ RakNetGUID ConnectionGraph2::GetLowestAveragePingSystem(void) const
         count=0;
 
         RemoteSystem *remoteSystem = remoteSystems[idx];
-        for (idx2=0; idx2 < remoteSystem->remoteConnections.Size(); idx2++)
+        for (idx2 = 0; idx2 < remoteSystem->remoteConnections.Size(); idx2++)
         {
-            ap=remoteSystem->remoteConnections[idx2].sendersPingToThatSystem;
-            if (ap!=-1)
-            {
-                thisAvePing+=(float) ap;
-                count++;
-            }
+            ap = remoteSystem->remoteConnections[idx2].sendersPingToThatSystem;
+            thisAvePing += (float) ap;
+            count++;
         }
 
         if (count>0 && (lowestPing==-1.0f || thisAvePing/count < lowestPing))

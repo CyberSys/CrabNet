@@ -106,7 +106,13 @@ public:
     struct User;
     struct ConnectionAttempt
     {
-        ConnectionAttempt() {sender=0; recipient=0; startTime=0; attemptPhase=NAT_ATTEMPT_PHASE_NOT_STARTED;}
+        ConnectionAttempt()
+            : sender(nullptr),
+              recipient(nullptr),
+              sessionId(0),
+              startTime(0),
+              attemptPhase(NAT_ATTEMPT_PHASE_NOT_STARTED) {}
+
         User *sender, *recipient;
         uint16_t sessionId;
         RakNet::Time startTime;

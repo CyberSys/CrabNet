@@ -45,7 +45,8 @@ STATIC_FACTORY_DEFINITIONS(MessageFilter,MessageFilter)
 
 MessageFilter::MessageFilter()
 {
-        whenLastTimeoutCheck=RakNet::GetTime();
+    autoAddNewConnectionsToFilter = 0;
+    whenLastTimeoutCheck = RakNet::GetTime();
 }
 MessageFilter::~MessageFilter()
 {

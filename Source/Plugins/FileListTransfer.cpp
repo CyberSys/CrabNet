@@ -754,11 +754,11 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
     inBitStream.Read(lastChunk);
     bool finished = lastChunk && isTheFullFile;
 
-    if (isTheFullFile==false)
+    if (!isTheFullFile)
         fileListReceiver->partLength=partLength;
 
     FLR_MemoryBlock mb;
-    if (fileListReceiver->pushedFiles.Has(onFileStruct.fileIndex)==false)
+    if (!fileListReceiver->pushedFiles.Has(onFileStruct.fileIndex))
     {
         mb.flrMemoryBlock=(char*) malloc(onFileStruct.byteLengthOfThisFile);
         fileListReceiver->pushedFiles.SetNew(onFileStruct.fileIndex, mb);
@@ -864,7 +864,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
             dcs.senderSystemAddress=packet->systemAddress;
             dcs.senderGuid=packet->guid;
 
-            if (fileListReceiver->downloadHandler->OnDownloadComplete(&dcs)==false)
+            if (!fileListReceiver->downloadHandler->OnDownloadComplete(&dcs))
             {
                 fileListReceiver->downloadHandler->OnDereference();
                 fileListReceivers.Delete(onFileStruct.setID);
@@ -893,7 +893,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
             // We don't have all the data for this chunk yet
 
             totalNotifications = onFileStruct.byteLengthOfThisFile / fileListReceiver->partLength + 1;
-            if (isTheFullFile==false)
+            if (!isTheFullFile)
                 currentNotificationIndex = (offset+partCount*fileListReceiver->partLength) / fileListReceiver->partLength ;
             else
                 currentNotificationIndex = (offset+chunkLength) / fileListReceiver->partLength ;

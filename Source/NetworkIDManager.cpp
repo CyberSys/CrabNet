@@ -23,111 +23,114 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(NetworkIDManager,NetworkIDManager)
+STATIC_FACTORY_DEFINITIONS(NetworkIDManager, NetworkIDManager)
 
 NetworkIDManager::NetworkIDManager()
 {
     startingOffset = RakPeerInterface::Get64BitUniqueRandomNumber();
     Clear();
 }
-NetworkIDManager::~NetworkIDManager(void)
+
+NetworkIDManager::~NetworkIDManager()
 {
 
 }
-void NetworkIDManager::Clear(void)
+
+void NetworkIDManager::Clear()
 {
-    memset(networkIdHash,0,sizeof(networkIdHash));
+    memset(networkIdHash, 0, sizeof(networkIdHash));
 }
+
 NetworkIDObject *NetworkIDManager::GET_BASE_OBJECT_FROM_ID(NetworkID x)
 {
-    unsigned int hashIndex=NetworkIDToHashIndex(x);
-    NetworkIDObject *nio=networkIdHash[hashIndex];
-    while (nio)
+    unsigned int hashIndex = NetworkIDToHashIndex(x);
+    NetworkIDObject *nio = networkIdHash[hashIndex];
+    while (nio != nullptr)
     {
-        if (nio->GetNetworkID()==x)
+        if (nio->GetNetworkID() == x)
             return nio;
-        nio=nio->nextInstanceForNetworkIDManager;
+        nio = nio->nextInstanceForNetworkIDManager;
     }
-    return 0;
+    return nullptr;
 }
-NetworkID NetworkIDManager::GetNewNetworkID(void)
+
+NetworkID NetworkIDManager::GetNewNetworkID()
 {
-    while (GET_BASE_OBJECT_FROM_ID(++startingOffset))
-        ;
-    if (startingOffset==UNASSIGNED_NETWORK_ID)
-    {
-        while (GET_BASE_OBJECT_FROM_ID(++startingOffset))
-            ;
-    }
+    while (GET_BASE_OBJECT_FROM_ID(++startingOffset) != nullptr);
+    if (startingOffset == UNASSIGNED_NETWORK_ID)
+        while (GET_BASE_OBJECT_FROM_ID(++startingOffset) != nullptr);
     return startingOffset;
 }
+
 unsigned int NetworkIDManager::NetworkIDToHashIndex(NetworkID networkId)
 {
 //    return SuperFastHash((const char*) &networkId.guid.g,sizeof(networkId.guid.g)) % NETWORK_ID_MANAGER_HASH_LENGTH;
     return (unsigned int) (networkId % NETWORK_ID_MANAGER_HASH_LENGTH);
 }
+
 void NetworkIDManager::TrackNetworkIDObject(NetworkIDObject *networkIdObject)
 {
-    RakAssert(networkIdObject->GetNetworkIDManager()==this);
+    RakAssert(networkIdObject->GetNetworkIDManager() == this);
     NetworkID rawId = networkIdObject->GetNetworkID();
-    RakAssert(rawId!=UNASSIGNED_NETWORK_ID);
+    RakAssert(rawId != UNASSIGNED_NETWORK_ID);
 
-    networkIdObject->nextInstanceForNetworkIDManager=0;
+    networkIdObject->nextInstanceForNetworkIDManager = nullptr;
 
-    unsigned int hashIndex=NetworkIDToHashIndex(rawId);
+    unsigned int hashIndex = NetworkIDToHashIndex(rawId);
 //    printf("TrackNetworkIDObject hashIndex=%i guid=%s\n",hashIndex, networkIdObject->GetNetworkID().guid.ToString()); // removeme
-    if (networkIdHash[hashIndex]==0)
+    if (networkIdHash[hashIndex] == nullptr)
     {
-        networkIdHash[hashIndex]=networkIdObject;
+        networkIdHash[hashIndex] = networkIdObject;
         return;
     }
-    NetworkIDObject *nio=networkIdHash[hashIndex];
+    NetworkIDObject *nio = networkIdHash[hashIndex];
     // Duplicate insertion?
-    RakAssert(nio!=networkIdObject);
+    RakAssert(nio != networkIdObject);
     // Random GUID conflict?
-    RakAssert(nio->GetNetworkID()!=rawId);
+    RakAssert(nio->GetNetworkID() != rawId);
 
-    while (nio->nextInstanceForNetworkIDManager!=0)
+    while (nio->nextInstanceForNetworkIDManager != nullptr)
     {
-        nio=nio->nextInstanceForNetworkIDManager;
+        nio = nio->nextInstanceForNetworkIDManager;
 
         // Duplicate insertion?
-        RakAssert(nio!=networkIdObject);
+        RakAssert(nio != networkIdObject);
         // Random GUID conflict?
-        RakAssert(nio->GetNetworkID()!=rawId);
+        RakAssert(nio->GetNetworkID() != rawId);
     }
 
-    nio->nextInstanceForNetworkIDManager=networkIdObject;
+    nio->nextInstanceForNetworkIDManager = networkIdObject;
 }
+
 void NetworkIDManager::StopTrackingNetworkIDObject(NetworkIDObject *networkIdObject)
 {
-    RakAssert(networkIdObject->GetNetworkIDManager()==this);
+    RakAssert(networkIdObject->GetNetworkIDManager() == this);
     NetworkID rawId = networkIdObject->GetNetworkID();
-    RakAssert(rawId!=UNASSIGNED_NETWORK_ID);
+    RakAssert(rawId != UNASSIGNED_NETWORK_ID);
 
     // RakAssert(networkIdObject->GetNetworkID()!=UNASSIGNED_NETWORK_ID);
-    unsigned int hashIndex=NetworkIDToHashIndex(rawId);
+    unsigned int hashIndex = NetworkIDToHashIndex(rawId);
 //    printf("hashIndex=%i\n",hashIndex); // removeme
-    NetworkIDObject *nio=networkIdHash[hashIndex];
-    if (nio==0)
+    NetworkIDObject *nio = networkIdHash[hashIndex];
+    if (nio == nullptr)
     {
         RakAssert("NetworkIDManager::StopTrackingNetworkIDObject didn't find object" && 0);
         return;
     }
-    if (nio==networkIdObject)
+    if (nio == networkIdObject)
     {
-        networkIdHash[hashIndex]=nio->nextInstanceForNetworkIDManager;
+        networkIdHash[hashIndex] = nio->nextInstanceForNetworkIDManager;
         return;
     }
 
-    while (nio)
+    while (nio != nullptr)
     {
-        if (nio->nextInstanceForNetworkIDManager==networkIdObject)
+        if (nio->nextInstanceForNetworkIDManager == networkIdObject)
         {
-            nio->nextInstanceForNetworkIDManager=networkIdObject->nextInstanceForNetworkIDManager;
+            nio->nextInstanceForNetworkIDManager = networkIdObject->nextInstanceForNetworkIDManager;
             return;
         }
-        nio=nio->nextInstanceForNetworkIDManager;
+        nio = nio->nextInstanceForNetworkIDManager;
     }
 
     RakAssert("NetworkIDManager::StopTrackingNetworkIDObject didn't find object" && 0);

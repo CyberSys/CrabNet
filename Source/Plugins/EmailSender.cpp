@@ -92,6 +92,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 
     if (authenticate)
     {
+        RakAssert(sender);
         sprintf(query, "EHLO %s\r\n", sender);
         tcpInterface.Send(query, (unsigned int)strlen(query), emailServer,false);
         response=GetResponse(&tcpInterface, emailServer, doPrintf);
@@ -103,7 +104,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
         RakNet::BitStream bs;
         char zero=0;
         bs.Write(&zero,1);
-        bs.Write(sender,(const unsigned int)strlen(sender));
+        bs.Write(sender, (const unsigned int) strlen(sender));
         //bs.Write("jms1@jms1.net",(const unsigned int)strlen("jms1@jms1.net"));
         bs.Write(&zero,1);
         bs.Write(password,(const unsigned int)strlen(password));
@@ -192,9 +193,10 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
     int bodyLength;
     bodyLength=(int)strlen(body);
     newBody = (char*) malloc(bodyLength*3);
-    if (bodyLength>=0)
-        newBody[0]=body[0];
-    for (i=1, j=1; i < bodyLength; i++)
+    RakAssert(newBody);
+    if (bodyLength >= 0)
+        newBody[0] = body[0];
+    for (i = 1, j = 1; i < bodyLength; i++)
     {
         // Transform \n . \r \n into \n . . \r \n
         if (i < bodyLength-2 &&
@@ -276,6 +278,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
             tcpInterface.Send(query, (unsigned int)strlen(query), emailServer,false);
 
             newBody = (char*) malloc( (size_t) (attachedFiles->fileList[i].dataLengthBytes*3)/2);
+            RakAssert(newBody);
 
             outputOffset=Base64Encoding((const unsigned char*) attachedFiles->fileList[i].data, (int) attachedFiles->fileList[i].dataLengthBytes, newBody);
 

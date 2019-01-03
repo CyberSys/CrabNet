@@ -241,7 +241,7 @@ public:
     /// \internal
     struct FCM2Participant
     {
-        FCM2Participant() {}
+        FCM2Participant(): fcm2Guid(0) {}
         FCM2Participant(const FCM2Guid &_fcm2Guid, const RakNetGUID &_rakNetGuid) : fcm2Guid(_fcm2Guid), rakNetGuid(_rakNetGuid) {}
 
         // Low half is a random number.

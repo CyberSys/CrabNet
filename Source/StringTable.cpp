@@ -55,6 +55,7 @@ void StringTable::AddString(const char *str, bool copyString)
     if (copyString)
     {
         sab.str = (char *) malloc(strlen(str) + 1);
+        RakAssert(sab.str);
         strcpy(sab.str, str);
     }
     else

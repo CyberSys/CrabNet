@@ -84,7 +84,7 @@ namespace DataStructures
     private:
         struct DataPlusPtr
         {
-            DataPlusPtr () {readyToRead=false;}
+            DataPlusPtr() { readyToRead = false; next = nullptr; }
             SingleProducerConsumerType object;
 
             // Ready to read is so we can use an equality boolean comparison, in case the writePointer var is trashed while context switching.

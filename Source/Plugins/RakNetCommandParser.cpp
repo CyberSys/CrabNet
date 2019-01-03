@@ -31,6 +31,8 @@ STATIC_FACTORY_DEFINITIONS(RakNetCommandParser,RakNetCommandParser)
 
 RakNetCommandParser::RakNetCommandParser()
 {
+    peer = nullptr;
+
     RegisterCommand(4, "Startup","( unsigned int maxConnections, unsigned short localPort, const char *forceHostAddress );");
     RegisterCommand(0,"InitializeSecurity","();");
     RegisterCommand(0,"DisableSecurity","( void );");

@@ -52,19 +52,20 @@ using namespace RakNet;
 #endif
 
 void RakNetSocket2Allocator::DeallocRNS2(RakNetSocket2 *s) {delete s;}
-RakNetSocket2::RakNetSocket2() {eventHandler=0;}
+RakNetSocket2::RakNetSocket2() : eventHandler(nullptr), socketType(RNS2Type::RNS2T_LINUX), userConnectionSocketIndex(0) {}
 RakNetSocket2::~RakNetSocket2() {}
-void RakNetSocket2::SetRecvEventHandler(RNS2EventHandler *_eventHandler) {eventHandler=_eventHandler;}
-RNS2Type RakNetSocket2::GetSocketType(void) const {return socketType;}
-void RakNetSocket2::SetSocketType(RNS2Type t) {socketType=t;}
-bool RakNetSocket2::IsBerkleySocket(void) const {
-    return socketType!=RNS2T_CHROME && socketType!=RNS2T_WINDOWS_STORE_8;
-}
-SystemAddress RakNetSocket2::GetBoundAddress(void) const {return boundAddress;}
-
-RakNetSocket2* RakNetSocket2Allocator::AllocRNS2(void)
+void RakNetSocket2::SetRecvEventHandler(RNS2EventHandler *_eventHandler) { eventHandler = _eventHandler; }
+RNS2Type RakNetSocket2::GetSocketType(void) const { return socketType; }
+void RakNetSocket2::SetSocketType(RNS2Type t) { socketType = t; }
+bool RakNetSocket2::IsBerkleySocket(void) const
 {
-    RakNetSocket2* s2;
+    return socketType != RNS2T_CHROME && socketType != RNS2T_WINDOWS_STORE_8;
+}
+SystemAddress RakNetSocket2::GetBoundAddress() const { return boundAddress; }
+
+RakNetSocket2 *RakNetSocket2Allocator::AllocRNS2()
+{
+    RakNetSocket2 *s2;
 #if defined(__native_client__)
     s2 =new RNS2_NativeClient;
     s2->SetSocketType(RNS2T_CHROME);
@@ -233,11 +234,16 @@ void RNS2_NativeClient::Update(void)
 #else // defined(__native_client__)
 bool IRNS2_Berkley::IsPortInUse(unsigned short port, const char *hostAddress, unsigned short addressFamily, int type ) {
     RNS2_BerkleyBindParameters bbp;
-    bbp.remotePortRakNetWasStartedOn_PS3_PS4_PSP2=0;
-    bbp.port=port; bbp.hostAddress=(char*) hostAddress;    bbp.addressFamily=addressFamily;
-    bbp.type=type; bbp.protocol=0; bbp.nonBlockingSocket=false;
-    bbp.setBroadcast=false;    bbp.doNotFragment=false; bbp.protocol=0;
-    bbp.setIPHdrIncl=false;
+    bbp.remotePortRakNetWasStartedOn_PS3_PS4_PSP2 = 0;
+    bbp.port = port;
+    bbp.hostAddress = (char *) hostAddress;
+    bbp.addressFamily = addressFamily;
+    bbp.type = type;
+    bbp.nonBlockingSocket = false;
+    bbp.setBroadcast = false;
+    bbp.doNotFragment = false;
+    bbp.protocol = 0;
+    bbp.setIPHdrIncl = false;
     SystemAddress boundAddress;
     RNS2_Berkley *rns2 = (RNS2_Berkley*) RakNetSocket2Allocator::AllocRNS2();
     RNS2BindResult bindResult = rns2->Bind(&bbp);
@@ -323,6 +329,18 @@ unsigned RNS2_Berkley::RecvFromLoopInt(void)
 }
 RNS2_Berkley::RNS2_Berkley()
 {
+    binding.port = 0;
+    binding.hostAddress = nullptr;
+    binding.addressFamily = AF_INET;
+    binding.type = SOCK_DGRAM;
+    binding.protocol = 0;
+    binding.nonBlockingSocket = false;
+    binding.setBroadcast = 0;
+    binding.setIPHdrIncl = 0;
+    binding.doNotFragment = 0;
+    binding.pollingThreadPriority = 0;
+    binding.eventHandler = eventHandler;
+    binding.remotePortRakNetWasStartedOn_PS3_PS4_PSP2 = 0;
     isRecvFromLoopThreadActive = 0;
     rns2Socket=(RNS2Socket)INVALID_SOCKET;
 }

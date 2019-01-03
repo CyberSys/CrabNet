@@ -89,6 +89,7 @@ void VariadicSQLParser::ExtractArguments(va_list argptr, const DataStructures::L
                 int val = va_arg(argptr, int);
                 paramLength[i] = sizeof(val);
                 paramData[i] = (char *) malloc(paramLength[i]);
+                RakAssert(paramData[i]);
                 memcpy(paramData[i], &val, paramLength[i]);
                 if (!RakNet::BitStream::IsNetworkOrder())
                     RakNet::BitStream::ReverseBytesInPlace((unsigned char *) paramData[i], paramLength[i]);

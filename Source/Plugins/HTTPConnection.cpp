@@ -32,7 +32,8 @@ STATIC_FACTORY_DEFINITIONS(HTTPConnection,HTTPConnection)
 
 HTTPConnection::HTTPConnection() : connectionState(CS_NONE)
 {
-    tcp=0;
+    port = 0;
+    tcp = nullptr;
 }
 
 void HTTPConnection::Init(TCPInterface* _tcp, const char *_host, unsigned short _port)

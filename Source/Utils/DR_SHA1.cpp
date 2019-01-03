@@ -213,10 +213,10 @@ void CSHA1::Final()
     // Wipe variables for security reasons
 #ifdef SHA1_WIPE_VARIABLES
 #ifndef _WIN32
-    memset(m_buffer, 0, 64);
-    memset(m_state, 0, 20);
-    memset(m_count, 0, 8);
-    memset(pbFinalCount, 0, 8);
+    explicit_bzero(m_buffer, 64);
+    explicit_bzero(m_state, 20);
+    explicit_bzero(m_count, 8);
+    explicit_bzero(pbFinalCount, 8);
 #else
     SecureZeroMemory(m_buffer, 64);
     SecureZeroMemory(m_state, 20);
@@ -231,7 +231,7 @@ void CSHA1::Final()
 
 bool CSHA1::ReportHash(TCHAR *tszReport, REPORT_TYPE rtReportType) const
 {
-    if (tszReport == NULL) return false;
+    if (tszReport == nullptr) return false;
 
     TCHAR tszTemp[16];
 
@@ -258,7 +258,8 @@ bool CSHA1::ReportHash(TCHAR *tszReport, REPORT_TYPE rtReportType) const
             _tcscat(tszReport, tszTemp);
         }
     }
-    else return false;
+    else
+        return false;
 
     return true;
 }

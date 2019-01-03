@@ -36,14 +36,14 @@ public:
     char outputSubdir[512];
     FileListTransferCBInterface *onFileCallback;
 
-    DDTCallback() {}
+    DDTCallback():subdirLen(0), outputSubdir{0}, onFileCallback(nullptr) {}
     virtual ~DDTCallback() {}
 
     virtual bool OnFile(OnFileStruct *onFileStruct)
     {
         char fullPathToDir[1024];
 
-        if (onFileStruct->fileName && onFileStruct->fileData && subdirLen < strlen(onFileStruct->fileName))
+        if (onFileStruct->fileData != nullptr && subdirLen < strlen(onFileStruct->fileName))
         {
             strcpy(fullPathToDir, outputSubdir);
             strcat(fullPathToDir, onFileStruct->fileName+subdirLen);
@@ -59,7 +59,7 @@ public:
     {
         char fullPathToDir[1024];
 
-        if (fps->onFileStruct->fileName && subdirLen < strlen(fps->onFileStruct->fileName))
+        if (subdirLen < strlen(fps->onFileStruct->fileName))
         {
             strcpy(fullPathToDir, outputSubdir);
             strcat(fullPathToDir, fps->onFileStruct->fileName+subdirLen);
@@ -79,12 +79,13 @@ STATIC_FACTORY_DEFINITIONS(DirectoryDeltaTransfer,DirectoryDeltaTransfer)
 
 DirectoryDeltaTransfer::DirectoryDeltaTransfer()
 {
-    applicationDirectory[0]=0;
-    fileListTransfer=0;
-    availableUploads =new FileList;
-    priority=HIGH_PRIORITY;
-    orderingChannel=0;
-    incrementalReadInterface=0;
+    applicationDirectory[0] = 0;
+    fileListTransfer = 0;
+    availableUploads = new FileList;
+    priority = HIGH_PRIORITY;
+    orderingChannel = 0;
+    incrementalReadInterface = 0;
+    chunkSize = 0;
 }
 DirectoryDeltaTransfer::~DirectoryDeltaTransfer()
 {

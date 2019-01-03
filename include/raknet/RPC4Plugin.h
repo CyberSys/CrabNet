@@ -189,10 +189,10 @@ class NetworkIDManager;
         // Callable object, along with priority to call relative to other objects
         struct LocalSlotObject
         {
-            LocalSlotObject() {}
+            LocalSlotObject(): registrationCount(0), callPriority(0), functionPointer(nullptr) {}
             LocalSlotObject(unsigned int _registrationCount,int _callPriority, void ( *_functionPointer ) ( RakNet::BitStream *userData, Packet *packet ))
             {registrationCount=_registrationCount;callPriority=_callPriority;functionPointer=_functionPointer;}
-            ~LocalSlotObject() {}
+            ~LocalSlotObject() = default;
 
             // Used so slots are called in the order they are registered
             unsigned int registrationCount;

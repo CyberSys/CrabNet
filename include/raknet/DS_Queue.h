@@ -101,20 +101,19 @@ namespace DataStructures
     }
 
     template <class queue_type>
-        inline queue_type Queue<queue_type>::Pop( void )
+    inline queue_type Queue<queue_type>::Pop()
     {
-#ifdef _DEBUG
-        RakAssert( head != tail);
-#endif
+        RakAssert(head!=tail);
+
         //head=(head+1) % allocation_size;
 
-        if ( ++head == allocation_size )
+        if (++head == allocation_size)
             head = 0;
 
-        if ( head == 0 )
-            return ( queue_type ) array[ allocation_size -1 ];
+        if (head == 0)
+            return array[allocation_size - 1];
 
-        return ( queue_type ) array[ head -1 ];
+        return array[head - 1];
     }
 
     template <class queue_type>
@@ -247,8 +246,6 @@ namespace DataStructures
 #ifdef _DEBUG
             RakAssert( new_array );
 #endif
-            if (new_array==0)
-                return;
 
             for ( unsigned int counter = 0; counter < allocation_size; ++counter )
                 new_array[ counter ] = array[ ( head + counter ) % ( allocation_size ) ];

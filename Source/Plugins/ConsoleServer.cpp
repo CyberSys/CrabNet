@@ -21,7 +21,7 @@
 #define COMMAND_DELINATOR ' '
 #define COMMAND_DELINATOR_TOGGLE '"'
 
-#include "Utils/LinuxStrings.h"
+#include "../Utils/LinuxStrings.h"
 
 using namespace RakNet;
 
@@ -313,10 +313,11 @@ void ConsoleServer::SetPrompt(const char *_prompt)
     {
         size_t len = strlen(_prompt);
         prompt = (char*) malloc(len+1);
-        strcpy(prompt,_prompt);
+        RakAssert(prompt);
+        strcpy(prompt, _prompt);
     }
     else
-        prompt=0;
+        prompt = 0;
 }
 
 #endif // _CRABNET_SUPPORT_*

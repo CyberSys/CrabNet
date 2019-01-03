@@ -280,7 +280,7 @@ namespace DataStructures
                 if (row==0)
                 {
                     path.Insert(startNode);
-                    for (col=0; outputQueue.Size(); col++)
+                    for (col=0; outputQueue.Size(); col++) // -V693 false positive because size will be 0 after popping all
                         path.Insert(outputQueue.Pop());
                     return true;
                 }
@@ -296,7 +296,7 @@ namespace DataStructures
         }
 
         path.Insert(startNode);
-        for (col=0; outputQueue.Size(); col++)
+        for (col=0; outputQueue.Size(); col++) // -V693 false positive because size will be 0 after popping all
             path.Insert(outputQueue.Pop());
         return true;
     }

@@ -111,8 +111,8 @@ namespace DataStructures
         // Note: If this structure is changed the struct in the swig files need to be changed as well
         struct RAK_DLL_EXPORT ColumnDescriptor
         {
-            ColumnDescriptor();
-            ~ColumnDescriptor();
+            ColumnDescriptor() = default;
+            ~ColumnDescriptor() = default;
             ColumnDescriptor(const char cn[_TABLE_MAX_COLUMN_NAME_LENGTH],ColumnType ct);
 
             char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH];
@@ -183,7 +183,7 @@ namespace DataStructures
         };
 
         // Constructor
-        Table();
+        Table() = default;
 
         // Destructor
         ~Table();

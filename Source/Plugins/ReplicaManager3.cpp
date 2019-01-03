@@ -78,18 +78,19 @@ void LastSerializationResult::AllocBS(void)
 
 ReplicaManager3::ReplicaManager3()
 {
-    defaultSendParameters.orderingChannel=0;
-    defaultSendParameters.priority=HIGH_PRIORITY;
-    defaultSendParameters.reliability=RELIABLE_ORDERED;
-    defaultSendParameters.sendReceipt=0;
-    autoSerializeInterval=30;
-    lastAutoSerializeOccurance=0;
-    autoCreateConnections=true;
-    autoDestroyConnections=true;
-    currentlyDeallocatingReplica=0;
+    nextReferenceIndex = 0;
+    defaultSendParameters.orderingChannel = 0;
+    defaultSendParameters.priority = HIGH_PRIORITY;
+    defaultSendParameters.reliability = RELIABLE_ORDERED;
+    defaultSendParameters.sendReceipt = 0;
+    autoSerializeInterval = 30;
+    lastAutoSerializeOccurance = 0;
+    autoCreateConnections = true;
+    autoDestroyConnections = true;
+    currentlyDeallocatingReplica = nullptr;
 
-    for (unsigned int i=0; i < 255; i++)
-        worldsArray[i]=0;
+    for (auto &world : worldsArray)
+        world = nullptr;
 
     AddWorld(0);
 }
@@ -560,7 +561,8 @@ void ReplicaManager3::Clear(bool deleteWorlds)
 
 ReplicaManager3::RM3World::RM3World()
 {
-    networkIDManager=0;
+    worldId = 0;
+    networkIDManager = nullptr;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1453,12 +1455,12 @@ void ReplicaManager3::BroadcastDestruction(Replica3 *replica, const SystemAddres
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Connection_RM3::Connection_RM3(const SystemAddress &_systemAddress, RakNetGUID _guid)
-: systemAddress(_systemAddress), guid(_guid)
+: systemAddress(_systemAddress), guid(_guid), constructionMode(QUERY_REPLICA_FOR_CONSTRUCTION)
 {
-    isValidated=false;
-    isFirstConstruction=true;
-    groupConstructionAndSerialize=false;
-    gotDownloadComplete=false;
+    isValidated = false;
+    isFirstConstruction = true;
+    groupConstructionAndSerialize = false;
+    gotDownloadComplete = false;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2380,12 +2382,12 @@ void Connection_RM3::SendValidation(RakNet::RakPeerInterface *rakPeer, WorldId w
 
 Replica3::Replica3()
 {
-    creatingSystemGUID=UNASSIGNED_CRABNET_GUID;
-    deletingSystemGUID=UNASSIGNED_CRABNET_GUID;
-    replicaManager=0;
-    forceSendUntilNextUpdate=false;
-    lsr=0;
-    referenceIndex = (uint32_t)-1;
+    creatingSystemGUID = UNASSIGNED_CRABNET_GUID;
+    deletingSystemGUID = UNASSIGNED_CRABNET_GUID;
+    replicaManager = 0;
+    forceSendUntilNextUpdate = false;
+    lsr = 0;
+    referenceIndex = (uint32_t) -1;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

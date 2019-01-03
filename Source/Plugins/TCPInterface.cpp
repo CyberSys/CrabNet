@@ -38,7 +38,7 @@ typedef int socklen_t;
 #include "StringTable.h"
 #include "Itoa.h"
 #include "SocketLayer.h"
-#include "Utils/SocketDefines.h"
+#include "../Utils/SocketDefines.h"
 
 #if (defined(__GNUC__) || defined(__GCCXML__)) && !defined(__WIN32__)
 #include <netdb.h>
@@ -62,10 +62,11 @@ STATIC_FACTORY_DEFINITIONS(TCPInterface, TCPInterface)
 
 TCPInterface::TCPInterface()
 {
+    threadPriority = 0;
     isStarted = 0;
     threadRunning = 0;
     listenSocket = 0;
-    remoteClients = 0;
+    remoteClients = nullptr;
     remoteClientsLength = 0;
 
 #if OPEN_SSL_CLIENT_SUPPORT == 1
@@ -304,8 +305,9 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
         }
         newRemoteClient.isActiveMutex.Unlock();
     }
-    if (newRemoteClientIndex == -1)
-        return UNASSIGNED_SYSTEM_ADDRESS;
+
+    /*if (newRemoteClientIndex == -1)
+        return UNASSIGNED_SYSTEM_ADDRESS;*/
 
     if (block)
     {
@@ -357,8 +359,8 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
 
         if (errorCode != 0)
         {
-            delete s;
             failedConnectionAttempts.Push(s->systemAddress);
+            delete s;
         }
         return UNASSIGNED_SYSTEM_ADDRESS;
     }
@@ -810,11 +812,12 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
     TCPInterface *tcpInterface = s->tcpInterface;
     const int newRemoteClientIndex = systemAddress.systemIndex;
     const unsigned short socketFamily = s->socketFamily;
-    delete s;
 
     char str1[64];
     systemAddress.ToString(false, str1);
     __TCPSOCKET__ sockfd = tcpInterface->SocketConnect(str1, systemAddress.GetPort(), socketFamily, s->bindAddress);
+
+    delete s;
     if (sockfd == 0)
     {
         tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
@@ -985,8 +988,8 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                         }
                         newRemoteClient.isActiveMutex.Unlock();
                     }
-                    if (newRemoteClientIndex == -1)
-                        closesocket__(sts->listenSocket);
+                    /*if (newRemoteClientIndex == -1)
+                        closesocket__(sts->listenSocket);*/
                 }
 #ifdef _DO_PRINTF
                 else
@@ -1039,6 +1042,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                         {
                             Packet *incomingMessage = sts->incomingMessages.Allocate();
                             incomingMessage->data = (unsigned char *) malloc(len + 1);
+                            RakAssert(incomingMessage->data);
                             memcpy(incomingMessage->data, data, len);
                             // Null terminate this so we can print it out as regular strings.  This is different from RakNet which does not do this.
                             incomingMessage->data[len] = 0;

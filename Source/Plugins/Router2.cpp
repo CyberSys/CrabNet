@@ -73,7 +73,7 @@ enum Router2MessageIdentifiers
     ID_ROUTER_2_REQUEST_FORWARDING,
     ID_ROUTER_2_INCREASE_TIMEOUT,
 };
-Router2::ConnnectRequest::ConnnectRequest()
+Router2::ConnnectRequest::ConnnectRequest(): requestState(R2RS_REQUEST_STATE_QUERY_FORWARDING), pingTimeout(0), returnConnectionLostOnFailure(false)
 {
 
 }
@@ -144,15 +144,15 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
     connectionRequestsMutex.Unlock();
 
     // StoreRequest(endpointGuid, Largest(ping*2), systemsSentTo). Set state REQUEST_STATE_QUERY_FORWARDING
-    Router2::ConnnectRequest *cr =new Router2::ConnnectRequest;
+    Router2::ConnnectRequest *cr = new Router2::ConnnectRequest;
     DataStructures::List<SystemAddress> addresses;
     DataStructures::List<RakNetGUID> guids;
     rakPeerInterface->GetSystemList(addresses, guids);
-    if (guids.Size()==0)
+    if (guids.Size() == 0)
     {
         char buff[512];
-        if (debugInterface)    debugInterface->ShowFailure(FormatString(buff, 512, "Router2 failed at %s:%i\n"));
-
+        if (debugInterface != nullptr) debugInterface->ShowFailure(FormatString(buff, 512, "Router2 failed at %s:%i\n"));
+        delete cr;
         return false;
     }
     cr->requestState=R2RS_REQUEST_STATE_QUERY_FORWARDING;
@@ -393,7 +393,7 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 void Router2::Update(void)
 {
     RakNet::TimeMS curTime = RakNet::GetTimeMS();
-    unsigned int connectionRequestIndex=0;
+    unsigned int connectionRequestIndex = 0;
     connectionRequestsMutex.Lock();
     while (connectionRequestIndex < connectionRequests.Size())
     {
@@ -422,32 +422,22 @@ void Router2::Update(void)
 
             if (anyRemoved)
             {
-                if (connectionRequestIndex!=(unsigned int)-1)
+                if (connectionRequestIndex != (unsigned int) -1)
                 {
                     // connectionRequestsMutex should be locked before calling this function
-                    if (UpdateForwarding(connectionRequest)==false)
-                    {
+                    if (!UpdateForwarding(connectionRequest))
                         RemoveConnectionRequest(connectionRequestIndex);
-                    }
                     else
-                    {
                         connectionRequestIndex++;
-                    }
                 }
                 else
-                {
                     connectionRequestIndex++;
-                }
             }
             else
-            {
                 connectionRequestIndex++;
-            }
         }
         else
-        {
             connectionRequestIndex++;
-        }
     }
     connectionRequestsMutex.Unlock();
 

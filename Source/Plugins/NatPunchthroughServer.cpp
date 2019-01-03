@@ -434,9 +434,9 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 {
     RakNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(sizeof(MessageID));
-    uint16_t sessionId;
+    uint16_t locSessionId;
     unsigned short mostRecentPort;
-    bsIn.Read(sessionId);
+    bsIn.Read(locSessionId);
     bsIn.Read(mostRecentPort);
 
     unsigned int i,j;
@@ -451,7 +451,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
         char addr1[128], addr2[128];
         packet->systemAddress.ToString(true,addr1);
         packet->guid.ToString(addr2);
-        log=RakNet::RakString("Got ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s. port=%i. sessionId=%i. userFound=%i.", addr1, addr2, mostRecentPort, sessionId, objectExists);
+        log=RakNet::RakString("Got ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s. port=%i. sessionId=%i. userFound=%i.", addr1, addr2, mostRecentPort, locSessionId, objectExists);
         natPunchthroughServerDebugInterface->OnServerMessage(log.C_String());
     }
 
@@ -468,7 +468,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
                 connectionAttempt->sender->mostRecentPort!=0 &&
                 connectionAttempt->recipient->mostRecentPort!=0 &&
                 // 04/29/08 add sessionId to prevent processing for other systems
-                connectionAttempt->sessionId==sessionId)
+                connectionAttempt->sessionId==locSessionId)
             {
                 SystemAddress senderSystemAddress = connectionAttempt->sender->systemAddress;
                 SystemAddress recipientSystemAddress = connectionAttempt->recipient->systemAddress;

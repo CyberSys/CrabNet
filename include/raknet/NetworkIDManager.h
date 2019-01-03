@@ -39,7 +39,7 @@ public:
     STATIC_FACTORY_DECLARATIONS(NetworkIDManager)
 
     NetworkIDManager();
-    virtual ~NetworkIDManager(void);
+    virtual ~NetworkIDManager();
 
     /// Returns the parent object, or this instance if you don't use a parent.
     /// Supports NetworkIDObject anywhere in the inheritance hierarchy
@@ -47,7 +47,7 @@ public:
     template <class returnType>
     returnType GET_OBJECT_FROM_ID(NetworkID x) {
         NetworkIDObject *nio = GET_BASE_OBJECT_FROM_ID(x);
-        if (nio==0)
+        if (nio == nullptr)
             return 0;
         if (nio->GetParent())
             return (returnType) nio->GetParent();
@@ -55,7 +55,7 @@ public:
     }
 
     // Stop tracking all NetworkID objects
-    void Clear(void);
+    void Clear();
 
     /// \internal
     NetworkIDObject *GET_BASE_OBJECT_FROM_ID(NetworkID x);
@@ -71,7 +71,7 @@ protected:
     unsigned int NetworkIDToHashIndex(NetworkID networkId);
     uint64_t startingOffset;
     /// \internal
-    NetworkID GetNewNetworkID(void);
+    NetworkID GetNewNetworkID();
 
 };
 

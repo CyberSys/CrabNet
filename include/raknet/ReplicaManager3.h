@@ -354,6 +354,7 @@ static const int RM3_NUM_OUTPUT_BITSTREAM_CHANNELS=16;
 /// \ingroup REPLICA_MANAGER_GROUP3
 struct LastSerializationResultBS
 {
+    LastSerializationResultBS(): indicesToSend{false} {}
     RakNet::BitStream bitStream[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
     bool indicesToSend[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
 };

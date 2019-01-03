@@ -89,6 +89,7 @@ unsigned char *BytePool::Allocate(int bytesWanted)
     }
 
     out = (unsigned char*) malloc(bytesWanted + 1);
+    RakAssert(out);
     out[0] = (unsigned char) 255;
     return out + 1;
 }

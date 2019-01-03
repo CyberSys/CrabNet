@@ -81,12 +81,6 @@ void DomainNameToIP_Berkley_IPV4( const char *domainName, char ip[65] )
         return;
     }
 
-    if (phe->h_addr_list[ 0 ]==0)
-    {
-        memset(ip,0,65*sizeof(char));
-        return;
-    }
-
     memcpy( &addr, phe->h_addr_list[ 0 ], sizeof( struct in_addr ) );
     strcpy(ip, inet_ntoa( addr ));
 }

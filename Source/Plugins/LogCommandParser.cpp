@@ -21,7 +21,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "Utils/LinuxStrings.h"
+#include "../Utils/LinuxStrings.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -36,6 +36,7 @@ LogCommandParser::LogCommandParser()
     RegisterCommand(CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS,"Subscribe","[<ChannelName>] - Subscribes to a named channel, or all channels");
     RegisterCommand(CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS,"Unsubscribe","[<ChannelName>] - Unsubscribes from a named channel, or all channels");
     memset(channelNames,0,sizeof(channelNames));
+    trans = nullptr;
 }
 LogCommandParser::~LogCommandParser()
 {

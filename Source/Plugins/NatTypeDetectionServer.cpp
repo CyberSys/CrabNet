@@ -30,7 +30,8 @@ STATIC_FACTORY_DEFINITIONS(NatTypeDetectionServer,NatTypeDetectionServer)
 
 NatTypeDetectionServer::NatTypeDetectionServer()
 {
-    s1p2=s2p3=s3p4=s4p5=0;
+    memset(s3p4Address, 0, sizeof(s3p4Address));
+    s1p2 = s2p3 = s3p4 = s4p5 = 0;
 }
 NatTypeDetectionServer::~NatTypeDetectionServer()
 {

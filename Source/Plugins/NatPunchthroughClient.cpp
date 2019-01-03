@@ -40,11 +40,12 @@ STATIC_FACTORY_DEFINITIONS(NatPunchthroughClient,NatPunchthroughClient)
 
 NatPunchthroughClient::NatPunchthroughClient()
 {
-    natPunchthroughDebugInterface=0;
-    mostRecentExternalPort=0;
-    sp.nextActionTime=0;
-    portStride=0;
-    hasPortStride=UNKNOWN_PORT_STRIDE;
+    natPunchthroughDebugInterface = 0;
+    mostRecentExternalPort = 0;
+    sp.nextActionTime = 0;
+    portStride = 0;
+    portStrideCalTimeout = 0;
+    hasPortStride = UNKNOWN_PORT_STRIDE;
 }
 NatPunchthroughClient::~NatPunchthroughClient()
 {

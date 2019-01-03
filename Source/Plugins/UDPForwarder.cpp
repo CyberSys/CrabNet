@@ -40,6 +40,8 @@ namespace RakNet
 
 UDPForwarder::ForwardEntry::ForwardEntry()
 {
+    timeoutOnNoDataMS = 0;
+    socketFamily = 0;
     socket=INVALID_SOCKET;
     timeLastDatagramForwarded=RakNet::GetTimeMS();
     addr1Confirmed=UNASSIGNED_SYSTEM_ADDRESS;
@@ -317,44 +319,41 @@ void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
             forwardTarget=forwardEntry->addr1Unconfirmed;
     }
     else
-    {
         return;
-    }
 
     // Forward to dest
-    len=0;
 //     sockaddr_in saOut;
 //     saOut.sin_port = forwardTarget.GetPortNetworkOrder(); // User port
 //     saOut.sin_addr.s_addr = forwardTarget.address.addr4.sin_addr.s_addr;
 //     saOut.sin_family = AF_INET;
-    do
+    if (forwardTarget.address.addr4.sin_family == AF_INET)
     {
-#if CRABNET_SUPPORT_IPV6==1
-        if (forwardTarget.address.addr4.sin_family==AF_INET)
-        {
-            do
-            {
-                len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardTarget.address.addr4, sizeof( sockaddr_in ) );
-            }
-            while ( len == 0 );
-        }
-        else
-        {
-            do
-            {
-                len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardTarget.address.addr6, sizeof( sockaddr_in6 ) );
-            }
-            while ( len == 0 );
-        }
-#else
         do
         {
-            len = sendto__( forwardEntry->socket, data, receivedDataLen, 0, ( const sockaddr* ) & forwardTarget.address.addr4, sizeof( sockaddr_in ) );
+            len = sendto__(forwardEntry->socket,
+                           data,
+                           receivedDataLen,
+                           0,
+                           (const sockaddr *) &forwardTarget.address.addr4,
+                           sizeof(sockaddr_in));
         }
-        while ( len == 0 );
-#endif
+        while (len == 0);
     }
-    while ( len == 0 );
+#if CRABNET_SUPPORT_IPV6 == 1
+    else
+    {
+        do
+        {
+            len = sendto__(forwardEntry->socket,
+                           data,
+                           receivedDataLen,
+                           0,
+                           (const sockaddr *) &forwardTarget.address.addr6,
+                           sizeof(sockaddr_in6));
+        }
+        while (len == 0);
+    }
+#endif
 
     forwardEntry->timeLastDatagramForwarded=curTime;
 #endif  // __native_client__
@@ -484,23 +483,23 @@ void UDPForwarder::UpdateUDPForwarder(void)
                     sfos.result=UDPFORWARDER_SUCCESS;
 #endif  // CRABNET_SUPPORT_IPV6==1
 
-                if (sfos.result==UDPFORWARDER_SUCCESS)
+                if (sfos.result == UDPFORWARDER_SUCCESS)
                 {
-                    sfos.forwardingPort = SocketLayer::GetLocalPort ( fe->socket );
-                    sfos.forwardingSocket=fe->socket;
+                    sfos.forwardingPort = SocketLayer::GetLocalPort ( fe->socket ); // -V774
+                    sfos.forwardingSocket=fe->socket; // -V774
 
                     sock_opt=1024*256;
-                    setsockopt__(fe->socket, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+                    setsockopt__(fe->socket, SOL_SOCKET, SO_RCVBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) ); // -V774
                     sock_opt=0;
-                    setsockopt__(fe->socket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+                    setsockopt__(fe->socket, SOL_SOCKET, SO_LINGER, ( char * ) & sock_opt, sizeof ( sock_opt ) ); // -V774
 #ifdef _WIN32
                     unsigned long nonblocking = 1;
                     ioctlsocket__( fe->socket, FIONBIO, &nonblocking );
 #else
-                    fcntl( fe->socket, F_SETFL, O_NONBLOCK );
+                    fcntl( fe->socket, F_SETFL, O_NONBLOCK ); // -V774
 #endif
 
-                    forwardListNotUpdated.Insert(fe);
+                    forwardListNotUpdated.Insert(fe); // -V774
                 }
             }
         }

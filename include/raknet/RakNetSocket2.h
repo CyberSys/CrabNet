@@ -68,7 +68,7 @@ enum RNS2Type
 
 struct RNS2_SendParameters
 {
-    RNS2_SendParameters() {ttl=0;}
+    RNS2_SendParameters(): data(nullptr), length(0), ttl(0) {}
     char *data;
     int length;
     SystemAddress systemAddress;

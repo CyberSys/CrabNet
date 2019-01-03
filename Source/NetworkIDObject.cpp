@@ -22,26 +22,28 @@ using namespace RakNet;
 
 NetworkIDObject::NetworkIDObject()
 {
-    networkID=UNASSIGNED_NETWORK_ID;
-    parent=0;
-    networkIDManager=0;
-    nextInstanceForNetworkIDManager=0;
+    networkID = UNASSIGNED_NETWORK_ID;
+    parent = nullptr;
+    networkIDManager = nullptr;
+    nextInstanceForNetworkIDManager = nullptr;
 }
+
 NetworkIDObject::~NetworkIDObject()
 {
-    if (networkIDManager)
+    if (networkIDManager != nullptr)
         networkIDManager->StopTrackingNetworkIDObject(this);
 }
-void NetworkIDObject::SetNetworkIDManager( NetworkIDManager *manager)
+
+void NetworkIDObject::SetNetworkIDManager(NetworkIDManager *manager)
 {
-    if (manager==networkIDManager)
+    if (manager == networkIDManager)
         return;
 
-    if (networkIDManager)
+    if (networkIDManager != nullptr)
         networkIDManager->StopTrackingNetworkIDObject(this);
 
-    networkIDManager=manager;
-    if (networkIDManager==0)
+    networkIDManager = manager;
+    if (networkIDManager == nullptr)
     {
         networkID = UNASSIGNED_NETWORK_ID;
         return;
@@ -55,38 +57,43 @@ void NetworkIDObject::SetNetworkIDManager( NetworkIDManager *manager)
 
     networkIDManager->TrackNetworkIDObject(this);
 }
-NetworkIDManager * NetworkIDObject::GetNetworkIDManager( void ) const
+
+NetworkIDManager *NetworkIDObject::GetNetworkIDManager() const
 {
     return networkIDManager;
 }
-NetworkID NetworkIDObject::GetNetworkID( void )
+
+NetworkID NetworkIDObject::GetNetworkID()
 {
     return networkID;
 }
-void NetworkIDObject::SetNetworkID( NetworkID id )
+
+void NetworkIDObject::SetNetworkID(NetworkID id)
 {
-    if (networkID==id)
+    if (networkID == id)
         return;
 
-    if ( id == UNASSIGNED_NETWORK_ID )
+    if (id == UNASSIGNED_NETWORK_ID)
     {
-        SetNetworkIDManager(0);
+        SetNetworkIDManager(nullptr);
         return;
     }
 
-    if ( networkIDManager )
+    if (networkIDManager != nullptr)
         networkIDManager->StopTrackingNetworkIDObject(this);
 
     networkID = id;
 
-    if (networkIDManager)
+    if (networkIDManager != nullptr)
         networkIDManager->TrackNetworkIDObject(this);
 }
-void NetworkIDObject::SetParent( void *_parent )
+
+void NetworkIDObject::SetParent(void *_parent)
 {
-    parent=_parent;
+    parent = _parent;
 }
-void* NetworkIDObject::GetParent( void ) const
+
+void *NetworkIDObject::GetParent() const
 {
     return parent;
 }

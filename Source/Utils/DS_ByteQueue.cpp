@@ -10,6 +10,7 @@
  */
 
 #include "DS_ByteQueue.h"
+#include "RakAssert.h"
 #include <cstring> // Memmove
 #include <cstdlib> // realloc
 #include <cstdio>
@@ -39,7 +40,9 @@ void ByteQueue::WriteBytes(const char *in, unsigned length)
         if (newAmountToAllocate < 256)
             newAmountToAllocate = 256;
         lengthAllocated = lengthAllocated + newAmountToAllocate;
-        data = (char*) realloc(data, lengthAllocated);
+        auto tmp = (char*) realloc(data, lengthAllocated);
+        RakAssert(tmp);
+        data = tmp;
         if (writeOffset < readOffset)
         {
             if (writeOffset <= newAmountToAllocate)

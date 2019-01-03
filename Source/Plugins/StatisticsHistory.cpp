@@ -56,7 +56,7 @@ int TimeAndValueQueueCompDesc( StatisticsHistory::TimeAndValueQueue* const &key,
         return 1;
     return 0;
 }
-StatisticsHistory::TrackedObjectData::TrackedObjectData() {}
+StatisticsHistory::TrackedObjectData::TrackedObjectData(): objectId(0), objectType(0), userData(nullptr) {}
 StatisticsHistory::TrackedObjectData::TrackedObjectData(uint64_t _objectId, int _objectType, void *_userData)
 {
     objectId=_objectId;
@@ -277,7 +277,7 @@ void StatisticsHistory::GetUniqueKeyList(DataStructures::List<RakString> &keys)
         }
     }
 }
-StatisticsHistory::TimeAndValueQueue::TimeAndValueQueue()
+StatisticsHistory::TimeAndValueQueue::TimeAndValueQueue(): timeToTrackValues(0), sortValue(0)
 {
     Clear();
 }
@@ -662,7 +662,7 @@ SHValueType StatisticsHistory::TimeAndValueQueue::Interpolate(StatisticsHistory:
 //         return t2.val + slope * (SHValueType) (time - t2.time);
 //     }
 }
-void StatisticsHistory::TimeAndValueQueue::Clear(void)
+void StatisticsHistory::TimeAndValueQueue::Clear()
 {
     recentSum = 0;
     recentSumOfSquares = 0;

@@ -652,16 +652,23 @@ void BitStream::AddBitsAndReallocate(BitSize_t numberOfBitsToWrite)
             if (amountToAllocate > BITSTREAM_STACK_ALLOCATION_SIZE)
             {
                 data = (unsigned char *) malloc((size_t) amountToAllocate);
-                RakAssert(data);
+                RakAssert(data);  // TODO: introduce optional exceptions instead RakAssert
 
                 // need to copy the stack data over to our new memory area too
                 memcpy((void *) data, (void *) stackData, (size_t) BITS_TO_BYTES(numberOfBitsAllocated));
+
             }
         }
         else
-            data = (unsigned char *) realloc(data, (size_t) amountToAllocate);
+        {
+            auto tmp = (unsigned char *) realloc(data, (size_t) amountToAllocate);
+            RakAssert(tmp); // Make sure realloc succeeded
+            if (tmp != nullptr)
+            {
+                data = tmp;
+            }
+        }
 
-        RakAssert(data); // Make sure realloc succeeded
         //  memset(data+newByteOffset, 0,  ((newNumberOfBitsAllocated-1)>>3) - ((numberOfBitsAllocated-1)>>3)); // Set the new data block to 0
     }
 
@@ -858,7 +865,8 @@ void BitStream::AssertCopyData()
         {
             auto newdata = (unsigned char *) malloc((size_t) BITS_TO_BYTES(numberOfBitsAllocated));
 
-            RakAssert(data);
+            RakAssert(newdata); // TODO: introduce optional exceptions instead RakAssert
+
 
             memcpy(newdata, data, (size_t) BITS_TO_BYTES(numberOfBitsAllocated));
             data = newdata;

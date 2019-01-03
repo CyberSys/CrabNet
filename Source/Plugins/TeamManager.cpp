@@ -58,11 +58,11 @@ int TM_World::JoinRequestHelperComp(const TM_World::JoinRequestHelper &key, cons
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TeamSelection::TeamSelection() {}
+TeamSelection::TeamSelection(): joinTeamType(JOIN_NO_TEAM), teamParameter{nullptr} {}
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TeamSelection::TeamSelection(JoinTeamType itt) : joinTeamType(itt) {}
+TeamSelection::TeamSelection(JoinTeamType itt) : joinTeamType(itt), teamParameter{nullptr} {}
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -92,10 +92,13 @@ TeamSelection TeamSelection::NoTeam(NoTeamId noTeamSubcategory) {return TeamSele
 
 TM_TeamMember::TM_TeamMember()
 {
-    networkId=0;
-    world=0;
-    joinTeamType=JOIN_NO_TEAM;
-    noTeamSubcategory=0;
+    whenJoinAnyRequested = 0;
+    joinAnyRequestIndex = 0;
+    owner = 0;
+    networkId = 0;
+    world = 0;
+    joinTeamType = JOIN_NO_TEAM;
+    noTeamSubcategory = 0;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

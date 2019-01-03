@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
-#include "Utils/LinuxStrings.h"
+#include "../Utils/LinuxStrings.h"
 
 // #define _PRINTF_DEBUG
 
@@ -101,12 +101,12 @@ void TelnetTransport::CloseConnection( SystemAddress systemAddress )
 {
     tcpInterface->CloseConnection(systemAddress);
 }
-Packet* TelnetTransport::Receive( void )
+Packet* TelnetTransport::Receive()
 {
-    if (tcpInterface==0) return 0;
+    if (tcpInterface == nullptr) return nullptr;
     Packet *p = tcpInterface->Receive();
-    if (p==0)
-        return 0;
+    if (p == nullptr)
+        return nullptr;
 
     /*
     if (p->data[0]==255)
@@ -123,18 +123,17 @@ Packet* TelnetTransport::Receive( void )
     */
 
     // Get this guy's cursor buffer.  This is real bullcrap that I have to do this.
-    unsigned i;
-    TelnetClient *remoteClient=0;
-    for (i=0; i < remoteClients.Size(); i++)
+    TelnetClient *remoteClient= nullptr;
+    for (unsigned i = 0; i < remoteClients.Size(); i++)
     {
         if (remoteClients[i]->systemAddress==p->systemAddress)
             remoteClient=remoteClients[i];
     }
     //RakAssert(remoteClient);
-    if (remoteClient==0)
+    if (remoteClient== nullptr)
     {
         tcpInterface->DeallocatePacket(p);
-        return 0;
+        return nullptr;
     }
 
 
@@ -151,7 +150,7 @@ Packet* TelnetTransport::Receive( void )
             remoteClient->cursorPosition=(unsigned int) strlen(remoteClient->textInput);
         }
 
-        return 0;
+        return nullptr;
     }
 
 
@@ -161,7 +160,7 @@ Packet* TelnetTransport::Receive( void )
     if (p->data[0]>=127 || p->data[0]==9 || p->data[0]==27)
     {
         tcpInterface->DeallocatePacket(p);
-        return 0;
+        return nullptr;
     }
 
     // Hack - I don't know what the hell this is about but cursor keys send 3 characters at a time.  I can block these
@@ -169,13 +168,11 @@ Packet* TelnetTransport::Receive( void )
     //Down=27,91,66
     //Right=27,91,67
     //Left=27,91,68
-    if (p->length==3 && p->data[0]==27 && p->data[1]==91 && p->data[2]>=65 && p->data[2]<=68)
+    if (p->length == 3 && p->data[0] == 27 && p->data[1] == 91 && p->data[2] >= 65 && p->data[2] <= 68) // todo: p->data[0] == 27 always false
     {
         tcpInterface->DeallocatePacket(p);
-        return 0;
+        return nullptr;
     }
-
-
 
     // Echo
 #ifdef ECHO_INPUT
@@ -184,7 +181,7 @@ Packet* TelnetTransport::Receive( void )
 
     bool gotLine;
     // Process each character in turn
-    for (i=0; i < p->length; i++)
+    for (unsigned i=0; i < p->length; i++)
     {
 
 #ifdef ECHO_INPUT
@@ -202,6 +199,7 @@ Packet* TelnetTransport::Receive( void )
         {
 
             Packet *reassembledLine = (Packet*) malloc(sizeof(Packet));
+            RakAssert(reassembledLine);
             reassembledLine->length=(unsigned int) strlen(remoteClient->textInput);
             memcpy(remoteClient->lastSentTextInput, remoteClient->textInput, reassembledLine->length+1);
             RakAssert(reassembledLine->length < REMOTE_MAX_TEXT_INPUT);
@@ -218,11 +216,11 @@ Packet* TelnetTransport::Receive( void )
     }
 
     tcpInterface->DeallocatePacket(p);
-    return 0;
+    return nullptr;
 }
 void TelnetTransport::DeallocatePacket( Packet *packet )
 {
-    if (tcpInterface==0) return;
+    if (tcpInterface== nullptr) return;
     free(packet->data);
     free(packet);
 }
@@ -305,27 +303,25 @@ CommandParserInterface* TelnetTransport::GetCommandParser(void)
 }
 void TelnetTransport::SetSendSuffix(const char *suffix)
 {
-    if (sendSuffix)
-    {
-        free(sendSuffix);
-        sendSuffix=0;
-    }
-    if (suffix)
+    free(sendSuffix);
+    sendSuffix= nullptr;
+
+    if (suffix != nullptr)
     {
         sendSuffix = (char*) malloc(strlen(suffix)+1);
+        RakAssert(sendSuffix);
         strcpy(sendSuffix, suffix);
     }
 }
 void TelnetTransport::SetSendPrefix(const char *prefix)
 {
-    if (sendPrefix)
+    free(sendPrefix);
+    sendPrefix = nullptr;
+
+    if (prefix != nullptr)
     {
-        free(sendPrefix);
-        sendPrefix=0;
-    }
-    if (prefix)
-    {
-        sendPrefix = (char*) malloc(strlen(prefix)+1);
+        sendPrefix = (char *) malloc(strlen(prefix) + 1);
+        RakAssert(sendPrefix);
         strcpy(sendPrefix, prefix);
     }
 }

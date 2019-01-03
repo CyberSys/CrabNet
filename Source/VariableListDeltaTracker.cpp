@@ -48,6 +48,7 @@ VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode() :
 VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode(const unsigned char *data, size_t _byteLength)
 {
     lastData = (char *) malloc(_byteLength);
+    RakAssert(lastData)
     memcpy(lastData, data, _byteLength);
     byteLength = _byteLength;
     isDirty = false;
