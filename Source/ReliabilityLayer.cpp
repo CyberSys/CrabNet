@@ -73,7 +73,7 @@ static FILE *fp=0;
 //#define FLIP_SEND_ORDER_TEST
 //#define LOG_TRIVIAL_NOTIFICATIONS
 
-BPSTracker::TimeAndValue2::TimeAndValue2() {}
+BPSTracker::TimeAndValue2::TimeAndValue2():value1(0), time(0) {}
 BPSTracker::TimeAndValue2::~TimeAndValue2() {}
 BPSTracker::TimeAndValue2::TimeAndValue2(RakNet::TimeUS t, uint64_t v1) : value1(v1), time(t) {}
 //BPSTracker::TimeAndValue2::TimeAndValue2(RakNet::TimeUS t, uint64_t v1, uint64_t v2) : time(t), value1(v1), value2(v2) {}
@@ -646,7 +646,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
         RakNetSocket2 *s, RakNetRandom *rnr, CCTimeType timeRead,
         BitStream &updateBitStream)
 {
-    RakAssert(buffer != 0);
+    RakAssert(buffer != nullptr);
 
 #if CC_TIME_TYPE_BYTES == 4
     timeRead/=1000;
@@ -743,17 +743,15 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
         }
         for (unsigned i = 0; i < incomingAcks.ranges.Size(); i++)
         {
-            if (incomingAcks.ranges[i].minIndex > incomingAcks.ranges[i].maxIndex || (incomingAcks.ranges[i].maxIndex == (uint24_t) (0xFFFFFFFF)))
+            RakAssert(incomingAcks.ranges[i].minIndex <= incomingAcks.ranges[i].maxIndex);
+            if (incomingAcks.ranges[i].maxIndex == (uint24_t) (0xFFFFFFFF))
             {
-                RakAssert(incomingAcks.ranges[i].minIndex <= incomingAcks.ranges[i].maxIndex);
-
                 for (unsigned int messageHandlerIndex = 0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
                     messageHandlerList[messageHandlerIndex]->OnReliabilityLayerNotification(
                             "incomingAcks minIndex > maxIndex or maxIndex is max value", BYTES_TO_BITS(length), systemAddress, true);
                 return false;
             }
-            for (datagramNumber = incomingAcks.ranges[i].minIndex;
-                 datagramNumber >= incomingAcks.ranges[i].minIndex && datagramNumber <= incomingAcks.ranges[i].maxIndex;
+            for (datagramNumber = incomingAcks.ranges[i].minIndex; datagramNumber <= incomingAcks.ranges[i].maxIndex;
                  datagramNumber++)
             {
 
@@ -843,18 +841,24 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
             // Sanity check
             //RakAssert(incomingNAKs.ranges[i].maxIndex.val-incomingNAKs.ranges[i].minIndex.val<1000);
             for (DatagramSequenceNumberType messageNumber = incomingNAKs.ranges[i].minIndex;
-                 messageNumber >= incomingNAKs.ranges[i].minIndex && messageNumber <= incomingNAKs.ranges[i].maxIndex;
+                 messageNumber < incomingNAKs.ranges[i].maxIndex;
                  messageNumber++)
             {
                 congestionManager.OnNAK(timeRead, messageNumber);
 
+                if ((messageNumber - datagramHistoryPopCount) >= datagramHistory.Size())
+                {
+                    ++receivePacketCount;
+                    return true;
+                }
+
                 CCTimeType timeSent;
                 MessageNumberNode *messageNumberNode = GetMessageNumberNodeByDatagramIndex(messageNumber, &timeSent);
-                while (messageNumberNode)
+                while (messageNumberNode != nullptr)
                 {
                     // Update timers so resends occur immediately
                     InternalPacket *internalPacket = resendBuffer[messageNumberNode->messageNumber & (uint32_t) RESEND_BUFFER_ARRAY_MASK];
-                    if (internalPacket && internalPacket->nextActionTime != 0)
+                    if ((internalPacket != nullptr) && internalPacket->nextActionTime != 0)
                         internalPacket->nextActionTime = timeRead;
 
                     messageNumberNode = messageNumberNode->next;
@@ -883,13 +887,13 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
         // Ack dhf.datagramNumber
         // Ack even unreliable messages for congestion control, just don't resend them on no ack
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
-        SendAcknowledgementPacket( dhf.datagramNumber, dhf.sourceSystemTime);
+        SendAcknowledgementPacket(dhf.datagramNumber, dhf.sourceSystemTime);
 #else
         SendAcknowledgementPacket(dhf.datagramNumber, 0);
 #endif
 
         InternalPacket *internalPacket = CreateInternalPacketFromBitStream(&socketData, timeRead);
-        if (internalPacket == 0)
+        if (internalPacket == nullptr)
         {
             for (unsigned int messageHandlerIndex = 0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
                 messageHandlerList[messageHandlerIndex]->OnReliabilityLayerNotification(
@@ -2650,14 +2654,14 @@ BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket(RakNet::BitStream
 InternalPacket *ReliabilityLayer::CreateInternalPacketFromBitStream(RakNet::BitStream *bitStream, CCTimeType time)
 {
     if (bitStream->GetNumberOfUnreadBits() < (int) sizeof(MessageNumberType) * 8)
-        return 0; // leftover bits
+        return nullptr; // leftover bits
 
     InternalPacket *internalPacket = AllocateFromInternalPacketPool();
     if (internalPacket == 0)
     {
         // Out of memory
         RakAssert(0);
-        return 0;
+        return nullptr;
     }
     internalPacket->creationTime = time;
 
@@ -2724,8 +2728,9 @@ InternalPacket *ReliabilityLayer::CreateInternalPacketFromBitStream(RakNet::BitS
     {
         // If this assert hits, encoding is garbage
         RakAssert("Encoding is garbage" && 0);
+        FreeInternalPacketData(internalPacket);
         ReleaseToInternalPacketPool(internalPacket);
-        return 0;
+        return nullptr;
     }
 
     // Allocate memory to hold our data
@@ -2735,8 +2740,9 @@ InternalPacket *ReliabilityLayer::CreateInternalPacketFromBitStream(RakNet::BitS
     if (internalPacket->data == 0)
     {
         RakAssert("Out of memory in ReliabilityLayer::CreateInternalPacketFromBitStream" && 0);
+        FreeInternalPacketData(internalPacket);
         ReleaseToInternalPacketPool(internalPacket);
-        return 0;
+        return nullptr;
     }
 
     // Set the last byte to 0 so if ReadBits does not read a multiple of 8 the last bits are 0'ed out
@@ -2752,10 +2758,10 @@ InternalPacket *ReliabilityLayer::CreateInternalPacketFromBitStream(RakNet::BitS
 
         FreeInternalPacketData(internalPacket);
         ReleaseToInternalPacketPool(internalPacket);
-        return 0;
+        return nullptr;
     }
 
-    return internalPacket;
+    return internalPacket; // -V1020
 }
 
 
@@ -3152,6 +3158,7 @@ ReliabilityLayer::BuildPacketFromSplitPacketList(SplitPacketChannel *splitPacket
         internalPacket->dataBitLength += splitPacketChannel->splitPacketList[j]->dataBitLength;
 
     internalPacket->data = (unsigned char *) malloc((size_t) BITS_TO_BYTES(internalPacket->dataBitLength));
+    RakAssert(internalPacket->data);
     internalPacket->allocationScheme = InternalPacket::NORMAL;
 
     BitSize_t offset = 0;
@@ -3919,9 +3926,9 @@ reliabilityHeapWeightType ReliabilityLayer::GetNextWeight(int priorityLevel)
         reliabilityHeapWeightType weight = outgoingPacketBuffer.PeekWeight();
         reliabilityHeapWeightType min = weight - (1 << peekPL) * peekPL + peekPL;
         if (next < min)
-            next = min + (1 << priorityLevel) * priorityLevel + priorityLevel;
+            next = min + ((uint64_t) 1 << priorityLevel) * priorityLevel + priorityLevel;
         outgoingPacketBufferNextWeights[priorityLevel] =
-                next + (1 << priorityLevel) * (priorityLevel + 1) + priorityLevel;
+                next + ((uint64_t) 1 << priorityLevel) * (priorityLevel + 1) + priorityLevel;
     }
     else
         InitHeapWeights();

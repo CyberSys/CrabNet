@@ -159,7 +159,7 @@ public:
     /// \return CONNECTION_ATTEMPT_STARTED on successful initiation. Otherwise, an appropriate enumeration indicating failure.
     /// \note CONNECTION_ATTEMPT_STARTED does not mean you are already connected!
     /// \note It is possible to immediately get back ID_CONNECTION_ATTEMPT_FAILED if you exceed the maxConnections parameter passed to Startup(). This could happen if you call CloseConnection() with sendDisconnectionNotificaiton true, then immediately call Connect() before the connection has closed.
-    ConnectionAttemptResult Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, PublicKey *publicKey=0, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=6, unsigned timeBetweenSendConnectionAttemptsMS=1000, RakNet::TimeMS timeoutTime=0 );
+    ConnectionAttemptResult Connect(const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, PublicKey *publicKey=0, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=6, unsigned timeBetweenSendConnectionAttemptsMS=1000, RakNet::TimeMS timeoutTime=0 ) final;
 
     /// \brief Connect to the specified host (ip or domain name) and server port.
     /// \param[in] host Either a dotted IP address or a domain name.
@@ -808,7 +808,7 @@ protected:
     SimpleMutex rakPeerMutexes[ NUMBER_OF_RAKPEER_MUTEXES ];
     ///RunUpdateCycle is not thread safe but we don't need to mutex calls. Just skip calls if it is running already
 
-    bool updateCycleIsRunning;
+    // bool updateCycleIsRunning;
     ///The list of people we have tried to connect to recently
 
     //DataStructures::Queue<RequestedConnectionStruct*> requestedConnectionsList;
@@ -817,7 +817,7 @@ protected:
     unsigned int bytesSentPerSecond, bytesReceivedPerSecond;
     // bool isSocketLayerBlocking;
     // bool continualPing,isRecvfromThreadActive,isMainLoopThreadActive, endThreads, isSocketLayerBlocking;
-    unsigned int validationInteger;
+    // unsigned int validationInteger;
     SimpleMutex incomingQueueMutex, banListMutex; //,synchronizedMemoryQueueMutex, automaticVariableSynchronizationMutex;
     //DataStructures::Queue<Packet *> incomingpacketSingleProducerConsumer; //, synchronizedMemorypacketSingleProducerConsumer;
     // BitStream enumerationData;
@@ -844,7 +844,6 @@ protected:
         RakNet::TimeMS timeoutTime;
         PublicKeyMode publicKeyMode;
         RakNetSocket2* socket;
-        enum {CONNECT=1/*, PING=2, PING_OPEN_CONNECTIONS=4,*/ /*ADVERTISE_SYSTEM=2*/} actionToTake;
 
 #ifdef LIBCAT_SECURITY
         char handshakeChallenge[cat::EasyHandshake::CHALLENGE_BYTES];
@@ -945,10 +944,6 @@ protected:
     DataStructures::List<RakNetSocket2* > socketList;
     void DerefAllSockets(void);
     unsigned int GetRakNetSocketFromUserConnectionSocketIndex(unsigned int userIndex) const;
-    // Used for RPC replies
-    RakNet::BitStream *replyFromTargetBS;
-    SystemAddress replyFromTargetPlayer;
-    bool replyFromTargetBroadcast;
 
     RakNet::TimeMS defaultTimeoutTime;
 

@@ -572,7 +572,7 @@ br == BR_REQUIRES_CRABNET_SUPPORT_IPV6_DEFINE)
 
     if (endThreads)
     {
-        updateCycleIsRunning = false;
+        // updateCycleIsRunning = false;
         endThreads = false;
         firstExternalID = UNASSIGNED_SYSTEM_ADDRESS;
 
@@ -1168,20 +1168,19 @@ inline bool RakPeer::IsActive(void) const
 // ---------------------------------------------------------------------------------------------------------------------
 bool RakPeer::GetConnectionList(SystemAddress *remoteSystems, unsigned short *numberOfSystems) const
 {
-    if (numberOfSystems == 0)
+    if (numberOfSystems == nullptr)
         return false;
 
-    if (remoteSystemList == 0 || endThreads == true)
+    if (remoteSystemList == nullptr || endThreads == true)
     {
-        if (numberOfSystems)
-            *numberOfSystems = 0;
+        *numberOfSystems = 0;
         return false;
     }
 
     DataStructures::List<SystemAddress> addresses;
     DataStructures::List<RakNetGUID> guids;
     GetSystemList(addresses, guids);
-    if (remoteSystems)
+    if (remoteSystems != nullptr)
     {
         unsigned short i;
         for (i = 0; i < *numberOfSystems && i < addresses.Size(); i++)
@@ -1384,10 +1383,7 @@ uint32_t RakPeer::SendList(const char **data, const int *lengths, const int numP
     if (numParameters == 0)
         return 0;
 
-    if (lengths == 0)
-        return 0;
-
-    if (broadcast == false && systemIdentifier.IsUndefined())
+    if (!broadcast && systemIdentifier.IsUndefined())
         return 0;
 
     uint32_t usedSendReceipt;
@@ -1840,6 +1836,7 @@ void RakPeer::AddToBanList(const char *IP, RakNet::TimeMS milliseconds)
 
     BanStruct *banStruct = new BanStruct;
     banStruct->IP = (char *) malloc(16);
+    RakAssert(banStruct->IP);
     if (milliseconds == 0)
         banStruct->timeout = 0; // Infinite
     else
@@ -2492,8 +2489,7 @@ void RakPeer::SetTimeoutTime(RakNet::TimeMS timeMS, const SystemAddress target)
         {
             if (remoteSystemList[i].isActive)
             {
-                if (remoteSystemList[i].isActive)
-                    remoteSystemList[i].reliabilityLayer.SetTimeoutTime(timeMS);
+                remoteSystemList[i].reliabilityLayer.SetTimeoutTime(timeMS);
             }
         }
     }
@@ -2974,9 +2970,6 @@ bool RakPeer::SendOutOfBand(const char *host, unsigned short remotePort, const c
               (MAX_OFFLINE_DATA_LENGTH + sizeof(unsigned char) + sizeof(RakNet::Time) + RakNetGUID::size() +
                sizeof(OFFLINE_MESSAGE_DATA_ID)));
 
-    if (host == 0)
-        return false;
-
     // 34 bytes
     RakNet::BitStream bitStream;
     WriteOutOfBandHeader(&bitStream);
@@ -3254,7 +3247,6 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
     rcs->socket = 0;
     rcs->extraData = extraData;
     rcs->socketIndex = connectionSocketIndex;
-    rcs->actionToTake = RequestedConnectionStruct::CONNECT;
     rcs->sendConnectionAttemptCount = sendConnectionAttemptCount;
     rcs->timeBetweenSendConnectionAttemptsMS = timeBetweenSendConnectionAttemptsMS;
     memcpy(rcs->outgoingPassword, passwordData, passwordDataLength);
@@ -3313,7 +3305,6 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
     rcs->socket = 0;
     rcs->extraData = extraData;
     rcs->socketIndex = connectionSocketIndex;
-    rcs->actionToTake = RequestedConnectionStruct::CONNECT;
     rcs->sendConnectionAttemptCount = sendConnectionAttemptCount;
     rcs->timeBetweenSendConnectionAttemptsMS = timeBetweenSendConnectionAttemptsMS;
     memcpy(rcs->outgoingPassword, passwordData, passwordDataLength);
@@ -3868,7 +3859,7 @@ bool RakPeer::IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matc
     }
 
     return (matchPort && systemIdentifier.systemAddress == firstExternalID) ||
-           !matchPort && systemIdentifier.systemAddress.EqualsExcludingPort(firstExternalID);
+        (!matchPort && systemIdentifier.systemAddress.EqualsExcludingPort(firstExternalID));
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -4720,7 +4711,6 @@ namespace RakNet
                         rakPeer->requestedConnectionQueueMutex.Unlock();
                         unlock = false;
 
-                        RakAssert(rcs->actionToTake == RakPeer::RequestedConnectionStruct::CONNECT);
                         // You might get this when already connected because of cross-connections
                         bool thisIPConnectedRecently = false;
                         remoteSystem = rakPeer->GetRemoteSystemFromSystemAddress(systemAddress, true, true);
@@ -4868,7 +4858,7 @@ namespace RakNet
                 for (unsigned i = 0; i < rakPeer->requestedConnectionQueue.Size(); i++)
                 {
                     RakPeer::RequestedConnectionStruct *rcs = rakPeer->requestedConnectionQueue[i];
-                    if (rcs->actionToTake == RakPeer::RequestedConnectionStruct::CONNECT && rcs->systemAddress == systemAddress)
+                    if (rcs->systemAddress == systemAddress)
                     {
                         connectionAttemptCancelled = true;
                         rakPeer->requestedConnectionQueue.RemoveAtIndex(i);
@@ -5450,7 +5440,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                         rcs->data = 0;
                     }
 
-                    if (condition1 && !condition2 && rcs->actionToTake == RequestedConnectionStruct::CONNECT)
+                    if (condition1 && !condition2)
                     {
                         // Tell user of connection attempt failed
                         packet = AllocPacket(sizeof(char));

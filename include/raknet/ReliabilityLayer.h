@@ -340,7 +340,7 @@ private:
     };
     struct DatagramHistoryNode
     {
-        DatagramHistoryNode() {}
+        DatagramHistoryNode(): head(nullptr), timeSent(0) {}
         DatagramHistoryNode(MessageNumberNode *_head, CCTimeType ts
             ) :
         head(_head), timeSent(ts)
@@ -356,7 +356,7 @@ private:
 
     struct UnreliableWithAckReceiptNode
     {
-        UnreliableWithAckReceiptNode() {}
+        UnreliableWithAckReceiptNode(): sendReceiptSerial(0), nextActionTime(0) {}
         UnreliableWithAckReceiptNode(DatagramSequenceNumberType _datagramNumber, uint32_t _sendReceiptSerial, RakNet::TimeUS _nextActionTime) :
             datagramNumber(_datagramNumber), sendReceiptSerial(_sendReceiptSerial), nextActionTime(_nextActionTime)
         {}
