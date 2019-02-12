@@ -51,6 +51,16 @@
 #pragma warning(disable: 4127)
 #endif //_MSC_VER
 
+#ifndef _WIN32
+void explicit_memzero(void *p, size_t len)
+{
+    memset (p, '\0', len);
+    asm volatile ("" ::: "memory");
+}
+
+#define SecureZeroMemory(p, l) explicit_memzero(p, l)
+#endif
+
 CSHA1::CSHA1()
 {
     m_block = (SHA1_WORKSPACE_BLOCK *) m_workspace;
@@ -212,17 +222,11 @@ void CSHA1::Final()
 
     // Wipe variables for security reasons
 #ifdef SHA1_WIPE_VARIABLES
-#ifndef _WIN32
-    explicit_bzero(m_buffer, 64);
-    explicit_bzero(m_state, 20);
-    explicit_bzero(m_count, 8);
-    explicit_bzero(pbFinalCount, 8);
-#else
     SecureZeroMemory(m_buffer, 64);
     SecureZeroMemory(m_state, 20);
     SecureZeroMemory(m_count, 8);
     SecureZeroMemory(pbFinalCount, 8);
-#endif //_WIN32
+
     Transform(m_state, m_buffer);
 #endif
 }
