@@ -7,17 +7,12 @@ FILE(GLOB ALL_CPP_SRCS
 
 if(MSVC)
     add_definitions("/D WIN32 /D _CRT_NONSTDC_NO_DEPRECATE /D _CRT_SECURE_NO_DEPRECATE /GS- /GR-")
-    set(CMAKE_CXX_FLAGS_DEBUG /D _DEBUG)
-else(MSVC)
-    set(CMAKE_CXX_FLAGS_DEBUG -D_DEBUG)
 endif(MSVC)
 
+set(CMAKE_CXX_FLAGS_DEBUG -D_DEBUG)
+
 if(CRABNET_ENABLE_LIBCAT_SECURITY)
-    if(MSVC)
-        add_definitions("/D LIBCAT_SECURITY")
-    else(MSVC)
-        add_definitions("-DLIBCAT_SECURITY")
-    endif(MSVC)
+    add_definitions("-DLIBCAT_SECURITY")
     message(STATUS "Security enabled")
 endif()
 
@@ -32,11 +27,7 @@ if(CRABNET_ENABLE_STATIC)
 endif()
 
 if(CRABNET_ENABLE_DLL)
-    if(MSVC)
-        add_definitions("/D _CRABNET_DLL")
-    else(MSVC)
-        add_definitions("-D_CRABNET_DLL")
-    endif(MSVC)
+    add_definitions("-D_CRABNET_DLL")
 
     add_library(${CRABNET_LIBRARY_SO_NAME} SHARED ${ALL_CPP_SRCS})
     target_link_libraries (${CRABNET_LIBRARY_SO_NAME} ${CRABNET_LIBRARY_LIBS})
