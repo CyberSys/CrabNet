@@ -27,13 +27,11 @@
 // winsock.h must be linked against WSock32.lib.  If these two are mixed up the flag won't work correctly
 #include "WindowsIncludes.h"
 #include "WSAStartupSingleton.h"
-
 #else
-
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
+#include <netdb.h>
 #endif
 
 #include <cstring> // strncasecmp
@@ -139,9 +137,11 @@ bool SystemAddress::EqualsExcludingPort(const SystemAddress &right) const
 {
     return (address.addr4.sin_family == AF_INET && address.addr4.sin_addr.s_addr == right.address.addr4.sin_addr.s_addr)
 #if CRABNET_SUPPORT_IPV6 == 1
-        || (address.addr4.sin_family==AF_INET6 && memcmp(address.addr6.sin6_addr.s6_addr, right.address.addr6.sin6_addr.s6_addr, sizeof(address.addr6.sin6_addr.s6_addr))==0)
+        || (address.addr4.sin_family == AF_INET6 && memcmp(address.addr6.sin6_addr.s6_addr,
+                                                           right.address.addr6.sin6_addr.s6_addr,
+                                                           sizeof(address.addr6.sin6_addr.s6_addr)) == 0)
 #endif
-            ;
+        ;
 }
 
 unsigned short SystemAddress::GetPort() const
@@ -182,8 +182,10 @@ bool SystemAddress::operator>(const SystemAddress &right) const
     {
 #if CRABNET_SUPPORT_IPV6 == 1
         if (address.addr4.sin_family == AF_INET)
-            return address.addr4.sin_addr.s_addr>right.address.addr4.sin_addr.s_addr;
-        return memcmp(address.addr6.sin6_addr.s6_addr, right.address.addr6.sin6_addr.s6_addr, sizeof(address.addr6.sin6_addr.s6_addr)) > 0;
+            return address.addr4.sin_addr.s_addr > right.address.addr4.sin_addr.s_addr;
+        return memcmp(address.addr6.sin6_addr.s6_addr,
+                      right.address.addr6.sin6_addr.s6_addr,
+                      sizeof(address.addr6.sin6_addr.s6_addr)) > 0;
 #else
         return address.addr4.sin_addr.s_addr > right.address.addr4.sin_addr.s_addr;
 #endif
@@ -197,8 +199,10 @@ bool SystemAddress::operator<(const SystemAddress &right) const
     {
 #if CRABNET_SUPPORT_IPV6 == 1
         if (address.addr4.sin_family == AF_INET)
-            return address.addr4.sin_addr.s_addr<right.address.addr4.sin_addr.s_addr;
-        return memcmp(address.addr6.sin6_addr.s6_addr, right.address.addr6.sin6_addr.s6_addr, sizeof(address.addr6.sin6_addr.s6_addr)) > 0;
+            return address.addr4.sin_addr.s_addr < right.address.addr4.sin_addr.s_addr;
+        return memcmp(address.addr6.sin6_addr.s6_addr,
+                      right.address.addr6.sin6_addr.s6_addr,
+                      sizeof(address.addr6.sin6_addr.s6_addr)) > 0;
 #else
         return address.addr4.sin_addr.s_addr < right.address.addr4.sin_addr.s_addr;
 #endif
@@ -220,10 +224,14 @@ unsigned long SystemAddress::ToInteger(const SystemAddress &sa)
     unsigned int lastHash = SuperFastHashIncremental((const char *) &sa.address.addr4.sin_port,
                                                      sizeof(sockaddr_in::sin_port), sizeof(sockaddr_in::sin_port));
 #if CRABNET_SUPPORT_IPV6 == 1
-    if (sa.address.addr4.sin_family==AF_INET)
-        return SuperFastHashIncremental ((const char*) & sa.address.addr4.sin_addr.s_addr, sizeof(sa.address.addr4.sin_addr.s_addr), lastHash );
+    if (sa.address.addr4.sin_family == AF_INET)
+        return SuperFastHashIncremental((const char *) &sa.address.addr4.sin_addr.s_addr,
+                                        sizeof(sa.address.addr4.sin_addr.s_addr),
+                                        lastHash);
     else
-        return SuperFastHashIncremental ((const char*) & sa.address.addr6.sin6_addr.s6_addr, sizeof(sa.address.addr6.sin6_addr.s6_addr), lastHash );
+        return SuperFastHashIncremental((const char *) &sa.address.addr6.sin6_addr.s6_addr,
+                                        sizeof(sa.address.addr6.sin6_addr.s6_addr),
+                                        lastHash);
 #else
     return SuperFastHashIncremental((const char *) &sa.address.addr4.sin_addr.s_addr, sizeof(sockaddr_in::sin_addr), lastHash);
 #endif
@@ -270,8 +278,8 @@ bool SystemAddress::IsLoopback() const
 #if CRABNET_SUPPORT_IPV6 == 1
     else
     {
-        const static char localhost[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
-        if (memcmp(&address.addr6.sin6_addr, localhost, 16)==0)
+        const static char localhost[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+        if (memcmp(&address.addr6.sin6_addr, localhost, 16) == 0)
             return true;
     }
 #endif
@@ -292,7 +300,7 @@ void SystemAddress::ToString_Old(bool writePort, char *dest, char portDelineator
     strcpy(dest, ntoaStr);
     if (writePort)
     {
-        char portStr[2] {portDelineator, 0};
+        char portStr[2]{portDelineator, 0};
         strcat(dest, portStr);
         Itoa(GetPort(), dest + strlen(dest), 10);
     }
@@ -303,7 +311,7 @@ const char *SystemAddress::ToString(bool writePort, char portDelineator) const
 {
     static unsigned char strIndex = 0;
 #if CRABNET_SUPPORT_IPV6 == 1
-    static char str[8][INET6_ADDRSTRLEN+5+1];
+    static char str[8][INET6_ADDRSTRLEN + 5 + 1];
 #else
     static char str[8][22 + 5 + 1];
 #endif
@@ -316,34 +324,39 @@ const char *SystemAddress::ToString(bool writePort, char portDelineator) const
 void SystemAddress::ToString_New(bool writePort, char *dest, char portDelineator) const
 {
     int ret;
-    (void) ret;
 
-    if (*this==UNASSIGNED_SYSTEM_ADDRESS)
+    if (*this == UNASSIGNED_SYSTEM_ADDRESS)
     {
         strcpy(dest, "UNASSIGNED_SYSTEM_ADDRESS");
         return;
     }
 
-    if (address.addr4.sin_family==AF_INET)
-    {
-        ret=getnameinfo((struct sockaddr *) &address.addr4, sizeof(struct sockaddr_in), dest, 22, NULL, 0, NI_NUMERICHOST);
-    }
+    if (address.addr4.sin_family == AF_INET)
+        ret = getnameinfo((struct sockaddr *) &address.addr4,
+                          sizeof(struct sockaddr_in),
+                          dest,
+                          22,
+                          nullptr,
+                          0,
+                          NI_NUMERICHOST);
     else
-    {
-        ret=getnameinfo((struct sockaddr *) &address.addr6, sizeof(struct sockaddr_in6), dest, INET6_ADDRSTRLEN, NULL, 0, NI_NUMERICHOST);
-    }
-    if (ret!=0)
-    {
-        dest[0]=0;
-    }
+        ret = getnameinfo((struct sockaddr *) &address.addr6,
+                          sizeof(struct sockaddr_in6),
+                          dest,
+                          INET6_ADDRSTRLEN,
+                          nullptr,
+                          0,
+                          NI_NUMERICHOST);
+    if (ret != 0)
+        dest[0] = 0;
 
     if (writePort)
     {
         unsigned char ch[2];
-        ch[0]=portDelineator;
-        ch[1]=0;
-        strcat(dest, (const char*) ch);
-        Itoa(ntohs(address.addr4.sin_port), dest+strlen(dest), 10);
+        ch[0] = portDelineator;
+        ch[1] = 0;
+        strcat(dest, (const char *) ch);
+        Itoa(ntohs(address.addr4.sin_port), dest + strlen(dest), 10);
     }
 
 }
@@ -355,7 +368,7 @@ void SystemAddress::ToString(bool writePort, char *dest, char portDelineator) co
 #if CRABNET_SUPPORT_IPV6 != 1
     ToString_Old(writePort, dest, portDelineator);
 #else
-    ToString_New(writePort,dest,portDelineator);
+    ToString_New(writePort, dest, portDelineator);
 #endif // #if CRABNET_SUPPORT_IPV6!=1
 }
 
@@ -396,9 +409,9 @@ void SystemAddress::FixForIPVersion(const SystemAddress &boundAddressToSocket)
     if (strcmp(str, IPV6_LOOPBACK) == 0 && boundAddressToSocket.GetIPVersion() == 4)
         FromString(IPV4_LOOPBACK, 0, 4);
 #if CRABNET_SUPPORT_IPV6 == 1
-    else if (strcmp(str, IPV4_LOOPBACK) == 0 && boundAddressToSocket.GetIPVersion()==6)
+    else if (strcmp(str, IPV4_LOOPBACK) == 0 && boundAddressToSocket.GetIPVersion() == 6)
     {
-        FromString(IPV6_LOOPBACK,0,6);
+        FromString(IPV6_LOOPBACK, 0, 6);
         // if (boundAddressToSocket.GetIPVersion()==4)
         // {
         // // Some kind of bug with sendto: returns "The requested address is not valid in its context." if loopback doesn't have the same IP address
@@ -500,82 +513,79 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
 #if CRABNET_SUPPORT_IPV6 != 1
     (void) ipVersion;
     return SetBinaryAddress(str, portDelineator);
+    char ipPart[INET_ADDRSTRLEN];
 #else
-    if (str==0)
+    if (str == nullptr)
     {
-        memset(&address,0,sizeof(address));
-        address.addr4.sin_family=AF_INET;
+        memset(&address, 0, sizeof(address));
+        address.addr4.sin_family = AF_INET;
         return true;
     }
-#if CRABNET_SUPPORT_IPV6==1
     char ipPart[INET6_ADDRSTRLEN];
-#else
-    char ipPart[INET_ADDRSTRLEN];
-#endif
     char portPart[32];
-    int i=0,j;
+    int i = 0, j;
 
     // TODO - what about 255.255.255.255?
-    if (ipVersion==4 && strcmp(str, IPV6_LOOPBACK)==0)
+    if (ipVersion == 4 && strcmp(str, IPV6_LOOPBACK) == 0)
+        strcpy(ipPart, IPV4_LOOPBACK);
+    else if (ipVersion == 6 && strcmp(str, IPV4_LOOPBACK) == 0)
     {
-        strcpy(ipPart,IPV4_LOOPBACK);
+        address.addr4.sin_family = AF_INET6;
+        strcpy(ipPart, IPV6_LOOPBACK);
     }
-    else if (ipVersion==6 && strcmp(str, IPV4_LOOPBACK)==0)
+    else if (NonNumericHostString(str) == false)
     {
-        address.addr4.sin_family=AF_INET6;
-        strcpy(ipPart,IPV6_LOOPBACK);
-    }
-    else if (NonNumericHostString(str)==false)
-    {
-        for (; i < sizeof(ipPart) && str[i]!=0 && str[i]!=portDelineator; i++)
+        for (; i < sizeof(ipPart) && str[i] != 0 && str[i] != portDelineator; i++)
         {
-            if ((str[i]<'0' || str[i]>'9') && (str[i]<'a' || str[i]>'f') && (str[i]<'A' || str[i]>'F') && str[i]!='.' && str[i]!=':' && str[i]!='%' && str[i]!='-' && str[i]!='/')
+            if ((str[i] < '0' || str[i] > '9') && (str[i] < 'a' || str[i] > 'f') && (str[i] < 'A' || str[i] > 'F')
+                && str[i] != '.' && str[i] != ':' && str[i] != '%' && str[i] != '-' && str[i] != '/')
                 break;
 
-            ipPart[i]=str[i];
+            ipPart[i] = str[i];
         }
-        ipPart[i]=0;
+        ipPart[i] = 0;
     }
     else
     {
-        strncpy(ipPart,str,sizeof(ipPart));
-        ipPart[sizeof(ipPart)-1]=0;
+        strncpy(ipPart, str, sizeof(ipPart));
+        ipPart[sizeof(ipPart) - 1] = 0;
     }
 
-    j=0;
-    if (str[i]==portDelineator && portDelineator!=0)
+    j = 0;
+    if (str[i] == portDelineator && portDelineator != 0)
     {
         i++;
-        for (; j < sizeof(portPart) && str[i]!=0; i++, j++)
+        for (; j < sizeof(portPart) && str[i] != 0; i++, j++)
         {
-            portPart[j]=str[i];
+            portPart[j] = str[i];
         }
     }
-    portPart[j]=0;
+    portPart[j] = 0;
 
     // needed for getaddrinfo
+#ifdef _WIN32
     WSAStartupSingleton::AddRef();
+#endif
 
     // This could be a domain, or a printable address such as "192.0.2.1" or "2001:db8:63b3:1::3490"
     // I want to convert it to its binary representation
-    addrinfo hints, *servinfo=0;
-    memset(&hints, 0, sizeof hints);
+    addrinfo hints{0}, *servinfo = nullptr;
     hints.ai_socktype = SOCK_DGRAM;
-    if (ipVersion==6)
+    if (ipVersion == 6)
         hints.ai_family = AF_INET6;
-    else if (ipVersion==4)
+    else if (ipVersion == 4)
         hints.ai_family = AF_INET;
     else
         hints.ai_family = AF_UNSPEC;
     getaddrinfo(ipPart, "", &hints, &servinfo);
-    if (servinfo==0)
+    if (servinfo == nullptr)
     {
-        if (ipVersion==6)
+        if (ipVersion == 6)
         {
-            ipVersion=4;
+            ipVersion = 4;
             hints.ai_family = AF_UNSPEC;
             getaddrinfo(ipPart, "", &hints, &servinfo);
-            if (servinfo==0)
+            if (servinfo == 0)
                 return false;
         }
         else
@@ -584,7 +594,7 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
     RakAssert(servinfo);
 
     unsigned short oldPort = address.addr4.sin_port;
-#if CRABNET_SUPPORT_IPV6==1
+#if CRABNET_SUPPORT_IPV6 == 1
     if (servinfo->ai_family == AF_INET)
     {
 //         if (ipVersion==6)
@@ -595,14 +605,14 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
 //         }
 //         else
 //         {
-            address.addr4.sin_family=AF_INET;
-            memcpy(&address.addr4, (struct sockaddr_in *)servinfo->ai_addr,sizeof(struct sockaddr_in));
+        address.addr4.sin_family = AF_INET;
+        memcpy(&address.addr4, (struct sockaddr_in *) servinfo->ai_addr, sizeof(struct sockaddr_in));
 //        }
     }
     else
     {
-        address.addr4.sin_family=AF_INET6;
-        memcpy(&address.addr6, (struct sockaddr_in6 *)servinfo->ai_addr,sizeof(struct sockaddr_in6));
+        address.addr4.sin_family = AF_INET6;
+        memcpy(&address.addr6, (struct sockaddr_in6 *) servinfo->ai_addr, sizeof(struct sockaddr_in6));
     }
 #else
     address.addr4.sin_family=AF_INET4;
@@ -612,19 +622,20 @@ bool SystemAddress::FromString(const char *str, char portDelineator, int ipVersi
     freeaddrinfo(servinfo); // free the linked list
 
     // needed for getaddrinfo
+#ifdef _WIN32
     WSAStartupSingleton::Deref();
+#endif
 
     // PORT
-    if (portPart[0])
+    if (portPart[0] != 0)
     {
-        address.addr4.sin_port=htons((unsigned short) atoi(portPart));
-        debugPort=ntohs(address.addr4.sin_port);
+        address.addr4.sin_port = htons((unsigned short) atoi(portPart));
+        debugPort = ntohs(address.addr4.sin_port);
     }
     else
-        address.addr4.sin_port=oldPort;
+        address.addr4.sin_port = oldPort;
     return true;
 #endif // #if CRABNET_SUPPORT_IPV6!=1
-
 }
 
 bool SystemAddress::FromStringExplicitPort(const char *str, unsigned short port, int ipVersion)
@@ -695,10 +706,10 @@ void RakNetGUID::ToString(char *dest) const
 
 bool RakNetGUID::FromString(const char *source)
 {
-    if (source == 0)
+    if (source == nullptr)
         return false;
 #if   defined(WIN32)
-    g=_strtoui64(source, NULL, 10);
+    g = _strtoui64(source, nullptr, 10);
 #else
     // Changed from g=strtoull(source,0,10); for android
     g = strtoull(source, (char **) nullptr, 10);

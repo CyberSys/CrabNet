@@ -18,6 +18,7 @@
 #if !defined(__native_client__)
 
 #include "Itoa.h"
+#include "Utils/LinuxStrings.h"
 
 void RNS2_Berkley::SetSocketOptions(void)
 {
