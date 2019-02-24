@@ -45,12 +45,6 @@
 #define USE_WAIT_FOR_MULTIPLE_EVENTS
 #endif
 
-/// Uncomment to use RakMemoryOverride for custom memory tracking
-/// See RakMemoryOverride.h. 
-#ifndef _USE_RAK_MEMORY_OVERRIDE
-#define _USE_RAK_MEMORY_OVERRIDE 0
-#endif
-
 /// If defined, OpenSSL is enabled for the class TCPInterface
 /// This is necessary to use the SendEmail class with Google POP servers
 /// Note that OpenSSL carries its own license restrictions that you should be aware of. If you don't agree, don't enable this define
@@ -78,9 +72,7 @@
 
 #ifndef RakAssert
 
-
-
-#if   defined(__native_client__)
+#if defined(__native_client__)
 #define RakAssert(x)
 #else
 #if defined(_DEBUG)
@@ -148,10 +140,6 @@
 
 #ifndef RPC4_GLOBAL_REGISTRATION_MAX_FUNCTION_NAME_LENGTH
 #define RPC4_GLOBAL_REGISTRATION_MAX_FUNCTION_NAME_LENGTH 48
-#endif
-
-#ifndef XBOX_BYPASS_SECURITY
-#define XBOX_BYPASS_SECURITY 1
 #endif
 
 // Controls how many allocations occur at once for the memory pool of incoming datagrams waiting to be transferred between the recvfrom thread and the main update thread
