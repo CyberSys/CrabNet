@@ -708,7 +708,7 @@ bool RakNetGUID::FromString(const char *source)
 {
     if (source == nullptr)
         return false;
-#if   defined(WIN32)
+#if defined(_WIN32)
     g = _strtoui64(source, nullptr, 10);
 #else
     // Changed from g=strtoull(source,0,10); for android
