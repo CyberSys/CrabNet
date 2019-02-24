@@ -36,8 +36,10 @@ option(CRABNET_ENABLE_PVS "Enable PVS Studio Analyzer" FALSE)
 
 option(CRABNET_ENABLE_LIBCAT_SECURITY "Enable secure connection support." FALSE)
 
-include(CmakeIncludes/CmakeMacros.cmake)
-include(PVS-Studio.cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CmakeIncludes)
+
+include(CmakeMacros)
+include(PVS-Studio)
 
 if(MSVC)
     FIXLINKOPTIONS()
