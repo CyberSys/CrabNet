@@ -28,7 +28,7 @@ static const CCTimeType SYN = 10000;
 #include "RakAssert.h"
 #include "RakAlloca.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 // ****************************************************** PUBLIC METHODS ******************************************************
 
@@ -163,7 +163,7 @@ bool CCRakNetSlidingWindow::OnGotPacket(DatagramSequenceNumberType datagramSeque
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
-void CCRakNetSlidingWindow::OnResend(CCTimeType curTime, RakNet::TimeUS nextActionTime)
+void CCRakNetSlidingWindow::OnResend(CCTimeType curTime, CrabNet::TimeUS nextActionTime)
 {
     (void) curTime;
     (void) nextActionTime;

@@ -25,14 +25,14 @@
 #pragma warning( push )
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
-int RakNet::MessageFilterStrComp( char *const &key,char *const &data )
+int CrabNet::MessageFilterStrComp( char *const &key,char *const &data )
 {
     return strcmp(key,data);
 }
 
-int RakNet::FilterSetComp( const int &key, FilterSet * const &data )
+int CrabNet::FilterSetComp( const int &key, FilterSet * const &data )
 {
     if (key < data->filterSetID)
         return -1;
@@ -46,7 +46,7 @@ STATIC_FACTORY_DEFINITIONS(MessageFilter,MessageFilter)
 MessageFilter::MessageFilter()
 {
     autoAddNewConnectionsToFilter = 0;
-    whenLastTimeoutCheck = RakNet::GetTime();
+    whenLastTimeoutCheck = CrabNet::GetTime();
 }
 MessageFilter::~MessageFilter()
 {
@@ -89,7 +89,7 @@ void MessageFilter::SetAllowRPC4(bool allow, const char* uniqueID, int filterSet
         }
     }
 }
-void MessageFilter::SetActionOnDisallowedMessage(bool kickOnDisallowed, bool banOnDisallowed, RakNet::TimeMS banTimeMS, int filterSetID)
+void MessageFilter::SetActionOnDisallowedMessage(bool kickOnDisallowed, bool banOnDisallowed, CrabNet::TimeMS banTimeMS, int filterSetID)
 {
     FilterSet *filterSet = GetFilterSetByID(filterSetID);
     filterSet->kickOnDisallowedMessage=kickOnDisallowed;
@@ -108,7 +108,7 @@ void MessageFilter::SetTimeoutCallback(int filterSetID, void *userData, void (*i
     filterSet->timeoutCallback=invalidMessageCallback;
     filterSet->timeoutUserData=userData;
 }
-void MessageFilter::SetFilterMaxTime(int allowedTimeMS, bool banOnExceed, RakNet::TimeMS banTimeMS, int filterSetID)
+void MessageFilter::SetFilterMaxTime(int allowedTimeMS, bool banOnExceed, CrabNet::TimeMS banTimeMS, int filterSetID)
 {
     FilterSet *filterSet = GetFilterSetByID(filterSetID);
     filterSet->maxMemberTimeMS=allowedTimeMS;
@@ -146,7 +146,7 @@ void MessageFilter::SetSystemFilterSet(AddressOrGUID addressOrGUID, int filterSe
         FilteredSystem filteredSystem;
         filteredSystem.filter = GetFilterSetByID(filterSetID);
     //    filteredSystem.addressOrGUID=addressOrGUID;
-        filteredSystem.timeEnteredThisSet=RakNet::GetTimeMS();
+        filteredSystem.timeEnteredThisSet=CrabNet::GetTimeMS();
     //    systemList.Insert(addressOrGUID, filteredSystem, true);
         systemList.Push(addressOrGUID,filteredSystem);
     }
@@ -155,7 +155,7 @@ void MessageFilter::SetSystemFilterSet(AddressOrGUID addressOrGUID, int filterSe
         if (filterSetID>=0)
         {
             FilterSet *filterSet = GetFilterSetByID(filterSetID);
-            systemList.ItemAtIndex(index).timeEnteredThisSet=RakNet::GetTimeMS();
+            systemList.ItemAtIndex(index).timeEnteredThisSet=CrabNet::GetTimeMS();
             systemList.ItemAtIndex(index).filter=filterSet;
         }
         else
@@ -288,7 +288,7 @@ void MessageFilter::OnInvalidMessage(FilterSet *filterSet, AddressOrGUID systemA
 void MessageFilter::Update(void)
 {
     // Update all timers for all systems.  If those systems' filter sets are expired, take the appropriate action.
-    RakNet::Time curTime = RakNet::GetTime();
+    CrabNet::Time curTime = CrabNet::GetTime();
     if (GreaterThan(curTime - 1000, whenLastTimeoutCheck))
     {
         DataStructures::List< FilteredSystem > itemList;
@@ -378,9 +378,9 @@ void MessageFilter::OnClosedConnection(const SystemAddress &systemAddress, RakNe
     default:
         if (packet->data[0]==ID_TIMESTAMP)
         {
-            if (packet->length<sizeof(MessageID) + sizeof(RakNet::TimeMS))
+            if (packet->length<sizeof(MessageID) + sizeof(CrabNet::TimeMS))
                 return RR_STOP_PROCESSING_AND_DEALLOCATE; // Invalid message
-            messageId=packet->data[sizeof(MessageID) + sizeof(RakNet::TimeMS)];
+            messageId=packet->data[sizeof(MessageID) + sizeof(CrabNet::TimeMS)];
         }
         else
             messageId=packet->data[0];
@@ -396,9 +396,9 @@ void MessageFilter::OnClosedConnection(const SystemAddress &systemAddress, RakNe
         }
         if (packet->data[0]==ID_RPC_PLUGIN)
         {
-            RakNet::BitStream bsIn(packet->data,packet->length,false);
+            CrabNet::BitStream bsIn(packet->data,packet->length,false);
             bsIn.IgnoreBytes(2);
-            RakNet::RakString functionName;
+            CrabNet::RakString functionName;
             bsIn.ReadCompressed(functionName);
             if (systemList.ItemAtIndex(index).filter->allowedRPC4.HasData(functionName)==false)
             {

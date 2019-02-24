@@ -28,7 +28,7 @@
 
 #include <math.h>
 
-using namespace RakNet;
+using namespace CrabNet;
 
 // Can't figure out which library has this function on the PS3
 double Ceil(double d)
@@ -75,8 +75,8 @@ static FILE *fp=0;
 
 BPSTracker::TimeAndValue2::TimeAndValue2():value1(0), time(0) {}
 BPSTracker::TimeAndValue2::~TimeAndValue2() {}
-BPSTracker::TimeAndValue2::TimeAndValue2(RakNet::TimeUS t, uint64_t v1) : value1(v1), time(t) {}
-//BPSTracker::TimeAndValue2::TimeAndValue2(RakNet::TimeUS t, uint64_t v1, uint64_t v2) : time(t), value1(v1), value2(v2) {}
+BPSTracker::TimeAndValue2::TimeAndValue2(CrabNet::TimeUS t, uint64_t v1) : value1(v1), time(t) {}
+//BPSTracker::TimeAndValue2::TimeAndValue2(CrabNet::TimeUS t, uint64_t v1, uint64_t v2) : time(t), value1(v1), value2(v2) {}
 BPSTracker::BPSTracker() {Reset();}
 BPSTracker::~BPSTracker() {}
 //void BPSTracker::Reset() {total1=total2=lastSec1=lastSec2=0; dataQueue.Clear(file,line);}
@@ -95,8 +95,8 @@ uint64_t BPSTracker::GetTotal1(void) const
 }
 //uint64_t BPSTracker::GetTotal2(void) const {return total2;}
 
-// void BPSTracker::ClearExpired2(RakNet::TimeUS time) {
-//     RakNet::TimeUS threshold=time;
+// void BPSTracker::ClearExpired2(CrabNet::TimeUS time) {
+//     CrabNet::TimeUS threshold=time;
 //     if (threshold < 1000000)
 //         return;
 //     threshold-=1000000;
@@ -107,7 +107,7 @@ uint64_t BPSTracker::GetTotal1(void) const
 //         dataQueue.Pop();
 //     }
 // }
-void BPSTracker::ClearExpired1(RakNet::TimeUS time)
+void BPSTracker::ClearExpired1(CrabNet::TimeUS time)
 {
     while (!dataQueue.IsEmpty() &&
            #if CC_TIME_TYPE_BYTES == 8
@@ -147,7 +147,7 @@ struct DatagramHeaderFormat
 
     static unsigned int GetDataHeaderByteLength()
     {
-        //return 2 + 3 + sizeof(RakNet::TimeMS) + sizeof(float)*2;
+        //return 2 + 3 + sizeof(CrabNet::TimeMS) + sizeof(float)*2;
         return 2 + 3 +
                #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
                sizeof(RakNetTimeMS) +
@@ -155,7 +155,7 @@ struct DatagramHeaderFormat
                sizeof(float) * 1;
     }
 
-    void Serialize(RakNet::BitStream *b)
+    void Serialize(CrabNet::BitStream *b)
     {
         // Not endian safe
         // RakAssert(GetDataHeaderByteLength()==sizeof(DatagramHeaderFormat));
@@ -169,7 +169,7 @@ struct DatagramHeaderFormat
             b->Write(hasBAndAS);
             b->AlignWriteToByteBoundary();
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
-            RakNet::TimeMS timeMSLow=(RakNet::TimeMS) sourceSystemTime&0xFFFFFFFF; b->Write(timeMSLow);
+            CrabNet::TimeMS timeMSLow=(CrabNet::TimeMS) sourceSystemTime&0xFFFFFFFF; b->Write(timeMSLow);
 #endif
             if (hasBAndAS)
             {
@@ -191,13 +191,13 @@ struct DatagramHeaderFormat
             b->Write(needsBAndAs);
             b->AlignWriteToByteBoundary();
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
-            RakNet::TimeMS timeMSLow=(RakNet::TimeMS) sourceSystemTime&0xFFFFFFFF; b->Write(timeMSLow);
+            CrabNet::TimeMS timeMSLow=(CrabNet::TimeMS) sourceSystemTime&0xFFFFFFFF; b->Write(timeMSLow);
 #endif
             b->Write(datagramNumber);
         }
     }
 
-    void Deserialize(RakNet::BitStream *b)
+    void Deserialize(CrabNet::BitStream *b)
     {
         // Not endian safe
         // b->ReadAlignedBytes((unsigned char*) this, sizeof(DatagramHeaderFormat));
@@ -212,7 +212,7 @@ struct DatagramHeaderFormat
             b->Read(hasBAndAS);
             b->AlignReadToByteBoundary();
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
-            RakNet::TimeMS timeMS; b->Read(timeMS); sourceSystemTime=(CCTimeType) timeMS;
+            CrabNet::TimeMS timeMS; b->Read(timeMS); sourceSystemTime=(CCTimeType) timeMS;
 #endif
             if (hasBAndAS)
             {
@@ -232,7 +232,7 @@ struct DatagramHeaderFormat
                 b->Read(needsBAndAs);
                 b->AlignReadToByteBoundary();
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
-                RakNet::TimeMS timeMS; b->Read(timeMS); sourceSystemTime=(CCTimeType) timeMS;
+                CrabNet::TimeMS timeMS; b->Read(timeMS); sourceSystemTime=(CCTimeType) timeMS;
 #endif
                 b->Read(datagramNumber);
             }
@@ -256,9 +256,9 @@ struct DatagramHeaderFormat
 static int waitFlag = -1;
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
-int RakNet::SplitPacketChannelComp(SplitPacketIdType const &key, SplitPacketChannel *const &data)
+int CrabNet::SplitPacketChannelComp(SplitPacketIdType const &key, SplitPacketChannel *const &data)
 {
 #if PREALLOCATE_LARGE_MESSAGES == 1
     if (key < data->returnedPacket->splitPacketId)
@@ -370,14 +370,14 @@ void ReliabilityLayer::Reset(bool resetVariables, int MTUSize, bool _useSecurity
 #else
         (void) _useSecurity;
 #endif // LIBCAT_SECURITY
-        congestionManager.Init(RakNet::GetTimeUS(), MTUSize - UDP_HEADER_SIZE);
+        congestionManager.Init(CrabNet::GetTimeUS(), MTUSize - UDP_HEADER_SIZE);
     }
 }
 
 //-------------------------------------------------------------------------------------------------------
 // Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable packet
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::SetTimeoutTime(RakNet::TimeMS time)
+void ReliabilityLayer::SetTimeoutTime(CrabNet::TimeMS time)
 {
     timeoutTime = time;
 }
@@ -385,7 +385,7 @@ void ReliabilityLayer::SetTimeoutTime(RakNet::TimeMS time)
 //-------------------------------------------------------------------------------------------------------
 // Returns the value passed to SetTimeoutTime. or the default if it was never called
 //-------------------------------------------------------------------------------------------------------
-RakNet::TimeMS ReliabilityLayer::GetTimeoutTime(void)
+CrabNet::TimeMS ReliabilityLayer::GetTimeoutTime(void)
 {
     return timeoutTime;
 }
@@ -402,7 +402,7 @@ void ReliabilityLayer::InitializeVariables(void)
     memset(&statistics, 0, sizeof(statistics));
     memset(&heapIndexOffsets, 0, sizeof(heapIndexOffsets));
 
-    statistics.connectionStartTime = RakNet::GetTimeUS();
+    statistics.connectionStartTime = CrabNet::GetTimeUS();
     splitPacketId = 0;
     elapsedTimeSinceLastUpdate = 0;
     throughputCapCountdown = 0;
@@ -410,7 +410,7 @@ void ReliabilityLayer::InitializeVariables(void)
     internalOrderIndex = 0;
     timeToNextUnreliableCull = 0;
     unreliableLinkedListHead = 0;
-    lastUpdateTime = RakNet::GetTimeUS();
+    lastUpdateTime = CrabNet::GetTimeUS();
     bandwidthExceededStatistic = false;
     remoteSystemTime = 0;
     unreliableTimeout = 0;
@@ -424,7 +424,7 @@ void ReliabilityLayer::InitializeVariables(void)
     timeOfLastContinualSend = 0;
 
     // timeResendQueueNonEmpty = 0;
-    timeLastDatagramArrived = RakNet::GetTimeMS();
+    timeLastDatagramArrived = CrabNet::GetTimeMS();
     //    packetlossThisSample=false;
     //    backoffThisSample=0;
     //    packetlossThisSampleResendCount=0;
@@ -663,7 +663,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
         return true;
     }
 
-    timeLastDatagramArrived = RakNet::GetTimeMS();
+    timeLastDatagramArrived = CrabNet::GetTimeMS();
 
     //    CCTimeType time;
 //    bool indexFound;
@@ -682,9 +682,9 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
     }
 #endif
 
-    RakNet::BitStream socketData((unsigned char *) buffer, length,
+    CrabNet::BitStream socketData((unsigned char *) buffer, length,
                                  false); // Convert the incoming data to a bitstream for easy parsing
-    //    time = RakNet::GetTimeUS();
+    //    time = CrabNet::GetTimeUS();
 
     // Set to the current time if it is not zero, and we get incoming data
     //     if (timeResendQueueNonEmpty!=0)
@@ -705,7 +705,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
         // datagramNumber=dhf.datagramNumber;
 
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
-        RakNet::TimeMS timeMSLow=(RakNet::TimeMS) timeRead&0xFFFFFFFF;
+        CrabNet::TimeMS timeMSLow=(CrabNet::TimeMS) timeRead&0xFFFFFFFF;
         CCTimeType rtt = timeMSLow-dhf.sourceSystemTime;
 #if CC_TIME_TYPE_BYTES==4
         if (rtt > 10000)
@@ -717,7 +717,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
             rtt=(CCTimeType) congestionManager.GetRTT();
         }
         //    RakAssert(rtt < 500000);
-        //    printf("%i ", (RakNet::TimeMS)(rtt/1000));
+        //    printf("%i ", (CrabNet::TimeMS)(rtt/1000));
         ackPing=rtt;
 #endif
 
@@ -912,7 +912,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
                 messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket,
                                                                           receivePacketCount,
                                                                           systemAddress,
-                                                                          (RakNet::TimeMS) (timeRead / (CCTimeType) 1000),
+                                                                          (CrabNet::TimeMS) (timeRead / (CCTimeType) 1000),
                                                                           false);
 #endif
             }
@@ -1278,7 +1278,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
                 // ___________________
                 BitStream bitStream(internalPacket->data, BITS_TO_BYTES(internalPacket->dataBitLength), false);
                 unsigned int receivedPacketNumber;
-                RakNet::Time receivedTime;
+                CrabNet::Time receivedTime;
                 unsigned char streamNumber;
                 PacketReliability reliability;
                 // ___________________
@@ -1723,12 +1723,12 @@ void ReliabilityLayer::Update(RakNetSocket2 *s, SystemAddress &systemAddress, in
 {
     (void) MTUSize;
 
-    RakNet::TimeMS timeMs;
+    CrabNet::TimeMS timeMs;
 #if CC_TIME_TYPE_BYTES == 4
     time /= 1000;
     timeMs = time;
 #else
-    timeMs = (RakNet::TimeMS) (time / (CCTimeType) 1000);
+    timeMs = (CrabNet::TimeMS) (time / (CCTimeType) 1000);
 #endif
 
 #ifdef _DEBUG
@@ -1819,7 +1819,7 @@ void ReliabilityLayer::Update(RakNetSocket2 *s, SystemAddress &systemAddress, in
     }
 
 
-    // Due to thread vagarities and the way I store the time to avoid slow calls to RakNet::GetTime
+    // Due to thread vagarities and the way I store the time to avoid slow calls to CrabNet::GetTime
     // time may be less than lastAck
     if (statistics.messagesInResendBuffer != 0 && AckTimeout(timeMs))
     {
@@ -2166,7 +2166,7 @@ void ReliabilityLayer::Update(RakNetSocket2 *s, SystemAddress &systemAddress, in
 
             // More accurate time to reset here
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
-            dhf.sourceSystemTime=RakNet::GetTimeUS();
+            dhf.sourceSystemTime=CrabNet::GetTimeUS();
 #endif
             updateBitStream.Reset();
             dhf.Serialize(&updateBitStream);
@@ -2241,7 +2241,7 @@ void ReliabilityLayer::Update(RakNetSocket2 *s, SystemAddress &systemAddress, in
 //-------------------------------------------------------------------------------------------------------
 // Writes a bitstream to the socket
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::SendBitStream(RakNetSocket2 *s, SystemAddress &systemAddress, RakNet::BitStream *bitStream,
+void ReliabilityLayer::SendBitStream(RakNetSocket2 *s, SystemAddress &systemAddress, CrabNet::BitStream *bitStream,
                                      RakNetRandom *rnr, CCTimeType currentTime)
 {
     (void) systemAddress;
@@ -2269,7 +2269,7 @@ void ReliabilityLayer::SendBitStream(RakNetSocket2 *s, SystemAddress &systemAddr
         dat->extraSocketOptions = extraSocketOptions;
         delayList.PushAtHead(dat, 0);
 #else
-        RakNet::TimeMS delay = minExtraPing;
+        CrabNet::TimeMS delay = minExtraPing;
         if (extraPingVariance > 0)
             delay += (randomMT() % extraPingVariance);
         if (delay > 0)
@@ -2278,7 +2278,7 @@ void ReliabilityLayer::SendBitStream(RakNetSocket2 *s, SystemAddress &systemAddr
             memcpy(dat->data, (char *) bitStream->GetData(), length);
             dat->s = s;
             dat->length = length;
-            dat->sendTime = RakNet::GetTimeMS() + delay;
+            dat->sendTime = CrabNet::GetTimeMS() + delay;
             for (unsigned int i = 0; i < delayList.Size(); i++)
             {
                 if (dat->sendTime < delayList[i]->sendTime)
@@ -2361,8 +2361,8 @@ bool ReliabilityLayer::AreAcksWaiting(void)
 }
 
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::ApplyNetworkSimulator(double _packetloss, RakNet::TimeMS _minExtraPing,
-                                             RakNet::TimeMS _extraPingVariance)
+void ReliabilityLayer::ApplyNetworkSimulator(double _packetloss, CrabNet::TimeMS _minExtraPing,
+                                             CrabNet::TimeMS _extraPingVariance)
 {
 #ifdef _DEBUG
     packetloss = _packetloss;
@@ -2384,7 +2384,7 @@ void ReliabilityLayer::SetSplitMessageProgressInterval(int interval)
 }
 
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::SetUnreliableTimeout(RakNet::TimeMS timeoutMS)
+void ReliabilityLayer::SetUnreliableTimeout(CrabNet::TimeMS timeoutMS)
 {
 #if CC_TIME_TYPE_BYTES == 4
     unreliableTimeout = timeoutMS;
@@ -2411,7 +2411,7 @@ bool ReliabilityLayer::IsSendThrottled(int MTUSize)
         if (resendList[i])
             resendListDataSize += resendList[i]->dataBitLength;
     }
-    unsigned packetsWaiting = 1 + ((BITS_TO_BYTES(resendListDataSize)) / (MTUSize - UDP_HEADER_SIZE - 10)); // 10 to roughly estimate the raknet header
+    unsigned packetsWaiting = 1 + ((BITS_TO_BYTES(resendListDataSize)) / (MTUSize - UDP_HEADER_SIZE - 10)); // 10 to roughly estimate the crabnet header
 
     return packetsWaiting >= windowSize;
     */
@@ -2452,7 +2452,7 @@ ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSequenced(cons
 #if CC_TIME_TYPE_BYTES == 4
         messageHandlerList[messageHandlerIndex]->OnAck(messageNumber, systemAddress, time);
 #else
-        messageHandlerList[messageHandlerIndex]->OnAck(messageNumber, systemAddress, (RakNet::TimeMS) (time / (CCTimeType) 1000));
+        messageHandlerList[messageHandlerIndex]->OnAck(messageNumber, systemAddress, (CrabNet::TimeMS) (time / (CCTimeType) 1000));
 #endif
     }
 
@@ -2578,7 +2578,7 @@ BitSize_t ReliabilityLayer::GetMessageHeaderLengthBits(const InternalPacket *con
 //-------------------------------------------------------------------------------------------------------
 // Parse an internalPacket and create a bitstream to represent this data
 //-------------------------------------------------------------------------------------------------------
-BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket(RakNet::BitStream *bitStream,
+BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket(CrabNet::BitStream *bitStream,
                                                                const InternalPacket *const internalPacket,
                                                                CCTimeType curTime)
 {
@@ -2651,7 +2651,7 @@ BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket(RakNet::BitStream
 //-------------------------------------------------------------------------------------------------------
 // Parse a bitstream and create an internal packet to represent this data
 //-------------------------------------------------------------------------------------------------------
-InternalPacket *ReliabilityLayer::CreateInternalPacketFromBitStream(RakNet::BitStream *bitStream, CCTimeType time)
+InternalPacket *ReliabilityLayer::CreateInternalPacketFromBitStream(CrabNet::BitStream *bitStream, CCTimeType time)
 {
     if (bitStream->GetNumberOfUnreadBits() < (int) sizeof(MessageNumberType) * 8)
         return nullptr; // leftover bits
@@ -3334,7 +3334,7 @@ void ReliabilityLayer::KillConnection(void)
 //-------------------------------------------------------------------------------------------------------
 RakNetStatistics *ReliabilityLayer::GetStatistics(RakNetStatistics *rns)
 {
-    RakNet::TimeUS time = RakNet::GetTimeUS();
+    CrabNet::TimeUS time = CrabNet::GetTimeUS();
     uint64_t uint64Denominator;
     double doubleDenominator;
 
@@ -3382,7 +3382,7 @@ unsigned int ReliabilityLayer::GetResendListDataSize(void) const
 }
 
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::AckTimeout(RakNet::Time curTime)
+bool ReliabilityLayer::AckTimeout(CrabNet::Time curTime)
 {
     // I check timeLastDatagramArrived-curTime because with threading it is possible that timeLastDatagramArrived is
     // slightly greater than curTime, in which case this is NOT an ack timeout
@@ -3434,11 +3434,11 @@ void ReliabilityLayer::PushPacket(CCTimeType time, InternalPacket *internalPacke
 // This code tells me how much time elapses between when you send, and when the message actually goes out
 //     if (internalPacket->data[0]==0)
 //     {
-//         RakNet::TimeMS t;
-//         RakNet::BitStream bs(internalPacket->data+1,sizeof(t),false);
+//         CrabNet::TimeMS t;
+//         CrabNet::BitStream bs(internalPacket->data+1,sizeof(t),false);
 //         bs.Read(t);
-//         RakNet::TimeMS curTime=RakNet::GetTimeMS();
-//         RakNet::TimeMS diff = curTime-t;
+//         CrabNet::TimeMS curTime=CrabNet::GetTimeMS();
+//         CrabNet::TimeMS diff = curTime-t;
 //     }
 
     congestionManager.OnSendBytes(time, BITS_TO_BYTES(internalPacket->dataBitLength) +

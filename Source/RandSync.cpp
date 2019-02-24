@@ -14,7 +14,7 @@
 #include <limits>
 #include <limits.h>
 
-namespace RakNet
+namespace CrabNet
 {
 
     RakNetRandomSync::RakNetRandomSync()
@@ -90,13 +90,13 @@ namespace RakNet
         callCount = i;
     }
 
-    void RakNetRandomSync::SerializeConstruction(RakNet::BitStream *constructionBitstream)
+    void RakNetRandomSync::SerializeConstruction(CrabNet::BitStream *constructionBitstream)
     {
         constructionBitstream->Write(seed);
         constructionBitstream->Write(callCount);
     }
 
-    bool RakNetRandomSync::DeserializeConstruction(RakNet::BitStream *constructionBitstream)
+    bool RakNetRandomSync::DeserializeConstruction(CrabNet::BitStream *constructionBitstream)
     {
         uint32_t _seed;
         uint32_t _skipValues;
@@ -107,12 +107,12 @@ namespace RakNet
         return success;
     }
 
-    void RakNetRandomSync::Serialize(RakNet::BitStream *outputBitstream)
+    void RakNetRandomSync::Serialize(CrabNet::BitStream *outputBitstream)
     {
         outputBitstream->Write(callCount);
     }
 
-    void RakNetRandomSync::Deserialize(RakNet::BitStream *outputBitstream)
+    void RakNetRandomSync::Deserialize(CrabNet::BitStream *outputBitstream)
     {
         uint32_t _callCount;
         outputBitstream->Read(_callCount);
@@ -140,7 +140,7 @@ namespace RakNet
         callCount += count;
     }
 
-} // namespace RakNet
+} // namespace CrabNet
 
 /*
 RakNetRandomSync r1, r2;

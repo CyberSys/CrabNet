@@ -17,7 +17,7 @@
 #include "MessageIdentifiers.h"
 #include "GetTime.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 
 enum TeamManagerOperations
@@ -518,7 +518,7 @@ bool TM_TeamMember::DeserializeConstruction(TeamManager *teamManager, BitStream 
             rt.requested = world->GetTeamByNetworkID(teamRequestedId);
             RakAssert(rt.requested);
         }
-        rt.whenRequested=RakNet::GetTime();
+        rt.whenRequested=CrabNet::GetTime();
         rt.requestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
         if (
             (hasTeamToLeave==false || (hasTeamToLeave==true && rt.teamToLeave!=0)) &&
@@ -681,7 +681,7 @@ void TM_TeamMember::UpdateTeamsRequestedToAny(void)
 {
     teamsRequested.Clear(true);
     joinTeamType=JOIN_ANY_AVAILABLE_TEAM;
-    whenJoinAnyRequested=RakNet::GetTime();
+    whenJoinAnyRequested=CrabNet::GetTime();
     joinAnyRequestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
 }
 
@@ -703,7 +703,7 @@ void TM_TeamMember::AddToRequestedTeams(TM_Team *teamToJoin)
     rt.isTeamSwitch=false;
     rt.requested=teamToJoin;
     rt.teamToLeave=0;
-    rt.whenRequested=RakNet::GetTime();
+    rt.whenRequested=CrabNet::GetTime();
     rt.requestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
     teamsRequested.Push(rt );
 }
@@ -718,7 +718,7 @@ void TM_TeamMember::AddToRequestedTeams(TM_Team *teamToJoin, TM_Team *teamToLeav
     rt.isTeamSwitch=true;
     rt.requested=teamToJoin;
     rt.teamToLeave=teamToLeave;
-    rt.whenRequested=RakNet::GetTime();
+    rt.whenRequested=CrabNet::GetTime();
     rt.requestIndex=world->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
     teamsRequested.Push(rt );
 }
@@ -1648,7 +1648,7 @@ void TM_World::GetSortedJoinRequests(DataStructures::OrderedList<TM_World::JoinR
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TM_World::BroadcastToParticipants(RakNet::BitStream *bsOut, RakNetGUID exclusionGuid)
+void TM_World::BroadcastToParticipants(CrabNet::BitStream *bsOut, RakNetGUID exclusionGuid)
 {
     for (unsigned int i=0; i < participants.Size(); i++)
     {
@@ -1749,7 +1749,7 @@ int TM_World::JoinSpecificTeam(TM_TeamMember *teamMember, TM_Team *team, bool is
 
                     // Send ID_TEAM_BALANCER_TEAM_ASSIGNED to all, for swapped member
                     // Calling function sends ID_RUN_RemoveFromTeamsRequestedAndAddTeam which pushes ID_TEAM_BALANCER_TEAM_ASSIGNED for teamMember
-                    RakNet::BitStream bitStream;
+                    CrabNet::BitStream bitStream;
                     bitStream.WriteCasted<MessageID>(ID_TEAM_BALANCER_TEAM_ASSIGNED);
                     teamManager->EncodeTeamAssigned(&bitStream, swappingMember);
                     BroadcastToParticipants(&bitStream, UNASSIGNED_CRABNET_GUID);
@@ -1905,7 +1905,7 @@ void TeamManager::SetTopology(TMTopology _topology)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::EncodeTeamFull(RakNet::BitStream *bitStream, TM_TeamMember *teamMember, TM_Team *team)
+void TeamManager::EncodeTeamFull(CrabNet::BitStream *bitStream, TM_TeamMember *teamMember, TM_Team *team)
 {
     bitStream->WriteCasted<MessageID>(ID_TEAM_BALANCER_REQUESTED_TEAM_FULL);
     EncodeTeamFullOrLocked(bitStream, teamMember, team);
@@ -1924,7 +1924,7 @@ void TeamManager::DecomposeTeamFull(Packet *packet,
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::EncodeTeamLocked(RakNet::BitStream *bitStream, TM_TeamMember *teamMember, TM_Team *team)
+void TeamManager::EncodeTeamLocked(CrabNet::BitStream *bitStream, TM_TeamMember *teamMember, TM_Team *team)
 {
     bitStream->WriteCasted<MessageID>(ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED);
     EncodeTeamFullOrLocked(bitStream, teamMember, team);
@@ -1932,7 +1932,7 @@ void TeamManager::EncodeTeamLocked(RakNet::BitStream *bitStream, TM_TeamMember *
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::EncodeTeamFullOrLocked(RakNet::BitStream *bitStream, TM_TeamMember *teamMember, TM_Team *team)
+void TeamManager::EncodeTeamFullOrLocked(CrabNet::BitStream *bitStream, TM_TeamMember *teamMember, TM_Team *team)
 {
     bitStream->Write(teamMember->world->GetWorldId());
     bitStream->Write(teamMember->GetNetworkID());
@@ -1945,7 +1945,7 @@ void TeamManager::EncodeTeamFullOrLocked(RakNet::BitStream *bitStream, TM_TeamMe
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::DecomposeTeamFullOrLocked(RakNet::BitStream *bsIn, TM_World **world, TM_TeamMember **teamMember, TM_Team **team,
+void TeamManager::DecomposeTeamFullOrLocked(CrabNet::BitStream *bsIn, TM_World **world, TM_TeamMember **teamMember, TM_Team **team,
                                uint16_t &currentMembers, uint16_t &memberLimitIncludingBalancing, bool &balancingIsActive, JoinPermissions &joinPermissions)
 {
     WorldId worldId;
@@ -1985,7 +1985,7 @@ void TeamManager::DecomposeTeamLocked(Packet *packet,
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::EncodeTeamAssigned(RakNet::BitStream *bitStream, TM_TeamMember *teamMember)
+void TeamManager::EncodeTeamAssigned(CrabNet::BitStream *bitStream, TM_TeamMember *teamMember)
 {
     bitStream->Write(teamMember->world->GetWorldId());
     bitStream->Write(teamMember->GetNetworkID());
@@ -2000,7 +2000,7 @@ void TeamManager::EncodeTeamAssigned(RakNet::BitStream *bitStream, TM_TeamMember
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::ProcessTeamAssigned(RakNet::BitStream *bsIn)
+void TeamManager::ProcessTeamAssigned(CrabNet::BitStream *bsIn)
 {
     TM_World *world;
     TM_TeamMember *teamMember;
@@ -2037,7 +2037,7 @@ void TeamManager::DecodeTeamAssigned(Packet *packet, TM_World **world, TM_TeamMe
     WorldId worldId;
     NetworkID teamMemberId;
 
-    RakNet::BitStream bsIn(packet->data, packet->length, false);
+    CrabNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(sizeof(MessageID));
     bsIn.Read(worldId);
     bsIn.Read(teamMemberId);
@@ -2059,7 +2059,7 @@ void TeamManager::DecodeTeamCancelled(Packet *packet, TM_World **world, TM_TeamM
     WorldId worldId;
     NetworkID teamMemberId;
 
-    RakNet::BitStream bsIn(packet->data, packet->length, false);
+    CrabNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(sizeof(MessageID));
     bsIn.Read(worldId);
     bsIn.Read(teamMemberId);
@@ -2282,7 +2282,7 @@ void TeamManager::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::Send( const RakNet::BitStream * bitStream, const AddressOrGUID systemIdentifier, bool broadcast )
+void TeamManager::Send( const CrabNet::BitStream * bitStream, const AddressOrGUID systemIdentifier, bool broadcast )
 {
     SendUnified(bitStream,HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, broadcast);
 }
@@ -2314,7 +2314,7 @@ void TeamManager::RemoveFromTeamsRequestedAndAddTeam(TM_TeamMember *teamMember, 
 void TeamManager::PushTeamAssigned(TM_TeamMember *teamMember)
 {
     // Push ID_TEAM_BALANCER_TEAM_ASSIGNED locally
-    RakNet::BitStream bitStream;
+    CrabNet::BitStream bitStream;
     bitStream.WriteCasted<MessageID>(ID_TEAM_BALANCER_TEAM_ASSIGNED);
     EncodeTeamAssigned(&bitStream, teamMember);
 
@@ -2323,7 +2323,7 @@ void TeamManager::PushTeamAssigned(TM_TeamMember *teamMember)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::PushBitStream(RakNet::BitStream *bitStream)
+void TeamManager::PushBitStream(CrabNet::BitStream *bitStream)
 {
     Packet *p = AllocatePacketUnified(bitStream->GetNumberOfBytesUsed());
     memcpy(p->data, bitStream->GetData(), bitStream->GetNumberOfBytesUsed());
@@ -2414,7 +2414,7 @@ void TeamManager::OnJoinAnyTeam(Packet *packet, TM_World *world)
             // Send to sender ID_TEAM_BALANCER_TEAM_ASSIGNED
             if (packet->guid!=GetMyGUIDUnified())
             {
-                RakNet::BitStream bitStream;
+                CrabNet::BitStream bitStream;
                 bitStream.WriteCasted<MessageID>(ID_TEAM_BALANCER_TEAM_ASSIGNED);
                 EncodeTeamAssigned(&bitStream, teamMember);
                 SendUnified(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
@@ -2533,7 +2533,7 @@ void TeamManager::OnJoinRequestedTeam(Packet *packet, TM_World *world)
             // Send to sender ID_TEAM_BALANCER_TEAM_ASSIGNED
             if (packet->guid!=GetMyGUIDUnified())
             {
-                RakNet::BitStream bitStream;
+                CrabNet::BitStream bitStream;
                 bitStream.WriteCasted<MessageID>(ID_TEAM_BALANCER_TEAM_ASSIGNED);
                 EncodeTeamAssigned(&bitStream, teamMember);
                 SendUnified(&bitStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);

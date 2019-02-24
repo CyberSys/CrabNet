@@ -14,7 +14,7 @@
 #include "RakNetDefines.h"
 #include "RakSleep.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 #if   defined(_WIN32)
     #include "WindowsIncludes.h"

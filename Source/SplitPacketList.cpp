@@ -5,19 +5,19 @@
 #include "SplitPacketList.h"
 #include <ReliabilityLayer.h>
 
-RakNet::SplitPacketList::SplitPacketList() : splitPacketId(0), inUse(0), reliabilityLayer(nullptr)
+CrabNet::SplitPacketList::SplitPacketList() : splitPacketId(0), inUse(0), reliabilityLayer(nullptr)
 {
 
 }
 
-void RakNet::SplitPacketList::prealloc(unsigned count, SplitPacketIdType splitPacketId)
+void CrabNet::SplitPacketList::prealloc(unsigned count, SplitPacketIdType splitPacketId)
 {
     RakAssert(count > 0);
     this->splitPacketId = splitPacketId;
     packets.resize(count);
 }
 
-bool RakNet::SplitPacketList::insert(RakNet::InternalPacket *internalPacket)
+bool CrabNet::SplitPacketList::insert(CrabNet::InternalPacket *internalPacket)
 {
     RakAssert(internalPacket->splitPacketIndex < size());
     RakAssert(splitPacketId == internalPacket->splitPacketId);
@@ -35,23 +35,23 @@ bool RakNet::SplitPacketList::insert(RakNet::InternalPacket *internalPacket)
     return false;
 }
 
-unsigned RakNet::SplitPacketList::size() const
+unsigned CrabNet::SplitPacketList::size() const
 {
     return static_cast<unsigned>(packets.size());
 }
 
-unsigned RakNet::SplitPacketList::count() const
+unsigned CrabNet::SplitPacketList::count() const
 {
     return inUse;
 }
 
-RakNet::InternalPacket *RakNet::SplitPacketList::operator[](unsigned n)
+CrabNet::InternalPacket *CrabNet::SplitPacketList::operator[](unsigned n)
 {
     RakAssert(n < size());
     return packets[n];
 }
 
-RakNet::SplitPacketIdType RakNet::SplitPacketList::id() const
+CrabNet::SplitPacketIdType CrabNet::SplitPacketList::id() const
 {
     return splitPacketId;
 }

@@ -24,7 +24,7 @@ void main_sockets(void)
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = 0;
 	int j = bind(sock,(struct sockaddr *) &serverAddr,sizeof(serverAddr));
-	struct hostent * phe = gethostbyname( "masterserver2.raknet.com" );
+	struct hostent * phe = gethostbyname( "masterserver2.crabnet.com" );
 	memcpy( &serverAddr.sin_addr.s_addr, phe->h_addr_list[ 0 ], sizeof( struct in_addr ) );
 	serverAddr.sin_port        = htons(80);
 	connect(sock, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
@@ -32,7 +32,7 @@ void main_sockets(void)
 		"POST /testServer HTTP/1.1\r\n"
 		"Content-Length: 83\r\n"
 		"Content-Type: text/plain; charset=UTF-8\r\n"
-		"Host: masterserver2.raknet.com\r\n"
+		"Host: masterserver2.crabnet.com\r\n"
 		"Connection: Keep-Alive\r\n"
 		"\r\n"
 		"{'__gameId': 'myGame','__clientReqId': '0','__timeoutSec': '60','mapname': 'myMap'}\r\n";
@@ -104,7 +104,7 @@ void main_RakNet_Get(void)
 	tcp->Start(0, 64);
 	tcp->AttachPlugin(httpConnection2);
 
-	// tcp->Connect("masterserver2.raknet.com", MASTER_SERVER_PORT, true);
+	// tcp->Connect("masterserver2.crabnet.com", MASTER_SERVER_PORT, true);
 	RakString rsRequest = RakString::FormatForGET(
 		RakString(MASTER_SERVER_ADDRESS "/testServer?__gameId=MotoGP_13"));
 	httpConnection2->TransmitRequest(rsRequest, MASTER_SERVER_ADDRESS, MASTER_SERVER_PORT);

@@ -182,7 +182,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="RakNet"
+			Name="CrabNet"
 			>
 			<File
 				RelativePath="..\..\Source\_FindFirst.cpp"

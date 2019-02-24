@@ -14,7 +14,7 @@
 #include "PacketFileLogger.h"
 #include "GetTime.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 PacketFileLogger::PacketFileLogger()
 {
@@ -33,9 +33,9 @@ void PacketFileLogger::StartLog(const char *filenamePrefix)
     // Open file for writing
     char filename[256];
     if (filenamePrefix)
-        sprintf(filename, "%s_%i.csv", filenamePrefix, (int) RakNet::GetTimeMS());
+        sprintf(filename, "%s_%i.csv", filenamePrefix, (int) CrabNet::GetTimeMS());
     else
-        sprintf(filename, "PacketLog_%i.csv", (int) RakNet::GetTimeMS());
+        sprintf(filename, "PacketLog_%i.csv", (int) CrabNet::GetTimeMS());
     packetLogFile = fopen(filename, "wt");
     LogHeader();
     if (packetLogFile)

@@ -18,7 +18,7 @@
 #include "RakPeerInterface.h"
 #include "Rand.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 enum TeamBalancerOperations
 {

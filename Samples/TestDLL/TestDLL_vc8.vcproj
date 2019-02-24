@@ -170,7 +170,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(SolutionDir)Lib\RakNet.dll"
+				CommandLine="copy $(SolutionDir)Lib\CrabNet.dll"
 			/>
 		</Configuration>
 	</Configurations>

@@ -18,7 +18,7 @@
 #include <unistd.h>
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 SignaledEvent::SignaledEvent()
 {

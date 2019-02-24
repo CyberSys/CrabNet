@@ -120,7 +120,7 @@ void RNS2_NativeClient::onRecvFrom(void* pData, int32_t dataSize)
     }
 
     recvStruct->bytesRead=dataSize;
-    recvStruct->timeRead=RakNet::GetTimeUS();
+    recvStruct->timeRead=CrabNet::GetTimeUS();
 
 
     PP_NetAddress_Private addr;

@@ -17,7 +17,7 @@
 #include "RakPeerInterface.h"
 #include "BitStream.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(RelayPlugin,RelayPlugin)
 

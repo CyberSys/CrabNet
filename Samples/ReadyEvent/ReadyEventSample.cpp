@@ -251,7 +251,7 @@ int main(void)
 			rakPeer->DeallocatePacket(p);
 		}		
 
-		// Keep raknet threads responsive
+		// Keep crabnet threads responsive
 		RakSleep(30);
 	}
 	

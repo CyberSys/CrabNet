@@ -32,10 +32,10 @@
 #define INVALID_SOCKET -1
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 static const unsigned short DEFAULT_MAX_FORWARD_ENTRIES = 64;
 
-namespace RakNet
+namespace CrabNet
 {
     RAK_THREAD_DECLARATION(UpdateUDPForwarderGlobal);
 }
@@ -45,7 +45,7 @@ UDPForwarder::ForwardEntry::ForwardEntry()
     timeoutOnNoDataMS = 0;
     socketFamily = 0;
     socket = INVALID_SOCKET;
-    timeLastDatagramForwarded = RakNet::GetTimeMS();
+    timeLastDatagramForwarded = CrabNet::GetTimeMS();
     addr1Confirmed = UNASSIGNED_SYSTEM_ADDRESS;
     addr2Confirmed = UNASSIGNED_SYSTEM_ADDRESS;
 }
@@ -84,7 +84,7 @@ void UDPForwarder::Startup()
 
     isRunning++;
 
-    int errorCode = RakNet::RakThread::Create(UpdateUDPForwarderGlobal, this);
+    int errorCode = CrabNet::RakThread::Create(UpdateUDPForwarderGlobal, this);
 
     if (errorCode != 0)
     {
@@ -123,7 +123,7 @@ int UDPForwarder::GetUsedForwardEntries() const
 }
 UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source,
                                                  SystemAddress destination,
-                                                 RakNet::TimeMS timeoutOnNoDataMS,
+                                                 CrabNet::TimeMS timeoutOnNoDataMS,
                                                  const char *forceHostAddress,
                                                  unsigned short socketFamily,
                                                  unsigned short *forwardingPort,
@@ -184,7 +184,7 @@ void UDPForwarder::StopForwarding(SystemAddress source, SystemAddress destinatio
     sfs->source = source;
     stopForwardingCommands.Push(sfs);
 }
-void UDPForwarder::RecvFrom(RakNet::TimeMS curTime, ForwardEntry *forwardEntry)
+void UDPForwarder::RecvFrom(CrabNet::TimeMS curTime, ForwardEntry *forwardEntry)
 {
 #ifndef __native_client__
     char data[MAXIMUM_MTU_SIZE];
@@ -352,7 +352,7 @@ void UDPForwarder::UpdateUDPForwarder()
 #endif
     */
 
-    RakNet::TimeMS curTime = RakNet::GetTimeMS();
+    CrabNet::TimeMS curTime = CrabNet::GetTimeMS();
 
     StartForwardingInputStruct *sfis;
     StartForwardingOutputStruct sfos;
@@ -530,7 +530,7 @@ void UDPForwarder::UpdateUDPForwarder()
     }
 }
 
-namespace RakNet
+namespace CrabNet
 {
     RAK_THREAD_DECLARATION(UpdateUDPForwarderGlobal)
     {
@@ -552,6 +552,6 @@ namespace RakNet
         udpForwarder->threadRunning--;
         return nullptr;
     }
-} // namespace RakNet
+} // namespace CrabNet
 
 #endif // #if _CRABNET_SUPPORT_FileOperations==1

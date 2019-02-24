@@ -26,7 +26,7 @@
 #pragma warning( push )
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(RakNetTransport2,RakNetTransport2)
 
@@ -65,7 +65,7 @@ void RakNetTransport2::Send( SystemAddress systemAddress, const char *data, ... 
     va_end(ap);
     text[REMOTE_MAX_TEXT_INPUT-1]=0;
 
-    RakNet::BitStream str;
+    CrabNet::BitStream str;
     str.Write((MessageID)ID_TRANSPORT_STRING);
     str.Write(text, (int) strlen(text));
     str.Write((unsigned char) 0); // Null terminate the string

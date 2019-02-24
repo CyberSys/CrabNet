@@ -2,7 +2,7 @@ Project: Directory delta transfer
 
 Description: Tests / demonstrates the DirectoryDeltaTransfer plugin. It's a patching system without dependencies on a database.
 
-Dependencies: FileListTransfer plugin (included with RakNet)
+Dependencies: FileListTransfer plugin (included with CrabNet)
 
 Related projects: None
 

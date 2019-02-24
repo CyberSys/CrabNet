@@ -25,7 +25,7 @@
 #pragma warning( push )
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(RakNetCommandParser,RakNetCommandParser)
 
@@ -49,7 +49,7 @@ RakNetCommandParser::RakNetCommandParser()
     RegisterCommand(2,"IsConnected","( );");
     RegisterCommand(1,"GetIndexFromSystemAddress","( const SystemAddress systemAddress );");
     RegisterCommand(1,"GetSystemAddressFromIndex","( unsigned int index );");
-    RegisterCommand(2,"AddToBanList","( const char *IP, RakNet::TimeMS milliseconds=0 );");
+    RegisterCommand(2,"AddToBanList","( const char *IP, CrabNet::TimeMS milliseconds=0 );");
     RegisterCommand(1,"RemoveFromBanList","( const char *IP );");
     RegisterCommand(0,"ClearBanList","( void );");
     RegisterCommand(1,"IsBanned","( const char *IP );");
@@ -62,7 +62,7 @@ RakNetCommandParser::RakNetCommandParser()
     RegisterCommand(2,"SetOfflinePingResponse","( const char *data, const unsigned int length );");
     RegisterCommand(0,"GetInternalID","( void ) const;");
     RegisterCommand(1,"GetExternalID","( const SystemAddress target ) const;");
-    RegisterCommand(2,"SetTimeoutTime","( RakNet::TimeMS timeMS, const SystemAddress target );");
+    RegisterCommand(2,"SetTimeoutTime","( CrabNet::TimeMS timeMS, const SystemAddress target );");
 //    RegisterCommand(1,"SetMTUSize","( int size );");
     RegisterCommand(0,"GetMTUSize","( void ) const;");
     RegisterCommand(0,"GetNumberOfAddresses","( void );");
@@ -76,7 +76,7 @@ RakNetCommandParser::RakNetCommandParser()
 RakNetCommandParser::~RakNetCommandParser()
 {
 }
-void RakNetCommandParser::SetRakPeerInterface(RakNet::RakPeerInterface *rakPeer)
+void RakNetCommandParser::SetRakPeerInterface(CrabNet::RakPeerInterface *rakPeer)
 {
     peer=rakPeer;
 }
@@ -90,7 +90,7 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
 
     if (strcmp(command, "Startup")==0)
     {
-        RakNet::SocketDescriptor socketDescriptor((unsigned short)atoi(parameterList[1]), parameterList[2]);
+        CrabNet::SocketDescriptor socketDescriptor((unsigned short)atoi(parameterList[1]), parameterList[2]);
         ReturnResult(peer->Startup((unsigned short)atoi(parameterList[0]), &socketDescriptor, 1), command, transport, systemAddress);
     }
     else if (strcmp(command, "InitializeSecurity")==0)
@@ -127,7 +127,7 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
     }
     else if (strcmp(command, "Connect")==0)
     {
-        ReturnResult(peer->Connect(parameterList[0], (unsigned short)atoi(parameterList[1]),parameterList[2],atoi(parameterList[3]))==RakNet::CONNECTION_ATTEMPT_STARTED, command, transport, systemAddress);
+        ReturnResult(peer->Connect(parameterList[0], (unsigned short)atoi(parameterList[1]),parameterList[2],atoi(parameterList[3]))==CrabNet::CONNECTION_ATTEMPT_STARTED, command, transport, systemAddress);
     }
     else if (strcmp(command, "Disconnect")==0)
     {
@@ -292,13 +292,13 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
 }
 const char *RakNetCommandParser::GetName(void) const
 {
-    return "RakNet";
+    return "CrabNet";
 }
 void RakNetCommandParser::SendHelp(TransportInterface *transport, const SystemAddress &systemAddress)
 {
     if (peer)
     {
-        transport->Send(systemAddress, "The RakNet parser provides mirror functions to RakPeer\r\n");
+        transport->Send(systemAddress, "The CrabNet parser provides mirror functions to RakPeer\r\n");
         transport->Send(systemAddress, "SystemAddresss take two parameters: send <BinaryAddress> <Port>.\r\n");
         transport->Send(systemAddress, "For bool, send 1 or 0.\r\n");
     }

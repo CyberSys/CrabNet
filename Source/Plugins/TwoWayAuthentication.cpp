@@ -26,7 +26,7 @@ static const int STRENGTHENING_FACTOR = 256;
 #include <cat/crypt/hash/Skein.hpp>
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 enum NegotiationIdentifiers
 {
@@ -40,7 +40,7 @@ TwoWayAuthentication::NonceGenerator::~NonceGenerator()
 {
     Clear();
 }
-void TwoWayAuthentication::NonceGenerator::GetNonce(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], unsigned short *requestId, RakNet::AddressOrGUID remoteSystem)
+void TwoWayAuthentication::NonceGenerator::GetNonce(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], unsigned short *requestId, CrabNet::AddressOrGUID remoteSystem)
 {
     TwoWayAuthentication::NonceAndRemoteSystemRequest *narsr =new TwoWayAuthentication::NonceAndRemoteSystemRequest;
     narsr->remoteSystem=remoteSystem;
@@ -48,14 +48,14 @@ void TwoWayAuthentication::NonceGenerator::GetNonce(char nonce[TWO_WAY_AUTHENTIC
     narsr->requestId=nextRequestId++;
     *requestId=narsr->requestId;
     memcpy(nonce,narsr->nonce,TWO_WAY_AUTHENTICATION_NONCE_LENGTH);
-    narsr->whenGenerated=RakNet::GetTime();
+    narsr->whenGenerated=CrabNet::GetTime();
     generatedNonces.Push(narsr);
 }
 void TwoWayAuthentication::NonceGenerator::GenerateNonce(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH])
 {
     fillBufferMT(nonce,TWO_WAY_AUTHENTICATION_NONCE_LENGTH);
 }
-bool TwoWayAuthentication::NonceGenerator::GetNonceById(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], unsigned short requestId, RakNet::AddressOrGUID remoteSystem, bool popIfFound)
+bool TwoWayAuthentication::NonceGenerator::GetNonceById(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], unsigned short requestId, CrabNet::AddressOrGUID remoteSystem, bool popIfFound)
 {
     unsigned int i;
     for (i=0; i < generatedNonces.Size(); i++)
@@ -87,7 +87,7 @@ void TwoWayAuthentication::NonceGenerator::Clear(void)
         delete generatedNonces[i];
     generatedNonces.Clear(true);
 }
-void TwoWayAuthentication::NonceGenerator::ClearByAddress(RakNet::AddressOrGUID remoteSystem)
+void TwoWayAuthentication::NonceGenerator::ClearByAddress(CrabNet::AddressOrGUID remoteSystem)
 {
     unsigned int i=0;
     while (i < generatedNonces.Size())
@@ -103,7 +103,7 @@ void TwoWayAuthentication::NonceGenerator::ClearByAddress(RakNet::AddressOrGUID 
         }
     }
 }
-void TwoWayAuthentication::NonceGenerator::Update(RakNet::Time curTime)
+void TwoWayAuthentication::NonceGenerator::Update(CrabNet::Time curTime)
 {
     if (generatedNonces.Size()>0 && GreaterThan(curTime-5000, generatedNonces[0]->whenGenerated))
     {
@@ -113,14 +113,14 @@ void TwoWayAuthentication::NonceGenerator::Update(RakNet::Time curTime)
 }
 TwoWayAuthentication::TwoWayAuthentication()
 {
-    whenLastTimeoutCheck=RakNet::GetTime();
-    seedMT(RakNet::GetTimeMS());
+    whenLastTimeoutCheck=CrabNet::GetTime();
+    seedMT(CrabNet::GetTimeMS());
 }
 TwoWayAuthentication::~TwoWayAuthentication()
 {
     Clear();
 }
-bool TwoWayAuthentication::AddPassword(RakNet::RakString identifier, RakNet::RakString password)
+bool TwoWayAuthentication::AddPassword(CrabNet::RakString identifier, CrabNet::RakString password)
 {
     if (password.IsEmpty())
         return false;
@@ -137,13 +137,13 @@ bool TwoWayAuthentication::AddPassword(RakNet::RakString identifier, RakNet::Rak
     passwords.Push(identifier, password);
     return true;
 }
-bool TwoWayAuthentication::Challenge(RakNet::RakString identifier, AddressOrGUID remoteSystem)
+bool TwoWayAuthentication::Challenge(CrabNet::RakString identifier, AddressOrGUID remoteSystem)
 {
     DataStructures::HashIndex skhi = passwords.GetIndexOf(identifier.C_String());
     if (skhi.IsInvalid())
         return false;
 
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     bsOut.Write((MessageID)ID_TWO_WAY_AUTHENTICATION_NEGOTIATION);
     bsOut.Write((MessageID)ID_NONCE_REQUEST);
     SendUnified(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,remoteSystem,false);
@@ -151,7 +151,7 @@ bool TwoWayAuthentication::Challenge(RakNet::RakString identifier, AddressOrGUID
     PendingChallenge pc;
     pc.identifier=identifier;
     pc.remoteSystem=remoteSystem;
-    pc.time=RakNet::GetTime();
+    pc.time=CrabNet::GetTime();
     pc.sentHash=false;
     outgoingChallenges.Push(pc);
 
@@ -159,7 +159,7 @@ bool TwoWayAuthentication::Challenge(RakNet::RakString identifier, AddressOrGUID
 }
 void TwoWayAuthentication::Update(void)
 {
-    RakNet::Time curTime = RakNet::GetTime();
+    CrabNet::Time curTime = CrabNet::GetTime();
     nonceGenerator.Update(curTime);
     if (GreaterThan(curTime - CHALLENGE_MINIMUM_TIMEOUT, whenLastTimeoutCheck))
     {
@@ -260,9 +260,9 @@ void TwoWayAuthentication::Clear(void)
     passwords.Clear();
     nonceGenerator.Clear();
 }
-void TwoWayAuthentication::PushToUser(MessageID messageId, RakNet::RakString password, RakNet::AddressOrGUID remoteSystem)
+void TwoWayAuthentication::PushToUser(MessageID messageId, CrabNet::RakString password, CrabNet::AddressOrGUID remoteSystem)
 {
-    RakNet::BitStream output;
+    CrabNet::BitStream output;
     output.Write(messageId);
     if (password.IsEmpty()==false)
         output.Write(password);
@@ -276,14 +276,14 @@ void TwoWayAuthentication::PushToUser(MessageID messageId, RakNet::RakString pas
 }
 void TwoWayAuthentication::OnNonceRequest(Packet *packet)
 {
-    RakNet::BitStream bsIn(packet->data, packet->length, false);
+    CrabNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(sizeof(MessageID)*2);
 
     char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH];
     unsigned short requestId;
     nonceGenerator.GetNonce(nonce,&requestId,packet);
 
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     bsOut.Write((MessageID)ID_TWO_WAY_AUTHENTICATION_NEGOTIATION);
     bsOut.Write((MessageID)ID_NONCE_REPLY);
     bsOut.Write(requestId);
@@ -292,7 +292,7 @@ void TwoWayAuthentication::OnNonceRequest(Packet *packet)
 }
 void TwoWayAuthentication::OnNonceReply(Packet *packet)
 {
-    RakNet::BitStream bsIn(packet->data, packet->length, false);
+    CrabNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(sizeof(MessageID)*2);
 
     char thierNonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH];
@@ -313,14 +313,14 @@ void TwoWayAuthentication::OnNonceReply(Packet *packet)
             DataStructures::HashIndex skhi = passwords.GetIndexOf(outgoingChallenges[i].identifier.C_String());
             if (skhi.IsInvalid()==false)
             {
-                RakNet::RakString password = passwords.ItemAtIndex(skhi);
+                CrabNet::RakString password = passwords.ItemAtIndex(skhi);
 
                 // Hash their nonce with password and reply
                 char hashedNonceAndPw[HASHED_NONCE_AND_PW_LENGTH];
                 Hash(thierNonce, password, hashedNonceAndPw);
 
                 // Send
-                RakNet::BitStream bsOut;
+                CrabNet::BitStream bsOut;
                 bsOut.Write((MessageID)ID_TWO_WAY_AUTHENTICATION_NEGOTIATION);
                 bsOut.Write((MessageID)ID_HASHED_NONCE_AND_PASSWORD);
                 bsOut.Write(requestId);
@@ -335,13 +335,13 @@ void TwoWayAuthentication::OnNonceReply(Packet *packet)
 }
 PluginReceiveResult TwoWayAuthentication::OnHashedNonceAndPassword(Packet *packet)
 {
-    RakNet::BitStream bsIn(packet->data, packet->length, false);
+    CrabNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(sizeof(MessageID)*2);
 
     char remoteHashedNonceAndPw[HASHED_NONCE_AND_PW_LENGTH];
     unsigned short requestId;
     bsIn.Read(requestId);
-    RakNet::RakString passwordIdentifier;
+    CrabNet::RakString passwordIdentifier;
     bsIn.Read(passwordIdentifier);
     bsIn.ReadAlignedBytes((unsigned char *) remoteHashedNonceAndPw,HASHED_NONCE_AND_PW_LENGTH);
 
@@ -358,7 +358,7 @@ PluginReceiveResult TwoWayAuthentication::OnHashedNonceAndPassword(Packet *packe
         if (memcmp(hashedThisNonceAndPw, remoteHashedNonceAndPw,HASHED_NONCE_AND_PW_LENGTH)==0)
         {
             // Pass
-            RakNet::BitStream bsOut;
+            CrabNet::BitStream bsOut;
             bsOut.Write((MessageID)ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_SUCCESS);
             bsOut.WriteAlignedBytes((const unsigned char*) usedNonce,TWO_WAY_AUTHENTICATION_NONCE_LENGTH);
             bsOut.WriteAlignedBytes((const unsigned char*) remoteHashedNonceAndPw,HASHED_NONCE_AND_PW_LENGTH);
@@ -375,7 +375,7 @@ PluginReceiveResult TwoWayAuthentication::OnHashedNonceAndPassword(Packet *packe
     // Incoming failure, modify arrived packet header to tell user
     packet->data[0]=(MessageID) ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_FAILURE;
 
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     bsOut.Write((MessageID)ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_FAILURE);
     bsOut.WriteAlignedBytes((const unsigned char*) usedNonce,TWO_WAY_AUTHENTICATION_NONCE_LENGTH);
     bsOut.WriteAlignedBytes((const unsigned char*) remoteHashedNonceAndPw,HASHED_NONCE_AND_PW_LENGTH);
@@ -386,19 +386,19 @@ PluginReceiveResult TwoWayAuthentication::OnHashedNonceAndPassword(Packet *packe
 }
 void TwoWayAuthentication::OnPasswordResult(Packet *packet)
 {
-    RakNet::BitStream bsIn(packet->data, packet->length, false);
+    CrabNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(sizeof(MessageID)*1);
     char usedNonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH];
     bsIn.ReadAlignedBytes((unsigned char *)usedNonce,TWO_WAY_AUTHENTICATION_NONCE_LENGTH);
     char hashedNonceAndPw[HASHED_NONCE_AND_PW_LENGTH];
     bsIn.ReadAlignedBytes((unsigned char *)hashedNonceAndPw,HASHED_NONCE_AND_PW_LENGTH);
-    RakNet::RakString passwordIdentifier;
+    CrabNet::RakString passwordIdentifier;
     bsIn.Read(passwordIdentifier);
 
     DataStructures::HashIndex skhi = passwords.GetIndexOf(passwordIdentifier.C_String());
     if (skhi.IsInvalid()==false)
     {
-        RakNet::RakString password = passwords.ItemAtIndex(skhi);
+        CrabNet::RakString password = passwords.ItemAtIndex(skhi);
         char testHash[HASHED_NONCE_AND_PW_LENGTH];
         Hash(usedNonce, password, testHash);
         if (memcmp(testHash,hashedNonceAndPw,HASHED_NONCE_AND_PW_LENGTH)==0)
@@ -421,7 +421,7 @@ void TwoWayAuthentication::OnPasswordResult(Packet *packet)
         }
     }
 }
-void TwoWayAuthentication::Hash(char thierNonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], RakNet::RakString password, char out[HASHED_NONCE_AND_PW_LENGTH])
+void TwoWayAuthentication::Hash(char thierNonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], CrabNet::RakString password, char out[HASHED_NONCE_AND_PW_LENGTH])
 {
 #ifdef LIBCAT_SECURITY
     cat::Skein hash;

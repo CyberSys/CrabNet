@@ -22,7 +22,7 @@
 #include "RakAssert.h"
 #include "RakAlloca.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 static const double UNSET_TIME_US = -1;
 static const double CWND_MIN_THRESHOLD = 2.0;
@@ -386,7 +386,7 @@ CCTimeType CCRakNetUDT::GetRTOForRetransmission(unsigned char timesSent) const
     return ret;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-void CCRakNetUDT::OnResend(CCTimeType curTime, RakNet::TimeUS nextActionTime)
+void CCRakNetUDT::OnResend(CCTimeType curTime, CrabNet::TimeUS nextActionTime)
 {
     (void) curTime;
 

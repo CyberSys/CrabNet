@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include "Itoa.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 //DataStructures::MemoryPool<RakString::SharedString> RakString::pool;
 RakString::SharedString RakString::emptyString = {0, 0, 0, (char *) "", (char *) "", ""};
@@ -33,7 +33,7 @@ class RakStringCleanup
 public:
     ~RakStringCleanup()
     {
-        RakNet::RakString::FreeMemoryNoMutex();
+        CrabNet::RakString::FreeMemoryNoMutex();
     }
 };
 
@@ -45,7 +45,7 @@ SimpleMutex &GetPoolMutex()
     return poolMutex;
 }
 
-int RakNet::RakString::RakStringComp(RakString const &key, RakString const &data)
+int CrabNet::RakString::RakStringComp(RakString const &key, RakString const &data)
 {
     return key.StrCmp(data);
 }
@@ -303,7 +303,7 @@ bool RakString::operator!=(char *str) const
     return strcmp(sharedString->c_str, str) != 0;
 }
 
-const RakNet::RakString operator+(const RakNet::RakString &lhs, const RakNet::RakString &rhs)
+const CrabNet::RakString operator+(const CrabNet::RakString &lhs, const CrabNet::RakString &rhs)
 {
     if (lhs.IsEmpty() && rhs.IsEmpty())
         return RakString(&RakString::emptyString);
@@ -469,12 +469,12 @@ void RakString::SetChar(unsigned index, unsigned char c)
     sharedString->c_str[index] = c;
 }
 
-void RakString::SetChar(unsigned index, RakNet::RakString s)
+void RakString::SetChar(unsigned index, CrabNet::RakString s)
 {
     RakAssert(index < GetLength());
     Clone();
-    RakNet::RakString firstHalf = SubStr(0, index);
-    RakNet::RakString secondHalf = SubStr(index + 1, (unsigned int) -1);
+    CrabNet::RakString firstHalf = SubStr(0, index);
+    CrabNet::RakString secondHalf = SubStr(index + 1, (unsigned int) -1);
     *this = firstHalf;
     *this += s;
     *this += secondHalf;
@@ -556,9 +556,9 @@ void RakString::FromWideChar(const wchar_t *source)
                           NULL );                // Don't care about this flag
 
 }
-RakNet::RakString RakString::FromWideChar_S(const wchar_t *source)
+CrabNet::RakString RakString::FromWideChar_S(const wchar_t *source)
 {
-    RakNet::RakString rs;
+    CrabNet::RakString rs;
     rs.FromWideChar(source);
     return rs;
 }
@@ -854,7 +854,7 @@ bool RakString::IsEmailAddress(void) const
     return dotCount != 0;
 }
 
-RakNet::RakString &RakString::URLEncode(void)
+CrabNet::RakString &RakString::URLEncode(void)
 {
     RakString result;
     size_t strLen = strlen(sharedString->c_str);
@@ -887,7 +887,7 @@ RakNet::RakString &RakString::URLEncode(void)
     return *this;
 }
 
-RakNet::RakString &RakString::URLDecode(void)
+CrabNet::RakString &RakString::URLDecode(void)
 {
     RakString result;
     size_t strLen = strlen(sharedString->c_str);
@@ -933,7 +933,7 @@ RakNet::RakString &RakString::URLDecode(void)
     return *this;
 }
 
-void RakString::SplitURI(RakNet::RakString &header, RakNet::RakString &domain, RakNet::RakString &path)
+void RakString::SplitURI(CrabNet::RakString &header, CrabNet::RakString &domain, CrabNet::RakString &path)
 {
     header.Clear();
     domain.Clear();
@@ -979,7 +979,7 @@ void RakString::SplitURI(RakNet::RakString &header, RakNet::RakString &domain, R
     pathOutput[outputIndex] = 0;
 }
 
-RakNet::RakString &RakString::SQLEscape()
+CrabNet::RakString &RakString::SQLEscape()
 {
     size_t strLen = GetLength();
     int escapedCharacterCount = 0;
@@ -1012,13 +1012,13 @@ RakNet::RakString &RakString::SQLEscape()
     return *this;
 }
 
-RakNet::RakString
+CrabNet::RakString
 RakString::FormatForPUTOrPost(const char *type, const char *uri, const char *contentType, const char *body, const char *extraHeaders)
 {
     RakString out;
     RakString host;
     RakString remotePath;
-    RakNet::RakString header;
+    CrabNet::RakString header;
     RakString uriRs = uri;
     uriRs.SplitURI(header, host, remotePath);
 
@@ -1074,8 +1074,8 @@ RakString RakString::FormatForGET(const char *uri, const char *extraHeaders)
     RakString out;
     RakString host;
     RakString remotePath;
-    RakNet::RakString header;
-    RakNet::RakString uriRs = uri;
+    CrabNet::RakString header;
+    CrabNet::RakString uriRs = uri;
 
     uriRs.SplitURI(header, host, remotePath);
     if (host.IsEmpty() || remotePath.IsEmpty())
@@ -1106,8 +1106,8 @@ RakString RakString::FormatForDELETE(const char *uri, const char *extraHeaders)
     RakString out;
     RakString host;
     RakString remotePath;
-    RakNet::RakString header;
-    RakNet::RakString uriRs = uri;
+    CrabNet::RakString header;
+    CrabNet::RakString uriRs = uri;
 
     uriRs.SplitURI(header, host, remotePath);
     if (host.IsEmpty() || remotePath.IsEmpty())
@@ -1136,12 +1136,12 @@ RakString RakString::FormatForDELETE(const char *uri, const char *extraHeaders)
     return out;
 }
 
-RakNet::RakString &RakString::MakeFilePath()
+CrabNet::RakString &RakString::MakeFilePath()
 {
     if (IsEmpty())
         return *this;
 
-    RakNet::RakString fixedString = *this;
+    CrabNet::RakString fixedString = *this;
     fixedString.Clone();
     for (int i = 0; fixedString.sharedString->c_str[i]; i++)
     {
@@ -1394,7 +1394,7 @@ void RakString::Assign(const char *str, va_list ap)
     }
 }
 
-RakNet::RakString RakString::Assign(const char *str, size_t pos, size_t n)
+CrabNet::RakString RakString::Assign(const char *str, size_t pos, size_t n)
 {
     Clone();
 
@@ -1418,9 +1418,9 @@ RakNet::RakString RakString::Assign(const char *str, size_t pos, size_t n)
     return (*this);
 }
 
-RakNet::RakString RakString::NonVariadic(const char *str)
+CrabNet::RakString RakString::NonVariadic(const char *str)
 {
-    return RakNet::RakString(str);
+    return CrabNet::RakString(str);
 }
 
 unsigned long RakString::ToInteger(const char *str)
@@ -1544,7 +1544,7 @@ void RakString::UnlockMutex()
 #include <string>
 #include "GetTime.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 int main(void)
 {
@@ -1591,72 +1591,72 @@ int main(void)
     DataStructures::List<char*> referenceStringList;
     char *c;
     unsigned i;
-    RakNet::TimeMS beforeReferenceList, beforeRakString, beforeStdString, afterStdString;
+    CrabNet::TimeMS beforeReferenceList, beforeRakString, beforeStdString, afterStdString;
 
     unsigned loop;
     for (loop=0; loop<2; loop++)
     {
-        beforeReferenceList=RakNet::GetTimeMS();
+        beforeReferenceList=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
         {
-            c = RakNet::OP_NEW_ARRAY<char >(56 );
+            c = CrabNet::OP_NEW_ARRAY<char >(56 );
             strcpy(c, "Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
             referenceStringList.Insert(c);
         }
-        beforeRakString=RakNet::GetTimeMS();
+        beforeRakString=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
             rakStringList.Insert("Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
-        beforeStdString=RakNet::GetTimeMS();
+        beforeStdString=CrabNet::GetTimeMS();
 
         for (i=0; i < repeatCount; i++)
             stdStringList.Insert("Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
-        afterStdString=RakNet::GetTimeMS();
+        afterStdString=CrabNet::GetTimeMS();
         CRABNET_DEBUG_PRINTF("Insertion 1 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
-        beforeReferenceList=RakNet::GetTimeMS();
+        beforeReferenceList=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
         {
             delete[] referenceStringList[0];
             referenceStringList.RemoveAtIndex(0);
         }
-        beforeRakString=RakNet::GetTimeMS();
+        beforeRakString=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
             rakStringList.RemoveAtIndex(0);
-        beforeStdString=RakNet::GetTimeMS();
+        beforeStdString=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
             stdStringList.RemoveAtIndex(0);
-        afterStdString=RakNet::GetTimeMS();
+        afterStdString=CrabNet::GetTimeMS();
         CRABNET_DEBUG_PRINTF("RemoveHead Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
-        beforeReferenceList=RakNet::GetTimeMS();
+        beforeReferenceList=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
         {
-            c = RakNet::OP_NEW_ARRAY<char >(56 );
+            c = CrabNet::OP_NEW_ARRAY<char >(56 );
             strcpy(c, "Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
             referenceStringList.Insert(0);
         }
-        beforeRakString=RakNet::GetTimeMS();
+        beforeRakString=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
             rakStringList.Insert("Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
-        beforeStdString=RakNet::GetTimeMS();
+        beforeStdString=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
             stdStringList.Insert("Aalsdkj alsdjf laksdjf ;lasdfj ;lasjfd");
-        afterStdString=RakNet::GetTimeMS();
+        afterStdString=CrabNet::GetTimeMS();
         CRABNET_DEBUG_PRINTF("Insertion 2 Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
-        beforeReferenceList=RakNet::GetTimeMS();
+        beforeReferenceList=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
         {
             delete[] referenceStringList[referenceStringList.Size()-1];
             referenceStringList.RemoveAtIndex(referenceStringList.Size()-1);
         }
-        beforeRakString=RakNet::GetTimeMS();
+        beforeRakString=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
             rakStringList.RemoveAtIndex(rakStringList.Size()-1);
-        beforeStdString=RakNet::GetTimeMS();
+        beforeStdString=CrabNet::GetTimeMS();
         for (i=0; i < repeatCount; i++)
             stdStringList.RemoveAtIndex(stdStringList.Size()-1);
-        afterStdString=RakNet::GetTimeMS();
+        afterStdString=CrabNet::GetTimeMS();
         CRABNET_DEBUG_PRINTF("RemoveTail Ref=%i Rak=%i, Std=%i\n", beforeRakString-beforeReferenceList, beforeStdString-beforeRakString, afterStdString-beforeStdString);
 
     }

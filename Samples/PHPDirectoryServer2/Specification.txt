@@ -1,4 +1,4 @@
-RakNet is using a PHP page to hold listings of running games. For example, I might run a server whose name is "MyServer" with the game mode "Deathmatch" and I want people to know that this server is running. Other people would connect to this webpage to download the list of running servers, in which case you would return those two fields to them.
+CrabNet is using a PHP page to hold listings of running games. For example, I might run a server whose name is "MyServer" with the game mode "Deathmatch" and I want people to know that this server is running. Other people would connect to this webpage to download the list of running servers, in which case you would return those two fields to them.
 
 General requirements:
 

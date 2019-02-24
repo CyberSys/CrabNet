@@ -30,7 +30,7 @@
 #pragma warning( push )
 #endif
 
-namespace RakNet
+namespace CrabNet
 {
 
 struct FLR_MemoryBlock
@@ -60,9 +60,9 @@ struct FileListReceiver
 
 };
 
-} // namespace RakNet
+} // namespace CrabNet
 
-using namespace RakNet;
+using namespace CrabNet;
 
 FileListReceiver::FileListReceiver() {filesReceived=0; setTotalDownloadedLength=0; partLength=1; DataStructures::Map<unsigned int, FLR_MemoryBlock>::IMPLEMENT_DEFAULT_COMPARISON();}
 FileListReceiver::~FileListReceiver() {
@@ -146,13 +146,13 @@ unsigned short FileListTransfer::SetupReceive(FileListTransferCBInterface *handl
     return oldId;
 }
 
-void FileListTransfer::Send(FileList *fileList, RakNet::RakPeerInterface *rakPeer, SystemAddress recipient, unsigned short setID, PacketPriority priority, char orderingChannel, IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize)
+void FileListTransfer::Send(FileList *fileList, CrabNet::RakPeerInterface *rakPeer, SystemAddress recipient, unsigned short setID, PacketPriority priority, char orderingChannel, IncrementalReadInterface *_incrementalReadInterface, unsigned int _chunkSize)
 {
     for (unsigned int flpcIndex=0; flpcIndex < fileListProgressCallbacks.Size(); flpcIndex++)
         fileList->AddCallback(fileListProgressCallbacks[flpcIndex]);
 
     unsigned int i, totalLength;
-    RakNet::BitStream outBitstream;
+    CrabNet::BitStream outBitstream;
     bool sendReference;
     const char *dataBlocks[2];
     int lengths[2];
@@ -282,7 +282,7 @@ bool FileListTransfer::DecodeSetHeader(Packet *packet)
 {
     bool anythingToWrite=false;
     unsigned short setID;
-    RakNet::BitStream inBitStream(packet->data, packet->length, false);
+    CrabNet::BitStream inBitStream(packet->data, packet->length, false);
     inBitStream.IgnoreBits(8);
     inBitStream.Read(setID);
     FileListReceiver *fileListReceiver;
@@ -347,7 +347,7 @@ bool FileListTransfer::DecodeSetHeader(Packet *packet)
 bool FileListTransfer::DecodeFile(Packet *packet, bool isTheFullFile)
 {
     FileListTransferCBInterface::OnFileStruct onFileStruct;
-    RakNet::BitStream inBitStream(packet->data, packet->length, false);
+    CrabNet::BitStream inBitStream(packet->data, packet->length, false);
     inBitStream.IgnoreBits(8);
 
     onFileStruct.senderSystemAddress=packet->systemAddress;
@@ -679,7 +679,7 @@ void FileListTransfer::Update(void)
 }
 void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
 {
-    RakNet::BitStream refPushAck;
+    CrabNet::BitStream refPushAck;
     if (isTheFullFile==false)
     {
         // 12/23/09 Why do I care about ID_DOWNLOAD_PROGRESS for reference pushes?
@@ -688,7 +688,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
     }
 
     FileListTransferCBInterface::OnFileStruct onFileStruct;
-    RakNet::BitStream inBitStream(packet->data, packet->length, false);
+    CrabNet::BitStream inBitStream(packet->data, packet->length, false);
     inBitStream.IgnoreBits(8);
 
     unsigned int partCount=0;
@@ -791,7 +791,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
         else
         {
             // In here mb.flrMemoryBlock is null
-            // This means the first block explicitly deallocated the memory, and no blocks will be permanently held by RakNet
+            // This means the first block explicitly deallocated the memory, and no blocks will be permanently held by CrabNet
             fps.iriDataChunk=(char*) inBitStream.GetData()+BITS_TO_BYTES(inBitStream.GetReadOffset());
         }
 
@@ -914,7 +914,7 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
 
     return;
 }
-namespace RakNet
+namespace CrabNet
 {
 
 /*
@@ -948,7 +948,7 @@ int SendIRIToAddressCB(FileListTransfer::ThreadData threadData, bool *returnOutp
     const char *dataBlocks[2];
     int lengths[2];
     unsigned int smallFileTotalSize=0;
-    RakNet::BitStream outBitstream;
+    CrabNet::BitStream outBitstream;
     unsigned int ftpIndex;
 
     fileListTransfer->fileToPushRecipientListMutex.Lock();
@@ -1120,7 +1120,7 @@ void FileListTransfer::SendIRIToAddress(SystemAddress systemAddress, unsigned sh
 }
 void FileListTransfer::OnReferencePushAck(Packet *packet)
 {
-    RakNet::BitStream inBitStream(packet->data, packet->length, false);
+    CrabNet::BitStream inBitStream(packet->data, packet->length, false);
     inBitStream.IgnoreBits(8);
     unsigned short setId;
     inBitStream.Read(setId);

@@ -1,5 +1,5 @@
 #include "RakPeerInterface.h"
-using namespace RakNet;
+using namespace CrabNet;
 
 #if defined(_WIN32)
 
@@ -8,18 +8,18 @@ using namespace RakNet;
 
 uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 {
-    uint64_t g=RakNet::GetTimeUS();
+    uint64_t g=CrabNet::GetTimeUS();
 
-    RakNet::TimeUS lastTime, thisTime;
+    CrabNet::TimeUS lastTime, thisTime;
     int j;
     // Sleep a small random time, then use the last 4 bits as a source of randomness
     for (j=0; j < 8; j++)
     {
-        lastTime = RakNet::GetTimeUS();
+        lastTime = CrabNet::GetTimeUS();
         RakSleep(1);
         RakSleep(0);
-        thisTime = RakNet::GetTimeUS();
-        RakNet::TimeUS diff = thisTime-lastTime;
+        thisTime = CrabNet::GetTimeUS();
+        CrabNet::TimeUS diff = thisTime-lastTime;
         unsigned int diff4Bits = (unsigned int) (diff & 15);
         diff4Bits <<= 32-4;
         diff4Bits >>= j*4;

@@ -19,7 +19,7 @@
 #include "RakVoice.h"
 
 // If you get:
-// Error	1	fatal error C1083: Cannot open include file: 'fmod.hpp': No such file or directory	c:\raknet\samples\rakvoicefmod\fmodvoiceadapter.h	9
+// Error	1	fatal error C1083: Cannot open include file: 'fmod.hpp': No such file or directory	c:\crabnet\samples\rakvoicefmod\fmodvoiceadapter.h	9
 // It is because this project depends on Fmod.  If you don't have FMOD you can't use it.
 #include "fmod.hpp"
 

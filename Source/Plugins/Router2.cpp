@@ -22,7 +22,7 @@
 #include "FormatString.h"
 #include "../Utils/SocketDefines.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 #ifndef INVALID_SOCKET
 #define INVALID_SOCKET -1
@@ -37,7 +37,7 @@ Algorithm:
 
 3. Upon the sender getting ID_ROUTER_2_REPLY_FORWARDING, the connection request structure is looked up in Router2::UpdateForwarding. The ping is stored in that structure. Once all systems have replied, the system continues to the next state. If every system in step 1 has been exhausted, and routing has occured at least once, then ID_CONNECTION_LOST is returned. If every system in step 1 has been exhausted and routing has never occured, then ID_ROUTER_2_FORWARDING_NO_PATH is returned. Otherwise, the router with the lowest ping is chosen, and RequestForwarding() is called with that system, which sends ID_ROUTER_2_REQUEST_FORWARDING to the router.
 
-4. When the router gets ID_ROUTER_2_REQUEST_FORWARDING, a MiniPunchRequest structure is allocated and stored in the miniPunchesInProgress list. The function SendOOBMessages() sends ID_ROUTER_2_REPLY_TO_SENDER_PORT from the routing sockets to both the sender and endpoint. It also sends ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT through the regular RakNet connection.
+4. When the router gets ID_ROUTER_2_REQUEST_FORWARDING, a MiniPunchRequest structure is allocated and stored in the miniPunchesInProgress list. The function SendOOBMessages() sends ID_ROUTER_2_REPLY_TO_SENDER_PORT from the routing sockets to both the sender and endpoint. It also sends ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT through the regular CrabNet connection.
 
 5. The sender and endpoint should get ID_ROUTER_2_REPLY_TO_SENDER_PORT and/or ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT depending on what type of router they have. If ID_ROUTER_2_REPLY_TO_SENDER_PORT arrives, then this will reply back to the routing socket directly. If ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT arrives, then the reply port is modified to be the port specified by the router system. In both cases, ID_ROUTER_2_MINI_PUNCH_REPLY is sent. As the router has already setup the forwarding, ID_ROUTER_2_MINI_PUNCH_REPLY will actually arrive to the endpoint from the sender, and from the sender to the endpoint.
 
@@ -156,7 +156,7 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
         return false;
     }
     cr->requestState=R2RS_REQUEST_STATE_QUERY_FORWARDING;
-    cr->pingTimeout=RakNet::GetTimeMS()+largestPing*2+1000;
+    cr->pingTimeout=CrabNet::GetTimeMS()+largestPing*2+1000;
     cr->endpointGuid=endpointGuid;
     cr->returnConnectionLostOnFailure=returnConnectionLostOnFailure;
     for (unsigned int i=0; i < guids.Size(); i++)
@@ -171,7 +171,7 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
             cr->connectionRequestSystemsMutex.Unlock();
 
             // Broadcast(ID_ROUTER_2_QUERY_FORWARDING, endpointGuid);
-            RakNet::BitStream bsOut;
+            CrabNet::BitStream bsOut;
             bsOut.Write((MessageID)ID_ROUTER_2_INTERNAL);
             bsOut.Write((unsigned char) ID_ROUTER_2_QUERY_FORWARDING);
             bsOut.Write(endpointGuid);
@@ -242,7 +242,7 @@ void Router2::SetMaximumForwardingRequests(int max)
 PluginReceiveResult Router2::OnReceive(Packet *packet)
 {
     SystemAddress sa;
-    RakNet::BitStream bs(packet->data,packet->length,false);
+    CrabNet::BitStream bs(packet->data,packet->length,false);
     if (packet->data[0]==ID_ROUTER_2_INTERNAL)
     {
         switch (packet->data[1])
@@ -286,7 +286,7 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
         {
             case ID_ROUTER_2_REPLY_TO_SENDER_PORT:
                 {
-                    RakNet::BitStream bsOut;
+                    CrabNet::BitStream bsOut;
                     bsOut.Write(packet->guid);
                     SendOOBFromRakNetPort(ID_ROUTER_2_MINI_PUNCH_REPLY, &bsOut, packet->systemAddress);
 
@@ -306,7 +306,7 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
                 }
             case ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT:
                 {
-                    RakNet::BitStream bsOut;
+                    CrabNet::BitStream bsOut;
                     bsOut.Write(packet->guid);
                     bs.IgnoreBytes(2);
                     sa=packet->systemAddress;
@@ -361,7 +361,7 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 
             // We connected to this system through a forwarding system
             // Have the endpoint take longer to drop us, in case the intermediary system drops
-            RakNet::BitStream bsOut;
+            CrabNet::BitStream bsOut;
             bsOut.Write((MessageID)ID_ROUTER_2_INTERNAL);
             bsOut.Write((unsigned char) ID_ROUTER_2_INCREASE_TIMEOUT);
             rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE,0,packet->guid,false);
@@ -392,7 +392,7 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 }
 void Router2::Update(void)
 {
-    RakNet::TimeMS curTime = RakNet::GetTimeMS();
+    CrabNet::TimeMS curTime = CrabNet::GetTimeMS();
     unsigned int connectionRequestIndex = 0;
     connectionRequestsMutex.Lock();
     while (connectionRequestIndex < connectionRequests.Size())
@@ -719,7 +719,7 @@ void Router2::RequestForwarding(ConnnectRequest* connectionRequest)
 
     connectionRequest->lastRequestedForwardingSystem=commandList[0].guid;
 
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     bsOut.Write((MessageID)ID_ROUTER_2_INTERNAL);
     bsOut.Write((unsigned char) ID_ROUTER_2_REQUEST_FORWARDING);
     bsOut.Write(connectionRequest->endpointGuid);
@@ -735,7 +735,7 @@ void Router2::RequestForwarding(ConnnectRequest* connectionRequest)
 }
 void Router2::SendFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid)
 {
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     bsOut.Write((MessageID)ID_ROUTER_2_INTERNAL);
     bsOut.Write((unsigned char) ID_ROUTER_2_REPLY_FORWARDING);
     bsOut.Write(endpointGuid);
@@ -786,7 +786,7 @@ int Router2::ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endp
 }
 void Router2::OnQueryForwarding(Packet *packet)
 {
-    RakNet::BitStream bs(packet->data, packet->length, false);
+    CrabNet::BitStream bs(packet->data, packet->length, false);
     bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
     RakNetGUID endpointGuid;
     // Read endpointGuid
@@ -801,7 +801,7 @@ void Router2::OnQueryForwarding(Packet *packet)
     }
 
     // If we are connected to endpointGuid, reply ID_ROUTER_2_REPLY_FORWARDING,endpointGuid,true,ping,numCurrentlyForwarding
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     bsOut.Write((MessageID)ID_ROUTER_2_INTERNAL);
     bsOut.Write((unsigned char) ID_ROUTER_2_REPLY_FORWARDING);
     bsOut.Write(endpointGuid);
@@ -818,7 +818,7 @@ void Router2::OnQueryForwarding(Packet *packet)
 }
 void Router2::OnQueryForwardingReply(Packet *packet)
 {
-    RakNet::BitStream bs(packet->data, packet->length, false);
+    CrabNet::BitStream bs(packet->data, packet->length, false);
     bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
     RakNetGUID endpointGuid;
     bs.Read(endpointGuid);
@@ -880,7 +880,7 @@ void Router2::OnQueryForwardingReply(Packet *packet)
 }
 void Router2::SendForwardingSuccess(MessageID messageId, RakNetGUID sourceGuid, RakNetGUID endpointGuid, unsigned short sourceToDstPort)
 {
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     bsOut.Write(messageId);
     bsOut.Write(endpointGuid);
     bsOut.Write(sourceToDstPort);
@@ -897,7 +897,7 @@ void Router2::SendForwardingSuccess(MessageID messageId, RakNetGUID sourceGuid, 
 }
 void Router2::SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraData, SystemAddress sa)
 {
-    RakNet::BitStream oobBs;
+    CrabNet::BitStream oobBs;
     oobBs.Write((unsigned char)oob);
     if (extraData)
     {
@@ -910,7 +910,7 @@ void Router2::SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraDa
 }
 void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, __UDPSOCKET__ socket)
 {
-    RakNet::BitStream bs;
+    CrabNet::BitStream bs;
     rakPeerInterface->WriteOutOfBandHeader(&bs);
     bs.Write((unsigned char) oob);
     // SocketLayer::SendTo_PC( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), sa, __FILE__, __LINE__  );
@@ -952,7 +952,7 @@ void Router2::SendOOBMessages(Router2::MiniPunchRequest *mpr)
     }                                              
 
     // Tell source to send to forwardingPort
-    RakNet::BitStream extraData;
+    CrabNet::BitStream extraData;
     extraData.Write(mpr->forwardingPort);
     RakAssert(mpr->forwardingPort!=0);
     SendOOBFromRakNetPort(ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT, &extraData, mpr->sourceAddress);
@@ -965,7 +965,7 @@ void Router2::SendOOBMessages(Router2::MiniPunchRequest *mpr)
 }
 void Router2::OnRequestForwarding(Packet *packet)
 {
-    RakNet::BitStream bs(packet->data, packet->length, false);
+    CrabNet::BitStream bs(packet->data, packet->length, false);
     bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
     RakNetGUID endpointGuid;
     bs.Read(endpointGuid);
@@ -1061,10 +1061,10 @@ void Router2::OnRequestForwarding(Packet *packet)
         int ping1 = rakPeerInterface->GetAveragePing(packet->guid);
         int ping2 = rakPeerInterface->GetAveragePing(endpointGuid);
         if (ping1>ping2)
-            miniPunchRequest.timeout=RakNet::GetTimeMS() + ping1*8+300;
+            miniPunchRequest.timeout=CrabNet::GetTimeMS() + ping1*8+300;
         else
-            miniPunchRequest.timeout=RakNet::GetTimeMS() + ping2*8+300;
-        miniPunchRequest.nextAction=RakNet::GetTimeMS()+100;
+            miniPunchRequest.timeout=CrabNet::GetTimeMS() + ping2*8+300;
+        miniPunchRequest.nextAction=CrabNet::GetTimeMS()+100;
         SendOOBMessages(&miniPunchRequest);
         miniPunchesInProgressMutex.Lock();
         miniPunchesInProgress.Push(miniPunchRequest);
@@ -1118,7 +1118,7 @@ void Router2::OnMiniPunchReplyBounce(Packet *packet)
 }
 void Router2::OnMiniPunchReply(Packet *packet)
 {
-    RakNet::BitStream bs(packet->data, packet->length, false);
+    CrabNet::BitStream bs(packet->data, packet->length, false);
     bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
     RakNetGUID routerGuid;
     bs.Read(routerGuid);
@@ -1137,7 +1137,7 @@ void Router2::OnMiniPunchReply(Packet *packet)
 }
 void Router2::OnRerouted(Packet *packet)
 {
-    RakNet::BitStream bs(packet->data, packet->length, false);
+    CrabNet::BitStream bs(packet->data, packet->length, false);
     bs.IgnoreBytes(sizeof(MessageID));
     RakNetGUID endpointGuid;
     bs.Read(endpointGuid);
@@ -1199,7 +1199,7 @@ void Router2::OnRerouted(Packet *packet)
 }
 bool Router2::OnForwardingSuccess(Packet *packet)
 {
-    RakNet::BitStream bs(packet->data, packet->length, false);
+    CrabNet::BitStream bs(packet->data, packet->length, false);
     bs.IgnoreBytes(sizeof(MessageID));
     RakNetGUID endpointGuid;
     bs.Read(endpointGuid);

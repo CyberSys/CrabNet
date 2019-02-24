@@ -27,7 +27,7 @@
 #pragma warning( push )
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(LogCommandParser,LogCommandParser)
 

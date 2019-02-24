@@ -23,7 +23,7 @@
 
 #include "../Utils/LinuxStrings.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(ConsoleServer,ConsoleServer)
 
@@ -55,7 +55,7 @@ void ConsoleServer::SetTransportProvider(TransportInterface *transportInterface,
         for (i=0; i < commandParserList.Size(); i++)
             commandParserList[i]->OnTransportChange(transport);
 
-        //  The transport itself might have a command parser - for example password for the RakNet transport
+        //  The transport itself might have a command parser - for example password for the CrabNet transport
         AddCommandParser(transport->GetCommandParser());
     }
 }
@@ -105,9 +105,9 @@ void ConsoleServer::Update(void)
     unsigned i;
     char *parameterList[20]; // Up to 20 parameters
     unsigned numParameters;
-    RakNet::SystemAddress newOrLostConnectionId;
-    RakNet::Packet *p;
-    RakNet::RegisteredCommand rc;
+    CrabNet::SystemAddress newOrLostConnectionId;
+    CrabNet::Packet *p;
+    CrabNet::RegisteredCommand rc;
 
     p = transport->Receive();
     newOrLostConnectionId=transport->HasNewIncomingConnection();
@@ -137,7 +137,7 @@ void ConsoleServer::Update(void)
         char copy[REMOTE_MAX_TEXT_INPUT];
         memcpy(copy, p->data, p->length);
         copy[p->length]=0;
-        RakNet::CommandParserInterface::ParseConsoleString((char*)p->data, COMMAND_DELINATOR, COMMAND_DELINATOR_TOGGLE, &numParameters, parameterList, 20); // Up to 20 parameters
+        CrabNet::CommandParserInterface::ParseConsoleString((char*)p->data, COMMAND_DELINATOR, COMMAND_DELINATOR_TOGGLE, &numParameters, parameterList, 20); // Up to 20 parameters
         if (numParameters==0)
         {
             transport->DeallocatePacket(p);
@@ -182,12 +182,12 @@ void ConsoleServer::Update(void)
                 if (commandParsed==false)
                 {
                     // Try again, for all commands for all parsers.
-                    RakNet::RegisteredCommand rc;
+                    CrabNet::RegisteredCommand rc;
                     for (i=0; i < commandParserList.Size(); i++)
                     {
                         if (commandParserList[i]->GetRegisteredCommand(parameterList[1], &rc))
                         {
-                            if (rc.parameterCount==RakNet::CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS)
+                            if (rc.parameterCount==CrabNet::CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS)
                                 transport->Send(p->systemAddress, "(Variable parms): %s %s\r\n", rc.command, rc.commandHelp);
                             else
                                 transport->Send(p->systemAddress, "(%i parms): %s %s\r\n", rc.parameterCount, rc.command, rc.commandHelp);

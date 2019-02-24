@@ -15,7 +15,7 @@
 #include "RakPeerInterface.h"
 #include "BitStream.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 PluginInterface2::PluginInterface2()
 {
@@ -28,7 +28,7 @@ PluginInterface2::~PluginInterface2()
 {
 
 }
-void PluginInterface2::SendUnified( const RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast )
+void PluginInterface2::SendUnified( const CrabNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast )
 {
     if (rakPeerInterface)
     {

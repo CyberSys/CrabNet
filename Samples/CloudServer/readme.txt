@@ -5,7 +5,7 @@ The CloudServer plugin allows for queries on remote systems but does not provide
 
 This sample uses helper code, found in CloudServerSample.cpp to accomplish discovery and migration
 
-1. When a server is activated, it checks a domain name passed to the command line for RakNet connectivity
+1. When a server is activated, it checks a domain name passed to the command line for CrabNet connectivity
 1.A If the domain name connects to our own IP, we act as host
 1.B If the domain name does not connect to another system, we point it to our own IP and act as host
 1.C If the domain name connects to another system, we treat that system as host.

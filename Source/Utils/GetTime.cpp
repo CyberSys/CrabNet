@@ -18,15 +18,15 @@
 
 #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT > 0
 #include "SimpleMutex.h"
-RakNet::TimeUS lastNormalizedReturnedValue=0;
-RakNet::TimeUS lastNormalizedInputValue=0;
+CrabNet::TimeUS lastNormalizedReturnedValue=0;
+CrabNet::TimeUS lastNormalizedInputValue=0;
 /// This constraints timer forward jumps to 1 second, and does not let it jump backwards
 /// See http://support.microsoft.com/kb/274323 where the timer can sometimes jump forward by hours or days
 /// This also has the effect where debugging a sending system won't treat the time spent halted past 1 second as elapsed network time
-RakNet::TimeUS NormalizeTime(RakNet::TimeUS timeIn)
+CrabNet::TimeUS NormalizeTime(CrabNet::TimeUS timeIn)
 {
-    RakNet::TimeUS diff, lastNormalizedReturnedValueCopy;
-    static RakNet::SimpleMutex mutex;
+    CrabNet::TimeUS diff, lastNormalizedReturnedValueCopy;
+    static CrabNet::SimpleMutex mutex;
 
     mutex.Lock();
     if (timeIn>=lastNormalizedInputValue)
@@ -48,17 +48,17 @@ RakNet::TimeUS NormalizeTime(RakNet::TimeUS timeIn)
 }
 #endif // #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
 
-RakNet::Time RakNet::GetTime()
+CrabNet::Time CrabNet::GetTime()
 {
-    return (RakNet::Time) (GetTimeUS() / 1000);
+    return (CrabNet::Time) (GetTimeUS() / 1000);
 }
 
-RakNet::TimeMS RakNet::GetTimeMS()
+CrabNet::TimeMS CrabNet::GetTimeMS()
 {
-    return (RakNet::TimeMS) (GetTimeUS() / 1000);
+    return (CrabNet::TimeMS) (GetTimeUS() / 1000);
 }
 
-RakNet::TimeUS RakNet::GetTimeUS()
+CrabNet::TimeUS CrabNet::GetTimeUS()
 {
     using namespace std::chrono;
     static auto initialTime = steady_clock::now();
@@ -71,15 +71,15 @@ RakNet::TimeUS RakNet::GetTimeUS()
 #endif
 }
 
-constexpr RakNet::Time halfSpan = ((RakNet::Time) (const RakNet::Time) -1) / (RakNet::Time) 2;
+constexpr CrabNet::Time halfSpan = ((CrabNet::Time) (const CrabNet::Time) -1) / (CrabNet::Time) 2;
 
-bool RakNet::GreaterThan(RakNet::Time a, RakNet::Time b)
+bool CrabNet::GreaterThan(CrabNet::Time a, CrabNet::Time b)
 {
     // a > b?
     return b != a && b - a > halfSpan;
 }
 
-bool RakNet::LessThan(RakNet::Time a, RakNet::Time b)
+bool CrabNet::LessThan(CrabNet::Time a, CrabNet::Time b)
 {
     // a < b?
     return b != a && b - a < halfSpan;

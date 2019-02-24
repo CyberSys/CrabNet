@@ -44,7 +44,7 @@
 #define MAX_FILENAME_LENGTH 512
 static const unsigned HASH_LENGTH = 4;
 
-using namespace RakNet;
+using namespace CrabNet;
 
 // alloca
 
@@ -310,8 +310,8 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
                         fclose(fp);
 
                         unsigned int hash = SuperFastHash(fileData + HASH_LENGTH, fileInfo.size);
-                        if (RakNet::BitStream::DoEndianSwap())
-                            RakNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
+                        if (CrabNet::BitStream::DoEndianSwap())
+                            CrabNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
                         memcpy(fileData, &hash, HASH_LENGTH);
 
                         //                    sha1.Reset();
@@ -330,8 +330,8 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
 //                    sha1.Final();
 
                     unsigned int hash = SuperFastHashFile(fullPath);
-                    if (RakNet::BitStream::DoEndianSwap())
-                        RakNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
+                    if (CrabNet::BitStream::DoEndianSwap())
+                        CrabNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
 
                     // Hash only
                     //    AddFile((const char*)fullPath+rootLen, (const char*)sha1.GetHash(), HASH_LENGTH, fileInfo.size, context);
@@ -383,7 +383,7 @@ void FileList::Clear()
     fileList.Clear(false);
 }
 
-void FileList::Serialize(RakNet::BitStream *outBitStream)
+void FileList::Serialize(CrabNet::BitStream *outBitStream)
 {
     outBitStream->WriteCompressed(fileList.Size());
     for (unsigned i = 0; i < fileList.Size(); i++)
@@ -407,7 +407,7 @@ void FileList::Serialize(RakNet::BitStream *outBitStream)
     }
 }
 
-bool FileList::Deserialize(RakNet::BitStream *inBitStream)
+bool FileList::Deserialize(CrabNet::BitStream *inBitStream)
 {
     char filename[512];
     uint32_t fileListSize;
@@ -585,8 +585,8 @@ void FileList::ListMissingOrChangedFiles(const char *applicationDirectory, FileL
 //                free(fileData);
 
                 unsigned int hash = SuperFastHashFilePtr(fp);
-                if (RakNet::BitStream::DoEndianSwap())
-                    RakNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
+                if (CrabNet::BitStream::DoEndianSwap())
+                    CrabNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
 
                 //if (fileLength != fileList[i].fileLength || memcmp( sha1.GetHash(), fileList[i].data, HASH_LENGTH)!=0)
                 if (fileLength != fileList[i].fileLengthBytes || memcmp(&hash, fileList[i].data, HASH_LENGTH) != 0)
@@ -640,8 +640,8 @@ void FileList::PopulateDataFromDisk(const char *applicationDirectory, bool write
 //                        sha1.Update((unsigned char*)fileList[i].data+HASH_LENGTH, fileList[i].fileLength);
 //                        sha1.Final();
                         unsigned int hash = SuperFastHash(fileList[i].data + HASH_LENGTH, fileList[i].fileLengthBytes);
-                        if (RakNet::BitStream::DoEndianSwap())
-                            RakNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
+                        if (CrabNet::BitStream::DoEndianSwap())
+                            CrabNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
 //                        memcpy(fileList[i].data, sha1.GetHash(), HASH_LENGTH);
                         memcpy(fileList[i].data, &hash, HASH_LENGTH);
                     }
@@ -660,8 +660,8 @@ void FileList::PopulateDataFromDisk(const char *applicationDirectory, bool write
                         //        sha1.Update((unsigned char*)fileList[i].data, fileList[i].fileLength);
                         //        sha1.Final();
                         unsigned int hash = SuperFastHash(fileList[i].data, fileList[i].fileLengthBytes);
-                        if (RakNet::BitStream::DoEndianSwap())
-                            RakNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
+                        if (CrabNet::BitStream::DoEndianSwap())
+                            CrabNet::BitStream::ReverseBytesInPlace((unsigned char *) &hash, sizeof(hash));
                         // memcpy(fileList[i].data, sha1.GetHash(), HASH_LENGTH);
                         memcpy(fileList[i].data, &hash, HASH_LENGTH);
                     }

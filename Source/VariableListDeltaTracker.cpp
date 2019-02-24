@@ -11,7 +11,7 @@
 
 #include "VariableListDeltaTracker.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 VariableListDeltaTracker::VariableListDeltaTracker()
 {

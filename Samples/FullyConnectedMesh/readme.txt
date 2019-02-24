@@ -2,7 +2,7 @@ Project: Fully connected mesh
 
 Description: Tests / demonstrates the fully connected mesh plugin. 
 
-Dependencies: ConnectionGraph plugin (included with RakNet)
+Dependencies: ConnectionGraph plugin (included with CrabNet)
 
 Related projects: None
 

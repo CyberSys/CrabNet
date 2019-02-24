@@ -24,7 +24,7 @@
 
 // #define NTDS_VERBOSE
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(NatTypeDetectionServer,NatTypeDetectionServer)
 
@@ -122,8 +122,8 @@ void NatTypeDetectionServer::Shutdown()
 void NatTypeDetectionServer::Update(void)
 {
     int i=0;
-    RakNet::TimeMS time = RakNet::GetTimeMS();
-    RakNet::BitStream bs;
+    CrabNet::TimeMS time = CrabNet::GetTimeMS();
+    CrabNet::BitStream bs;
     SystemAddress boundAddress;
 
     RNS2RecvStruct *recvStruct;
@@ -139,7 +139,7 @@ void NatTypeDetectionServer::Update(void)
         char *data = recvStruct->data;
         if (data[0]==NAT_TYPE_PORT_RESTRICTED && recvStruct->socket==s3p4)
         {
-            RakNet::BitStream bsIn((unsigned char*) data,recvStruct->bytesRead,false);
+            CrabNet::BitStream bsIn((unsigned char*) data,recvStruct->bytesRead,false);
             RakNetGUID senderGuid;
             bsIn.IgnoreBytes(sizeof(MessageID));
             bool readSuccess = bsIn.Read(senderGuid);
@@ -205,7 +205,7 @@ void NatTypeDetectionServer::Update(void)
     // Client is asking us if this is port restricted. Only client requests of this type come in on s3p4
     while (len>0 && data[0]==NAT_TYPE_PORT_RESTRICTED)
     {
-        RakNet::BitStream bsIn((unsigned char*) data,len,false);
+        CrabNet::BitStream bsIn((unsigned char*) data,len,false);
         RakNetGUID senderGuid;
         bsIn.IgnoreBytes(sizeof(MessageID));
         bool readSuccess = bsIn.Read(senderGuid);
@@ -373,7 +373,7 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet *packet)
 {
     unsigned int i = GetDetectionAttemptIndex(packet->systemAddress);
 
-    RakNet::BitStream bsIn(packet->data, packet->length, false);
+    CrabNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(1);
     bool isRequest=false;
     bsIn.Read(isRequest);

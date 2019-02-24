@@ -65,7 +65,7 @@
 #define CAT_AUDIT_PRINTF(...)
 #endif
 
-namespace RakNet
+namespace CrabNet
 {
     RAK_THREAD_DECLARATION(UpdateNetworkLoop);
     RAK_THREAD_DECLARATION(RecvFromLoop);
@@ -113,7 +113,7 @@ static const int mtuSizes[NUM_MTU_SIZES] = {MAXIMUM_MTU_SIZE, 1200, 576};
 #pragma warning( push )
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 static RakNetRandom rnr;
 
@@ -155,7 +155,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize)
 //     p->guid=UNASSIGNED_CRABNET_GUID;
 //     return p;
 
-    RakNet::Packet *p;
+    CrabNet::Packet *p;
     packetAllocationPoolMutex.Lock();
     p = packetAllocationPool.Allocate();
     packetAllocationPoolMutex.Unlock();
@@ -172,7 +172,7 @@ Packet *RakPeer::AllocPacket(unsigned dataSize)
 Packet *RakPeer::AllocPacket(unsigned dataSize, unsigned char *data)
 {
     // Packet *p = (Packet *)malloc(sizeof(Packet));
-    RakNet::Packet *p;
+    CrabNet::Packet *p;
     packetAllocationPoolMutex.Lock();
     p = packetAllocationPool.Allocate();
     packetAllocationPoolMutex.Unlock();
@@ -308,7 +308,7 @@ RakPeer::~RakPeer()
 // \param[in] maxConnections The maximum number of connections between this instance of RakPeer and another instance of RakPeer. Required so the network can preallocate and for thread safety. A pure client would set this to 1.  A pure server would set it to the number of allowed clients.- A hybrid would set it to the sum of both types of connections
 // \param[in] localPort The port to listen for connections on.
 // \param[in] _threadSleepTimer How many ms to Sleep each internal update cycle. With new congestion control, the best results will be obtained by passing 10.
-// \param[in] socketDescriptors An array of SocketDescriptor structures to force RakNet to listen on a particular IP address or port (or both).  Each SocketDescriptor will represent one unique socket.  Do not pass redundant structures.  To listen on a specific port, you can pass &socketDescriptor, 1SocketDescriptor(myPort,0); such as for a server.  For a client, it is usually OK to just pass SocketDescriptor();
+// \param[in] socketDescriptors An array of SocketDescriptor structures to force CrabNet to listen on a particular IP address or port (or both).  Each SocketDescriptor will represent one unique socket.  Do not pass redundant structures.  To listen on a specific port, you can pass &socketDescriptor, 1SocketDescriptor(myPort,0); such as for a server.  For a client, it is usually OK to just pass SocketDescriptor();
 // \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 // \return False on failure (can't create socket or thread), true on success.
 // ---------------------------------------------------------------------------------------------------------------------
@@ -585,7 +585,7 @@ br == BR_REQUIRES_CRABNET_SUPPORT_IPV6_DEFINE)
 #if RAKPEER_USER_THREADED != 1
 
             int errorCode;
-            errorCode = RakNet::RakThread::Create(UpdateNetworkLoop, this, threadPriority);
+            errorCode = CrabNet::RakThread::Create(UpdateNetworkLoop, this, threadPriority);
             if (errorCode != 0)
             {
                 Shutdown(0, 0);
@@ -605,10 +605,10 @@ br == BR_REQUIRES_CRABNET_SUPPORT_IPV6_DEFINE)
 
     #if defined(SN_TARGET_PSP2)
                 sprintf(threadName, "RecvFromLoop_%p", this);
-                //errorCode = RakNet::RakThread::Create(RecvFromLoop, rpai, threadPriority, threadName, 1+i, runtime);
-                errorCode = RakNet::RakThread::Create(RecvFromLoop, rpai, threadPriority, threadName, 1024*1);
+                //errorCode = CrabNet::RakThread::Create(RecvFromLoop, rpai, threadPriority, threadName, 1+i, runtime);
+                errorCode = CrabNet::RakThread::Create(RecvFromLoop, rpai, threadPriority, threadName, 1024*1);
     #else
-                errorCode = RakNet::RakThread::Create(RecvFromLoop, rpai, threadPriority);
+                errorCode = CrabNet::RakThread::Create(RecvFromLoop, rpai, threadPriority);
     #endif
 
                 if ( errorCode != 0 )
@@ -649,7 +649,7 @@ br == BR_REQUIRES_CRABNET_SUPPORT_IPV6_DEFINE)
     }
 
 #ifdef USE_THREADED_SEND
-    RakNet::SendToThread::AddRef();
+    CrabNet::SendToThread::AddRef();
 #endif
 
     return CRABNET_STARTED;
@@ -907,7 +907,7 @@ void RakPeer::GetIncomingPassword(char *passwordData, int *passwordDataLength)
 ConnectionAttemptResult
 RakPeer::Connect(const char *host, unsigned short remotePort, const char *passwordData, int passwordDataLength,
                  PublicKey *publicKey, unsigned connectionSocketIndex, unsigned sendConnectionAttemptCount,
-                 unsigned timeBetweenSendConnectionAttemptsMS, RakNet::TimeMS timeoutTime)
+                 unsigned timeBetweenSendConnectionAttemptsMS, CrabNet::TimeMS timeoutTime)
 {
     // If endThreads is true here you didn't call Startup() first.
     if (host == 0 || endThreads || connectionSocketIndex >= socketList.Size())
@@ -944,7 +944,7 @@ ConnectionAttemptResult
 RakPeer::ConnectWithSocket(const char *host, unsigned short remotePort, const char *passwordData,
                            int passwordDataLength, RakNetSocket2 *socket, PublicKey *publicKey,
                            unsigned sendConnectionAttemptCount, unsigned timeBetweenSendConnectionAttemptsMS,
-                           RakNet::TimeMS timeoutTime)
+                           CrabNet::TimeMS timeoutTime)
 {
     if (host == 0 || endThreads || socket == 0)
         return INVALID_PARAMETER;
@@ -969,9 +969,9 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
 {
     unsigned i, j;
     bool anyActive;
-    RakNet::TimeMS startWaitingTime;
+    CrabNet::TimeMS startWaitingTime;
 //    SystemAddress systemAddress;
-    RakNet::TimeMS time;
+    CrabNet::TimeMS time;
     //unsigned short systemListSize = remoteSystemListSize; // This is done for threading reasons
     unsigned int systemListSize = maximumNumberOfPeers;
 
@@ -985,7 +985,7 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
                                          disconnectionNotificationPriority);
         }
 
-        time = RakNet::GetTimeMS();
+        time = CrabNet::GetTimeMS();
         startWaitingTime = time;
         while (time - startWaitingTime < blockDuration)
         {
@@ -1008,7 +1008,7 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
             // send the disconnection notification
 
             RakSleep(15);
-            time = RakNet::GetTimeMS();
+            time = CrabNet::GetTimeMS();
         }
     }
     for (i = 0; i < pluginListTS.Size(); i++)
@@ -1026,7 +1026,7 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
 
     endThreads = true;
 
-//    RakNet::TimeMS timeout;
+//    CrabNet::TimeMS timeout;
 #if RAKPEER_USER_THREADED != 1
 
 #if !defined(__native_client__)
@@ -1055,8 +1055,8 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
     }
 
     /*
-    timeout = RakNet::GetTimeMS()+1000;
-    while ( isRecvFromLoopThreadActive.GetValue()>0 && RakNet::GetTimeMS()<timeout )
+    timeout = CrabNet::GetTimeMS()+1000;
+    while ( isRecvFromLoopThreadActive.GetValue()>0 && CrabNet::GetTimeMS()<timeout )
     {
         // Get recvfrom to unblock
         for (i=0; i < socketList.Size(); i++)
@@ -1114,8 +1114,8 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
     /*
     if (isRecvFromLoopThreadActive.GetValue()>0)
     {
-        timeout = RakNet::GetTimeMS()+1000;
-        while ( isRecvFromLoopThreadActive.GetValue()>0 && RakNet::GetTimeMS()<timeout )
+        timeout = CrabNet::GetTimeMS()+1000;
+        while ( isRecvFromLoopThreadActive.GetValue()>0 && CrabNet::GetTimeMS()<timeout )
         {
             RakSleep(30);
         }
@@ -1142,7 +1142,7 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
     ClearRemoteSystemLookup();
 
 #ifdef USE_THREADED_SEND
-    RakNet::SendToThread::Deref();
+    CrabNet::SendToThread::Deref();
 #endif
 
     ResetSendReceipt();
@@ -1294,7 +1294,7 @@ void RakPeer::SendLoopback(const char *data, const int length)
     PushBackPacket(packet, false);
 }
 
-uint32_t RakPeer::Send(const RakNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability,
+uint32_t RakPeer::Send(const CrabNet::BitStream *bitStream, PacketPriority priority, PacketReliability reliability,
                        char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast,
                        uint32_t forceReceiptNumber)
 {
@@ -1349,7 +1349,7 @@ uint32_t RakPeer::Send(const RakNet::BitStream *bitStream, PacketPriority priori
 // Sends multiple blocks of data, concatenating them automatically.
 //
 // This is equivalent to:
-// RakNet::BitStream bs;
+// CrabNet::BitStream bs;
 // bs.WriteAlignedBytes(block1, blockLength1);
 // bs.WriteAlignedBytes(block2, blockLength2);
 // bs.WriteAlignedBytes(block3, blockLength3);
@@ -1417,7 +1417,7 @@ Packet *RakPeer::Receive(void)
     if (!(IsActive()))
         return 0;
 
-    RakNet::Packet *packet;
+    CrabNet::Packet *packet;
 //    Packet **threadPacket;
     PluginReceiveResult pluginResult;
 
@@ -1482,12 +1482,12 @@ Packet *RakPeer::Receive(void)
             return 0;
 
 //        unsigned char msgId;
-        if ((packet->length >= sizeof(unsigned char) + sizeof(RakNet::Time)) &&
+        if ((packet->length >= sizeof(unsigned char) + sizeof(CrabNet::Time)) &&
             ((unsigned char) packet->data[0] == ID_TIMESTAMP))
         {
             offset = sizeof(unsigned char);
             ShiftIncomingTimestamp(packet->data + offset, packet->systemAddress);
-//            msgId=packet->data[sizeof(unsigned char) + sizeof( RakNet::Time )];
+//            msgId=packet->data[sizeof(unsigned char) + sizeof( CrabNet::Time )];
         }
 //        else
         //        msgId=packet->data[0];
@@ -1805,10 +1805,10 @@ RakPeer::GetSystemList(DataStructures::List<SystemAddress> &addresses, DataStruc
 // All IP addresses starting with 128.0.0
 // milliseconds - how many ms for a temporary ban.  Use 0 for a permanent ban
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::AddToBanList(const char *IP, RakNet::TimeMS milliseconds)
+void RakPeer::AddToBanList(const char *IP, CrabNet::TimeMS milliseconds)
 {
     unsigned index;
-    RakNet::TimeMS time = RakNet::GetTimeMS();
+    CrabNet::TimeMS time = CrabNet::GetTimeMS();
 
     if (IP == 0 || IP[0] == 0 || strlen(IP) > 15)
         return;
@@ -1930,7 +1930,7 @@ void RakPeer::SetLimitIPConnectionFrequency(bool b)
 bool RakPeer::IsBanned(const char *IP)
 {
     unsigned banListIndex, characterIndex;
-    RakNet::TimeMS time;
+    CrabNet::TimeMS time;
     BanStruct *temp;
 
     if (IP == 0 || IP[0] == 0 || strlen(IP) > 15)
@@ -1941,7 +1941,7 @@ bool RakPeer::IsBanned(const char *IP)
     if (banList.Size() == 0)
         return false; // Skip the mutex if possible
 
-    time = RakNet::GetTimeMS();
+    time = CrabNet::GetTimeMS();
 
     banListMutex.Lock();
 
@@ -2028,7 +2028,7 @@ void RakPeer::Ping(const SystemAddress target)
 // Description:
 // Send a ping to the specified unconnected system.
 // The remote system, if it is Initialized, will respond with ID_UNCONNECTED_PONG.
-// The final ping time will be encoded in the following sizeof(RakNet::TimeMS) bytes.  (Default is 4 bytes - See __GET_TIME_64BIT in RakNetTypes.h
+// The final ping time will be encoded in the following sizeof(CrabNet::TimeMS) bytes.  (Default is 4 bytes - See __GET_TIME_64BIT in RakNetTypes.h
 //
 // Parameters:
 // host: Either a dotted IP address or a domain name.  Can be 255.255.255.255 for LAN broadcast.
@@ -2048,13 +2048,13 @@ bool RakPeer::Ping(const char *host, unsigned short remotePort, bool onlyReplyOn
 //    if ( IsActive() == false )
 //        return;
 
-    RakNet::BitStream bitStream(sizeof(unsigned char) + sizeof(RakNet::Time));
+    CrabNet::BitStream bitStream(sizeof(unsigned char) + sizeof(CrabNet::Time));
     if (onlyReplyOnAcceptingConnections)
         bitStream.Write((MessageID) ID_UNCONNECTED_PING_OPEN_CONNECTIONS);
     else
         bitStream.Write((MessageID) ID_UNCONNECTED_PING);
 
-    bitStream.Write(RakNet::GetTime());
+    bitStream.Write(CrabNet::GetTime());
 
     bitStream.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 
@@ -2133,7 +2133,7 @@ int RakPeer::GetLastPing(const AddressOrGUID systemIdentifier) const
     if (remoteSystem == 0)
         return -1;
 
-//    return (int)(remoteSystem->reliabilityLayer.GetAckPing()/(RakNet::TimeUS)1000);
+//    return (int)(remoteSystem->reliabilityLayer.GetAckPing()/(CrabNet::TimeUS)1000);
 
     if (remoteSystem->pingAndClockDifferentialWriteIndex == 0)
         return remoteSystem->pingAndClockDifferential[PING_TIMES_ARRAY_SIZE - 1].pingTime;
@@ -2176,7 +2176,7 @@ void RakPeer::SetOccasionalPing(bool doPing)
 /// Subtract the time from a time returned by the remote system to get that time relative to your own system
 /// Returns 0 if the system is unknown
 // ---------------------------------------------------------------------------------------------------------------------
-RakNet::Time RakPeer::GetClockDifferential(const AddressOrGUID systemIdentifier)
+CrabNet::Time RakPeer::GetClockDifferential(const AddressOrGUID systemIdentifier)
 {
     RemoteSystemStruct *remoteSystem = GetRemoteSystem(systemIdentifier, false, false);
     if (remoteSystem == 0)
@@ -2186,10 +2186,10 @@ RakNet::Time RakPeer::GetClockDifferential(const AddressOrGUID systemIdentifier)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-RakNet::Time RakPeer::GetClockDifferentialInt(RemoteSystemStruct *remoteSystem) const
+CrabNet::Time RakPeer::GetClockDifferentialInt(RemoteSystemStruct *remoteSystem) const
 {
     int counter, lowestPingSoFar;
-    RakNet::Time clockDifferential;
+    CrabNet::Time clockDifferential;
 
     lowestPingSoFar = 65535;
 
@@ -2478,7 +2478,7 @@ bool RakPeer::GetClientPublicKeyFromSystemAddress(const SystemAddress input, cha
 // Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable packet
 // \param[in] time Time, in MS
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::SetTimeoutTime(RakNet::TimeMS timeMS, const SystemAddress target)
+void RakPeer::SetTimeoutTime(CrabNet::TimeMS timeMS, const SystemAddress target)
 {
     if (target == UNASSIGNED_SYSTEM_ADDRESS)
     {
@@ -2504,7 +2504,7 @@ void RakPeer::SetTimeoutTime(RakNet::TimeMS timeMS, const SystemAddress target)
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-RakNet::TimeMS RakPeer::GetTimeoutTime(const SystemAddress target)
+CrabNet::TimeMS RakPeer::GetTimeoutTime(const SystemAddress target)
 {
     if (target == UNASSIGNED_SYSTEM_ADDRESS)
     {
@@ -2628,7 +2628,7 @@ void RakPeer::AllowConnectionResponseIPMigration(bool allow)
 bool RakPeer::AdvertiseSystem(const char *host, unsigned short remotePort, const char *data, int dataLength,
                               unsigned connectionSocketIndex)
 {
-    RakNet::BitStream bs;
+    CrabNet::BitStream bs;
     bs.Write((MessageID) ID_ADVERTISE_SYSTEM);
     bs.WriteAlignedBytes((const unsigned char *) data, dataLength);
     return SendOutOfBand(host, remotePort, (const char *) bs.GetData(), bs.GetNumberOfBytesUsed(),
@@ -2663,7 +2663,7 @@ int RakPeer::GetSplitMessageProgressInterval(void) const
 // Set to 0 or less to never timeout.  Defaults to 0.
 // timeoutMS How many ms to wait before simply not sending an unreliable message.
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::SetUnreliableTimeout(RakNet::TimeMS timeoutMS)
+void RakPeer::SetUnreliableTimeout(CrabNet::TimeMS timeoutMS)
 {
     unreliableTimeout = timeoutMS;
     for (unsigned short i = 0; i < maximumNumberOfPeers; i++)
@@ -2822,9 +2822,9 @@ RakNetSocket2 *RakPeer::GetSocket(const SystemAddress target)
 
     // Block up to one second to get the socket, although it should actually take virtually no time
     SocketQueryOutput *sqo;
-    RakNet::TimeMS stopWaiting = RakNet::GetTimeMS() + 1000;
+    CrabNet::TimeMS stopWaiting = CrabNet::GetTimeMS() + 1000;
     DataStructures::List<RakNetSocket2 *> output;
-    while (RakNet::GetTimeMS() < stopWaiting)
+    while (CrabNet::GetTimeMS() < stopWaiting)
     {
         if (isMainLoopThreadActive == false)
             return 0;
@@ -2932,7 +2932,7 @@ bool RakPeer::IsNetworkSimulatorActive(void)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::WriteOutOfBandHeader(RakNet::BitStream *bitStream)
+void RakPeer::WriteOutOfBandHeader(CrabNet::BitStream *bitStream)
 {
     bitStream->Write((MessageID) ID_OUT_OF_BAND_INTERNAL);
     bitStream->Write(myGuid);
@@ -2967,11 +2967,11 @@ bool RakPeer::SendOutOfBand(const char *host, unsigned short remotePort, const c
 
     // This is a security measure.  Don't send data longer than this value
     RakAssert(dataLength <=
-              (MAX_OFFLINE_DATA_LENGTH + sizeof(unsigned char) + sizeof(RakNet::Time) + RakNetGUID::size() +
+              (MAX_OFFLINE_DATA_LENGTH + sizeof(unsigned char) + sizeof(CrabNet::Time) + RakNetGUID::size() +
                sizeof(OFFLINE_MESSAGE_DATA_ID)));
 
     // 34 bytes
-    RakNet::BitStream bitStream;
+    CrabNet::BitStream bitStream;
     WriteOutOfBandHeader(&bitStream);
 
     if (dataLength > 0)
@@ -3225,7 +3225,7 @@ ConnectionAttemptResult
 RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, const char *passwordData,
                                int passwordDataLength, PublicKey *publicKey, unsigned connectionSocketIndex,
                                unsigned int extraData, unsigned sendConnectionAttemptCount,
-                               unsigned timeBetweenSendConnectionAttemptsMS, RakNet::TimeMS timeoutTime)
+                               unsigned timeBetweenSendConnectionAttemptsMS, CrabNet::TimeMS timeoutTime)
 {
     RakAssert(passwordDataLength <= 256);
     RakAssert(remotePort != 0);
@@ -3241,7 +3241,7 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
     RequestedConnectionStruct *rcs = new RequestedConnectionStruct;
 
     rcs->systemAddress = systemAddress;
-    rcs->nextRequestTime = RakNet::GetTimeMS();
+    rcs->nextRequestTime = CrabNet::GetTimeMS();
     rcs->requestsMade = 0;
     rcs->data = 0;
     rcs->socket = 0;
@@ -3284,7 +3284,7 @@ ConnectionAttemptResult
 RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, const char *passwordData,
                                int passwordDataLength, PublicKey *publicKey, unsigned connectionSocketIndex,
                                unsigned int extraData, unsigned sendConnectionAttemptCount,
-                               unsigned timeBetweenSendConnectionAttemptsMS, RakNet::TimeMS timeoutTime,
+                               unsigned timeBetweenSendConnectionAttemptsMS, CrabNet::TimeMS timeoutTime,
                                RakNetSocket2 *socket)
 {
     RakAssert(passwordDataLength <= 256);
@@ -3299,7 +3299,7 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
     RequestedConnectionStruct *rcs = new RequestedConnectionStruct;
 
     rcs->systemAddress = systemAddress;
-    rcs->nextRequestTime = RakNet::GetTimeMS();
+    rcs->nextRequestTime = CrabNet::GetTimeMS();
     rcs->requestsMade = 0;
     rcs->data = 0;
     rcs->socket = 0;
@@ -3406,11 +3406,11 @@ RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystemFromGUID(const RakNetGUID g
 
 void RakPeer::ParseConnectionRequestPacket(RakPeer::RemoteSystemStruct *remoteSystem, const SystemAddress &systemAddress, const char *data, int byteSize)
 {
-    RakNet::BitStream bs((unsigned char *) data, byteSize, false);
+    CrabNet::BitStream bs((unsigned char *) data, byteSize, false);
     bs.IgnoreBytes(sizeof(MessageID));
     RakNetGUID guid;
     bs.Read(guid);
-    RakNet::Time incomingTimestamp;
+    CrabNet::Time incomingTimestamp;
     bs.Read(incomingTimestamp);
     unsigned char doSecurity;
     bs.Read(doSecurity);
@@ -3450,13 +3450,13 @@ void RakPeer::ParseConnectionRequestPacket(RakPeer::RemoteSystemStruct *remoteSy
                 if (!_server_handshake->VerifyInitiatorIdentity(remoteSystem->answer, ident,
                                                                 remoteSystem->client_public_key))
                 {
-                    RakNet::BitStream bitStream;
+                    CrabNet::BitStream bitStream;
                     // Report an error since the client is not providing an identity when it is necessary to connect
                     bitStream.Write((MessageID) ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY);
                     // Indicate client identity is invalid
                     bitStream.Write((unsigned char) 2);
                     SendImmediate((char *) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), IMMEDIATE_PRIORITY,
-                                  RELIABLE, 0, systemAddress, false, false, RakNet::GetTimeUS(), 0);
+                                  RELIABLE, 0, systemAddress, false, false, CrabNet::GetTimeUS(), 0);
                     remoteSystem->connectMode = RemoteSystemStruct::DISCONNECT_ASAP_SILENTLY;
                     return;
                 }
@@ -3468,12 +3468,12 @@ void RakPeer::ParseConnectionRequestPacket(RakPeer::RemoteSystemStruct *remoteSy
             // If no client key was provided but it is required,
             if (_require_client_public_key)
             {
-                RakNet::BitStream bitStream;
+                CrabNet::BitStream bitStream;
                 // Report an error since the client is not providing an identity when it is necessary to connect
                 bitStream.Write((MessageID) ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY);
                 bitStream.Write((unsigned char) 1); // Indicate client identity is missing
                 SendImmediate((char *) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), IMMEDIATE_PRIORITY,
-                              RELIABLE, 0, systemAddress, false, false, RakNet::GetTimeUS(), 0);
+                              RELIABLE, 0, systemAddress, false, false, CrabNet::GetTimeUS(), 0);
                 remoteSystem->connectMode = RemoteSystemStruct::DISCONNECT_ASAP_SILENTLY;
                 return;
             }
@@ -3487,11 +3487,11 @@ void RakPeer::ParseConnectionRequestPacket(RakPeer::RemoteSystemStruct *remoteSy
     {
         CAT_AUDIT_PRINTF("AUDIT: Invalid password\n");
         // This one we only send once since we don't care if it arrives.
-        RakNet::BitStream bitStream;
+        CrabNet::BitStream bitStream;
         bitStream.Write((MessageID) ID_INVALID_PASSWORD);
         bitStream.Write(GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
         SendImmediate((char *) bitStream.GetData(), bitStream.GetNumberOfBytesUsed(), IMMEDIATE_PRIORITY, RELIABLE, 0,
-                      systemAddress, false, false, RakNet::GetTimeUS(), 0);
+                      systemAddress, false, false, CrabNet::GetTimeUS(), 0);
         remoteSystem->connectMode = RemoteSystemStruct::DISCONNECT_ASAP_SILENTLY;
         return;
     }
@@ -3502,9 +3502,9 @@ void RakPeer::ParseConnectionRequestPacket(RakPeer::RemoteSystemStruct *remoteSy
     OnConnectionRequest(remoteSystem, incomingTimestamp);
 }
 
-void RakPeer::OnConnectionRequest(RakPeer::RemoteSystemStruct *remoteSystem, RakNet::Time incomingTimestamp)
+void RakPeer::OnConnectionRequest(RakPeer::RemoteSystemStruct *remoteSystem, CrabNet::Time incomingTimestamp)
 {
-    RakNet::BitStream bitStream;
+    CrabNet::BitStream bitStream;
     bitStream.Write((MessageID) ID_CONNECTION_REQUEST_ACCEPTED);
     bitStream.Write(remoteSystem->systemAddress);
     SystemIndex systemIndex = (SystemIndex) GetIndexFromSystemAddress(remoteSystem->systemAddress, true);
@@ -3513,21 +3513,21 @@ void RakPeer::OnConnectionRequest(RakPeer::RemoteSystemStruct *remoteSystem, Rak
     for (unsigned int i = 0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
         bitStream.Write(ipList[i]);
     bitStream.Write(incomingTimestamp);
-    bitStream.Write(RakNet::GetTime());
+    bitStream.Write(CrabNet::GetTime());
 
     SendImmediate((char *) bitStream.GetData(), bitStream.GetNumberOfBitsUsed(), IMMEDIATE_PRIORITY, RELIABLE_ORDERED,
-                  0, remoteSystem->systemAddress, false, false, RakNet::GetTimeUS(), 0);
+                  0, remoteSystem->systemAddress, false, false, CrabNet::GetTimeUS(), 0);
 }
 
 void RakPeer::NotifyAndFlagForShutdown(const SystemAddress systemAddress, bool performImmediate,
                                        unsigned char orderingChannel, PacketPriority disconnectionNotificationPriority)
 {
-    RakNet::BitStream temp(sizeof(unsigned char));
+    CrabNet::BitStream temp(sizeof(unsigned char));
     temp.Write((MessageID) ID_DISCONNECTION_NOTIFICATION);
     if (performImmediate)
     {
         SendImmediate((char *) temp.GetData(), temp.GetNumberOfBitsUsed(), disconnectionNotificationPriority,
-                      RELIABLE_ORDERED, orderingChannel, systemAddress, false, false, RakNet::GetTimeUS(), 0);
+                      RELIABLE_ORDERED, orderingChannel, systemAddress, false, false, CrabNet::GetTimeUS(), 0);
         RemoteSystemStruct *rss = GetRemoteSystemFromSystemAddress(systemAddress, true, true);
         rss->connectMode = RemoteSystemStruct::DISCONNECT_ASAP;
     }
@@ -3559,7 +3559,7 @@ RakPeer::AssignSystemAddressToRemoteSystemList(const SystemAddress systemAddress
                                                RakNetSocket2 *incomingRakNetSocket, bool *thisIPConnectedRecently, SystemAddress bindingAddress,
                                                int incomingMTU, RakNetGUID guid, bool useSecurity)
 {
-    RakNet::TimeMS time = RakNet::GetTimeMS();
+    CrabNet::TimeMS time = CrabNet::GetTimeMS();
 
     RakAssert(systemAddress != UNASSIGNED_SYSTEM_ADDRESS);
 
@@ -3652,8 +3652,8 @@ void RakPeer::ShiftIncomingTimestamp(unsigned char *data, const SystemAddress &s
     RakAssert(IsActive());
     RakAssert(data);
     
-    RakNet::BitStream timeBS(data, sizeof(RakNet::Time), false);
-    RakNet::Time encodedTimestamp;
+    CrabNet::BitStream timeBS(data, sizeof(CrabNet::Time), false);
+    CrabNet::Time encodedTimestamp;
     timeBS.Read(encodedTimestamp);
 
     encodedTimestamp = encodedTimestamp - GetBestClockDifferential(systemAddress);
@@ -3663,7 +3663,7 @@ void RakPeer::ShiftIncomingTimestamp(unsigned char *data, const SystemAddress &s
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Thanks to Chris Taylor (cat02e@fsu.edu) for the improved timestamping algorithm
-RakNet::Time RakPeer::GetBestClockDifferential(const SystemAddress systemAddress) const
+CrabNet::Time RakPeer::GetBestClockDifferential(const SystemAddress systemAddress) const
 {
     RemoteSystemStruct *remoteSystem = GetRemoteSystemFromSystemAddress(systemAddress, true, true);
 
@@ -3946,12 +3946,12 @@ void RakPeer::PingInternal(const SystemAddress target, bool performImmediate, Pa
     if (!IsActive())
         return;
 
-    RakNet::BitStream bitStream(sizeof(unsigned char) + sizeof(RakNet::Time));
+    CrabNet::BitStream bitStream(sizeof(unsigned char) + sizeof(CrabNet::Time));
     bitStream.Write((MessageID) ID_CONNECTED_PING);
-    bitStream.Write(RakNet::GetTime());
+    bitStream.Write(CrabNet::GetTime());
     if (performImmediate)
         SendImmediate((char *) bitStream.GetData(), bitStream.GetNumberOfBitsUsed(), IMMEDIATE_PRIORITY, reliability, 0,
-                      target, false, false, RakNet::GetTimeUS(), 0);
+                      target, false, false, CrabNet::GetTimeUS(), 0);
     else
         Send(&bitStream, IMMEDIATE_PRIORITY, reliability, 0, target, false);
 }
@@ -4122,7 +4122,7 @@ void RakPeer::SendBufferedList(const char **data, const int *lengths, const int 
 // ---------------------------------------------------------------------------------------------------------------------
 bool RakPeer::SendImmediate(char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability,
                             char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast,
-                            bool useCallerDataAllocation, RakNet::TimeUS currentTime, uint32_t receipt)
+                            bool useCallerDataAllocation, CrabNet::TimeUS currentTime, uint32_t receipt)
 {
     unsigned remoteSystemIndex; // Iterates into the list of remote systems
     if (systemIdentifier.systemAddress != UNASSIGNED_SYSTEM_ADDRESS)
@@ -4203,8 +4203,8 @@ bool RakPeer::SendImmediate(char *data, BitSize_t numberOfBitsToSend, PacketPrio
 //            ||
 //            reliability==RELIABLE_SEQUENCED_WITH_ACK_RECEIPT
                 )
-            remoteSystemList[sendList[sendListIndex]].lastReliableSend = (RakNet::TimeMS) (currentTime /
-                                                                                           (RakNet::TimeUS) 1000);
+            remoteSystemList[sendList[sendListIndex]].lastReliableSend = (CrabNet::TimeMS) (currentTime /
+                                                                                           (CrabNet::TimeUS) 1000);
     }
 
 #if !defined(USE_ALLOCA)
@@ -4225,11 +4225,11 @@ void RakPeer::ResetSendReceipt(void)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::OnConnectedPong(RakNet::Time sendPingTime, RakNet::Time sendPongTime, RemoteSystemStruct *remoteSystem)
+void RakPeer::OnConnectedPong(CrabNet::Time sendPingTime, CrabNet::Time sendPongTime, RemoteSystemStruct *remoteSystem)
 {
-    RakNet::Time ping;
-//    RakNet::TimeMS lastPing;
-    RakNet::Time time = RakNet::GetTime(); // Update the time value to be accurate
+    CrabNet::Time ping;
+//    CrabNet::TimeMS lastPing;
+    CrabNet::Time time = CrabNet::GetTime(); // Update the time value to be accurate
     if (time > sendPingTime)
         ping = time - sendPingTime;
     else
@@ -4246,7 +4246,7 @@ void RakPeer::OnConnectedPong(RakNet::Time sendPingTime, RakNet::Time sendPongTi
     if (remoteSystem->lowestPing == (unsigned short) -1 || remoteSystem->lowestPing > (int) ping)
         remoteSystem->lowestPing = (unsigned short) ping;
 
-    if (++(remoteSystem->pingAndClockDifferentialWriteIndex) == (RakNet::Time) PING_TIMES_ARRAY_SIZE)
+    if (++(remoteSystem->pingAndClockDifferentialWriteIndex) == (CrabNet::Time) PING_TIMES_ARRAY_SIZE)
         remoteSystem->pingAndClockDifferentialWriteIndex = 0;
 }
 
@@ -4290,7 +4290,7 @@ void RakPeer::ClearRequestedConnectionList(void)
     }
 }
 
-inline void RakPeer::AddPacketToProducer(RakNet::Packet *p)
+inline void RakPeer::AddPacketToProducer(CrabNet::Packet *p)
 {
     packetReturnMutex.Lock();
     packetReturnQueue.Push(p);
@@ -4304,7 +4304,7 @@ void RakPeer::GenerateGUID(void)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-// void RakNet::ProcessPortUnreachable( SystemAddress systemAddress, RakPeer *rakPeer )
+// void CrabNet::ProcessPortUnreachable( SystemAddress systemAddress, RakPeer *rakPeer )
 // {
 //     (void) binaryAddress;
 //     (void) port;
@@ -4312,14 +4312,14 @@ void RakPeer::GenerateGUID(void)
 //
 // }
 // ---------------------------------------------------------------------------------------------------------------------
-namespace RakNet
+namespace CrabNet
 {
     bool ProcessOfflineNetworkPacket(SystemAddress systemAddress, const char *data, unsigned int length, RakPeer *rakPeer,
-                                     RakNetSocket2 *rakNetSocket, bool *isOfflineMessage, RakNet::TimeUS timeRead)
+                                     RakNetSocket2 *rakNetSocket, bool *isOfflineMessage, CrabNet::TimeUS timeRead)
     {
         (void) timeRead;
         RakPeer::RemoteSystemStruct *remoteSystem;
-        RakNet::Packet *packet;
+        CrabNet::Packet *packet;
 
         char str1[64];
         systemAddress.ToString(false, str1);
@@ -4328,7 +4328,7 @@ namespace RakNet
             for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                 rakPeer->pluginListNTS[i]->OnDirectSocketReceive(data, length * 8, systemAddress);
 
-            RakNet::BitStream bs;
+            CrabNet::BitStream bs;
             bs.Write((MessageID) ID_CONNECTION_BANNED);
             bs.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
             bs.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
@@ -4359,16 +4359,16 @@ namespace RakNet
         if (length <= 2)
             *isOfflineMessage = true;
         else if (((unsigned char) data[0] == ID_UNCONNECTED_PING || (unsigned char) data[0] == ID_UNCONNECTED_PING_OPEN_CONNECTIONS) &&
-                length >= sizeof(unsigned char) + sizeof(RakNet::Time) + sizeof(OFFLINE_MESSAGE_DATA_ID))
+                length >= sizeof(unsigned char) + sizeof(CrabNet::Time) + sizeof(OFFLINE_MESSAGE_DATA_ID))
         {
-            *isOfflineMessage = memcmp(data + sizeof(unsigned char) + sizeof(RakNet::Time), OFFLINE_MESSAGE_DATA_ID,
+            *isOfflineMessage = memcmp(data + sizeof(unsigned char) + sizeof(CrabNet::Time), OFFLINE_MESSAGE_DATA_ID,
                                        sizeof(OFFLINE_MESSAGE_DATA_ID)) == 0;
         }
         else if ((unsigned char) data[0] == ID_UNCONNECTED_PONG && (size_t) length >=
-                                                                   sizeof(unsigned char) + sizeof(RakNet::TimeMS) +
+                                                                   sizeof(unsigned char) + sizeof(CrabNet::TimeMS) +
                                                                    RakNetGUID::size() + sizeof(OFFLINE_MESSAGE_DATA_ID))
         {
-            *isOfflineMessage = memcmp(data + sizeof(unsigned char) + sizeof(RakNet::Time) + RakNetGUID::size(),
+            *isOfflineMessage = memcmp(data + sizeof(unsigned char) + sizeof(CrabNet::Time) + RakNetGUID::size(),
                                        OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID)) == 0;
         }
         else if ((unsigned char) data[0] == ID_OUT_OF_BAND_INTERNAL &&
@@ -4406,20 +4406,20 @@ namespace RakNet
             // These are all messages from unconnected systems.  Messages here can be any size, but are never processed from connected systems.
             if (((unsigned char) data[0] == ID_UNCONNECTED_PING_OPEN_CONNECTIONS
                  || (unsigned char) (data)[0] == ID_UNCONNECTED_PING) &&
-                length >= sizeof(unsigned char) + sizeof(RakNet::Time) + sizeof(OFFLINE_MESSAGE_DATA_ID))
+                length >= sizeof(unsigned char) + sizeof(CrabNet::Time) + sizeof(OFFLINE_MESSAGE_DATA_ID))
             {
                 if ((unsigned char) (data)[0] == ID_UNCONNECTED_PING ||
                     rakPeer->AllowIncomingConnections()) // Open connections with players
                 {
-                    RakNet::BitStream inBitStream((unsigned char *) data, length, false);
+                    CrabNet::BitStream inBitStream((unsigned char *) data, length, false);
                     inBitStream.IgnoreBits(8);
-                    RakNet::Time sendPingTime;
+                    CrabNet::Time sendPingTime;
                     inBitStream.Read(sendPingTime);
                     inBitStream.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
                     RakNetGUID remoteGuid = UNASSIGNED_CRABNET_GUID;
                     inBitStream.Read(remoteGuid);
 
-                    RakNet::BitStream outBitStream;
+                    CrabNet::BitStream outBitStream;
                     outBitStream.Write((MessageID) ID_UNCONNECTED_PONG); // Should be named ID_UNCONNECTED_PONG eventually
                     outBitStream.Write(sendPingTime);
                     outBitStream.Write(rakPeer->myGuid);
@@ -4454,29 +4454,29 @@ namespace RakNet
             }
                 // UNCONNECTED MESSAGE Pong with no data.
             else if ((unsigned char) data[0] == ID_UNCONNECTED_PONG && (size_t) length >=
-                                                                       sizeof(unsigned char) + sizeof(RakNet::Time) +
+                                                                       sizeof(unsigned char) + sizeof(CrabNet::Time) +
                                                                        RakNetGUID::size() +
                                                                        sizeof(OFFLINE_MESSAGE_DATA_ID) &&
-                     (size_t) length < sizeof(unsigned char) + sizeof(RakNet::Time) + RakNetGUID::size() +
+                     (size_t) length < sizeof(unsigned char) + sizeof(CrabNet::Time) + RakNetGUID::size() +
                                        sizeof(OFFLINE_MESSAGE_DATA_ID) + MAX_OFFLINE_DATA_LENGTH)
             {
                 packet = rakPeer->AllocPacket((unsigned int) (length - sizeof(OFFLINE_MESSAGE_DATA_ID) - RakNetGUID::size() -
-                                        sizeof(RakNet::Time) + sizeof(RakNet::TimeMS)));
-                RakNet::BitStream bsIn((unsigned char *) data, length, false);
+                                        sizeof(CrabNet::Time) + sizeof(CrabNet::TimeMS)));
+                CrabNet::BitStream bsIn((unsigned char *) data, length, false);
                 bsIn.IgnoreBytes(sizeof(unsigned char));
-                RakNet::Time ping;
+                CrabNet::Time ping;
                 bsIn.Read(ping);
                 bsIn.Read(packet->guid);
 
-                RakNet::BitStream bsOut(packet->data, packet->length, false);
+                CrabNet::BitStream bsOut(packet->data, packet->length, false);
                 bsOut.ResetWritePointer();
                 bsOut.Write((unsigned char) ID_UNCONNECTED_PONG);
-                RakNet::TimeMS pingMS = (RakNet::TimeMS) ping;
+                CrabNet::TimeMS pingMS = (CrabNet::TimeMS) ping;
                 bsOut.Write(pingMS);
                 bsOut.WriteAlignedBytes(
-                        (const unsigned char *) data + sizeof(unsigned char) + sizeof(RakNet::Time) +
+                        (const unsigned char *) data + sizeof(unsigned char) + sizeof(CrabNet::Time) +
                         RakNetGUID::size() + sizeof(OFFLINE_MESSAGE_DATA_ID),
-                        length - sizeof(unsigned char) - sizeof(RakNet::Time) - RakNetGUID::size() - sizeof(OFFLINE_MESSAGE_DATA_ID));
+                        length - sizeof(unsigned char) - sizeof(CrabNet::Time) - RakNetGUID::size() - sizeof(OFFLINE_MESSAGE_DATA_ID));
 
                 packet->systemAddress = systemAddress;
                 packet->systemAddress.systemIndex = (SystemIndex) rakPeer->GetIndexFromSystemAddress(systemAddress, true);
@@ -4493,7 +4493,7 @@ namespace RakNet
                 packet = rakPeer->AllocPacket(dataLength + 1);
                 RakAssert(packet->length < 1024);
 
-                RakNet::BitStream bs2((unsigned char *) data, length, false);
+                CrabNet::BitStream bs2((unsigned char *) data, length, false);
                 bs2.IgnoreBytes(sizeof(MessageID));
                 bs2.Read(packet->guid);
 
@@ -4520,7 +4520,7 @@ namespace RakNet
                 for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                     rakPeer->pluginListNTS[i]->OnDirectSocketReceive(data, length * 8, systemAddress);
 
-                RakNet::BitStream bsIn((unsigned char *) data, length, false);
+                CrabNet::BitStream bsIn((unsigned char *) data, length, false);
                 bsIn.IgnoreBytes(sizeof(MessageID));
                 bsIn.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
                 RakNetGUID serverGuid;
@@ -4533,7 +4533,7 @@ namespace RakNet
                 if (serverHasSecurity)
                     bsIn.Read(cookie);
 
-                RakNet::BitStream bsOut;
+                CrabNet::BitStream bsOut;
                 bsOut.Write((MessageID) ID_OPEN_CONNECTION_REQUEST_2);
                 bsOut.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID,
                                         sizeof(OFFLINE_MESSAGE_DATA_ID));
@@ -4649,7 +4649,7 @@ namespace RakNet
                 for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                     rakPeer->pluginListNTS[i]->OnDirectSocketReceive(data, length * 8, systemAddress);
 
-                RakNet::BitStream bs((unsigned char *) data, length, false);
+                CrabNet::BitStream bs((unsigned char *) data, length, false);
                 bs.IgnoreBytes(sizeof(MessageID));
                 bs.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
                 RakNetGUID guid;
@@ -4767,10 +4767,10 @@ namespace RakNet
                                 if (rcs->timeoutTime != 0)
                                     remoteSystem->reliabilityLayer.SetTimeoutTime(rcs->timeoutTime);
 
-                                RakNet::BitStream temp;
+                                CrabNet::BitStream temp;
                                 temp.Write((MessageID) ID_CONNECTION_REQUEST);
                                 temp.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
-                                temp.Write(RakNet::GetTime());
+                                temp.Write(CrabNet::GetTime());
 
 #ifdef LIBCAT_SECURITY
                                 temp.Write((unsigned char) (doSecurity ? 1 : 0));
@@ -4844,7 +4844,7 @@ namespace RakNet
                      (unsigned char) (data)[0] == (MessageID) ID_INCOMPATIBLE_PROTOCOL_VERSION)
             {
 
-                RakNet::BitStream bs((unsigned char *) data, length, false);
+                CrabNet::BitStream bs((unsigned char *) data, length, false);
                 bs.IgnoreBytes(sizeof(MessageID));
                 bs.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
                 if ((unsigned char) (data)[0] == (MessageID) ID_INCOMPATIBLE_PROTOCOL_VERSION)
@@ -4889,7 +4889,7 @@ namespace RakNet
                 char remoteProtocol = data[1 + sizeof(OFFLINE_MESSAGE_DATA_ID)];
                 if (remoteProtocol != CRABNET_PROTOCOL_VERSION)
                 {
-                    RakNet::BitStream bs;
+                    CrabNet::BitStream bs;
                     bs.Write((MessageID) ID_INCOMPATIBLE_PROTOCOL_VERSION);
                     bs.Write((unsigned char) CRABNET_PROTOCOL_VERSION);
                     bs.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID,
@@ -4911,7 +4911,7 @@ namespace RakNet
                 for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                     rakPeer->pluginListNTS[i]->OnDirectSocketReceive(data, length * 8, systemAddress);
 
-                RakNet::BitStream bsOut;
+                CrabNet::BitStream bsOut;
                 bsOut.Write((MessageID) ID_OPEN_CONNECTION_REPLY_1);
                 bsOut.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
                 bsOut.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
@@ -4949,8 +4949,8 @@ namespace RakNet
             else if ((unsigned char) (data)[0] == ID_OPEN_CONNECTION_REQUEST_2)
             {
                 RakNetGUID guid;
-                RakNet::BitStream bsOut;
-                RakNet::BitStream bs((unsigned char *) data, length, false);
+                CrabNet::BitStream bsOut;
+                CrabNet::BitStream bs((unsigned char *) data, length, false);
                 bs.IgnoreBytes(sizeof(MessageID));
                 bs.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
 
@@ -5021,7 +5021,7 @@ namespace RakNet
                         // Returns ID)_CONNECTION_REQUEST_ACCEPTED to one system, and ID_ALREADY_CONNECTED followed by ID_NEW_INCOMING_CONNECTION to another
                     }
                     else
-                        outcome = 2; // ID_ALREADY_CONNECTED (restarted raknet, connected again from same ip, plus someone else took this guid)
+                        outcome = 2; // ID_ALREADY_CONNECTED (restarted crabnet, connected again from same ip, plus someone else took this guid)
                 }
                 else if (!IPAddrInUse && GUIDInUse)
                     outcome = 3;  // ID_ALREADY_CONNECTED (someone else took this guid)
@@ -5030,7 +5030,7 @@ namespace RakNet
                 else
                     outcome = 0;  // Allow connection
 
-                RakNet::BitStream bsAnswer;
+                CrabNet::BitStream bsAnswer;
                 bsAnswer.Write((MessageID) ID_OPEN_CONNECTION_REPLY_2);
                 bsAnswer.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID,
                                            sizeof(OFFLINE_MESSAGE_DATA_ID));
@@ -5171,13 +5171,13 @@ namespace RakNet
 
 // ---------------------------------------------------------------------------------------------------------------------
     void ProcessNetworkPacket(SystemAddress systemAddress, const char *data, unsigned int length, RakPeer *rakPeer,
-                              RakNet::TimeUS timeRead, BitStream &updateBitStream)
+                              CrabNet::TimeUS timeRead, BitStream &updateBitStream)
     {
         ProcessNetworkPacket(systemAddress, data, length, rakPeer, rakPeer->socketList[0], timeRead, updateBitStream);
     }
 
     void ProcessNetworkPacket(SystemAddress systemAddress, const char *data, unsigned int length, RakPeer *rakPeer,
-                              RakNetSocket2 *rakNetSocket, RakNet::TimeUS timeRead, BitStream &updateBitStream)
+                              RakNetSocket2 *rakNetSocket, CrabNet::TimeUS timeRead, BitStream &updateBitStream)
     {
 #ifdef LIBCAT_SECURITY
 #ifdef CAT_AUDIT
@@ -5254,7 +5254,7 @@ unsigned int RakPeer::GetRakNetSocketFromUserConnectionSocketIndex(unsigned int 
 
 /*
 // DS_APR
-void RakPeer::ProcessChromePacket(RakNetSocket2 *s, const char *buffer, int dataSize, const SystemAddress& recvFromAddress, RakNet::TimeUS timeRead)
+void RakPeer::ProcessChromePacket(RakNetSocket2 *s, const char *buffer, int dataSize, const SystemAddress& recvFromAddress, CrabNet::TimeUS timeRead)
 {
     RakAssert(buffer);
     RakAssert(dataSize > 0);
@@ -5313,8 +5313,8 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
     SystemAddress systemAddress;
     bool callerDataAllocationUsed;
     RakNetStatistics *rnss;
-    RakNet::TimeUS timeNS = 0;
-    RakNet::Time timeMS = 0;
+    CrabNet::TimeUS timeNS = 0;
+    CrabNet::Time timeMS = 0;
 
     // This is here so RecvFromBlocking actually gets data from the same thread
 #if defined(_WIN32)
@@ -5326,7 +5326,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
         do {
             len = ((RNS2_Windows*)socketList[0])->GetSocketLayerOverride()->RakNetRecvFrom(dataOut,&sender,true);
             if (len>0)
-                ProcessNetworkPacket( sender, dataOut, len, this, socketList[0], RakNet::GetTimeUS(), updateBitStream );
+                ProcessNetworkPacket( sender, dataOut, len, this, socketList[0], CrabNet::GetTimeUS(), updateBitStream );
         } while (len>0);
     }
 #endif
@@ -5356,8 +5356,8 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
             // GetTime is a very slow call so do it once and as late as possible
             if (timeNS == 0)
             {
-                timeNS = RakNet::GetTimeUS();
-                timeMS = (RakNet::TimeMS) (timeNS / (RakNet::TimeUS) 1000);
+                timeNS = CrabNet::GetTimeUS();
+                timeMS = (CrabNet::TimeMS) (timeNS / (CrabNet::TimeUS) 1000);
             }
 
             callerDataAllocationUsed = SendImmediate((char *) bcs->data, bcs->numberOfBitsToSend, bcs->priority,
@@ -5417,8 +5417,8 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
     {
         if (timeNS == 0)
         {
-            timeNS = RakNet::GetTimeUS();
-            timeMS = (RakNet::TimeMS) (timeNS / (RakNet::TimeUS) 1000);
+            timeNS = CrabNet::GetTimeUS();
+            timeMS = (CrabNet::TimeMS) (timeNS / (CrabNet::TimeUS) 1000);
         }
 
         unsigned requestedConnectionQueueIndex = 0;
@@ -5476,7 +5476,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                     rcs->requestsMade++;
                     rcs->nextRequestTime = timeMS + rcs->timeBetweenSendConnectionAttemptsMS;
 
-                    RakNet::BitStream bitStream;
+                    CrabNet::BitStream bitStream;
                     //WriteOutOfBandHeader(&bitStream, ID_USER_PACKET_ENUM);
                     bitStream.Write((MessageID) ID_OPEN_CONNECTION_REQUEST_1);
                     bitStream.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
@@ -5504,7 +5504,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
 #endif
 
                     // SocketLayer::SetDoNotFragment(socketToUse, 1);
-                    RakNet::Time sendToStart = RakNet::GetTime();
+                    CrabNet::Time sendToStart = CrabNet::GetTime();
 
                     RNS2_SendParameters bsp;
                     bsp.data = (char *) bitStream.GetData();
@@ -5519,7 +5519,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                     }
                     else
                     {
-                        RakNet::Time sendToEnd = RakNet::GetTime();
+                        CrabNet::Time sendToEnd = CrabNet::GetTime();
                         if (sendToEnd - sendToStart > 100)
                         {
                             // Drop to lowest MTU
@@ -5570,8 +5570,8 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
 
         if (timeNS == 0)
         {
-            timeNS = RakNet::GetTimeUS();
-            timeMS = (RakNet::TimeMS) (timeNS / (RakNet::TimeUS) 1000);
+            timeNS = CrabNet::GetTimeUS();
+            timeMS = (CrabNet::TimeMS) (timeNS / (CrabNet::TimeUS) 1000);
             //CRABNET_DEBUG_PRINTF("timeNS = %I64i timeMS=%i\n", timeNS, timeMS);
         }
 
@@ -5611,7 +5611,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
             //    CRABNET_DEBUG_PRINTF("timeMS=%i remoteSystem->connectionTime=%i\n", timeMS, remoteSystem->connectionTime );
 
             // Failed.  Inform the user?
-            // TODO - RakNet 4.0 - Return a different message identifier for DISCONNECT_ASAP_SILENTLY and DISCONNECT_ASAP than for DISCONNECT_ON_NO_ACK
+            // TODO - CrabNet 4.0 - Return a different message identifier for DISCONNECT_ASAP_SILENTLY and DISCONNECT_ASAP than for DISCONNECT_ON_NO_ACK
             // The first two mean we called CloseConnection(), the last means the other system sent us ID_DISCONNECTION_NOTIFICATION
             if (remoteSystem->connectMode == RemoteSystemStruct::CONNECTED ||
                 remoteSystem->connectMode == RemoteSystemStruct::REQUESTED_CONNECTION
@@ -5619,7 +5619,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                 remoteSystem->connectMode == RemoteSystemStruct::DISCONNECT_ON_NO_ACK)
             {
 
-//                    RakNet::BitStream undeliveredMessages;
+//                    CrabNet::BitStream undeliveredMessages;
 //                    remoteSystem->reliabilityLayer.GetUndeliveredMessages(&undeliveredMessages,remoteSystem->MTUSize);
 
 //                    packet=AllocPacket(sizeof( char ) + undeliveredMessages.GetNumberOfBytesUsed());
@@ -5716,11 +5716,11 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                     else
                     {
 
-                        RakNet::BitStream bs((unsigned char *) data, byteSize, false);
+                        CrabNet::BitStream bs((unsigned char *) data, byteSize, false);
                         bs.IgnoreBytes(sizeof(MessageID));
                         bs.IgnoreBytes(sizeof(OFFLINE_MESSAGE_DATA_ID));
                         bs.IgnoreBytes(RakNetGUID::size());
-                        RakNet::Time incomingTimestamp;
+                        CrabNet::Time incomingTimestamp;
                         bs.Read(incomingTimestamp);
 
                         // Got a connection request message from someone we are already connected to. Just reply normally.
@@ -5730,7 +5730,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                     free(data);
                 }
                 else if (data[0] == ID_NEW_INCOMING_CONNECTION && byteSize > sizeof(unsigned char) + sizeof(unsigned int) +
-                                                                             sizeof(unsigned short) + sizeof(RakNet::Time) * 2)
+                                                                             sizeof(unsigned short) + sizeof(CrabNet::Time) * 2)
                 {
                     if (remoteSystem->connectMode == RemoteSystemStruct::HANDLING_CONNECTION_REQUEST)
                     {
@@ -5740,7 +5740,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                         // Update again immediately after this tick so the ping goes out right away
                         quitAndDataEvents.SetEvent();
 
-                        RakNet::BitStream inBitStream(data, byteSize, false);
+                        CrabNet::BitStream inBitStream(data, byteSize, false);
                         SystemAddress bsSystemAddress;
 
                         inBitStream.IgnoreBits(8);
@@ -5748,14 +5748,14 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                         for (unsigned i = 0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
                             inBitStream.Read(remoteSystem->theirInternalSystemAddress[i]);
 
-                        RakNet::Time sendPingTime, sendPongTime;
+                        CrabNet::Time sendPingTime, sendPongTime;
                         inBitStream.Read(sendPingTime);
                         inBitStream.Read(sendPongTime);
                         OnConnectedPong(sendPingTime, sendPongTime, remoteSystem);
 
                         // Overwrite the data in the packet
                         // NewIncomingConnectionStruct newIncomingConnectionStruct;
-                        // RakNet::BitStream nICS_BS( data, NewIncomingConnectionStruct_Size, false );
+                        // CrabNet::BitStream nICS_BS( data, NewIncomingConnectionStruct_Size, false );
                         // newIncomingConnectionStruct.Deserialize( nICS_BS );
 
                         remoteSystem->myExternalSystemAddress = bsSystemAddress;
@@ -5787,13 +5787,13 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                         //    free(data);
                     }
                 }
-                else if (data[0] == ID_CONNECTED_PONG && byteSize == sizeof(unsigned char) + sizeof(RakNet::Time) * 2)
+                else if (data[0] == ID_CONNECTED_PONG && byteSize == sizeof(unsigned char) + sizeof(CrabNet::Time) * 2)
                 {
-                    RakNet::Time sendPingTime, sendPongTime;
+                    CrabNet::Time sendPingTime, sendPongTime;
 
                     // Copy into the ping times array the current time - the value returned
                     // First extract the sent ping
-                    RakNet::BitStream inBitStream((unsigned char *) data, byteSize, false);
+                    CrabNet::BitStream inBitStream((unsigned char *) data, byteSize, false);
                     //PingStruct ps;
                     //ps.Deserialize(psBS);
                     inBitStream.IgnoreBits(8);
@@ -5804,19 +5804,19 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
 
                     free(data);
                 }
-                else if (data[0] == ID_CONNECTED_PING && byteSize == sizeof(unsigned char) + sizeof(RakNet::Time))
+                else if (data[0] == ID_CONNECTED_PING && byteSize == sizeof(unsigned char) + sizeof(CrabNet::Time))
                 {
-                    RakNet::BitStream inBitStream((unsigned char *) data, byteSize, false);
+                    CrabNet::BitStream inBitStream((unsigned char *) data, byteSize, false);
                     inBitStream.IgnoreBits(8);
-                    RakNet::Time sendPingTime;
+                    CrabNet::Time sendPingTime;
                     inBitStream.Read(sendPingTime);
 
-                    RakNet::BitStream outBitStream;
+                    CrabNet::BitStream outBitStream;
                     outBitStream.Write((MessageID) ID_CONNECTED_PONG);
                     outBitStream.Write(sendPingTime);
-                    outBitStream.Write(RakNet::GetTime());
+                    outBitStream.Write(CrabNet::GetTime());
                     SendImmediate((char *) outBitStream.GetData(), outBitStream.GetNumberOfBitsUsed(),
-                                  IMMEDIATE_PRIORITY, UNRELIABLE, 0, systemAddress, false, false, RakNet::GetTimeUS(), 0);
+                                  IMMEDIATE_PRIORITY, UNRELIABLE, 0, systemAddress, false, false, CrabNet::GetTimeUS(), 0);
 
                     // Update again immediately after this tick so the ping goes out right away
                     quitAndDataEvents.SetEvent();
@@ -5859,7 +5859,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                 {
                     if (byteSize >
                         sizeof(MessageID) + sizeof(unsigned int) + sizeof(unsigned short) + sizeof(SystemIndex) +
-                        sizeof(RakNet::Time) * 2)
+                        sizeof(CrabNet::Time) * 2)
                     {
                         // Make sure this connection accept is from someone we wanted to connect to
                         bool allowConnection =
@@ -5875,7 +5875,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                             SystemIndex systemIndex;
                             // SystemAddress internalID;
 
-                            RakNet::BitStream inBitStream(data, byteSize, false);
+                            CrabNet::BitStream inBitStream(data, byteSize, false);
                             inBitStream.IgnoreBits(8);
                             // inBitStream.Read(remotePort);
                             inBitStream.Read(externalID);
@@ -5883,13 +5883,13 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                             for (unsigned int i = 0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
                                 inBitStream.Read(remoteSystem->theirInternalSystemAddress[i]);
 
-                            RakNet::Time sendPingTime, sendPongTime;
+                            CrabNet::Time sendPingTime, sendPongTime;
                             inBitStream.Read(sendPingTime);
                             inBitStream.Read(sendPongTime);
                             OnConnectedPong(sendPingTime, sendPongTime, remoteSystem);
 
                             // Find a free remote system struct to use
-                            // RakNet::BitStream casBitS(data, byteSize, false);
+                            // CrabNet::BitStream casBitS(data, byteSize, false);
                             // ConnectionAcceptStruct cas;
                             // cas.Deserialize(casBitS);
                             // systemAddress.GetPort() = remotePort;
@@ -5918,17 +5918,17 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                             packet->guid.systemIndex = packet->systemAddress.systemIndex;
                             AddPacketToProducer(packet);
 
-                            RakNet::BitStream outBitStream;
+                            CrabNet::BitStream outBitStream;
                             outBitStream.Write((MessageID) ID_NEW_INCOMING_CONNECTION);
                             outBitStream.Write(systemAddress);
                             for (unsigned i = 0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
                                 outBitStream.Write(ipList[i]);
                             outBitStream.Write(sendPongTime);
-                            outBitStream.Write(RakNet::GetTime());
+                            outBitStream.Write(CrabNet::GetTime());
 
                             SendImmediate((char *) outBitStream.GetData(), outBitStream.GetNumberOfBitsUsed(),
                                           IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, systemAddress, false, false,
-                                          RakNet::GetTimeUS(), 0);
+                                          CrabNet::GetTimeUS(), 0);
 
                             if (!alreadyConnected)
                                 PingInternal(systemAddress, true, UNRELIABLE);
@@ -5988,7 +5988,7 @@ void RakPeer::OnRNS2Recv(RNS2RecvStruct *recvStruct)
 // ---------------------------------------------------------------------------------------------------------------------
 
 /*
-RAK_THREAD_DECLARATION(RakNet::RecvFromLoop)
+RAK_THREAD_DECLARATION(CrabNet::RecvFromLoop)
 {
 #if defined(SN_TARGET_PSP2)
     RakPeerAndIndex *rpai = ( RakPeerAndIndex * ) RakThread::GetRealThreadArgument(callGetRealThreadArgument);
@@ -6018,7 +6018,7 @@ RAK_THREAD_DECLARATION(RakNet::RecvFromLoop)
 */
 
 // ---------------------------------------------------------------------------------------------------------------------
-RAK_THREAD_DECLARATION(RakNet::UpdateNetworkLoop)
+RAK_THREAD_DECLARATION(CrabNet::UpdateNetworkLoop)
 {
     RakPeer *rakPeer = (RakPeer *) arguments;
 
@@ -6060,7 +6060,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateNetworkLoop)
     {
 // #ifdef _DEBUG
 //         // Sanity check, make sure RunUpdateCycle does not block or not otherwise get called for a long time
-//         RakNetTime thisCall=RakNet::GetTime();
+//         RakNetTime thisCall=CrabNet::GetTime();
 //         RakAssert(thisCall-lastCall<250);
 //         lastCall=thisCall;
 // #endif
@@ -6099,7 +6099,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateNetworkLoop)
         }
 
 #else // ((_WIN32_WINNT >= 0x0400) || (_WIN32_WINDOWS > 0x0400)) && defined(USE_WAIT_FOR_MULTIPLE_EVENTS)
-        #pragma message("-- RakNet: Using Sleep(). Uncomment USE_WAIT_FOR_MULTIPLE_EVENTS in RakNetDefines.h if you want to use WaitForSingleObject instead. --")
+        #pragma message("-- CrabNet: Using Sleep(). Uncomment USE_WAIT_FOR_MULTIPLE_EVENTS in RakNetDefines.h if you want to use WaitForSingleObject instead. --")
 
         RakSleep( rakPeer->threadSleepTimer );
 #endif

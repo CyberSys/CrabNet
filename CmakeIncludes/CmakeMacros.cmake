@@ -1,4 +1,4 @@
-#This file includes the global macros for the RakNet CMake files
+#This file includes the global macros for the CrabNet CMake files
 
 MACRO(STANDARDSUBPROJECT PROJECTNAME)#Many of the projects just need the cpp files compiled and the header added to the project, this avoids repeating code
 	project(${PROJECTNAME})

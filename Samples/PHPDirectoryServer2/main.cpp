@@ -426,10 +426,10 @@ void TestPHPDirectoryServer(int argc, char **argv)
 		if (website[0]==0)
 			strcpy(website, "jenkinssoftware.com");
 
-		printf("Enter path to DirectoryServer.php, e.g. raknet/DirectoryServer.php:\n");
+		printf("Enter path to DirectoryServer.php, e.g. crabnet/DirectoryServer.php:\n");
 		Gets(pathToPHP,sizeof(pathToPHP));
 		if (pathToPHP[0]==0)
-			strcpy(pathToPHP, "/raknet/DirectoryServer.php");
+			strcpy(pathToPHP, "/crabnet/DirectoryServer.php");
 	}
 
 	if (website[strlen(website)-1]!='/' && pathToPHP[0]!='/')

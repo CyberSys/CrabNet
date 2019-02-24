@@ -70,7 +70,7 @@ void TestCommandServer(RakNet::TransportInterface *ti, unsigned short port, RakN
 	while (1)
 	{
 		consoleServer.Update();
-		// Ignore raknet packets for this sample.
+		// Ignore crabnet packets for this sample.
 		rakPeer->DeallocatePacket(rakPeer->Receive());
 
 		if (RakNet::GetTimeMS() > lastLog + 4000)

@@ -18,7 +18,7 @@
 #include "GetTime.h"
 #include "Base64Encoder.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 struct DynDnsResult
 {
@@ -130,16 +130,16 @@ void DynDNS::Update()
             connectPhase = CP_WAITING_FOR_DYNDNS_RESPONSE;
             tcp->Send(getString.C_String(), (unsigned int) getString.GetLength(), serverAddress, false);
         }
-        phaseTimeout = RakNet::GetTime() + 1000;
+        phaseTimeout = CrabNet::GetTime() + 1000;
     }
 
-    if (connectPhase == CP_WAITING_FOR_CHECKIP_RESPONSE && RakNet::GetTime() > phaseTimeout)
+    if (connectPhase == CP_WAITING_FOR_CHECKIP_RESPONSE && CrabNet::GetTime() > phaseTimeout)
     {
         connectPhase = CP_CONNECTING_TO_DYNDNS;
         tcp->CloseConnection(checkIpAddress);
         tcp->Connect("members.dyndns.org", 80, false);
     }
-    else if (connectPhase == CP_WAITING_FOR_DYNDNS_RESPONSE && RakNet::GetTime() > phaseTimeout)
+    else if (connectPhase == CP_WAITING_FOR_DYNDNS_RESPONSE && CrabNet::GetTime() > phaseTimeout)
     {
         SetCompleted(RC_DYNDNS_TIMEOUT, "DynDNS did not respond");
         return;

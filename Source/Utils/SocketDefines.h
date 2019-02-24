@@ -18,8 +18,8 @@
 #if   defined(_WIN32)
     #define closesocket__ closesocket
 #elif defined(__native_client__)
-    // namespace RakNet { void CloseSocket(SOCKET s); }
-    // #define closesocket__ RakNet::CloseSocket
+    // namespace CrabNet { void CloseSocket(SOCKET s); }
+    // #define closesocket__ CrabNet::CloseSocket
 #else
     #define closesocket__ close
 #endif

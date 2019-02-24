@@ -20,15 +20,15 @@ ENDIF(WIN32 AND NOT UNIX)
 
 IF (WIN32 AND NOT UNIX)
     set(CRABNET_LIBRARY_LIBS ws2_32.lib)
-    set(CRABNET_LIBRARY_SO_NAME RakNetDLL)
+    set(CRABNET_LIBRARY_SO_NAME CrabNetDLL)
 ELSE(WIN32 AND NOT UNIX)
     set(CRABNET_LIBRARY_LIBS pthread)
-    set(CRABNET_LIBRARY_SO_NAME raknet)
+    set(CRABNET_LIBRARY_SO_NAME crabnet)
 ENDIF(WIN32 AND NOT UNIX)
 
 
 # Options
-option(CRABNET_ENABLE_SAMPLES "Generate RakNet sample projects." FALSE)
+option(CRABNET_ENABLE_SAMPLES "Generate CrabNet sample projects." FALSE)
 option(CRABNET_ENABLE_DLL "Generate the DLL project." TRUE)
 option(CRABNET_ENABLE_STATIC "Generate the static library project." TRUE)
 
@@ -47,11 +47,11 @@ if(MSVC)
 endif(MSVC)
 
 
-include_directories(SYSTEM include/raknet DependentExtensions)
+include_directories(SYSTEM include/crabnet DependentExtensions)
 
 add_subdirectory(lib)
 
-set(CRABNET_COMMON_LIBS RakNetLibStatic)
+set(CRABNET_COMMON_LIBS CrabNetLibStatic)
 
 if(CRABNET_ENABLE_SAMPLES)
     add_subdirectory(Samples)

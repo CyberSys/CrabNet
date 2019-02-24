@@ -25,7 +25,7 @@
 #include <netdb.h>
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 /*
 #if defined(__native_client__)
@@ -70,12 +70,12 @@ using namespace pp;
 #pragma warning( push )
 #endif
 
-namespace RakNet
+namespace CrabNet
 {
     extern void
     ProcessNetworkPacket(const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer,
-                         RakNet::TimeUS timeRead);
-    //extern void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSocket* rakNetSocket, RakNet::TimeUS timeRead );
+                         CrabNet::TimeUS timeRead);
+    //extern void ProcessNetworkPacket( const SystemAddress systemAddress, const char *data, const int length, RakPeer *rakPeer, RakNetSocket* rakNetSocket, CrabNet::TimeUS timeRead );
 }
 
 // http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html#ip4to6
@@ -147,9 +147,9 @@ void SocketLayer::SetSocketOptions(__UDPSOCKET__ listenSocket, bool blockingSock
 #endif
 }
 
-RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, RakNet::RakString inIpString)
+CrabNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, CrabNet::RakString inIpString)
 {
-    RakNet::RakString netMaskString;
+    CrabNet::RakString netMaskString;
 
 #if defined(_WIN32)
     INTERFACE_INFO InterfaceList[20];
@@ -164,7 +164,7 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, Rak
     {
         sockaddr_in *pAddress;
         pAddress = (sockaddr_in *) & (InterfaceList[i].iiAddress);
-        RakNet::RakString ipString = inet_ntoa(pAddress->sin_addr);
+        CrabNet::RakString ipString = inet_ntoa(pAddress->sin_addr);
 
         if (inIpString == ipString)
         {
@@ -192,7 +192,7 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, Rak
     int intNum = ifc.ifc_len / sizeof(struct ifreq);
     for (int i = 0; i < intNum; i++)
     {
-        RakNet::RakString ipString = inet_ntoa(((struct sockaddr_in *) &ifr[i].ifr_addr)->sin_addr);
+        CrabNet::RakString ipString = inet_ntoa(((struct sockaddr_in *) &ifr[i].ifr_addr)->sin_addr);
 
         if (inIpString == ipString)
         {

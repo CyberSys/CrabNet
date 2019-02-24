@@ -18,7 +18,7 @@
 #include "RakAssert.h"
 #include "RakAlloca.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 NetworkIDObject::NetworkIDObject()
 {

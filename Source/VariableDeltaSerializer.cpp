@@ -11,7 +11,7 @@
 
 #include "VariableDeltaSerializer.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 VariableDeltaSerializer::VariableDeltaSerializer() {didComparisonThisTick=false;}
 VariableDeltaSerializer::~VariableDeltaSerializer() {RemoveRemoteSystemVariableHistory();}
@@ -152,7 +152,7 @@ void VariableDeltaSerializer::RemoveRemoteSystemVariableHistory(RakNetGUID guid)
     }
 }
 
-int RakNet::VariableDeltaSerializer::UpdatedVariablesListPtrComp( const uint32_t &key, ChangedVariablesList* const &data )
+int CrabNet::VariableDeltaSerializer::UpdatedVariablesListPtrComp( const uint32_t &key, ChangedVariablesList* const &data )
 {
     if (key<data->sendReceipt)
         return -1;

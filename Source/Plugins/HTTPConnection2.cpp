@@ -15,7 +15,7 @@
 #include "HTTPConnection2.h"
 #include "TCPInterface.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(HTTPConnection2,HTTPConnection2)
 

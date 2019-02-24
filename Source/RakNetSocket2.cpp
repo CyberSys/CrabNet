@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <string.h> // memcpy
 
-using namespace RakNet;
+using namespace CrabNet;
 
 #ifdef _WIN32
 #else
@@ -362,7 +362,7 @@ int RNS2_Berkley::CreateRecvPollingThread(int threadPriority)
 {
     endThreads=false;
 
-    int errorCode = RakNet::RakThread::Create(RecvFromLoop, this, threadPriority);
+    int errorCode = CrabNet::RakThread::Create(RecvFromLoop, this, threadPriority);
 
     return errorCode;
 }
@@ -383,8 +383,8 @@ void RNS2_Berkley::BlockOnStopRecvPollingThread(void)
     bsp.ttl=0;
     Send(&bsp);
 
-    RakNet::TimeMS timeout = RakNet::GetTimeMS()+1000;
-    while (isRecvFromLoopThreadActive > 0 && RakNet::GetTimeMS() < timeout)
+    CrabNet::TimeMS timeout = CrabNet::GetTimeMS()+1000;
+    while (isRecvFromLoopThreadActive > 0 && CrabNet::GetTimeMS() < timeout)
     {
         // Get recvfrom to unblock
         Send(&bsp);

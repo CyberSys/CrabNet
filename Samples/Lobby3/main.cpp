@@ -33,7 +33,7 @@ using namespace RakNet;
 void main_RakNet(void)
 {
 	const char *serverURL = "localhost";
-	//const char *serverURL = "lobby3.raknet.com";
+	//const char *serverURL = "lobby3.crabnet.com";
 	//const unsigned int serverPort=80;
 	//const unsigned int serverPort=8888;
 	//const bool useSSL=true;

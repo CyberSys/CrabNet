@@ -2,7 +2,7 @@ FILE(GLOB ALL_CPP_SRCS
         ${CrabNet_SOURCE_DIR}/Source/*.cpp
         ${CrabNet_SOURCE_DIR}/Source/Utils/*.cpp
         ${CrabNet_SOURCE_DIR}/Source/Plugins/*.cpp
-        ${CrabNet_SOURCE_DIR}/include/raknet/*.h
+        ${CrabNet_SOURCE_DIR}/include/crabnet/*.h
         )
 
 if(MSVC)
@@ -22,12 +22,12 @@ if(CRABNET_ENABLE_LIBCAT_SECURITY)
 endif()
 
 if(CRABNET_ENABLE_STATIC)
-    add_library(RakNetLibStatic STATIC ${ALL_CPP_SRCS})
+    add_library(CrabNetLibStatic STATIC ${ALL_CPP_SRCS})
 
-    target_link_libraries (RakNetLibStatic ${CRABNET_LIBRARY_LIBS})
+    target_link_libraries (CrabNetLibStatic ${CRABNET_LIBRARY_LIBS})
 
     if(MSVC)
-        set_target_properties(RakNetLibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:\"LIBCD.lib LIBCMTD.lib MSVCRT.lib\"" )
+        set_target_properties(CrabNetLibStatic PROPERTIES STATIC_LIBRARY_FLAGS "/NODEFAULTLIB:\"LIBCD.lib LIBCMTD.lib MSVCRT.lib\"" )
     endif(MSVC)
 endif()
 
@@ -46,6 +46,6 @@ endif()
 if(CRABNET_ENABLE_PVS)
 pvs_studio_add_target(TARGET crabnet.analyze ALL
         OUTPUT FORMAT errorfile
-        ANALYZE RakNetLibStatic
+        ANALYZE CrabNetLibStatic
         LOG target.err)
 endif()

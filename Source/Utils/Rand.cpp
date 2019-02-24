@@ -62,7 +62,7 @@ static unsigned int _state[N + 1];     // state vector + 1 extra to not violate 
 static unsigned int *_next;        // next random value is computed from here
 static int _left = -1; // can *next++ this many times before reloading
 
-using namespace RakNet;
+using namespace CrabNet;
 
 void seedMT(unsigned int seed, unsigned int *state, unsigned int *&next, int &left);
 unsigned int reloadMT(unsigned int *state, unsigned int *&next, int &left);

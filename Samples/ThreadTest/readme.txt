@@ -1,6 +1,6 @@
 Project: ThreadTest
 
-Description: Tests to make sure RakNet will not crash if called from multiple threads.
+Description: Tests to make sure CrabNet will not crash if called from multiple threads.
 
 Dependencies: None
 

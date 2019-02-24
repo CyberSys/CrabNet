@@ -47,7 +47,7 @@ typedef int socklen_t;
 #ifdef _DO_PRINTF
 #endif
 
-namespace RakNet
+namespace CrabNet
 {
     RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop);
     RAK_THREAD_DECLARATION(ConnectionAttemptLoop);
@@ -56,7 +56,7 @@ namespace RakNet
 #pragma warning( push )
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(TCPInterface, TCPInterface)
 
@@ -192,7 +192,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 
     // Start the update thread
-    int errorCode = RakNet::RakThread::Create(UpdateTCPInterfaceLoop, this, threadPriority);
+    int errorCode = CrabNet::RakThread::Create(UpdateTCPInterfaceLoop, this, threadPriority);
 
 
     if (errorCode != 0)
@@ -355,7 +355,7 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
         s->socketFamily = socketFamily;
 
         // Start the connection thread
-        int errorCode = RakNet::RakThread::Create(ConnectionAttemptLoop, s, threadPriority);
+        int errorCode = CrabNet::RakThread::Create(ConnectionAttemptLoop, s, threadPriority);
 
         if (errorCode != 0)
         {
@@ -804,7 +804,7 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char *host, unsigned short remot
 #endif  // __native_client__
 }
 
-RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
+RAK_THREAD_DECLARATION(CrabNet::ConnectionAttemptLoop)
 {
     const TCPInterface::ThisPtrPlusSysAddr *s = (TCPInterface::ThisPtrPlusSysAddr *) arguments;
 
@@ -844,7 +844,7 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 
 }
 
-RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
+RAK_THREAD_DECLARATION(CrabNet::UpdateTCPInterfaceLoop)
 {
 //    const int BUFF_SIZE=8096;
     //char data[ BUFF_SIZE ];
@@ -1044,7 +1044,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
                             incomingMessage->data = (unsigned char *) malloc(len + 1);
                             RakAssert(incomingMessage->data);
                             memcpy(incomingMessage->data, data, len);
-                            // Null terminate this so we can print it out as regular strings.  This is different from RakNet which does not do this.
+                            // Null terminate this so we can print it out as regular strings.  This is different from CrabNet which does not do this.
                             incomingMessage->data[len] = 0;
 
                             incomingMessage->length = len;

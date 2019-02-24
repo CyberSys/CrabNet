@@ -15,11 +15,11 @@
 #include <string.h> // Use string.h rather than memory.h for a console
 #include <cstdlib>
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(DataCompressor,DataCompressor)
 
-void DataCompressor::Compress( unsigned char *userData, unsigned sizeInBytes, RakNet::BitStream * output )
+void DataCompressor::Compress( unsigned char *userData, unsigned sizeInBytes, CrabNet::BitStream * output )
 {
     // Don't use this for small files as you will just make them bigger!
     RakAssert(sizeInBytes > 2048);
@@ -46,7 +46,7 @@ void DataCompressor::Compress( unsigned char *userData, unsigned sizeInBytes, Ra
     output->SetWriteOffset(writeOffset2);
 }
 
-unsigned DataCompressor::DecompressAndAllocate( RakNet::BitStream * input, unsigned char **output )
+unsigned DataCompressor::DecompressAndAllocate( CrabNet::BitStream * input, unsigned char **output )
 {
     HuffmanEncodingTree tree;
     unsigned int bitsUsed, destinationSizeInBytes;

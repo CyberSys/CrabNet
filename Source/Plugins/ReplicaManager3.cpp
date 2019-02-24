@@ -18,7 +18,7 @@
 #include "RakPeerInterface.h"
 #include "NetworkIDManager.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 // DEFINE_MULTILIST_PTR_TO_MEMBER_COMPARISONS(LastSerializationResult,Replica3*,replica);
 
@@ -60,7 +60,7 @@ LastSerializationResult::LastSerializationResult()
 {
     replica=0;
     lastSerializationResultBS=0;
-    whenLastSerialized = RakNet::GetTime();
+    whenLastSerialized = CrabNet::GetTime();
 }
 LastSerializationResult::~LastSerializationResult()
 {
@@ -154,7 +154,7 @@ void ReplicaManager3::AutoCreateConnectionList(
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool ReplicaManager3::PushConnection(RakNet::Connection_RM3 *newConnection, WorldId worldId)
+bool ReplicaManager3::PushConnection(CrabNet::Connection_RM3 *newConnection, WorldId worldId)
 {
     if (newConnection==0)
         return false;
@@ -187,7 +187,7 @@ bool ReplicaManager3::PushConnection(RakNet::Connection_RM3 *newConnection, Worl
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::DeallocReplicaNoBroadcastDestruction(RakNet::Connection_RM3 *connection, RakNet::Replica3 *replica3)
+void ReplicaManager3::DeallocReplicaNoBroadcastDestruction(CrabNet::Connection_RM3 *connection, CrabNet::Replica3 *replica3)
 {
     currentlyDeallocatingReplica=replica3;
     replica3->DeallocReplica(connection);
@@ -196,12 +196,12 @@ void ReplicaManager3::DeallocReplicaNoBroadcastDestruction(RakNet::Connection_RM
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RakNet::Connection_RM3 * ReplicaManager3::PopConnection(unsigned int index, WorldId worldId)
+CrabNet::Connection_RM3 * ReplicaManager3::PopConnection(unsigned int index, WorldId worldId)
 {
     DataStructures::List<Replica3*> replicaList;
     DataStructures::List<NetworkID> destructionList;
     DataStructures::List<Replica3*> broadcastList;
-    RakNet::Connection_RM3 *connection;
+    CrabNet::Connection_RM3 *connection;
     unsigned int index2;
     RM3ActionOnPopConnection action;
 
@@ -269,7 +269,7 @@ RakNet::Connection_RM3 * ReplicaManager3::PopConnection(unsigned int index, Worl
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RakNet::Connection_RM3 * ReplicaManager3::PopConnection(RakNetGUID guid, WorldId worldId)
+CrabNet::Connection_RM3 * ReplicaManager3::PopConnection(RakNetGUID guid, WorldId worldId)
 {
     unsigned int index;
 
@@ -288,7 +288,7 @@ RakNet::Connection_RM3 * ReplicaManager3::PopConnection(RakNetGUID guid, WorldId
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::Reference(RakNet::Replica3 *replica3, WorldId worldId)
+void ReplicaManager3::Reference(CrabNet::Replica3 *replica3, WorldId worldId)
 {
     RakAssert(worldsArray[worldId]!=0 && "World not in use");
     RM3World *world = worldsArray[worldId];
@@ -311,7 +311,7 @@ void ReplicaManager3::Reference(RakNet::Replica3 *replica3, WorldId worldId)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int ReplicaManager3::ReferenceInternal(RakNet::Replica3 *replica3, WorldId worldId)
+unsigned int ReplicaManager3::ReferenceInternal(CrabNet::Replica3 *replica3, WorldId worldId)
 {
     RakAssert(worldsArray[worldId]!=0 && "World not in use");
     RM3World *world = worldsArray[worldId];
@@ -338,7 +338,7 @@ unsigned int ReplicaManager3::ReferenceInternal(RakNet::Replica3 *replica3, Worl
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::Dereference(RakNet::Replica3 *replica3, WorldId worldId)
+void ReplicaManager3::Dereference(CrabNet::Replica3 *replica3, WorldId worldId)
 {
     RakAssert(worldsArray[worldId]!=0 && "World not in use");
     RM3World *world = worldsArray[worldId];
@@ -503,7 +503,7 @@ void ReplicaManager3::SetDefaultPacketReliability(PacketReliability def)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::SetAutoSerializeInterval(RakNet::Time intervalMS)
+void ReplicaManager3::SetAutoSerializeInterval(CrabNet::Time intervalMS)
 {
     autoSerializeInterval=intervalMS;
 }
@@ -656,20 +656,20 @@ PluginReceiveResult ReplicaManager3::OnReceive(Packet *packet)
 
     WorldId incomingWorldId;
 
-    RakNet::Time timestamp=0;
+    CrabNet::Time timestamp=0;
     unsigned char packetIdentifier, packetDataOffset;
     if ( ( unsigned char ) packet->data[ 0 ] == ID_TIMESTAMP )
     {
-        if ( packet->length > sizeof( unsigned char ) + sizeof( RakNet::Time ) )
+        if ( packet->length > sizeof( unsigned char ) + sizeof( CrabNet::Time ) )
         {
-            packetIdentifier = ( unsigned char ) packet->data[ sizeof( unsigned char ) + sizeof( RakNet::Time ) ];
+            packetIdentifier = ( unsigned char ) packet->data[ sizeof( unsigned char ) + sizeof( CrabNet::Time ) ];
             // Required for proper endian swapping
-            RakNet::BitStream tsBs(packet->data+sizeof(MessageID),packet->length-1,false);
+            CrabNet::BitStream tsBs(packet->data+sizeof(MessageID),packet->length-1,false);
             tsBs.Read(timestamp);
             // Next line assumes worldId is only 1 byte
             RakAssert(sizeof(WorldId)==1);
-            incomingWorldId=packet->data[sizeof( unsigned char )*2 + sizeof( RakNet::Time )];
-            packetDataOffset=sizeof( unsigned char )*3 + sizeof( RakNet::Time );
+            incomingWorldId=packet->data[sizeof( unsigned char )*2 + sizeof( CrabNet::Time )];
+            packetDataOffset=sizeof( unsigned char )*3 + sizeof( CrabNet::Time );
         }
         else
             return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -754,7 +754,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3, Worl
                 if (constructionState==RM3CS_ALREADY_EXISTS_REMOTELY)
                 {
                     // Serialize construction data to this connection
-                    RakNet::BitStream bsOut;
+                    CrabNet::BitStream bsOut;
                     bsOut.Write((MessageID)ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING);
                     bsOut.Write(replicaManager3->GetWorldID());
                     NetworkID networkId;
@@ -769,7 +769,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3, Worl
                 // Serialize first serialization to this connection.
                 // This is done here, as it isn't done in PushConstruction
                 SerializeParameters sp;
-                RakNet::BitStream emptyBs;
+                CrabNet::BitStream emptyBs;
                 for (index=0; index < (unsigned int) RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; index++)
                 {
                     sp.lastSentBitstream[index]=&emptyBs;
@@ -780,7 +780,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3, Worl
                 sp.messageTimestamp=0;
                 sp.whenLastSerialized=0;
 
-                RakNet::Replica3 *replica = lsr->replica;
+                CrabNet::Replica3 *replica = lsr->replica;
 
                 RM3SerializationResult res = replica->Serialize(&sp);
                 if (res!=RM3SR_NEVER_SERIALIZE_FOR_THIS_CONNECTION &&
@@ -794,7 +794,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3, Worl
                         allIndices[z]=true;
                     }
                     if (SendSerialize(replica, allIndices, sp.outputBitstream, sp.messageTimestamp, sp.pro, replicaManager3->GetRakPeerInterface(), replicaManager3->GetWorldID())==SSICR_SENT_DATA)
-                        lsr->replica->whenLastSerialized=RakNet::GetTimeMS();
+                        lsr->replica->whenLastSerialized=CrabNet::GetTimeMS();
                 }
                 */
             }
@@ -879,7 +879,7 @@ void ReplicaManager3::Update(void)
 
     WorldId worldId;
     RM3World *world;
-    RakNet::Time time = RakNet::GetTime();
+    CrabNet::Time time = CrabNet::GetTime();
 
     for (index3=0; index3 < worldsList.Size(); index3++)
     {
@@ -1059,7 +1059,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
         return RR_STOP_PROCESSING;
     }
 
-    RakNet::BitStream bsIn(packetData,packetDataLength,false);
+    CrabNet::BitStream bsIn(packetData,packetDataLength,false);
     bsIn.IgnoreBytes(packetDataOffset);
     uint16_t constructionObjectListSize, destructionObjectListSize, index, index2;
     BitSize_t streamEnd, writeAllocationIDEnd;
@@ -1155,7 +1155,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
     RakAssert(constructionTickStack.Size()==constructionObjectListSize);
     RakAssert(actuallyCreateObjectList.Size()==constructionObjectListSize);
 
-    RakNet::BitStream empty;
+    CrabNet::BitStream empty;
     for (index=0; index < constructionObjectListSize; index++)
     {
         bool pdcWritten=false;
@@ -1248,7 +1248,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-PluginReceiveResult ReplicaManager3::OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNet::Time timestamp, unsigned char packetDataOffset, WorldId worldId)
+PluginReceiveResult ReplicaManager3::OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, CrabNet::Time timestamp, unsigned char packetDataOffset, WorldId worldId)
 {
     Connection_RM3 *connection = GetConnectionByGUID(senderGuid, worldId);
     if (connection==0)
@@ -1261,7 +1261,7 @@ PluginReceiveResult ReplicaManager3::OnSerialize(Packet *packet, unsigned char *
 
     RM3World *world = worldsArray[worldId];
     RakAssert(world->networkIDManager);
-    RakNet::BitStream bsIn(packetData,packetDataLength,false);
+    CrabNet::BitStream bsIn(packetData,packetDataLength,false);
     bsIn.IgnoreBytes(packetDataOffset);
 
     struct DeserializeParameters ds;
@@ -1311,7 +1311,7 @@ PluginReceiveResult ReplicaManager3::OnDownloadStarted(Packet *packet, unsigned 
     }
 
     connection->groupConstructionAndSerialize=false;
-    RakNet::BitStream bsIn(packetData,packetDataLength,false);
+    CrabNet::BitStream bsIn(packetData,packetDataLength,false);
     bsIn.IgnoreBytes(packetDataOffset);
     connection->DeserializeOnDownloadStarted(&bsIn);
     return RR_CONTINUE_PROCESSING;
@@ -1340,7 +1340,7 @@ PluginReceiveResult ReplicaManager3::OnDownloadComplete(Packet *packet, unsigned
         return RR_STOP_PROCESSING;
     }
 
-    RakNet::BitStream bsIn(packetData,packetDataLength,false);
+    CrabNet::BitStream bsIn(packetData,packetDataLength,false);
     bsIn.IgnoreBytes(packetDataOffset);
     connection->gotDownloadComplete=true;
     connection->DeserializeOnDownloadComplete(&bsIn);
@@ -1368,7 +1368,7 @@ Replica3* ReplicaManager3::GetReplicaByNetworkID(NetworkID networkId, WorldId wo
 
 void ReplicaManager3::BroadcastDestructionList(DataStructures::List<Replica3*> &replicaListSource, const SystemAddress &exclusionAddress, WorldId worldId)
 {
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     unsigned int i,j;
 
     RakAssert(worldsArray[worldId]!=0 && "World not in use");
@@ -1487,7 +1487,7 @@ void Connection_RM3::GetConstructedReplicas(DataStructures::List<Replica3*> &obj
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool Connection_RM3::HasReplicaConstructed(RakNet::Replica3 *replica)
+bool Connection_RM3::HasReplicaConstructed(CrabNet::Replica3 *replica)
 {
     bool objectExists;
     constructedReplicaList.GetIndexFromKey(replica, &objectExists);
@@ -1495,7 +1495,7 @@ bool Connection_RM3::HasReplicaConstructed(RakNet::Replica3 *replica)
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void Connection_RM3::SendSerializeHeader(RakNet::Replica3 *replica, RakNet::Time timestamp, RakNet::BitStream *bs, WorldId worldId)
+void Connection_RM3::SendSerializeHeader(CrabNet::Replica3 *replica, CrabNet::Time timestamp, CrabNet::BitStream *bs, WorldId worldId)
 {
     bs->Reset();
 
@@ -1517,7 +1517,7 @@ void Connection_RM3::ClearDownloadGroup(RakPeerInterface *rakPeerInterface)
     downloadGroup.Clear();
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *replica, bool indicesToSend[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::BitStream serializationData[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::Time timestamp, PRO sendParameters[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakPeerInterface *rakPeer, unsigned char worldId, RakNet::Time curTime)
+SendSerializeIfChangedResult Connection_RM3::SendSerialize(CrabNet::Replica3 *replica, bool indicesToSend[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], CrabNet::BitStream serializationData[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], CrabNet::Time timestamp, PRO sendParameters[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakPeerInterface *rakPeer, unsigned char worldId, CrabNet::Time curTime)
 {
     bool channelHasData;
     BitSize_t sum=0;
@@ -1527,7 +1527,7 @@ SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *rep
             sum+=serializationData[z].GetNumberOfBitsUsed();
     }
 
-    RakNet::BitStream out;
+    CrabNet::BitStream out;
     BitSize_t bitsPerChannel[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS];
 
     if (sum==0)
@@ -1611,9 +1611,9 @@ SendSerializeIfChangedResult Connection_RM3::SendSerialize(RakNet::Replica3 *rep
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-SendSerializeIfChangedResult Connection_RM3::SendSerializeIfChanged(LastSerializationResult *lsr, SerializeParameters *sp, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager, RakNet::Time curTime)
+SendSerializeIfChangedResult Connection_RM3::SendSerializeIfChanged(LastSerializationResult *lsr, SerializeParameters *sp, CrabNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager, CrabNet::Time curTime)
 {
-    RakNet::Replica3 *replica = lsr->replica;
+    CrabNet::Replica3 *replica = lsr->replica;
 
     if (replica->GetNetworkID()==UNASSIGNED_NETWORK_ID)
         return SSICR_DID_NOT_SEND_DATA;
@@ -2186,7 +2186,7 @@ void Connection_RM3::ValidateLists(ReplicaManager3 *replicaManager) const
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void Connection_RM3::SendConstruction(DataStructures::List<Replica3*> &newObjects, DataStructures::List<Replica3*> &deletedObjects, PRO sendParameters, RakNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager3)
+void Connection_RM3::SendConstruction(DataStructures::List<Replica3*> &newObjects, DataStructures::List<Replica3*> &deletedObjects, PRO sendParameters, CrabNet::RakPeerInterface *rakPeer, unsigned char worldId, ReplicaManager3 *replicaManager3)
 {
     if (newObjects.Size()==0 && deletedObjects.Size()==0)
         return;
@@ -2196,7 +2196,7 @@ void Connection_RM3::SendConstruction(DataStructures::List<Replica3*> &newObject
     //    DataStructures::List<LastSerializationResult* > serializedObjects;
     BitSize_t offsetStart, offsetStart2, offsetEnd;
     unsigned int newListIndex, oldListIndex;
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     NetworkID networkId;
     if (isFirstConstruction)
     {
@@ -2253,7 +2253,7 @@ void Connection_RM3::SendConstruction(DataStructures::List<Replica3*> &newObject
         bsOut.SetWriteOffset(offsetEnd);
     }
 
-    RakNet::BitStream bsOut2;
+    CrabNet::BitStream bsOut2;
     for (newListIndex=0; newListIndex < newObjects.Size(); newListIndex++)
     {
         bsOut2.Reset();
@@ -2315,7 +2315,7 @@ void Connection_RM3::SendConstruction(DataStructures::List<Replica3*> &newObject
     // If the object was serialized identically, and does not change later on, then the new connection never gets the data
     SerializeParameters sp;
     sp.whenLastSerialized=0;
-    RakNet::BitStream emptyBs;
+    CrabNet::BitStream emptyBs;
     for (int index=0; index < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; index++)
     {
         sp.lastSentBitstream[index]=&emptyBs;
@@ -2324,12 +2324,12 @@ void Connection_RM3::SendConstruction(DataStructures::List<Replica3*> &newObject
     }
 
     sp.bitsWrittenSoFar=0;
-//    RakNet::Time t = RakNet::GetTimeMS();
+//    CrabNet::Time t = CrabNet::GetTimeMS();
     for (newListIndex=0; newListIndex < newObjects.Size(); newListIndex++)
     {
         sp.destinationConnection=this;
         sp.messageTimestamp=0;
-        RakNet::Replica3 *replica = newObjects[newListIndex];
+        CrabNet::Replica3 *replica = newObjects[newListIndex];
         // 8/22/09 Forgot ResetWritePointer
         for (int z=0; z < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; z++)
         {
@@ -2369,10 +2369,10 @@ void Connection_RM3::SendConstruction(DataStructures::List<Replica3*> &newObject
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void Connection_RM3::SendValidation(RakNet::RakPeerInterface *rakPeer, WorldId worldId)
+void Connection_RM3::SendValidation(CrabNet::RakPeerInterface *rakPeer, WorldId worldId)
 {
     // Hijack to mean sendValidation
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     bsOut.Write((MessageID)ID_REPLICA_MANAGER_SCOPE_CHANGE);
     bsOut.Write(worldId);
     rakPeer->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,systemAddress,false);
@@ -2416,7 +2416,7 @@ RakNetGUID Replica3::GetCreatingSystemGUID(void) const
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3ConstructionState Replica3::QueryConstruction_ClientConstruction(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
+RM3ConstructionState Replica3::QueryConstruction_ClientConstruction(CrabNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
 {
     (void) destinationConnection;
     if (creatingSystemGUID==replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
@@ -2429,7 +2429,7 @@ RM3ConstructionState Replica3::QueryConstruction_ClientConstruction(RakNet::Conn
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool Replica3::QueryRemoteConstruction_ClientConstruction(RakNet::Connection_RM3 *sourceConnection, bool isThisTheServer)
+bool Replica3::QueryRemoteConstruction_ClientConstruction(CrabNet::Connection_RM3 *sourceConnection, bool isThisTheServer)
 {
     (void) sourceConnection;
     (void) isThisTheServer;
@@ -2440,7 +2440,7 @@ bool Replica3::QueryRemoteConstruction_ClientConstruction(RakNet::Connection_RM3
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3ConstructionState Replica3::QueryConstruction_ServerConstruction(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
+RM3ConstructionState Replica3::QueryConstruction_ServerConstruction(CrabNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
 {
     (void) destinationConnection;
 
@@ -2451,7 +2451,7 @@ RM3ConstructionState Replica3::QueryConstruction_ServerConstruction(RakNet::Conn
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool Replica3::QueryRemoteConstruction_ServerConstruction(RakNet::Connection_RM3 *sourceConnection, bool isThisTheServer)
+bool Replica3::QueryRemoteConstruction_ServerConstruction(CrabNet::Connection_RM3 *sourceConnection, bool isThisTheServer)
 {
     (void) sourceConnection;
     if (isThisTheServer)
@@ -2461,7 +2461,7 @@ bool Replica3::QueryRemoteConstruction_ServerConstruction(RakNet::Connection_RM3
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3ConstructionState Replica3::QueryConstruction_PeerToPeer(RakNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode)
+RM3ConstructionState Replica3::QueryConstruction_PeerToPeer(CrabNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode)
 {
     (void) destinationConnection;
 
@@ -2497,7 +2497,7 @@ RM3ConstructionState Replica3::QueryConstruction_PeerToPeer(RakNet::Connection_R
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool Replica3::QueryRemoteConstruction_PeerToPeer(RakNet::Connection_RM3 *sourceConnection)
+bool Replica3::QueryRemoteConstruction_PeerToPeer(CrabNet::Connection_RM3 *sourceConnection)
 {
     (void) sourceConnection;
 
@@ -2506,7 +2506,7 @@ bool Replica3::QueryRemoteConstruction_PeerToPeer(RakNet::Connection_RM3 *source
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3QuerySerializationResult Replica3::QuerySerialization_ClientSerializable(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
+RM3QuerySerializationResult Replica3::QuerySerialization_ClientSerializable(CrabNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
 {
     // Owner client sends to all
     if (creatingSystemGUID==replicaManager->GetRakPeerInterface()->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS))
@@ -2520,7 +2520,7 @@ RM3QuerySerializationResult Replica3::QuerySerialization_ClientSerializable(RakN
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3QuerySerializationResult Replica3::QuerySerialization_ServerSerializable(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
+RM3QuerySerializationResult Replica3::QuerySerialization_ServerSerializable(CrabNet::Connection_RM3 *destinationConnection, bool isThisTheServer)
 {
     (void) destinationConnection;
     // Server sends to all
@@ -2533,7 +2533,7 @@ RM3QuerySerializationResult Replica3::QuerySerialization_ServerSerializable(RakN
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3QuerySerializationResult Replica3::QuerySerialization_PeerToPeer(RakNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode)
+RM3QuerySerializationResult Replica3::QuerySerialization_PeerToPeer(CrabNet::Connection_RM3 *destinationConnection, Replica3P2PMode p2pMode)
 {
     (void) destinationConnection;
 
@@ -2567,7 +2567,7 @@ RM3QuerySerializationResult Replica3::QuerySerialization_PeerToPeer(RakNet::Conn
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_Client(RakNet::Connection_RM3 *droppedConnection) const
+RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_Client(CrabNet::Connection_RM3 *droppedConnection) const
 {
     (void) droppedConnection;
     return RM3AOPC_DELETE_REPLICA;
@@ -2575,7 +2575,7 @@ RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_Client(RakNet::Con
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_Server(RakNet::Connection_RM3 *droppedConnection) const
+RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_Server(CrabNet::Connection_RM3 *droppedConnection) const
 {
     (void) droppedConnection;
     return RM3AOPC_DELETE_REPLICA_AND_BROADCAST_DESTRUCTION;
@@ -2583,7 +2583,7 @@ RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_Server(RakNet::Con
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_PeerToPeer(RakNet::Connection_RM3 *droppedConnection) const
+RM3ActionOnPopConnection Replica3::QueryActionOnPopConnection_PeerToPeer(CrabNet::Connection_RM3 *droppedConnection) const
 {
     (void) droppedConnection;
     return RM3AOPC_DELETE_REPLICA;

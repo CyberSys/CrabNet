@@ -21,7 +21,7 @@
 #include "SuperFastHash.h"
 #include "RakPeerInterface.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(NetworkIDManager, NetworkIDManager)
 

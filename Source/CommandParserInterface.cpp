@@ -31,7 +31,7 @@
 
 #include "Utils/LinuxStrings.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -39,7 +39,7 @@ using namespace RakNet;
 
 const unsigned char CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS = 255;
 
-int RakNet::RegisteredCommandComp(const char *const &key, const RegisteredCommand &data)
+int CrabNet::RegisteredCommandComp(const char *const &key, const RegisteredCommand &data)
 {
     return _stricmp(key, data.command);
 }

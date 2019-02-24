@@ -21,7 +21,7 @@
 #include "GetTime.h"
 #include "PacketLogger.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 void NatPunchthroughServerDebugInterface_Printf::OnServerMessage(const char *msg)
 {
@@ -65,18 +65,18 @@ bool NatPunchthroughServer::User::HasConnectionAttemptToUser(User *user)
     }
     return false;
 }
-void NatPunchthroughServer::User::LogConnectionAttempts(RakNet::RakString &rs)
+void NatPunchthroughServer::User::LogConnectionAttempts(CrabNet::RakString &rs)
 {
     rs.Clear();
     unsigned int index;
     char guidStr[128], ipStr[128];
     guid.ToString(guidStr);
     systemAddress.ToString(true,ipStr);
-    rs=RakNet::RakString("User systemAddress=%s guid=%s\n", ipStr, guidStr);
-    rs+=RakNet::RakString("%i attempts in list:\n", connectionAttempts.Size());
+    rs=CrabNet::RakString("User systemAddress=%s guid=%s\n", ipStr, guidStr);
+    rs+=CrabNet::RakString("%i attempts in list:\n", connectionAttempts.Size());
     for (index=0; index < connectionAttempts.Size(); index++)
     {
-        rs+=RakNet::RakString("%i. SessionID=%i ", index+1, connectionAttempts[index]->sessionId);
+        rs+=CrabNet::RakString("%i. SessionID=%i ", index+1, connectionAttempts[index]->sessionId);
         if (connectionAttempts[index]->sender==this)
             rs+="(We are sender) ";
         else
@@ -100,11 +100,11 @@ void NatPunchthroughServer::User::LogConnectionAttempts(RakNet::RakString &rs)
             connectionAttempts[index]->sender->systemAddress.ToString(true,ipStr);
         }
 
-        rs+=RakNet::RakString("Target systemAddress=%s, guid=%s.\n", ipStr, guidStr);
+        rs+=CrabNet::RakString("Target systemAddress=%s, guid=%s.\n", ipStr, guidStr);
     }
 }
 
-int RakNet::NatPunchthroughServer::NatPunchthroughUserComp( const RakNetGUID &key, User * const &data )
+int CrabNet::NatPunchthroughServer::NatPunchthroughUserComp( const RakNetGUID &key, User * const &data )
 {
     if (key < data->guid)
         return -1;
@@ -155,7 +155,7 @@ void NatPunchthroughServer::Update(void)
     ConnectionAttempt *connectionAttempt;
     User *user, *recipient;
     unsigned int i,j;
-    RakNet::Time time = RakNet::GetTime();
+    CrabNet::Time time = CrabNet::GetTime();
     if (time > lastUpdate+250)
     {
         lastUpdate=time;
@@ -172,7 +172,7 @@ void NatPunchthroughServer::Update(void)
                         time > connectionAttempt->startTime &&
                         time > 10000 + connectionAttempt->startTime ) // Formerly 5000, but sometimes false positives
                     {
-                        RakNet::BitStream outgoingBs;
+                        CrabNet::BitStream outgoingBs;
 
                         // that other system might not be running the plugin
                         outgoingBs.Write((MessageID)ID_NAT_TARGET_UNRESPONSIVE);
@@ -202,7 +202,7 @@ void NatPunchthroughServer::Update(void)
                             connectionAttempt->recipient->systemAddress.ToString(true,addr2);
                             sprintf(str, "Sending ID_NAT_TARGET_UNRESPONSIVE to sender %s and recipient %s.", addr1, addr2);
                             natPunchthroughServerDebugInterface->OnServerMessage(str);
-                            RakNet::RakString log;
+                            CrabNet::RakString log;
                             connectionAttempt->sender->LogConnectionAttempts(log);
                             connectionAttempt->recipient->LogConnectionAttempts(log);
                         }
@@ -235,7 +235,7 @@ PluginReceiveResult NatPunchthroughServer::OnReceive(Packet *packet)
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
     case ID_NAT_REQUEST_BOUND_ADDRESSES:
         {
-            RakNet::BitStream outgoingBs;
+            CrabNet::BitStream outgoingBs;
             outgoingBs.Write((MessageID)ID_NAT_RESPOND_BOUND_ADDRESSES);
 
             if (boundAddresses[0]==UNASSIGNED_SYSTEM_ADDRESS)
@@ -265,12 +265,12 @@ PluginReceiveResult NatPunchthroughServer::OnReceive(Packet *packet)
     case ID_OUT_OF_BAND_INTERNAL:
         if (packet->length>=2 && packet->data[1]==ID_NAT_PING)
         {
-            RakNet::BitStream bs(packet->data,packet->length,false);
+            CrabNet::BitStream bs(packet->data,packet->length,false);
             bs.IgnoreBytes(sizeof(MessageID)*2);
             uint16_t externalPort;
             bs.Read(externalPort);
 
-            RakNet::BitStream outgoingBs;
+            CrabNet::BitStream outgoingBs;
             outgoingBs.Write((MessageID)ID_NAT_PONG);
             outgoingBs.Write(externalPort);
             uint16_t externalPort2 = packet->systemAddress.GetPort();
@@ -292,7 +292,7 @@ void NatPunchthroughServer::OnClosedConnection(const SystemAddress &systemAddres
     i = users.GetIndexFromKey(rakNetGUID, &objectExists);
     if (objectExists)
     {
-        RakNet::BitStream outgoingBs;
+        CrabNet::BitStream outgoingBs;
         DataStructures::List<User *> freedUpInProgressUsers;
         User *user = users[i];
         User *otherUser;
@@ -349,7 +349,7 @@ void NatPunchthroughServer::OnClosedConnection(const SystemAddress &systemAddres
         {
 //            printf("DEBUG %i\n", __LINE__);
 
-            RakNet::BitStream outgoingBs;
+            CrabNet::BitStream outgoingBs;
             outgoingBs.Write((MessageID)ID_NAT_TARGET_NOT_CONNECTED);
             outgoingBs.Write(rakNetGUID);
             rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,users[i]->systemAddress,false);
@@ -377,8 +377,8 @@ void NatPunchthroughServer::OnNewConnection(const SystemAddress &systemAddress, 
 }
 void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 {
-    RakNet::BitStream outgoingBs;
-    RakNet::BitStream incomingBs(packet->data, packet->length, false);
+    CrabNet::BitStream outgoingBs;
+    CrabNet::BitStream incomingBs(packet->data, packet->length, false);
     incomingBs.IgnoreBytes(sizeof(MessageID));
     RakNetGUID recipientGuid, senderGuid;
     incomingBs.Read(recipientGuid);
@@ -432,7 +432,7 @@ void NatPunchthroughServer::OnClientReady(Packet *packet)
 }
 void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 {
-    RakNet::BitStream bsIn(packet->data, packet->length, false);
+    CrabNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(sizeof(MessageID));
     uint16_t locSessionId;
     unsigned short mostRecentPort;
@@ -447,11 +447,11 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 
     if (natPunchthroughServerDebugInterface)
     {
-        RakNet::RakString log;
+        CrabNet::RakString log;
         char addr1[128], addr2[128];
         packet->systemAddress.ToString(true,addr1);
         packet->guid.ToString(addr2);
-        log=RakNet::RakString("Got ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s. port=%i. sessionId=%i. userFound=%i.", addr1, addr2, mostRecentPort, locSessionId, objectExists);
+        log=CrabNet::RakString("Got ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s. port=%i. sessionId=%i. userFound=%i.", addr1, addr2, mostRecentPort, locSessionId, objectExists);
         natPunchthroughServerDebugInterface->OnServerMessage(log.C_String());
     }
 
@@ -459,7 +459,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
     {
         user=users[i];
         user->mostRecentPort=mostRecentPort;
-        RakNet::Time time = RakNet::GetTime();
+        CrabNet::Time time = CrabNet::GetTime();
 
         for (j=0; j < user->connectionAttempts.Size(); j++)
         {
@@ -480,7 +480,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
                 // Pick a time far enough in the future that both systems will have gotten the message
                 int targetPing = rakPeerInterface->GetAveragePing(recipientTargetAddress);
                 int senderPing = rakPeerInterface->GetAveragePing(senderSystemAddress);
-                RakNet::Time simultaneousAttemptTime;
+                CrabNet::Time simultaneousAttemptTime;
                 if (targetPing==-1 || senderPing==-1)
                     simultaneousAttemptTime = time + 1500;
                 else
@@ -494,16 +494,16 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 
                 if (natPunchthroughServerDebugInterface)
                 {
-                    RakNet::RakString log;
+                    CrabNet::RakString log;
                     char addr1[128], addr2[128];
                     recipientSystemAddress.ToString(true,addr1);
                     connectionAttempt->recipient->guid.ToString(addr2);
-                    log=RakNet::RakString("Sending ID_NAT_CONNECT_AT_TIME to recipient systemAddress %s guid %s", addr1, addr2);
+                    log=CrabNet::RakString("Sending ID_NAT_CONNECT_AT_TIME to recipient systemAddress %s guid %s", addr1, addr2);
                     natPunchthroughServerDebugInterface->OnServerMessage(log.C_String());
                 }
 
                 // Send to recipient timestamped message to connect at time
-                RakNet::BitStream bsOut;
+                CrabNet::BitStream bsOut;
                 bsOut.Write((MessageID)ID_TIMESTAMP);
                 bsOut.Write(simultaneousAttemptTime);
                 bsOut.Write((MessageID)ID_NAT_CONNECT_AT_TIME);
@@ -518,11 +518,11 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 
                 if (natPunchthroughServerDebugInterface)
                 {
-                    RakNet::RakString log;
+                    CrabNet::RakString log;
                     char addr1[128], addr2[128];
                     senderSystemAddress.ToString(true,addr1);
                     connectionAttempt->sender->guid.ToString(addr2);
-                    log=RakNet::RakString("Sending ID_NAT_CONNECT_AT_TIME to sender systemAddress %s guid %s", addr1, addr2);
+                    log=CrabNet::RakString("Sending ID_NAT_CONNECT_AT_TIME to sender systemAddress %s guid %s", addr1, addr2);
                     natPunchthroughServerDebugInterface->OnServerMessage(log.C_String());
                 }
 
@@ -553,11 +553,11 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 
         if (natPunchthroughServerDebugInterface)
         {
-            RakNet::RakString log;
+            CrabNet::RakString log;
             char addr1[128], addr2[128];
             packet->systemAddress.ToString(true,addr1);
             packet->guid.ToString(addr2);
-            log=RakNet::RakString("Ignoring ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s", addr1, addr2);
+            log=CrabNet::RakString("Ignoring ID_NAT_GET_MOST_RECENT_PORT from systemAddress %s guid %s", addr1, addr2);
             natPunchthroughServerDebugInterface->OnServerMessage(log.C_String());
         }
 
@@ -602,12 +602,12 @@ void NatPunchthroughServer::StartPunchthroughForUser(User *user)
             sender->isReady=false;
             recipient->isReady=false;
             connectionAttempt->attemptPhase=ConnectionAttempt::NAT_ATTEMPT_PHASE_GETTING_RECENT_PORTS;
-            connectionAttempt->startTime=RakNet::GetTime();
+            connectionAttempt->startTime=CrabNet::GetTime();
 
             sender->mostRecentPort=0;
             recipient->mostRecentPort=0;
 
-            RakNet::BitStream outgoingBs;
+            CrabNet::BitStream outgoingBs;
             outgoingBs.Write((MessageID)ID_NAT_GET_MOST_RECENT_PORT);
             // 4/29/09 Write sessionID so we don't use returned port for a system we don't want
             outgoingBs.Write(connectionAttempt->sessionId);

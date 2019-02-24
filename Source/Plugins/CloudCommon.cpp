@@ -16,9 +16,9 @@
 #include "CloudCommon.h"
 #include "BitStream.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
-int RakNet::CloudKeyComp(const CloudKey &key, const CloudKey &data)
+int CrabNet::CloudKeyComp(const CloudKey &key, const CloudKey &data)
 {
     if (key.primaryKey < data.primaryKey)
         return -1;

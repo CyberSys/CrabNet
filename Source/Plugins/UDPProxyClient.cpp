@@ -19,7 +19,7 @@
 #include "MessageIdentifiers.h"
 #include "GetTime.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 static const int DEFAULT_UNRESPONSIVE_PING_TIME_COORDINATOR=1000;
 
 // bool operator<( const DataStructures::MLKeyRef<UDPProxyClient::ServerWithPing> &inputKey, const UDPProxyClient::ServerWithPing &cls ) {return inputKey.Get().serverAddress < cls.serverAddress;}
@@ -40,7 +40,7 @@ void UDPProxyClient::SetResultHandler(UDPProxyClientResultHandler *rh)
 {
     resultHandler=rh;
 }
-bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, RakNetGUID targetGuid, RakNet::TimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream)
+bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, RakNetGUID targetGuid, CrabNet::TimeMS timeoutOnNoDataMS, CrabNet::BitStream *serverSelectionBitstream)
 {
     // Return false if not connected
     ConnectionState cs = rakPeerInterface->GetConnectionState(proxyCoordinator);
@@ -72,7 +72,7 @@ bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAdd
 
     return true;
 }
-bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddressAsSeenFromCoordinator, RakNet::TimeMS timeoutOnNoDataMS, RakNet::BitStream *serverSelectionBitstream)
+bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddressAsSeenFromCoordinator, CrabNet::TimeMS timeoutOnNoDataMS, CrabNet::BitStream *serverSelectionBitstream)
 {
     // Return false if not connected
     ConnectionState cs = rakPeerInterface->GetConnectionState(proxyCoordinator);
@@ -112,7 +112,7 @@ void UDPProxyClient::Update(void)
         PingServerGroup *psg = pingServerGroups[idx1];
 
         if (psg->serversToPing.Size() > 0 &&
-            RakNet::GetTimeMS() > psg->startPingTime+DEFAULT_UNRESPONSIVE_PING_TIME_COORDINATOR)
+            CrabNet::GetTimeMS() > psg->startPingTime+DEFAULT_UNRESPONSIVE_PING_TIME_COORDINATOR)
         {
             // If they didn't reply within DEFAULT_UNRESPONSIVE_PING_TIME_COORDINATOR, just give up on them
             psg->SendPingedServersToCoordinator(rakPeerInterface);
@@ -138,11 +138,11 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
             {
                 if (psg->serversToPing[idx2].serverAddress==packet->systemAddress)
                 {
-                    RakNet::BitStream bsIn(packet->data,packet->length,false);
+                    CrabNet::BitStream bsIn(packet->data,packet->length,false);
                     bsIn.IgnoreBytes(sizeof(MessageID));
-                    RakNet::TimeMS sentTime;
+                    CrabNet::TimeMS sentTime;
                     bsIn.Read(sentTime);
-                    RakNet::TimeMS curTime=RakNet::GetTimeMS();
+                    CrabNet::TimeMS curTime=CrabNet::GetTimeMS();
                     int ping;
                     if (curTime>sentTime)
                         ping=(int) (curTime-sentTime);
@@ -182,7 +182,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
             {
                 RakNetGUID targetGuid;
                 SystemAddress senderAddress, targetAddress;
-                RakNet::BitStream incomingBs(packet->data, packet->length, false);
+                CrabNet::BitStream incomingBs(packet->data, packet->length, false);
                 incomingBs.IgnoreBytes(sizeof(MessageID)*2);
                 incomingBs.Read(senderAddress);
                 incomingBs.Read(targetAddress);
@@ -195,7 +195,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
                 case ID_UDP_PROXY_IN_PROGRESS:
                     {
                         unsigned short forwardingPort;
-                        RakNet::RakString serverIP;
+                        CrabNet::RakString serverIP;
                         incomingBs.Read(serverIP);
                         incomingBs.Read(forwardingPort);
                         if (packet->data[1]==ID_UDP_PROXY_FORWARDING_SUCCEEDED)
@@ -248,7 +248,7 @@ void UDPProxyClient::OnRakPeerShutdown(void)
 }
 void UDPProxyClient::OnPingServers(Packet *packet)
 {
-    RakNet::BitStream incomingBs(packet->data, packet->length, false);
+    CrabNet::BitStream incomingBs(packet->data, packet->length, false);
     incomingBs.IgnoreBytes(2);
 
     PingServerGroup *psg =new PingServerGroup;
@@ -256,7 +256,7 @@ void UDPProxyClient::OnPingServers(Packet *packet)
     ServerWithPing swp;
     incomingBs.Read(psg->sata.senderClientAddress);
     incomingBs.Read(psg->sata.targetClientAddress);
-    psg->startPingTime=RakNet::GetTimeMS();
+    psg->startPingTime=CrabNet::GetTimeMS();
     psg->coordinatorAddressForPings=packet->systemAddress;
     unsigned short serverListSize;
     incomingBs.Read(serverListSize);

@@ -24,7 +24,7 @@
 
 #include <memory.h>
 
-using namespace RakNet;
+using namespace CrabNet;
 
 StringCompressor &StringCompressor::Instance()
 {
@@ -81,7 +81,7 @@ StringCompressor::~StringCompressor()
         delete huffmanEncodingTrees[i];
 }
 
-void StringCompressor::EncodeString(const char *input, size_t maxCharsToWrite, RakNet::BitStream *output, uint8_t languageId)
+void StringCompressor::EncodeString(const char *input, size_t maxCharsToWrite, CrabNet::BitStream *output, uint8_t languageId)
 {
     if (!huffmanEncodingTrees.Has(languageId))
         return;
@@ -99,7 +99,7 @@ void StringCompressor::EncodeString(const char *input, size_t maxCharsToWrite, R
     if (maxCharsToWrite > 0 && charsToWrite > maxCharsToWrite)
         charsToWrite = maxCharsToWrite - 1;
 
-    RakNet::BitStream encodedBitStream;
+    CrabNet::BitStream encodedBitStream;
     huffmanEncodingTree->EncodeArray((unsigned char *) input, charsToWrite, &encodedBitStream);
 
     uint32_t stringBitLength = encodedBitStream.GetNumberOfBitsUsed();
@@ -107,7 +107,7 @@ void StringCompressor::EncodeString(const char *input, size_t maxCharsToWrite, R
     output->WriteBits(encodedBitStream.GetData(), stringBitLength);
 }
 
-bool StringCompressor::DecodeString(char *output, size_t maxCharsToWrite, RakNet::BitStream *input, uint8_t languageId)
+bool StringCompressor::DecodeString(char *output, size_t maxCharsToWrite, CrabNet::BitStream *input, uint8_t languageId)
 {
     if (!huffmanEncodingTrees.Has(languageId))
         return false;
@@ -135,12 +135,12 @@ bool StringCompressor::DecodeString(char *output, size_t maxCharsToWrite, RakNet
 }
 
 #ifdef _CSTRING_COMPRESSOR
-void StringCompressor::EncodeString(const CString &input, int maxCharsToWrite, RakNet::BitStream *output)
+void StringCompressor::EncodeString(const CString &input, int maxCharsToWrite, CrabNet::BitStream *output)
 {
     LPTSTR p = input;
     EncodeString(p, maxCharsToWrite*sizeof(TCHAR), output, languageID);
 }
-bool StringCompressor::DecodeString(CString &output, int maxCharsToWrite, RakNet::BitStream *input, uint8_t languageId)
+bool StringCompressor::DecodeString(CString &output, int maxCharsToWrite, CrabNet::BitStream *input, uint8_t languageId)
 {
     LPSTR p = output.GetBuffer(maxCharsToWrite*sizeof(TCHAR));
     DecodeString(p,maxCharsToWrite*sizeof(TCHAR), input, languageID);
@@ -149,11 +149,11 @@ bool StringCompressor::DecodeString(CString &output, int maxCharsToWrite, RakNet
 }
 #endif
 #ifdef _STD_STRING_COMPRESSOR
-void StringCompressor::EncodeString(const std::string &input, int maxCharsToWrite, RakNet::BitStream *output, uint8_t languageId)
+void StringCompressor::EncodeString(const std::string &input, int maxCharsToWrite, CrabNet::BitStream *output, uint8_t languageId)
 {
     EncodeString(input.c_str(), maxCharsToWrite, output, languageId);
 }
-bool StringCompressor::DecodeString(std::string *output, int maxCharsToWrite, RakNet::BitStream *input, uint8_t languageId)
+bool StringCompressor::DecodeString(std::string *output, int maxCharsToWrite, CrabNet::BitStream *input, uint8_t languageId)
 {
     if (maxCharsToWrite <= 0)
     {
@@ -183,12 +183,12 @@ bool StringCompressor::DecodeString(std::string *output, int maxCharsToWrite, Ra
 }
 #endif
 
-void StringCompressor::EncodeString(const RakString *input, size_t maxCharsToWrite, RakNet::BitStream *output, uint8_t languageId)
+void StringCompressor::EncodeString(const RakString *input, size_t maxCharsToWrite, CrabNet::BitStream *output, uint8_t languageId)
 {
     EncodeString(input->C_String(), maxCharsToWrite, output, languageId);
 }
 
-bool StringCompressor::DecodeString(RakString *output, size_t maxCharsToWrite, RakNet::BitStream *input, uint8_t languageId)
+bool StringCompressor::DecodeString(RakString *output, size_t maxCharsToWrite, CrabNet::BitStream *input, uint8_t languageId)
 {
     if (maxCharsToWrite <= 0)
     {

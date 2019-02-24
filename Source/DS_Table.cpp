@@ -180,23 +180,23 @@ void Table::Cell::Get(char *output, int *outputLength)
         *outputLength = (int) i;
 }
 
-RakNet::RakString Table::Cell::ToString(ColumnType columnType)
+CrabNet::RakString Table::Cell::ToString(ColumnType columnType)
 {
     if (isEmpty)
-        return RakNet::RakString();
+        return CrabNet::RakString();
 
     switch(columnType)
     {
         case NUMERIC:
-            return RakNet::RakString("%f", i);
+            return CrabNet::RakString("%f", i);
         case STRING:
-            return RakNet::RakString(c);
+            return CrabNet::RakString(c);
         case BINARY:
-            return RakNet::RakString("<Binary>");
+            return CrabNet::RakString("<Binary>");
         case POINTER:
-            return RakNet::RakString("%p", ptr);
+            return CrabNet::RakString("%p", ptr);
         default:
-            return RakNet::RakString();
+            return CrabNet::RakString();
     }
 }
 

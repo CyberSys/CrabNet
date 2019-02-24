@@ -91,7 +91,7 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(SolutionDir)Lib\RakNet.dll"/>
+				CommandLine="copy $(SolutionDir)Lib\CrabNet.dll"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

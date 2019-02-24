@@ -244,7 +244,7 @@ void PrintConnections()
 			}
 		}
 
-		// Keep raknet threads responsive
+		// Keep crabnet threads responsive
 		RakSleep(30);
 	}	
 }

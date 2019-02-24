@@ -23,7 +23,7 @@
 #include "FileOperations.h"
 #include "IncrementalReadInterface.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -170,7 +170,7 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(FileList &localF
     unsigned short setId = fileListTransfer->SetupReceive(transferCallback, true, host);
 
     // Send to the host, telling it to process this request
-    RakNet::BitStream outBitstream;
+    CrabNet::BitStream outBitstream;
     outBitstream.Write((MessageID)ID_DDT_DOWNLOAD_REQUEST);
     outBitstream.Write(setId);
     StringCompressor::Instance().EncodeString(subdir, 256, &outBitstream);
@@ -199,7 +199,7 @@ void DirectoryDeltaTransfer::OnDownloadRequest(Packet *packet)
 {
     char subdir[256];
     char remoteSubdir[256];
-    RakNet::BitStream inBitstream(packet->data, packet->length, false);
+    CrabNet::BitStream inBitstream(packet->data, packet->length, false);
     FileList remoteFileHash;
     FileList delta;
     unsigned short setId;

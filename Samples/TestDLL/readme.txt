@@ -1,6 +1,6 @@
 Project: TestDLL
 
-Description: Makes sure RakNet can be called through a DLL. Internal.
+Description: Makes sure CrabNet can be called through a DLL. Internal.
 
 Dependencies: None
 

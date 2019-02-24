@@ -26,14 +26,14 @@
 #include <stdio.h>
 #include "RakSleep.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 
 STATIC_FACTORY_DEFINITIONS(EmailSender,EmailSender)
 
 const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, const char *sender, const char *recipient, const char *senderName, const char *recipientName, const char *subject, const char *body, FileList *attachedFiles, bool doPrintf, const char *password)
 {
-    RakNet::Packet *packet;
+    CrabNet::Packet *packet;
     char query[1024];
     TCPInterface tcpInterface;
     SystemAddress emailServer;
@@ -45,9 +45,9 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 #if  OPEN_SSL_CLIENT_SUPPORT==1
     tcpInterface.StartSSLClient(emailServer);
 #endif
-    RakNet::TimeMS timeoutTime = RakNet::GetTimeMS()+3000;
+    CrabNet::TimeMS timeoutTime = CrabNet::GetTimeMS()+3000;
     packet=0;
-    while (RakNet::GetTimeMS() < timeoutTime)
+    while (CrabNet::GetTimeMS() < timeoutTime)
     {
         packet = tcpInterface.Receive();
         if (packet)
@@ -101,7 +101,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
         if (password==0)
             return "Password needed";
         char *outputData = new char[(strlen(sender)+strlen(password)+2)*3];
-        RakNet::BitStream bs;
+        CrabNet::BitStream bs;
         char zero=0;
         bs.Write(&zero,1);
         bs.Write(sender, (const unsigned int) strlen(sender));
@@ -166,7 +166,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
     int i,j;
     if (attachedFiles && attachedFiles->fileList.Size())
     {
-        rakNetRandom.SeedMT((unsigned int) RakNet::GetTimeMS());
+        rakNetRandom.SeedMT((unsigned int) CrabNet::GetTimeMS());
         // Random multipart message boundary
         for (i=0; i < boundarySize; i++)
             boundary[i]=Base64Map()[rakNetRandom.RandomMT()%64];
@@ -319,9 +319,9 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 
 const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAddress &emailServer, bool doPrintf)
 {
-    RakNet::Packet *packet;
-    RakNet::TimeMS timeout;
-    timeout=RakNet::GetTimeMS()+5000;
+    CrabNet::Packet *packet;
+    CrabNet::TimeMS timeout;
+    timeout=CrabNet::GetTimeMS()+5000;
 #ifdef _MSC_VER
     #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
 #endif
@@ -366,7 +366,7 @@ const char *EmailSender::GetResponse(TCPInterface *tcpInterface, const SystemAdd
             if (strstr((const char*)packet->data, "553"))
                 return "Failed on error code 553";
         }
-        if (RakNet::GetTimeMS() > timeout)
+        if (CrabNet::GetTimeMS() > timeout)
             return "Timed out";
         RakSleep(100);
     }

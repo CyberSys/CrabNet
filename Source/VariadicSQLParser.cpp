@@ -91,8 +91,8 @@ void VariadicSQLParser::ExtractArguments(va_list argptr, const DataStructures::L
                 paramData[i] = (char *) malloc(paramLength[i]);
                 RakAssert(paramData[i]);
                 memcpy(paramData[i], &val, paramLength[i]);
-                if (!RakNet::BitStream::IsNetworkOrder())
-                    RakNet::BitStream::ReverseBytesInPlace((unsigned char *) paramData[i], paramLength[i]);
+                if (!CrabNet::BitStream::IsNetworkOrder())
+                    CrabNet::BitStream::ReverseBytesInPlace((unsigned char *) paramData[i], paramLength[i]);
             }
                 break;
             case 's':
@@ -109,8 +109,8 @@ void VariadicSQLParser::ExtractArguments(va_list argptr, const DataStructures::L
                 paramLength[i] = sizeof(val);
                 paramData[i] = (char *) malloc(paramLength[i]);
                 memcpy(paramData[i], &val, paramLength[i]);
-                if (!RakNet::BitStream::IsNetworkOrder())
-                    RakNet::BitStream::ReverseBytesInPlace((unsigned char *) paramData[i], paramLength[i]);
+                if (!CrabNet::BitStream::IsNetworkOrder())
+                    CrabNet::BitStream::ReverseBytesInPlace((unsigned char *) paramData[i], paramLength[i]);
             }
                 break;
                 /*
@@ -122,7 +122,7 @@ void VariadicSQLParser::ExtractArguments(va_list argptr, const DataStructures::L
                     paramLength[i]=sizeof(val);
                     paramData[i]=(char*) malloc(paramLength[i]);
                     memcpy(paramData[i], &val, paramLength[i]);
-                    if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
+                    if (CrabNet::BitStream::IsNetworkOrder()==false) CrabNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
                 }
                 break;
                 */
@@ -134,8 +134,8 @@ void VariadicSQLParser::ExtractArguments(va_list argptr, const DataStructures::L
                 paramLength[i] = sizeof(val);
                 paramData[i] = (char *) malloc(paramLength[i]);
                 memcpy(paramData[i], &val, paramLength[i]);
-                if (!RakNet::BitStream::IsNetworkOrder())
-                    RakNet::BitStream::ReverseBytesInPlace((unsigned char *) paramData[i], paramLength[i]);
+                if (!CrabNet::BitStream::IsNetworkOrder())
+                    CrabNet::BitStream::ReverseBytesInPlace((unsigned char *) paramData[i], paramLength[i]);
             }
                 break;
             case 'a':

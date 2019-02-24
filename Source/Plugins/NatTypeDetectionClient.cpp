@@ -22,7 +22,7 @@
 #include "SocketLayer.h"
 #include "../Utils/SocketDefines.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(NatTypeDetectionClient,NatTypeDetectionClient)
 
@@ -67,7 +67,7 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 
     serverAddress=_serverAddress;
 
-    RakNet::BitStream bs;
+    CrabNet::BitStream bs;
     bs.Write((unsigned char)ID_NAT_TYPE_DETECTION_REQUEST);
     bs.Write(true); // IsRequest
     bs.Write(c2->GetBoundAddress().GetPort());
@@ -89,7 +89,7 @@ void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result)
     if (result!=NAT_TYPE_PORT_RESTRICTED && result!=NAT_TYPE_SYMMETRIC)
     {
         // Otherwise tell the server we got this message, so it stops sending tests to us
-        RakNet::BitStream bs;
+        CrabNet::BitStream bs;
         bs.Write((unsigned char)ID_NAT_TYPE_DETECTION_REQUEST);
         bs.Write(false); // Done
         rakPeerInterface->Send(&bs,HIGH_PRIORITY,RELIABLE,0,serverAddress,false);
@@ -179,9 +179,9 @@ void NatTypeDetectionClient::OnDetach(void)
 }
 void NatTypeDetectionClient::OnTestPortRestricted(Packet *packet)
 {
-    RakNet::BitStream bsIn(packet->data,packet->length,false);
+    CrabNet::BitStream bsIn(packet->data,packet->length,false);
     bsIn.IgnoreBytes(sizeof(MessageID));
-    RakNet::RakString s3p4StrAddress;
+    CrabNet::RakString s3p4StrAddress;
     bsIn.Read(s3p4StrAddress);
     unsigned short s3p4Port;
     bsIn.Read(s3p4Port);
@@ -191,9 +191,9 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet *packet)
     SystemAddress s3p4Addr = sockets[0]->GetBoundAddress();
     s3p4Addr.FromStringExplicitPort(s3p4StrAddress.C_String(), s3p4Port);
 
-    // Send off the RakNet socket to the specified address, message is unformatted
+    // Send off the CrabNet socket to the specified address, message is unformatted
     // Server does this twice, so don't have to unduly worry about packetloss
-    RakNet::BitStream bsOut;
+    CrabNet::BitStream bsOut;
     bsOut.Write((MessageID) NAT_TYPE_PORT_RESTRICTED);
     bsOut.Write(rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
 //    SocketLayer::SendTo_PC( sockets[0], (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), s3p4Addr, __FILE__, __LINE__ );

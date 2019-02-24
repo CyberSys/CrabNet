@@ -16,7 +16,7 @@
 #include <cstring>
 #include <cstdlib>
 
-using namespace RakNet;
+using namespace CrabNet;
 
 ThreadsafePacketLogger::ThreadsafePacketLogger()
 {

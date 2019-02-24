@@ -12,7 +12,7 @@
 /*
 #include "RakNetSocket.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 #if defined(__native_client__)
 using namespace pp;

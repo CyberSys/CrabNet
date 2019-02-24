@@ -38,7 +38,7 @@
 #define _copysign copysign
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 #ifdef _MSC_VER
 #pragma warning( push )

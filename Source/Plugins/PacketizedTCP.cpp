@@ -18,7 +18,7 @@
 #include "MessageIdentifiers.h"
 #include "RakAlloca.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 typedef uint32_t PTCPHeader;
 
@@ -47,8 +47,8 @@ void PacketizedTCP::Send( const char *data, unsigned length, const SystemAddress
     PTCPHeader dataLength;
     dataLength=length;
 #ifndef __BITSTREAM_NATIVE_END
-    if (RakNet::BitStream::DoEndianSwap())
-        RakNet::BitStream::ReverseBytes((unsigned char*) &length,(unsigned char*) &dataLength,sizeof(dataLength));
+    if (CrabNet::BitStream::DoEndianSwap())
+        CrabNet::BitStream::ReverseBytes((unsigned char*) &length,(unsigned char*) &dataLength,sizeof(dataLength));
 #else
         dataLength=length;
 #endif
@@ -81,8 +81,8 @@ bool PacketizedTCP::SendList( const char **data, const unsigned int *lengths, co
 
     PTCPHeader dataLength;
 #ifndef __BITSTREAM_NATIVE_END
-    if (RakNet::BitStream::DoEndianSwap())
-        RakNet::BitStream::ReverseBytes((unsigned char*) &totalLengthOfUserData,(unsigned char*) &dataLength,sizeof(dataLength));
+    if (CrabNet::BitStream::DoEndianSwap())
+        CrabNet::BitStream::ReverseBytes((unsigned char*) &totalLengthOfUserData,(unsigned char*) &dataLength,sizeof(dataLength));
 #else
     dataLength=totalLengthOfUserData;
 #endif
@@ -173,8 +173,8 @@ Packet* PacketizedTCP::Receive( void )
 
                 // Peek the header to see if a full message is waiting
                 bq->ReadBytes((char*) &dataLength,sizeof(PTCPHeader),true);
-                if (RakNet::BitStream::DoEndianSwap())
-                    RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &dataLength,sizeof(dataLength));
+                if (CrabNet::BitStream::DoEndianSwap())
+                    CrabNet::BitStream::ReverseBytesInPlace((unsigned char*) &dataLength,sizeof(dataLength));
                 // Header indicates packet length. If enough data is available, read out and return one packet
                 if (bq->GetBytesWritten()>=dataLength+sizeof(PTCPHeader))
                 {
@@ -201,8 +201,8 @@ Packet* PacketizedTCP::Receive( void )
                         // Peek the header to see if a full message is waiting
                         if (bq->ReadBytes((char*) &dataLength,sizeof(PTCPHeader),true))
                         {
-                            if (RakNet::BitStream::DoEndianSwap())
-                                RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &dataLength,sizeof(dataLength));
+                            if (CrabNet::BitStream::DoEndianSwap())
+                                CrabNet::BitStream::ReverseBytesInPlace((unsigned char*) &dataLength,sizeof(dataLength));
                         }
                         else
                             break;

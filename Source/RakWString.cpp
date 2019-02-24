@@ -15,7 +15,7 @@
 #include <wchar.h>
 #include <stdlib.h>
 
-using namespace RakNet;
+using namespace CrabNet;
 
 // From http://www.joelonsoftware.com/articles/Unicode.html
 // Only code points 128 and above are stored using 2, 3, in fact, up to 6 bytes.
@@ -410,23 +410,23 @@ bool RakWString::Deserialize(wchar_t *str, BitStream *bs)
 }
 
 /*
-RakNet::BitStream bsTest;
-RakNet::RakWString testString("cat"), testString2;
+CrabNet::BitStream bsTest;
+CrabNet::RakWString testString("cat"), testString2;
 testString = "Hllo";
 testString = L"Hello";
 testString += L" world";
 testString2 += testString2;
-RakNet::RakWString ts3(L" from here");
+CrabNet::RakWString ts3(L" from here");
 testString2+=ts3;
-RakNet::RakWString ts4(L" 222");
+CrabNet::RakWString ts4(L" 222");
 testString2=ts4;
-RakNet::RakString rs("rakstring");
+CrabNet::RakString rs("rakstring");
 testString2+=rs;
 testString2=rs;
 bsTest.Write(L"one");
 bsTest.Write(testString2);
 bsTest.SetReadOffset(0);
-RakNet::RakWString ts5, ts6;
+CrabNet::RakWString ts5, ts6;
 wchar_t buff[99];
 wchar_t *wptr = (wchar_t*)buff;
 bsTest.Read(wptr);

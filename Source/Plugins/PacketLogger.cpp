@@ -32,7 +32,7 @@
 #pragma warning( push )
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 STATIC_FACTORY_DEFINITIONS(PacketLogger,PacketLogger)
 
@@ -121,7 +121,7 @@ void PacketLogger::OnDirectSocketSend(const char *data, const BitSize_t bitsUsed
         return;
 
     char str[1024];
-    FormatLine(str, "Snd", "Raw", 0, 0, (unsigned char)data[0], bitsUsed, RakNet::GetTimeMS(),
+    FormatLine(str, "Snd", "Raw", 0, 0, (unsigned char)data[0], bitsUsed, CrabNet::GetTimeMS(),
                rakPeerInterface->GetExternalID(remoteSystemAddress), remoteSystemAddress,
                (unsigned int)-1, (unsigned int)-1, (unsigned int)-1, (unsigned int)-1);
     AddToLog(str);
@@ -138,7 +138,7 @@ void PacketLogger::OnDirectSocketReceive(const char *data, const BitSize_t bitsU
         return;
 
     char str[1024];
-    FormatLine(str, "Rcv", "Raw", 0, 0, data[0], bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+    FormatLine(str, "Rcv", "Raw", 0, 0, data[0], bitsUsed, CrabNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
     AddToLog(str);
 }
 void PacketLogger::OnReliabilityLayerNotification(const char *errorMessage, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress, bool isError)
@@ -149,11 +149,11 @@ void PacketLogger::OnReliabilityLayerNotification(const char *errorMessage, cons
         type=(char*) "RcvErr";
     else
         type=(char*) "RcvWrn";
-    FormatLine(str, type, errorMessage, 0, 0, "", bitsUsed, RakNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
+    FormatLine(str, type, errorMessage, 0, 0, "", bitsUsed, CrabNet::GetTime(), rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS), remoteSystemAddress,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1,(unsigned int)-1);
     AddToLog(str);
     RakAssert(isError==false);
 }
-void PacketLogger::OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, RakNet::TimeMS time)
+void PacketLogger::OnAck(unsigned int messageNumber, SystemAddress remoteSystemAddress, CrabNet::TimeMS time)
 {
     char str[256];
     char str1[64], str2[62];
@@ -179,7 +179,7 @@ void PacketLogger::OnPushBackPacket(const char *data, const BitSize_t bitsUsed, 
     SystemAddress localSystemAddress = rakPeerInterface->GetExternalID(remoteSystemAddress);
     localSystemAddress.ToString(true, str1);
     remoteSystemAddress.ToString(true, str2);
-    RakNet::TimeMS time = RakNet::GetTimeMS();
+    CrabNet::TimeMS time = CrabNet::GetTimeMS();
     char localtime[128];
     GetLocalTime(localtime);
 
@@ -194,7 +194,7 @@ void PacketLogger::OnPushBackPacket(const char *data, const BitSize_t bitsUsed, 
     AddToLog(str);
 }
 void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned frameNumber, SystemAddress remoteSystemAddress,
-                                    RakNet::TimeMS time, int isSend)
+                                    CrabNet::TimeMS time, int isSend)
 {
     char str[1024];
     const char *sendTypes[] =
@@ -219,7 +219,7 @@ void PacketLogger::OnInternalPacket(InternalPacket *internalPacket, unsigned fra
 
     if (internalPacket->data[0]==ID_TIMESTAMP)
     {
-        FormatLine(str, sendType, "Tms", reliableMessageNumber, frameNumber, internalPacket->data[1+sizeof(RakNet::Time)], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
+        FormatLine(str, sendType, "Tms", reliableMessageNumber, frameNumber, internalPacket->data[1+sizeof(CrabNet::Time)], internalPacket->dataBitLength, (unsigned long long)time, localSystemAddress, remoteSystemAddress, internalPacket->splitPacketId, internalPacket->splitPacketIndex, internalPacket->splitPacketCount, internalPacket->orderingIndex);
     }
     else
     {
@@ -242,7 +242,7 @@ void PacketLogger::WriteMiscellaneous(const char *type, const char *msg)
     char str1[64];
     SystemAddress localSystemAddress = rakPeerInterface->GetInternalID();
     localSystemAddress.ToString(true, str1);
-    RakNet::TimeMS time = RakNet::GetTimeMS();
+    CrabNet::TimeMS time = CrabNet::GetTimeMS();
     char localtime[128];
     GetLocalTime(localtime);
 

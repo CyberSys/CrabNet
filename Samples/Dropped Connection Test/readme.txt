@@ -1,6 +1,6 @@
 Project: Dropped connection test
 
-Description: Tests silently dropping multiple instances of RakNet. This is used to test that lost connections are detected properly.
+Description: Tests silently dropping multiple instances of CrabNet. This is used to test that lost connections are detected properly.
 
 Dependencies: None
 

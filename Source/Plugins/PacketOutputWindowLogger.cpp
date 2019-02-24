@@ -22,7 +22,7 @@
 #include "WindowsIncludes.h"
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 PacketOutputWindowLogger::PacketOutputWindowLogger()
 {
@@ -35,11 +35,11 @@ void PacketOutputWindowLogger::WriteLog(const char *str)
 #if defined(_WIN32)
 
     #if defined(UNICODE)
-        RakNet::RakWString str2 = str;
+        CrabNet::RakWString str2 = str;
         str2+="\n";
         OutputDebugString(str2.C_String());
     #else
-        RakNet::RakString str2 = str;
+        CrabNet::RakString str2 = str;
         str2+="\n";
         OutputDebugString(str2.C_String());
     #endif

@@ -16,7 +16,7 @@
 #include "RakString.h"
 #include "TCPInterface.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 Rackspace::Rackspace()
 {
@@ -78,7 +78,7 @@ SystemAddress Rackspace::Authenticate(TCPInterface *_tcpInterface, const char *_
     tcpInterface->StartSSLClient(ro.connectionAddress);
 #endif
 
-    RakNet::RakString command(
+    CrabNet::RakString command(
         "GET /v1.0 HTTP/1.1\n"
         "Host: %s\n"
         "X-Auth-User: %s\n"
@@ -129,7 +129,7 @@ const char * Rackspace::EventTypeToString(RackspaceEventType eventType)
     }
     return "Unknown event type (bug)";
 }
-void Rackspace::AddOperation(RackspaceOperationType type, RakNet::RakString httpCommand, RakNet::RakString operation, RakNet::RakString xml)
+void Rackspace::AddOperation(RackspaceOperationType type, CrabNet::RakString httpCommand, CrabNet::RakString operation, CrabNet::RakString xml)
 {
     RackspaceOperation ro;
     ro.type=type;
@@ -153,111 +153,111 @@ void Rackspace::ListServersWithDetails(void)
 {
     AddOperation(RO_LIST_SERVERS_WITH_DETAILS, "GET", "servers/detail", "");
 }
-void Rackspace::CreateServer(RakNet::RakString name, RakNet::RakString imageId, RakNet::RakString flavorId)
+void Rackspace::CreateServer(CrabNet::RakString name, CrabNet::RakString imageId, CrabNet::RakString flavorId)
 {
-    RakNet::RakString xml(
+    CrabNet::RakString xml(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<server xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\" name=\"%s\" imageId=\"%s\" flavorId=\"%s\">"
         "</server>"
         ,name.C_String() ,imageId.C_String(), flavorId.C_String());
     AddOperation(RO_CREATE_SERVER, "POST", "servers", xml);
 }
-void Rackspace::GetServerDetails(RakNet::RakString serverId)
+void Rackspace::GetServerDetails(CrabNet::RakString serverId)
 {
-    AddOperation(RO_GET_SERVER_DETAILS, "GET", RakNet::RakString("servers/%s", serverId.C_String()), "");
+    AddOperation(RO_GET_SERVER_DETAILS, "GET", CrabNet::RakString("servers/%s", serverId.C_String()), "");
 }
-void Rackspace::UpdateServerNameOrPassword(RakNet::RakString serverId, RakNet::RakString newName, RakNet::RakString newPassword)
+void Rackspace::UpdateServerNameOrPassword(CrabNet::RakString serverId, CrabNet::RakString newName, CrabNet::RakString newPassword)
 {
     if (newName.IsEmpty() && newPassword.IsEmpty())
         return;
-    RakNet::RakString xml(
+    CrabNet::RakString xml(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<server xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\""
         );
     if (newName.IsEmpty()==false)
-        xml += RakNet::RakString(" name=\"%s\"", newName.C_String());
+        xml += CrabNet::RakString(" name=\"%s\"", newName.C_String());
     if (newPassword.IsEmpty()==false)
-        xml += RakNet::RakString(" adminPass=\"%s\"", newPassword.C_String());
+        xml += CrabNet::RakString(" adminPass=\"%s\"", newPassword.C_String());
     xml += " />";
-    AddOperation(RO_UPDATE_SERVER_NAME_OR_PASSWORD, "PUT", RakNet::RakString("servers/%s", serverId.C_String()), xml);
+    AddOperation(RO_UPDATE_SERVER_NAME_OR_PASSWORD, "PUT", CrabNet::RakString("servers/%s", serverId.C_String()), xml);
 }
-void Rackspace::DeleteServer(RakNet::RakString serverId)
+void Rackspace::DeleteServer(CrabNet::RakString serverId)
 {
-    AddOperation(RO_DELETE_SERVER, "DELETE", RakNet::RakString("servers/%s", serverId.C_String()), "");
+    AddOperation(RO_DELETE_SERVER, "DELETE", CrabNet::RakString("servers/%s", serverId.C_String()), "");
 }
-void Rackspace::ListServerAddresses(RakNet::RakString serverId)
+void Rackspace::ListServerAddresses(CrabNet::RakString serverId)
 {
-    AddOperation(RO_LIST_SERVER_ADDRESSES, "GET", RakNet::RakString("servers/%s/ips", serverId.C_String()), "");
+    AddOperation(RO_LIST_SERVER_ADDRESSES, "GET", CrabNet::RakString("servers/%s/ips", serverId.C_String()), "");
 }
-void Rackspace::ShareServerAddress(RakNet::RakString serverId, RakNet::RakString ipAddress)
+void Rackspace::ShareServerAddress(CrabNet::RakString serverId, CrabNet::RakString ipAddress)
 {
-    AddOperation(RO_SHARE_SERVER_ADDRESS, "PUT", RakNet::RakString("servers/%s/ips/public/%s", serverId.C_String(), ipAddress.C_String()), "");
+    AddOperation(RO_SHARE_SERVER_ADDRESS, "PUT", CrabNet::RakString("servers/%s/ips/public/%s", serverId.C_String(), ipAddress.C_String()), "");
 }
-void Rackspace::DeleteServerAddress(RakNet::RakString serverId, RakNet::RakString ipAddress)
+void Rackspace::DeleteServerAddress(CrabNet::RakString serverId, CrabNet::RakString ipAddress)
 {
-    AddOperation(RO_DELETE_SERVER_ADDRESS, "DELETE", RakNet::RakString("servers/%s/ips/public/%s", serverId.C_String(), ipAddress.C_String()), "");
+    AddOperation(RO_DELETE_SERVER_ADDRESS, "DELETE", CrabNet::RakString("servers/%s/ips/public/%s", serverId.C_String(), ipAddress.C_String()), "");
 }
-void Rackspace::RebootServer(RakNet::RakString serverId, RakNet::RakString rebootType)
+void Rackspace::RebootServer(CrabNet::RakString serverId, CrabNet::RakString rebootType)
 {
-    RakNet::RakString xml(
+    CrabNet::RakString xml(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<reboot xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\" type=\"%s\""
         "/>",
         rebootType.C_String());
 
-    AddOperation(RO_REBOOT_SERVER, "POST", RakNet::RakString("servers/%s/action", serverId.C_String()), xml);
+    AddOperation(RO_REBOOT_SERVER, "POST", CrabNet::RakString("servers/%s/action", serverId.C_String()), xml);
 }
-void Rackspace::RebuildServer(RakNet::RakString serverId, RakNet::RakString imageId)
+void Rackspace::RebuildServer(CrabNet::RakString serverId, CrabNet::RakString imageId)
 {
-    RakNet::RakString xml(
+    CrabNet::RakString xml(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<rebuild xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\" imageId=\"%s\""
         "/>",
         imageId.C_String());
 
-    AddOperation(RO_REBUILD_SERVER, "POST", RakNet::RakString("servers/%s/action", serverId.C_String()), xml);
+    AddOperation(RO_REBUILD_SERVER, "POST", CrabNet::RakString("servers/%s/action", serverId.C_String()), xml);
 }
-void Rackspace::ResizeServer(RakNet::RakString serverId, RakNet::RakString flavorId)
+void Rackspace::ResizeServer(CrabNet::RakString serverId, CrabNet::RakString flavorId)
 {
-    RakNet::RakString xml(
+    CrabNet::RakString xml(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<resize xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\" flavorId=\"%s\""
         "/>",
         flavorId.C_String());
 
-    AddOperation(RO_RESIZE_SERVER, "POST", RakNet::RakString("servers/%s/action", serverId.C_String()), xml);
+    AddOperation(RO_RESIZE_SERVER, "POST", CrabNet::RakString("servers/%s/action", serverId.C_String()), xml);
 }
-void Rackspace::ConfirmResizedServer(RakNet::RakString serverId)
+void Rackspace::ConfirmResizedServer(CrabNet::RakString serverId)
 {
-    RakNet::RakString xml(
+    CrabNet::RakString xml(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<confirmResize xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\" "
         "/>");
-    AddOperation(RO_CONFIRM_RESIZED_SERVER, "POST", RakNet::RakString("servers/%s/action", serverId.C_String()), xml);
+    AddOperation(RO_CONFIRM_RESIZED_SERVER, "POST", CrabNet::RakString("servers/%s/action", serverId.C_String()), xml);
 }
-void Rackspace::RevertResizedServer(RakNet::RakString serverId)
+void Rackspace::RevertResizedServer(CrabNet::RakString serverId)
 {
-    RakNet::RakString xml(
+    CrabNet::RakString xml(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<revertResize xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\" "
         "/>");
-    AddOperation(RO_REVERT_RESIZED_SERVER, "POST", RakNet::RakString("servers/%s/action", serverId.C_String()), xml);
+    AddOperation(RO_REVERT_RESIZED_SERVER, "POST", CrabNet::RakString("servers/%s/action", serverId.C_String()), xml);
 }
 void Rackspace::ListFlavors(void)
 {
     AddOperation(RO_LIST_FLAVORS, "GET", "flavors", "");
 }
-void Rackspace::GetFlavorDetails(RakNet::RakString flavorId)
+void Rackspace::GetFlavorDetails(CrabNet::RakString flavorId)
 {
-    AddOperation(RO_GET_FLAVOR_DETAILS, "GET", RakNet::RakString("flavors/%s", flavorId.C_String()), "");
+    AddOperation(RO_GET_FLAVOR_DETAILS, "GET", CrabNet::RakString("flavors/%s", flavorId.C_String()), "");
 }
 void Rackspace::ListImages(void)
 {
     AddOperation(RO_LIST_IMAGES, "GET", "images", "");
 }
-void Rackspace::CreateImage(RakNet::RakString serverId, RakNet::RakString imageName)
+void Rackspace::CreateImage(CrabNet::RakString serverId, CrabNet::RakString imageName)
 {
-    RakNet::RakString xml(
+    CrabNet::RakString xml(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<image xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\" name=\"%s\" serverId=\"%s\""
         "/>",
@@ -265,13 +265,13 @@ void Rackspace::CreateImage(RakNet::RakString serverId, RakNet::RakString imageN
 
     AddOperation(RO_CREATE_IMAGE, "POST", "images", xml);
 }
-void Rackspace::GetImageDetails(RakNet::RakString imageId)
+void Rackspace::GetImageDetails(CrabNet::RakString imageId)
 {
-    AddOperation(RO_GET_IMAGE_DETAILS, "GET", RakNet::RakString("images/%s", imageId.C_String()), "");
+    AddOperation(RO_GET_IMAGE_DETAILS, "GET", CrabNet::RakString("images/%s", imageId.C_String()), "");
 }
-void Rackspace::DeleteImage(RakNet::RakString imageId)
+void Rackspace::DeleteImage(CrabNet::RakString imageId)
 {
-    AddOperation(RO_DELETE_IMAGE, "DELETE", RakNet::RakString("images/%s", imageId.C_String()), "");
+    AddOperation(RO_DELETE_IMAGE, "DELETE", CrabNet::RakString("images/%s", imageId.C_String()), "");
 }
 void Rackspace::ListSharedIPGroups(void)
 {
@@ -281,24 +281,24 @@ void Rackspace::ListSharedIPGroupsWithDetails(void)
 {
     AddOperation(RO_LIST_SHARED_IP_GROUPS_WITH_DETAILS, "GET", "shared_ip_groups/detail", "");
 }
-void Rackspace::CreateSharedIPGroup(RakNet::RakString name, RakNet::RakString optionalServerId)
+void Rackspace::CreateSharedIPGroup(CrabNet::RakString name, CrabNet::RakString optionalServerId)
 {
-    RakNet::RakString xml(
+    CrabNet::RakString xml(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         "<sharedIpGroup xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\" name=\"%s\">", name.C_String());
         if (optionalServerId.IsEmpty()==false)
-            xml+=RakNet::RakString("<server id=\"%s\"/>", optionalServerId.C_String());
+            xml+=CrabNet::RakString("<server id=\"%s\"/>", optionalServerId.C_String());
         xml+="</sharedIpGroup>";
 
     AddOperation(RO_CREATE_SHARED_IP_GROUP, "POST", "shared_ip_groups", xml);
 }
-void Rackspace::GetSharedIPGroupDetails(RakNet::RakString groupId)
+void Rackspace::GetSharedIPGroupDetails(CrabNet::RakString groupId)
 {
-    AddOperation(RO_GET_SHARED_IP_GROUP_DETAILS, "GET", RakNet::RakString("shared_ip_groups/%s", groupId.C_String()), "");
+    AddOperation(RO_GET_SHARED_IP_GROUP_DETAILS, "GET", CrabNet::RakString("shared_ip_groups/%s", groupId.C_String()), "");
 }
-void Rackspace::DeleteSharedIPGroup(RakNet::RakString groupId)
+void Rackspace::DeleteSharedIPGroup(CrabNet::RakString groupId)
 {
-    AddOperation(RO_DELETE_SHARED_IP_GROUP, "DELETE", RakNet::RakString("shared_ip_groups/%s", groupId.C_String()), "");
+    AddOperation(RO_DELETE_SHARED_IP_GROUP, "DELETE", CrabNet::RakString("shared_ip_groups/%s", groupId.C_String()), "");
 }
 void Rackspace::OnClosedConnection(SystemAddress systemAddress)
 {
@@ -314,7 +314,7 @@ void Rackspace::OnClosedConnection(SystemAddress systemAddress)
             RackspaceOperation ro = operations[operationsIndex];
             operations.RemoveAtIndex(operationsIndex);
 
-            RakNet::RakString packetDataString = ro.incomingStream;
+            CrabNet::RakString packetDataString = ro.incomingStream;
             const char *packetData = packetDataString.C_String();
 
             char resultCodeStr[32];
@@ -361,7 +361,7 @@ void Rackspace::OnClosedConnection(SystemAddress systemAddress)
                 {
                     if (rackspaceEventType==RET_Success_204)
                     {
-                        RakNet::RakString header;
+                        CrabNet::RakString header;
                         ReadLine(packetData, "X-Server-Management-Url: ", serverManagementURL);
                         serverManagementURL.SplitURI(header, serverManagementDomain, serverManagementPath);
                         ReadLine(packetData, "X-Storage-Url: ", storageURL);
@@ -577,7 +577,7 @@ bool Rackspace::ExecuteOperation(RackspaceOperation &ro)
     if (ConnectToServerManagementDomain(ro)==false)
         return false;
 
-    RakNet::RakString command(
+    CrabNet::RakString command(
         "%s %s/%s HTTP/1.1\n"
         "Host: %s\n"
         "Content-Type: application/xml\n"
@@ -602,7 +602,7 @@ bool Rackspace::ExecuteOperation(RackspaceOperation &ro)
     tcpInterface->Send(command.C_String(), (unsigned int) command.GetLength(), ro.connectionAddress, false);
     return true;
 }
-void Rackspace::ReadLine(const char *data, const char *stringStart, RakNet::RakString &output)
+void Rackspace::ReadLine(const char *data, const char *stringStart, CrabNet::RakString &output)
 {
     output.Clear();
 

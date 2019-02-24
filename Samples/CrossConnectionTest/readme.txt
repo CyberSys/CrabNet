@@ -1,6 +1,6 @@
 Project: Cross connection test
 
-Description: Tests what happens if two instances of RakNet connect to each other at the same time. This has caused handshaking problems in the past.
+Description: Tests what happens if two instances of CrabNet connect to each other at the same time. This has caused handshaking problems in the past.
 
 Dependencies: None
 

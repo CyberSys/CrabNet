@@ -12,7 +12,7 @@
 #include "IncrementalReadInterface.h"
 #include <stdio.h>
 
-using namespace RakNet;
+using namespace CrabNet;
 
 unsigned int IncrementalReadInterface::GetFilePart(const char *filename, unsigned int startReadBytes,
                                                    unsigned int numBytesToRead, void *preallocatedDestination,

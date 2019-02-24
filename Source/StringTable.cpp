@@ -17,13 +17,13 @@
 #include "BitStream.h"
 #include "StringCompressor.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 StringTable *StringTable::instance = 0;
 int StringTable::referenceCount = 0;
 
 
-int RakNet::StrAndBoolComp(char *const &key, const StrAndBool &data)
+int CrabNet::StrAndBoolComp(char *const &key, const StrAndBool &data)
 {
     return strcmp(key, (const char *) data.str);
 }
@@ -68,7 +68,7 @@ void StringTable::AddString(const char *str, bool copyString)
     RakAssert(orderedStringList.Size() < (StringTableType) -1);
 }
 
-void StringTable::EncodeString(const char *input, size_t maxCharsToWrite, RakNet::BitStream *output)
+void StringTable::EncodeString(const char *input, size_t maxCharsToWrite, CrabNet::BitStream *output)
 {
     bool objectExists;
     // This is fast because the list is kept ordered.
@@ -86,7 +86,7 @@ void StringTable::EncodeString(const char *input, size_t maxCharsToWrite, RakNet
     }
 }
 
-bool StringTable::DecodeString(char *output, size_t maxCharsToWrite, RakNet::BitStream *input)
+bool StringTable::DecodeString(char *output, size_t maxCharsToWrite, CrabNet::BitStream *input)
 {
     RakAssert(maxCharsToWrite > 0);
 

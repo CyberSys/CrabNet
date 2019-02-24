@@ -21,7 +21,7 @@
 #include "CCRakNetSlidingWindow.h"
 #endif
 
-using namespace RakNet;
+using namespace CrabNet;
 
 int SendToThread::refCount=0;
 DataStructures::ThreadsafeAllocatingQueue<SendToThread::SendToThreadBlock> SendToThread::objectQueue;
@@ -31,8 +31,8 @@ SendToThread::SendToThreadBlock* SendToWorkerThread(SendToThread::SendToThreadBl
 {
     (void) perThreadData;
     *returnOutput=false;
-//    RakNet::TimeUS *mostRecentTime=(RakNet::TimeUS *)input->data;
-//    *mostRecentTime=RakNet::GetTimeUS();
+//    CrabNet::TimeUS *mostRecentTime=(CrabNet::TimeUS *)input->data;
+//    *mostRecentTime=CrabNet::GetTimeUS();
     SocketLayer::SendTo(input->s, input->data, input->dataWriteOffset, input->systemAddress);
     SendToThread::objectQueue.Push(input);
     return 0;

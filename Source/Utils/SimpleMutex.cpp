@@ -15,7 +15,7 @@
 #include "SimpleMutex.h"
 #include "RakAssert.h"
 
-using namespace RakNet;
+using namespace CrabNet;
 
 SimpleMutex::SimpleMutex() //: isInitialized(false)
 {

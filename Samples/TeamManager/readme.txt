@@ -12,7 +12,7 @@ For help and support, please visit http://vwww.jenkinssoftware.com
 
 ------------------ NETWORKING FLOW ------------------
 
-TeamManager demonstrates an in-game lobby where users can switch between 3 teams. It uses the following RakNet plugins:
+TeamManager demonstrates an in-game lobby where users can switch between 3 teams. It uses the following CrabNet plugins:
 
 1. TeamBalancer: Handles networking and logic involved with joining and leaving teams. Requires that the user have corresponding TM_Team and TM_TeamMember objects in the game code.
 2. ReplicaManager3: Handles networking and logic involved with creating replicated instances of objects. Used to replicate the User class to other systems, and to transmit serialization of the TM_Team and TM_TeamMember objects. ReplicaManager3 also depends on networkIDManager.

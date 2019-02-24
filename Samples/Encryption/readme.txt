@@ -1,6 +1,6 @@
 Project: Encryption
 
-Description: Tests / Demonstrates the secure connectivity feature of RakNet.
+Description: Tests / Demonstrates the secure connectivity feature of CrabNet.
 
 Dependencies: None
 

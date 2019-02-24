@@ -40,7 +40,7 @@
 #include "SuperFastHash.h"
 #include <cstdlib>
 
-using namespace RakNet;
+using namespace CrabNet;
 
 const char *IPV6_LOOPBACK = "::1";
 const char *IPV4_LOOPBACK = "127.0.0.1";
@@ -72,7 +72,7 @@ void AddressOrGUID::ToString(bool writePort, char *dest) const
     return systemAddress.ToString(writePort, dest);
 }
 
-bool RakNet::NonNumericHostString(const char *host)
+bool CrabNet::NonNumericHostString(const char *host)
 {
     // Return false if IP address. Return true if domain
     for (unsigned i = 0; host[i]; ++i)
