@@ -21,6 +21,7 @@
 #include "../Utils/LinuxStrings.h"
 #include "../Utils/SocketDefines.h"
 #include "errno.h"
+#include <mutex>
 
 #ifdef _WIN32
 #include "../WSAStartupSingleton.h"
@@ -156,7 +157,8 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source,
     while (true)
     {
         RakSleep(0);
-        startForwardingOutputMutex.lock();
+
+        std::lock_guard<SimpleMutex> guard(startForwardingOutputMutex);
         for (unsigned int i = 0; i < startForwardingOutput.Size(); i++)
         {
             if (startForwardingOutput[i].inputId == inputId)
@@ -174,7 +176,6 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source,
                 return res;
             }
         }
-        startForwardingOutputMutex.unlock();
     }
 }
 void UDPForwarder::StopForwarding(SystemAddress source, SystemAddress destination)
@@ -474,9 +475,10 @@ void UDPForwarder::UpdateUDPForwarder()
 
         // Push result
         sfos.inputId = sfis->inputId;
-        startForwardingOutputMutex.lock();
-        startForwardingOutput.Push(sfos);
-        startForwardingOutputMutex.unlock();
+        {
+            std::lock_guard<SimpleMutex> guard(startForwardingOutputMutex);
+            startForwardingOutput.Push(sfos);
+        }
 
         startForwardingInput.Deallocate(sfis);
     }
