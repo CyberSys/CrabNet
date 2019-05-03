@@ -538,16 +538,10 @@ bool BitStream::ReadBits(unsigned char *inOutByteArray, BitSize_t numberOfBitsTo
         {
             int neg = (int) numberOfBitsToRead - 8;
 
-            if (neg < 0)   // Reading a partial byte for the last byte, shift right so the data is aligned on the right
-            {
+            if (alignBitsToRight)
+                *(inOutByteArray + offset) >>= -neg;
 
-                if (alignBitsToRight)
-                    *(inOutByteArray + offset) >>= -neg;
-
-                readOffset += 8 + neg;
-            }
-            else
-                readOffset += 8;
+            readOffset += 8 + neg;
 
             offset++;
 
