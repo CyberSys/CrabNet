@@ -14,6 +14,7 @@
 ///
 
 
+#include <atomic>
 #include "NativeFeatureIncludes.h"
 #if _CRABNET_SUPPORT_FileListTransfer==1 && _CRABNET_SUPPORT_FileOperations==1
 
@@ -150,8 +151,7 @@ protected:
     };
     struct FileToPushRecipient
     {
-        unsigned int refCount;
-        SimpleMutex refCountMutex;
+        std::atomic_uint refCount;
         void DeleteThis();
         void AddRef();
         void Deref();

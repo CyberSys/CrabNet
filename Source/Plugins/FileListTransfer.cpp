@@ -83,21 +83,16 @@ void FileListTransfer::FileToPushRecipient::DeleteThis()
 }
 void FileListTransfer::FileToPushRecipient::AddRef()
 {
-    refCountMutex.lock();
     ++refCount;
-    refCountMutex.unlock();
 }
 void FileListTransfer::FileToPushRecipient::Deref()
 {
-    refCountMutex.lock();
     --refCount;
     if (refCount==0)
     {
-        refCountMutex.unlock();
         DeleteThis();
         return;
     }
-    refCountMutex.unlock();
 }
 FileListTransfer::FileListTransfer()
 {
