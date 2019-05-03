@@ -27,31 +27,32 @@
 namespace CrabNet
 {
 
-class RAK_DLL_EXPORT SignaledEvent
-{
-public:
-    SignaledEvent();
-    ~SignaledEvent();
+    class RAK_DLL_EXPORT SignaledEvent
+    {
+    public:
+        SignaledEvent();
+        ~SignaledEvent();
 
-    void InitEvent();
-    void CloseEvent();
-    void SetEvent();
-    void WaitOnEvent(int timeoutMs);
+        void CloseEvent();
+        void SetEvent();
+        void WaitOnEvent(int timeoutMs);
 
-protected:
+    protected:
 #ifdef _WIN32
-    HANDLE eventList;
+        HANDLE eventList;
 #else
-    SimpleMutex isSignaledMutex;
-    bool isSignaled;
+        SimpleMutex isSignaledMutex;
+        bool isSignaled;
 #if !defined(ANDROID)
-    pthread_condattr_t condAttr;
+        pthread_condattr_t condAttr;
 #endif
-    pthread_cond_t eventList;
-    pthread_mutex_t hMutex;
-    pthread_mutexattr_t mutexAttr;
+        pthread_cond_t eventList;
+        pthread_mutex_t hMutex;
+        pthread_mutexattr_t mutexAttr;
 #endif
-};
+    private:
+        bool closed = false;
+    };
 
 } // namespace CrabNet
 

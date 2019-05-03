@@ -266,7 +266,6 @@ RakPeer::RakPeer()
 
     GenerateGUID();
 
-    quitAndDataEvents.InitEvent();
     limitConnectionFrequencyFromTheSameIP = false;
     ResetSendReceipt();
 }
@@ -284,8 +283,6 @@ RakPeer::~RakPeer()
 #ifdef _WIN32
     WSAStartupSingleton::Deref();
 #endif
-
-    quitAndDataEvents.CloseEvent();
 
 #ifdef LIBCAT_SECURITY
     // Encryption and security

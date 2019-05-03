@@ -338,8 +338,6 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
     }
     runThreadsMutex.Unlock();
 
-    quitAndIncomingDataEvents.InitEvent();
-
     perThreadDataFactory=_perThreadDataFactory;
     perThreadDataDestructor=_perThreadDataDestructor;
 

@@ -23,36 +23,31 @@ using namespace CrabNet;
 SignaledEvent::SignaledEvent()
 {
 #ifdef _WIN32
-    eventList = INVALID_HANDLE_VALUE;
+    eventList = CreateEvent(0, false, false, 0);
 #else
+#if !defined(ANDROID)
+    pthread_condattr_init(&condAttr);
+    pthread_cond_init(&eventList, &condAttr);
+#else
+    pthread_cond_init(&eventList, 0);
+#endif
+    pthread_mutexattr_init(&mutexAttr);
+    pthread_mutex_init(&hMutex, &mutexAttr);
     isSignaled = false;
 #endif
 }
 SignaledEvent::~SignaledEvent()
 {
-    // Intentionally do not close event, so it doesn't close twice on linux
-}
-
-void SignaledEvent::InitEvent()
-{
-#if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
-        eventList = CreateEventEx(0, 0, 0, 0);
-#elif defined(_WIN32)
-        eventList = CreateEvent(0, false, false, 0);
-#else
-#if !defined(ANDROID)
-        pthread_condattr_init(&condAttr);
-        pthread_cond_init(&eventList, &condAttr);
-#else
-        pthread_cond_init(&eventList, 0);
-#endif
-        pthread_mutexattr_init(&mutexAttr);
-        pthread_mutex_init(&hMutex, &mutexAttr);
-#endif
+    if (!closed)
+        CloseEvent();
 }
 
 void SignaledEvent::CloseEvent()
 {
+    if (!closed)
+        closed = true;
+    else
+        return;
 #ifdef _WIN32
     if (eventList!=INVALID_HANDLE_VALUE)
     {
