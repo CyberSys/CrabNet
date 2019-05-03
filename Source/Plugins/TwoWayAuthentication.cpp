@@ -80,7 +80,7 @@ bool TwoWayAuthentication::NonceGenerator::GetNonceById(char nonce[TWO_WAY_AUTHE
     }
     return false;
 }
-void TwoWayAuthentication::NonceGenerator::Clear(void)
+void TwoWayAuthentication::NonceGenerator::Clear()
 {
     unsigned int i;
     for (i=0; i < generatedNonces.Size(); i++)
@@ -157,7 +157,7 @@ bool TwoWayAuthentication::Challenge(CrabNet::RakString identifier, AddressOrGUI
 
     return true;
 }
-void TwoWayAuthentication::Update(void)
+void TwoWayAuthentication::Update()
 {
     CrabNet::Time curTime = CrabNet::GetTime();
     nonceGenerator.Update(curTime);
@@ -226,7 +226,7 @@ PluginReceiveResult TwoWayAuthentication::OnReceive(Packet *packet)
 
     return RR_CONTINUE_PROCESSING;
 }
-void TwoWayAuthentication::OnRakPeerShutdown(void)
+void TwoWayAuthentication::OnRakPeerShutdown()
 {
     Clear();
 }
@@ -254,7 +254,7 @@ void TwoWayAuthentication::OnClosedConnection(const SystemAddress &systemAddress
     else
         nonceGenerator.ClearByAddress(systemAddress);
 }
-void TwoWayAuthentication::Clear(void)
+void TwoWayAuthentication::Clear()
 {
     outgoingChallenges.Clear();
     passwords.Clear();

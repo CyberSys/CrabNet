@@ -111,7 +111,7 @@ struct TeamSelection
 
     /// \brief Join any team that has available slots and is tagged with ALLOW_JOIN_ANY_AVAILABLE_TEAM
     /// \details ID_TEAM_BALANCER_TEAM_ASSIGNED, ID_TEAM_BALANCER_REQUESTED_TEAM_FULL, or ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED will be returned to all systems.
-    static TeamSelection AnyAvailable(void);
+    static TeamSelection AnyAvailable();
     /// \brief Join a specific team if it has available slots, and is tagged with JOIN_SPECIFIC_TEAMS
     /// \details ID_TEAM_BALANCER_TEAM_ASSIGNED, ID_TEAM_BALANCER_REQUESTED_TEAM_FULL, or ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED will be returned to all systems.
     /// \param[in] specificTeamToJoin Which team to attempt to join.
@@ -155,7 +155,7 @@ public:
 
     /// \brief Returns the first requested team in the list of requested teams, if you have a requested team at all.
     /// \return TeamSelection::SpecificTeam(), TeamSelection::NoTeam(), or TeamSelection::AnyAvailable()
-    TeamSelection GetRequestedTeam(void) const;
+    TeamSelection GetRequestedTeam() const;
 
     /// \brief Returns pending calls to RequestTeam() when using TeamSelection::JOIN_SPECIFIC_TEAM
     /// \param[out] All pending requested teams
@@ -172,7 +172,7 @@ public:
     unsigned int GetRequestedTeamIndex(TM_Team *team) const;
 
     /// \return The number of teams that would be returned by a call to GetRequestedSpecificTeams()
-    unsigned int GetRequestedTeamCount(void) const;
+    unsigned int GetRequestedTeamCount() const;
 
     /// \brief Cancels a request to join a specific team.
     /// \details Useful if you got ID_TEAM_BALANCER_REQUESTED_TEAM_FULL or ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED and changed your mind about joining the team.
@@ -197,10 +197,10 @@ public:
     bool LeaveAllTeams(NoTeamId noTeamSubcategory);
 
     /// \return Get the first team we are on, or 0 if we are not on a team.
-    TM_Team* GetCurrentTeam(void) const;
+    TM_Team* GetCurrentTeam() const;
 
     /// \return How many teams we are on
-    unsigned int GetCurrentTeamCount(void) const;
+    unsigned int GetCurrentTeamCount() const;
 
     /// \return Returns one of the teams in the current team list, up to GetCurrentTeamCount()
     TM_Team* GetCurrentTeamByIndex(unsigned int index);
@@ -218,10 +218,10 @@ public:
     bool IsOnTeam(TM_Team *team) const;
 
     /// \return The teamMemberID parameter passed to TM_World::ReferenceTeamMember()
-    NetworkID GetNetworkID(void) const;
+    NetworkID GetNetworkID() const;
 
     /// \return The TM_World instance that was used when calling TM_World::ReferenceTeamMember()
-    TM_World* GetTM_World(void) const;
+    TM_World* GetTM_World() const;
 
     /// \brief Serializes the current state of this object
     /// \details To replicate a TM_TeamMember on another system, first instantiate the object using your own code, or a system such as ReplicaManager3.
@@ -242,13 +242,13 @@ public:
     void SetOwner(void *o);
 
     /// \return Whatever was passed to SetOwner()
-    void *GetOwner(void) const;
+    void *GetOwner() const;
 
     /// \return If not on a team, returns the current NoTeamId value
-    NoTeamId GetNoTeamId(void) const;
+    NoTeamId GetNoTeamId() const;
 
     /// Return world->GetTeamMemberIndex(this)
-    unsigned int GetWorldIndex(void) const;
+    unsigned int GetWorldIndex() const;
 
     /// \internal
     static unsigned long ToUint32( const NetworkID &g );
@@ -283,19 +283,19 @@ protected:
 
     // Remove from all requested and current teams.
     void UpdateListsToNoTeam(NoTeamId nti);
-    bool JoinAnyTeamCheck(void) const;
+    bool JoinAnyTeamCheck() const;
     bool JoinSpecificTeamCheck(TM_Team *specificTeamToJoin, bool ignoreRequested) const;
     bool SwitchSpecificTeamCheck(TM_Team *teamToJoin, TM_Team *teamToLeave, bool ignoreRequested) const;
     bool LeaveTeamCheck(TM_Team *team) const;
-    void UpdateTeamsRequestedToAny(void);
-    void UpdateTeamsRequestedToNone(void);
+    void UpdateTeamsRequestedToAny();
+    void UpdateTeamsRequestedToNone();
     void AddToRequestedTeams(TM_Team *teamToJoin);
     void AddToRequestedTeams(TM_Team *teamToJoin, TM_Team *teamToLeave);
     bool RemoveFromRequestedTeams(TM_Team *team);
     void AddToTeamList(TM_Team *team);
     void RemoveFromSpecificTeamInternal(TM_Team *team);
-    void RemoveFromAllTeamsInternal(void);
-    void StoreLastTeams(void);
+    void RemoveFromAllTeamsInternal();
+    void StoreLastTeams();
 
     friend class TM_World;
     friend class TM_Team;
@@ -327,10 +327,10 @@ public:
     bool SetMemberLimit(TeamMemberLimit _teamMemberLimit, NoTeamId noTeamSubcategory);
 
     /// \return If team balancing is on, the most members that can be on this team that would not either unbalance it or exceed the value passed to SetMemberLimit(). If team balancing is off, the same as GetMemberLimitSetting()
-    TeamMemberLimit GetMemberLimit(void) const;
+    TeamMemberLimit GetMemberLimit() const;
 
     /// \return What was passed to SetMemberLimit() or the default
-    TeamMemberLimit GetMemberLimitSetting(void) const;
+    TeamMemberLimit GetMemberLimitSetting() const;
 
     /// \brief Who can join this team under what conditions, while the team is not full
     /// To not allow new joins, pass 0
@@ -342,7 +342,7 @@ public:
     bool SetJoinPermissions(JoinPermissions _joinPermissions);
 
     /// \return Whatever was passed to SetJoinPermissions(), or the default.
-    JoinPermissions GetJoinPermissions(void) const;
+    JoinPermissions GetJoinPermissions() const;
 
     /// \brief Removes a member from a team he or she is on
     /// \details Identical to teamMember->LeaveTeam(this, noTeamSubcategory); See TeamMember::LeaveTeam() for details.
@@ -351,23 +351,23 @@ public:
     void LeaveTeam(TM_TeamMember* teamMember, NoTeamId noTeamSubcategory);
 
     /// \return What was passed as the \a applyBalancing parameter TM_World::ReferenceTeam() when this team was added.
-    bool GetBalancingApplies(void) const;
+    bool GetBalancingApplies() const;
 
     /// \param[out] All team members of this team
     void GetTeamMembers(DataStructures::List<TM_TeamMember*> &_teamMembers) const;
 
     /// \return The number of team members on this team
-    unsigned int GetTeamMembersCount(void) const;
+    unsigned int GetTeamMembersCount() const;
 
     /// \return A team member on this team. Members are stored in the order they are added
     /// \param[in] index A value between 0 and GetTeamMembersCount()
     TM_TeamMember *GetTeamMemberByIndex(unsigned int index) const;
 
     /// \return The teamID parameter passed to TM_World::ReferenceTeam()
-    NetworkID GetNetworkID(void) const;
+    NetworkID GetNetworkID() const;
 
     /// \return The TM_World instance that was used when calling TM_World::ReferenceTeamMember()
-    TM_World* GetTM_World(void) const;
+    TM_World* GetTM_World() const;
 
     /// \brief Used by the host to serialize the initial state of this object to a new system
     /// \details On the host, when sending existing objects to a new system, call SerializeConstruction() on each of those objects to serialize creation state.
@@ -383,10 +383,10 @@ public:
     void SetOwner(void *o);
 
     /// \return Whatever was passed to SetOwner()
-    void *GetOwner(void) const;
+    void *GetOwner() const;
 
     /// Return world->GetTeamIndex(this)
-    unsigned int GetWorldIndex(void) const;
+    unsigned int GetWorldIndex() const;
 
     /// \internal
     static unsigned long ToUint32( const NetworkID &g );
@@ -426,7 +426,7 @@ public:
     virtual ~TM_World();
 
     /// \return Returns the plugin that created this TM_World instance
-    TeamManager *GetTeamManager(void) const;
+    TeamManager *GetTeamManager() const;
 
     /// \brief Add a new system to send team and team member updates to.
     /// \param[in] rakNetGUID GUID of the system you are adding. See Packet::rakNetGUID or RakPeerInterface::GetGUIDFromSystemAddress()
@@ -462,7 +462,7 @@ public:
     void DereferenceTeam(TM_Team *team, NoTeamId noTeamSubcategory);
 
     /// \return Number of teams uniquely added with ReferenceTeam()
-    unsigned int GetTeamCount(void) const;
+    unsigned int GetTeamCount() const;
 
     /// \param[in] index A value between 0 and GetTeamCount()
     /// \return Returns whatever was passed to \a team in the function ReferenceTeam() in the order it was called.
@@ -491,7 +491,7 @@ public:
     void DereferenceTeamMember(TM_TeamMember *teamMember);
 
     /// \return Number of team members uniquely added with ReferenceTeamMember()
-    unsigned int GetTeamMemberCount(void) const;
+    unsigned int GetTeamMemberCount() const;
 
     /// \param[in] index A value between 0 and GetTeamMemberCount()
     /// \return Returns whatever was passed to \a team in the function ReferenceTeamMember() in the order it was called.
@@ -520,7 +520,7 @@ public:
     bool SetBalanceTeams(bool balanceTeams, NoTeamId noTeamSubcategory);
 
     /// \return \a balanceTeams parameter of SetBalanceTeams(), or the default
-    bool GetBalanceTeams(void) const;
+    bool GetBalanceTeams() const;
 
     /// \brief Set the host that will perform balancing calculations and send notifications
     /// \details Operations that can cause conflicts due to latency, such as joining teams, are operated on by the host. The result is sent to all systems added with AddParticipant()
@@ -531,14 +531,14 @@ public:
     void SetHost(RakNetGUID _hostGuid);
 
     /// \return Returns the current host, or UNASSIGNED_CRABNET_GUID if unknown
-    RakNetGUID GetHost(void) const;
+    RakNetGUID GetHost() const;
 
     /// \return The \a worldId passed to TeamManagr::AddWorld()
-    WorldId GetWorldId(void) const;
+    WorldId GetWorldId() const;
 
     /// \brief Clear all memory and reset everything.
     /// \details It is up to the user to deallocate pointers passed to ReferenceTeamMember() or ReferenceTeam(), if so desired.
-    void Clear(void);
+    void Clear();
 
     /// \internal
     struct JoinRequestHelper
@@ -558,7 +558,7 @@ protected:
     // Teams with too many members have those members go to other teams.
     void EnforceTeamBalance(NoTeamId noTeamSubcategory);
     void KickExcessMembers(NoTeamId noTeamSubcategory);
-    void FillRequestedSlots(void);
+    void FillRequestedSlots();
     unsigned int GetAvailableTeamIndexWithFewestMembers(TeamMemberLimit secondaryLimit, JoinPermissions joinPermissions);
 
     void GetSortedJoinRequests(DataStructures::OrderedList<JoinRequestHelper, JoinRequestHelper, JoinRequestHelperComp> &joinRequests);
@@ -577,7 +577,7 @@ protected:
 
     int JoinSpecificTeam(TM_TeamMember *teamMember, TM_Team *team, bool isTeamSwitch, TM_Team *teamToLeave, DataStructures::List<TM_Team*> &teamsWeAreLeaving);
 
-    TeamMemberLimit GetBalancedTeamLimit(void) const;
+    TeamMemberLimit GetBalancedTeamLimit() const;
 
     // For fast lookup. Shares pointers with list teams
     DataStructures::Hash<NetworkID, TM_Team*, 256, TM_Team::ToUint32> teamsHash;
@@ -638,7 +638,7 @@ public:
     void RemoveWorld(WorldId worldId);
 
     /// \return Returns the number of worlds created with AddWorld()
-    unsigned int GetWorldCount(void) const;
+    unsigned int GetWorldCount() const;
 
     /// \param[in] index A value beteween 0 and GetWorldCount()-1 inclusive.
     /// \return Returns a world created with AddWorld()
@@ -677,7 +677,7 @@ public:
 
     /// \brief Clear all memory and reset everything.
     /// \details Deallocates TM_World instances. It is up to the user to deallocate pointers passed to ReferenceTeamMember() or ReferenceTeam(), if so desired.
-    void Clear(void);
+    void Clear();
 
     /// \brief Reads out the world and teamMember from ID_TEAM_BALANCER_TEAM_ASSIGNED
     /// \note You can get the current and prior team list from the teamMember itself
@@ -696,7 +696,7 @@ public:
 
 protected:
 
-    virtual void Update(void);
+    virtual void Update();
     virtual PluginReceiveResult OnReceive(Packet *packet);
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
     virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);

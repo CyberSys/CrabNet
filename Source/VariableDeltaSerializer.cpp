@@ -209,7 +209,7 @@ unsigned int VariableDeltaSerializer::GetVarsWrittenPerRemoteSystemListIndex(Rak
     }
     return (unsigned int) -1;
 }
-void VariableDeltaSerializer::RemoveRemoteSystemVariableHistory(void)
+void VariableDeltaSerializer::RemoveRemoteSystemVariableHistory()
 {
     unsigned int idx,idx2;
     for (idx=0; idx < remoteSystemVariableHistoryList.Size(); idx++)
@@ -230,7 +230,7 @@ VariableDeltaSerializer::RemoteSystemVariableHistory* VariableDeltaSerializer::G
     return remoteSystemVariableHistoryList[rshli];
 }
 
-VariableDeltaSerializer::ChangedVariablesList *VariableDeltaSerializer::AllocChangedVariablesList(void)
+VariableDeltaSerializer::ChangedVariablesList *VariableDeltaSerializer::AllocChangedVariablesList()
 {
     VariableDeltaSerializer::ChangedVariablesList *p = updatedVariablesMemoryPool.Allocate();
     p->bitWriteIndex=0;
@@ -280,7 +280,7 @@ unsigned int VariableDeltaSerializer::GetRemoteSystemHistoryListIndex(RakNetGUID
     return (unsigned int) -1;
 }
 
-void VariableDeltaSerializer::OnPreSerializeTick(void)
+void VariableDeltaSerializer::OnPreSerializeTick()
 {
     didComparisonThisTick=false;
 }

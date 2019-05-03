@@ -72,10 +72,10 @@ public:
     bool GetResponse( RakString &stringTransmitted, RakString &hostTransmitted, RakString &responseReceived, SystemAddress &hostReceived, int &contentOffset );
 
     /// \brief Return if any requests are pending
-    bool IsBusy(void) const;
+    bool IsBusy() const;
 
     /// \brief Return if any requests are waiting to be read by the user
-    bool HasResponse(void) const;
+    bool HasResponse() const;
 
     struct Request
     {
@@ -106,7 +106,7 @@ protected:
     bool IsConnected(SystemAddress sa);
     void SendRequest(Request *request);
     void RemovePendingRequest(SystemAddress sa);
-    void SendNextPendingRequest(void);
+    void SendNextPendingRequest();
     void SendPendingRequestToConnectedSystem(SystemAddress sa);
 
     DataStructures::Queue<Request*> pendingRequests;

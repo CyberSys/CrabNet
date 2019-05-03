@@ -23,7 +23,7 @@ int WSAStartupSingleton::refCount=0;
 
 WSAStartupSingleton::WSAStartupSingleton() {}
 WSAStartupSingleton::~WSAStartupSingleton() {}
-void WSAStartupSingleton::AddRef(void)
+void WSAStartupSingleton::AddRef()
 {
 #if defined(_WIN32)
 
@@ -49,7 +49,7 @@ void WSAStartupSingleton::AddRef(void)
 
 #endif
 }
-void WSAStartupSingleton::Deref(void)
+void WSAStartupSingleton::Deref()
 {
 #if defined(_WIN32)
     if (refCount==0)

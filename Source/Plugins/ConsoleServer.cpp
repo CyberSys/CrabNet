@@ -100,7 +100,7 @@ void ConsoleServer::RemoveCommandParser(CommandParserInterface *commandParserInt
         }
     }
 }
-void ConsoleServer::Update(void)
+void ConsoleServer::Update()
 {
     unsigned i;
     char *parameterList[20]; // Up to 20 parameters

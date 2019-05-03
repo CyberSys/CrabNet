@@ -104,8 +104,8 @@ class CCRakNetSlidingWindow
 
     /// Every data packet sent must contain a sequence number
     /// Call this function to get it. The sequence number is passed into OnGotPacketPair()
-    DatagramSequenceNumberType GetAndIncrementNextDatagramSequenceNumber(void);
-    DatagramSequenceNumberType GetNextDatagramSequenceNumber(void);
+    DatagramSequenceNumberType GetAndIncrementNextDatagramSequenceNumber();
+    DatagramSequenceNumberType GetNextDatagramSequenceNumber();
 
     /// Call this when you send packets
     /// Every 15th and 16th packets should be sent as a packet pair if possible
@@ -161,21 +161,21 @@ class CCRakNetSlidingWindow
     void SetMTU(uint32_t bytes);
 
     /// Return what was set by SetMTU()
-    uint32_t GetMTU(void) const;
+    uint32_t GetMTU() const;
 
     /// Query for statistics
-    BytesPerMicrosecond GetLocalSendRate(void) const {return 0;}
+    BytesPerMicrosecond GetLocalSendRate() const {return 0;}
     BytesPerMicrosecond GetLocalReceiveRate(CCTimeType currentTime) const;
-    BytesPerMicrosecond GetRemoveReceiveRate(void) const {return 0;}
-    //BytesPerMicrosecond GetEstimatedBandwidth(void) const {return B;}
-    BytesPerMicrosecond GetEstimatedBandwidth(void) const {return GetLinkCapacityBytesPerSecond()*1000000.0;}
-    double GetLinkCapacityBytesPerSecond(void) const {return 0;}
+    BytesPerMicrosecond GetRemoveReceiveRate() const {return 0;}
+    //BytesPerMicrosecond GetEstimatedBandwidth() const {return B;}
+    BytesPerMicrosecond GetEstimatedBandwidth() const {return GetLinkCapacityBytesPerSecond()*1000000.0;}
+    double GetLinkCapacityBytesPerSecond() const {return 0;}
 
     /// Query for statistics
-    double GetRTT(void) const;
+    double GetRTT() const;
 
-    bool GetIsInSlowStart(void) const {return IsInSlowStart();}
-    uint32_t GetCWNDLimit(void) const {return (uint32_t) 0;}
+    bool GetIsInSlowStart() const {return IsInSlowStart();}
+    uint32_t GetCWNDLimit() const {return (uint32_t) 0;}
 
 
     /// Is a > b, accounting for variable overflow?
@@ -183,7 +183,7 @@ class CCRakNetSlidingWindow
     /// Is a < b, accounting for variable overflow?
     static bool LessThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b);
 //    void SetTimeBetweenSendsLimit(unsigned int bitsPerSecond);
-    uint64_t GetBytesPerSecondLimitByCongestionControl(void) const;
+    uint64_t GetBytesPerSecondLimitByCongestionControl() const;
 
     protected:
 
@@ -197,7 +197,7 @@ class CCRakNetSlidingWindow
     /// When we send out acks, set oldestUnsentAck to 0
     CCTimeType oldestUnsentAck;
 
-    CCTimeType GetSenderRTOForACK(void) const;
+    CCTimeType GetSenderRTOForACK() const;
 
     /// Every outgoing datagram is assigned a sequence number, which increments by 1 every assignment
     DatagramSequenceNumberType nextDatagramSequenceNumber;
@@ -209,7 +209,7 @@ class CCRakNetSlidingWindow
 
     bool _isContinuousSend;
 
-    bool IsInSlowStart(void) const;
+    bool IsInSlowStart() const;
 
     double lastRtt, estimatedRTT, deviationRtt;
 

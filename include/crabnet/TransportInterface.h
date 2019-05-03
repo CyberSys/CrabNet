@@ -44,7 +44,7 @@ public:
     virtual bool Start(unsigned short port, bool serverMode)=0;
 
     /// Stop the transport provider.  You can clear memory and shutdown threads here.
-    virtual void Stop(void)=0;
+    virtual void Stop()=0;
 
     /// Send a null-terminated string to \a systemAddress
     /// If your transport method requires particular formatting of the outgoing data (e.g. you don't just send strings) you can do it here
@@ -71,17 +71,17 @@ public:
 
     /// If a new system connects to you, you should queue that event and return the systemAddress/address of that player in this function.
     /// \return The SystemAddress/address of the system
-    virtual SystemAddress HasNewIncomingConnection(void)=0;
+    virtual SystemAddress HasNewIncomingConnection()=0;
 
     /// If a system loses the connection, you should queue that event and return the systemAddress/address of that player in this function.
     /// \return The SystemAddress/address of the system
-    virtual SystemAddress HasLostConnection(void)=0;
+    virtual SystemAddress HasLostConnection()=0;
 
     /// Your transport provider can itself have command parsers if the transport layer has user-modifiable features
     /// For example, your transport layer may have a password which you want remote users to be able to set or you may want
     /// to allow remote users to turn on or off command echo
     /// \return 0 if you do not need a command parser - otherwise the desired derivation of CommandParserInterface
-    virtual CommandParserInterface* GetCommandParser(void)=0;
+    virtual CommandParserInterface* GetCommandParser()=0;
 protected:
 };
 

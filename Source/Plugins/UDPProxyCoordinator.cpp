@@ -82,7 +82,7 @@ void UDPProxyCoordinator::SetRemoteLoginPassword(CrabNet::RakString password)
 {
     remoteLoginPassword=password;
 }
-void UDPProxyCoordinator::Update(void)
+void UDPProxyCoordinator::Update()
 {
     unsigned int idx;
     CrabNet::TimeMS curTime = CrabNet::GetTimeMS();
@@ -525,7 +525,7 @@ void UDPProxyCoordinator::SendAllBusy(SystemAddress senderClientAddress, SystemA
     outgoingBs.Write(targetClientGuid);
     rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, requestingAddress, false);
 }
-void UDPProxyCoordinator::Clear(void)
+void UDPProxyCoordinator::Clear()
 {
     serverList.Clear(true);
     for (unsigned int i=0; i < forwardingRequestList.Size(); i++)
@@ -534,7 +534,7 @@ void UDPProxyCoordinator::Clear(void)
     }
     forwardingRequestList.Clear(false);
 }
-void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry(void)
+void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry()
 {
     //DataStructures::Multilist<ML_ORDERED_LIST,UDPProxyCoordinator::ServerWithPing,unsigned short> swpList;
     DataStructures::OrderedList<unsigned short, UDPProxyCoordinator::ServerWithPing, ServerWithPingComp> swpList;

@@ -137,7 +137,7 @@ public:
     /// \brief Called while the handler is active by FileListTransfer
     /// \details Return false when you are done with the class.
     /// At that point OnDereference will be called and the class will no longer be maintained by the FileListTransfer plugin.
-    virtual bool Update(void) {return true;}
+    virtual bool Update() {return true;}
 
     /// \brief Called when the download is completed.
     /// \details If you are finished with this class, return false.
@@ -149,7 +149,7 @@ public:
     /// \details Update will no longer be called.
     /// It will will be deleted automatically if true was passed to FileListTransfer::SetupReceive::deleteHandler
     /// Otherwise it is up to you to delete it yourself.
-    virtual void OnDereference(void) {}
+    virtual void OnDereference() {}
 };
 
 } // namespace CrabNet

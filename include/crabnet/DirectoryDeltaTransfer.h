@@ -139,11 +139,11 @@ public:
     void GenerateHashes(FileList &localFiles, const char *outputSubdir, bool prependAppDirToOutputSubdir);
 
     /// \brief Clear all allowed uploads previously set with AddUploadsFromSubdirectory
-    void ClearUploads(void);
+    void ClearUploads();
 
     /// \brief Returns how many files are available for upload
     /// \return How many files are available for upload
-    unsigned GetNumberOfFilesForUpload(void) const;
+    unsigned GetNumberOfFilesForUpload() const;
 
     /// \brief Normally, if a remote system requests files, those files are all loaded into memory and sent immediately.
     /// \details This function allows the files to be read in incremental chunks, saving memory

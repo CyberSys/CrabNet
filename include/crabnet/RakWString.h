@@ -38,7 +38,7 @@ namespace CrabNet
         operator wchar_t* () const {if (c_str) return c_str; return (wchar_t*) L"";}
 
         /// Same as std::string::c_str
-        const wchar_t* C_String(void) const {if (c_str) return c_str; return (const wchar_t*) L"";}
+        const wchar_t* C_String() const {if (c_str) return c_str; return (const wchar_t*) L"";}
 
         /// Assignment operators
         RakWString& operator = ( const RakWString& right );
@@ -69,10 +69,10 @@ namespace CrabNet
         void Set( wchar_t *str );
 
         /// Returns if the string is empty. Also, C_String() would return ""
-        bool IsEmpty(void) const;
+        bool IsEmpty() const;
 
         /// Returns the length of the string
-        size_t GetLength(void) const;
+        size_t GetLength() const;
 
         /// Has the string into an unsigned int
         static unsigned long ToInteger(const RakWString &rs);
@@ -84,10 +84,10 @@ namespace CrabNet
         int StrICmp(const RakWString &right) const;
 
         /// Clear the string
-        void Clear(void);
+        void Clear();
 
         /// Print the string to the screen
-        void Printf(void);
+        void Printf();
 
         /// Print the string to a file
         void FPrintf(FILE *fp);

@@ -149,7 +149,7 @@ void RNS2_NativeClient::onRecvFrom(void* pData, int32_t dataSize)
     // Reissue call
     socket2->IssueReceiveCall();
 }
-void RNS2_NativeClient::IssueReceiveCall(void)
+void RNS2_NativeClient::IssueReceiveCall()
 {
     RNS2RecvStruct *recvFromStruct;
     recvFromStruct=binding.eventHandler->AllocRNS2RecvStruct();

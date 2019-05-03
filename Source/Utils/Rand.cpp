@@ -249,7 +249,7 @@ void RakNetRandom::FillBufferMT(void *buffer, unsigned int bytes)
 }
 
 /*
-int main(void)
+int main()
 {
 int j;
 

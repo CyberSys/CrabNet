@@ -44,14 +44,14 @@ SendToThread::~SendToThread()
 {
 
 }
-void SendToThread::AddRef(void)
+void SendToThread::AddRef()
 {
     if (++refCount==1)
     {
         threadPool.StartThreads(1,0);
     }
 }
-void SendToThread::Deref(void)
+void SendToThread::Deref()
 {
     if (refCount>0)
     {
@@ -72,7 +72,7 @@ void SendToThread::Deref(void)
         }
     }
 }
-SendToThread::SendToThreadBlock* SendToThread::AllocateBlock(void)
+SendToThread::SendToThreadBlock* SendToThread::AllocateBlock()
 {
     SendToThread::SendToThreadBlock *b;
     b=objectQueue.Pop();

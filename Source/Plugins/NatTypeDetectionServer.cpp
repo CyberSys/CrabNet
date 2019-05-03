@@ -119,7 +119,7 @@ void NatTypeDetectionServer::Shutdown()
         delete bufferedPackets.Pop();
     bufferedPacketsMutex.Unlock();
 }
-void NatTypeDetectionServer::Update(void)
+void NatTypeDetectionServer::Update()
 {
     int i=0;
     CrabNet::TimeMS time = CrabNet::GetTimeMS();

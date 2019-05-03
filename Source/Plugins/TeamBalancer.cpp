@@ -327,7 +327,7 @@ void TeamBalancer::OnClosedConnection(const SystemAddress &systemAddress, RakNet
 
     RemoveByGuid(rakNetGUID);
 }
-void TeamBalancer::OnAttach(void)
+void TeamBalancer::OnAttach()
 {
     hostGuid = rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 }
@@ -603,7 +603,7 @@ void TeamBalancer::GetMinMaxTeamMembers(int &minMembersOnASingleTeam, int &maxMe
     else
         maxMembersOnASingleTeam = minMembersOnASingleTeam+1;
 }
-void TeamBalancer::EvenTeams(void)
+void TeamBalancer::EvenTeams()
 {
     // Ensure all teams are even. If not, pick players at random from overpopulated teams, and move to underpopulated teams.
     int minMembersOnASingleTeam;
@@ -691,7 +691,7 @@ void TeamBalancer::NotifyTeamAssigment(unsigned int teamMemberIndex)
     bsOut.Write(teamMembers[teamMemberIndex].memberId);
     rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,teamMembers[teamMemberIndex].memberGuid,false);
 }
-bool TeamBalancer::WeAreHost(void) const
+bool TeamBalancer::WeAreHost() const
 {
     return hostGuid==rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 }
@@ -742,7 +742,7 @@ PluginReceiveResult TeamBalancer::OnTeamsLocked(Packet *packet)
 
     return RR_CONTINUE_PROCESSING;
 }
-TeamId TeamBalancer::GetNextDefaultTeam(void)
+TeamId TeamBalancer::GetNextDefaultTeam()
 {
     // Accounting for team balancing and team limits, get the team a player should be placed on
     switch (defaultAssigmentAlgorithm)
@@ -789,7 +789,7 @@ bool TeamBalancer::TeamWouldBeUnderpopulatedOnLeave(TeamId teamId, unsigned int 
     }
     return false;
 }
-TeamId TeamBalancer::GetSmallestNonFullTeam(void) const
+TeamId TeamBalancer::GetSmallestNonFullTeam() const
 {
     TeamId idx;
     unsigned long smallestTeamCount=MAX_UNSIGNED_LONG;
@@ -804,7 +804,7 @@ TeamId TeamBalancer::GetSmallestNonFullTeam(void) const
     }
     return smallestTeamIndex;
 }
-TeamId TeamBalancer::GetFirstNonFullTeam(void) const
+TeamId TeamBalancer::GetFirstNonFullTeam() const
 {
     TeamId idx;
     for (idx=0; idx < teamMemberCounts.Size(); idx++)

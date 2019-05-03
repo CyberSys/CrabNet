@@ -290,7 +290,7 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
 
     return true;
 }
-const char *RakNetCommandParser::GetName(void) const
+const char *RakNetCommandParser::GetName() const
 {
     return "CrabNet";
 }

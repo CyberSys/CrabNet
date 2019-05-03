@@ -58,7 +58,7 @@ public:
 #include "BitStream.h"
 #include "StringCompressor.h"
 #include "DS_Table.h"
-void main(void)
+void main()
 {
     DataStructures::Table table;
     DataStructures::Table::Row *row;

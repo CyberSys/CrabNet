@@ -43,7 +43,7 @@ namespace DataStructures
 
         /// WriteLock must be immediately followed by WriteUnlock.  These two functions must be called in the same thread.
         /// \return A pointer to a block of data you can write to.
-        SingleProducerConsumerType* WriteLock(void);
+        SingleProducerConsumerType* WriteLock();
 
         /// Call if you don't want to write to a block of data from WriteLock() after all.
         /// Cancelling locks cancels all locks back up to the data passed.  So if you lock twice and cancel using the first lock, the second lock is ignored
@@ -51,12 +51,12 @@ namespace DataStructures
         void CancelWriteLock(SingleProducerConsumerType* cancelToLocation);
 
         /// Call when you are done writing to a block of memory returned by WriteLock()
-        void WriteUnlock(void);
+        void WriteUnlock();
 
         /// ReadLock must be immediately followed by ReadUnlock. These two functions must be called in the same thread.
         /// \retval 0 No data is availble to read
         /// \retval Non-zero The data previously written to, in another thread, by WriteLock followed by WriteUnlock.
-        SingleProducerConsumerType* ReadLock(void);
+        SingleProducerConsumerType* ReadLock();
 
         // Cancelling locks cancels all locks back up to the data passed.  So if you lock twice and cancel using the first lock, the second lock is ignored
         /// param[in] Which ReadLock() to cancel.
@@ -64,14 +64,14 @@ namespace DataStructures
 
         /// Signals that we are done reading the the data from the least recent call of ReadLock.
         /// At this point that pointer is no longer valid, and should no longer be read.
-        void ReadUnlock(void);
+        void ReadUnlock();
 
         /// Clear is not thread-safe and none of the lock or unlock functions should be called while it is running.
-        void Clear(void);
+        void Clear();
 
         /// This function will estimate how many elements are waiting to be read.  It's threadsafe enough that the value returned is stable, but not threadsafe enough to give accurate results.
         /// \return An ESTIMATE of how many data elements are waiting to be read
-        int Size(void) const;
+        int Size() const;
 
         /// Make sure that the pointer we done reading for the call to ReadUnlock is the right pointer.
         /// param[in] A previous pointer returned by ReadLock()
@@ -79,7 +79,7 @@ namespace DataStructures
 
         /// Returns if ReadUnlock was called before ReadLock
         /// \return If the read is locked
-        bool ReadIsLocked(void) const;
+        bool ReadIsLocked() const;
 
     private:
         struct DataPlusPtr
@@ -260,7 +260,7 @@ namespace DataStructures
 
 
     template <class SingleProducerConsumerType>
-        bool SingleProducerConsumer<SingleProducerConsumerType>::ReadIsLocked(void) const
+        bool SingleProducerConsumer<SingleProducerConsumerType>::ReadIsLocked() const
     {
         return readAheadPointer!=readPointer;
     }

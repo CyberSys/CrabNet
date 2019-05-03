@@ -105,7 +105,7 @@ public:
 
     /// Returns how many open connections there are at this time
     /// \return the number of open connections
-    virtual unsigned short NumberOfConnections(void) const=0;
+    virtual unsigned short NumberOfConnections() const=0;
 
     /// Sets the password incoming connections must match in the call to Connect (defaults to none). Pass 0 to passwordData to specify no password
     /// This is a way to set a low level password for all incoming connections.  To selectively reject connections, implement your own scheme using CloseConnection() to remove unwanted connections
@@ -176,12 +176,12 @@ public:
     /// Returns the next uint32_t that Send() will return
     /// \note If using RakPeer from multiple threads, this may not be accurate for your thread. Use IncrementNextSendReceipt() in that case.
     /// \return The next uint32_t that Send() or SendList will return
-    virtual uint32_t GetNextSendReceipt(void)=0;
+    virtual uint32_t GetNextSendReceipt()=0;
 
     /// Returns the next uint32_t that Send() will return, and increments the value by one
     /// \note If using RakPeer from multiple threads, pass this to forceReceipt in the send function
     /// \return The next uint32_t that Send() or SendList will return
-    virtual uint32_t IncrementNextSendReceipt(void)=0;
+    virtual uint32_t IncrementNextSendReceipt()=0;
 
     /// Sends a block of data to the specified system that you are connected to.
     /// This function only works while connected
@@ -391,13 +391,13 @@ public:
     virtual SystemAddress GetExternalID( const SystemAddress target ) const=0;
 
     /// Return my own GUID
-    virtual const RakNetGUID GetMyGUID(void) const=0;
+    virtual const RakNetGUID GetMyGUID() const=0;
 
     /// Return the address bound to a socket at the specified index
     virtual SystemAddress GetMyBoundAddress(const int socketIndex=0)=0;
 
     /// Get a random number (to generate a GUID)
-    static uint64_t Get64BitUniqueRandomNumber(void);
+    static uint64_t Get64BitUniqueRandomNumber();
 
     /// Given a connected system, give us the unique GUID representing that instance of RakPeer.
     /// This will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different
@@ -475,7 +475,7 @@ public:
 
     /// Returns what was passed to SetSplitMessageProgressInterval()
     /// \return What was passed to SetSplitMessageProgressInterval(). Default to 0.
-    virtual int GetSplitMessageProgressInterval(void) const=0;
+    virtual int GetSplitMessageProgressInterval() const=0;
 
     /// Set how long to wait before giving up on sending an unreliable message
     /// Useful if the network is clogged up.
@@ -588,7 +588,7 @@ public:
     virtual void GetStatisticsList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids, DataStructures::List<RakNetStatistics> &statistics)=0;
 
     /// \Returns how many messages are waiting when you call Receive()
-    virtual unsigned int GetReceiveBufferSize(void)=0;
+    virtual unsigned int GetReceiveBufferSize()=0;
 
     // --------------------------------------------------------------------------------------------EVERYTHING AFTER THIS COMMENT IS FOR INTERNAL USE ONLY--------------------------------------------------------------------------------------------
 

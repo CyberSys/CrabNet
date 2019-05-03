@@ -57,10 +57,10 @@ public:
 
     /// Starts the system.
     /// Required to call before StartForwarding
-    void Startup(void);
+    void Startup();
 
     /// Stops the system, and frees all sockets
-    void Shutdown(void);
+    void Shutdown();
 
     /// Sets the maximum number of forwarding entries allowed
     /// Set according to your available bandwidth and the estimated average bandwidth per forwarded address.
@@ -68,10 +68,10 @@ public:
     void SetMaxForwardEntries(unsigned short maxEntries);
 
     /// \return The \a maxEntries parameter passed to SetMaxForwardEntries(), or the default if it was never called
-    int GetMaxForwardEntries(void) const;
+    int GetMaxForwardEntries() const;
 
     /// \return How many entries have been used
-    int GetUsedForwardEntries(void) const;
+    int GetUsedForwardEntries() const;
 
     /// Forwards datagrams from source to destination, and vice-versa
     /// Does nothing if this forward entry already exists via a previous call
@@ -111,7 +111,7 @@ public:
 protected:
     friend RAK_THREAD_DECLARATION(UpdateUDPForwarderGlobal);
 
-    void UpdateUDPForwarder(void);
+    void UpdateUDPForwarder();
     void RecvFrom(CrabNet::TimeMS curTime, ForwardEntry *forwardEntry);
 
     struct StartForwardingInputStruct

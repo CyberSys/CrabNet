@@ -208,7 +208,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 #endif  // __native_client__
 }
 
-void TCPInterface::Stop(void)
+void TCPInterface::Stop()
 {
     for (unsigned int i = 0; i < messageHandlerList.Size(); i++)
         messageHandlerList[i]->OnRakPeerShutdown();
@@ -444,12 +444,12 @@ bool TCPInterface::SendList(const char **data, const unsigned int *lengths, cons
     return true;
 }
 
-bool TCPInterface::ReceiveHasPackets(void)
+bool TCPInterface::ReceiveHasPackets()
 {
     return !headPush.IsEmpty() || !incomingMessages.IsEmpty() || !tailPush.IsEmpty();
 }
 
-Packet *TCPInterface::Receive(void)
+Packet *TCPInterface::Receive()
 {
     for (unsigned int i = 0; i < messageHandlerList.Size(); i++)
         messageHandlerList[i]->Update();
@@ -477,7 +477,7 @@ Packet *TCPInterface::Receive(void)
     return outgoingPacket;
 }
 
-Packet *TCPInterface::ReceiveInt(void)
+Packet *TCPInterface::ReceiveInt()
 {
     if (isStarted == 0)
         return 0;
@@ -596,12 +596,12 @@ void TCPInterface::PushBackPacket(Packet *packet, bool pushAtHead)
         tailPush.Push(packet);
 }
 
-bool TCPInterface::WasStarted(void) const
+bool TCPInterface::WasStarted() const
 {
     return threadRunning > 0;
 }
 
-SystemAddress TCPInterface::HasCompletedConnectionAttempt(void)
+SystemAddress TCPInterface::HasCompletedConnectionAttempt()
 {
     SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
     completedConnectionAttemptMutex.Lock();
@@ -619,7 +619,7 @@ SystemAddress TCPInterface::HasCompletedConnectionAttempt(void)
     return sysAddr;
 }
 
-SystemAddress TCPInterface::HasFailedConnectionAttempt(void)
+SystemAddress TCPInterface::HasFailedConnectionAttempt()
 {
     SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
     failedConnectionAttemptMutex.Lock();
@@ -643,7 +643,7 @@ SystemAddress TCPInterface::HasFailedConnectionAttempt(void)
     return sysAddr;
 }
 
-SystemAddress TCPInterface::HasNewIncomingConnection(void)
+SystemAddress TCPInterface::HasNewIncomingConnection()
 {
     SystemAddress *out = newIncomingConnections.PopInaccurate();
     if (out)
@@ -660,7 +660,7 @@ SystemAddress TCPInterface::HasNewIncomingConnection(void)
     return UNASSIGNED_SYSTEM_ADDRESS;
 }
 
-SystemAddress TCPInterface::HasLostConnection(void)
+SystemAddress TCPInterface::HasLostConnection()
 {
     SystemAddress *out = lostConnections.PopInaccurate();
     if (out)
@@ -693,7 +693,7 @@ void TCPInterface::GetConnectionList(SystemAddress *remoteSystems, unsigned shor
     *numberOfSystems = systemCount;
 }
 
-unsigned short TCPInterface::GetConnectionCount(void) const
+unsigned short TCPInterface::GetConnectionCount() const
 {
     unsigned short systemCount = 0;
     for (int i = 0; i < remoteClientsLength; i++)
@@ -1231,12 +1231,12 @@ bool RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
     }
     return true;
 }
-void RemoteClient::DisconnectSSL(void)
+void RemoteClient::DisconnectSSL()
 {
     if (ssl)
         SSL_shutdown (ssl);  /* send SSL/TLS close_notify */
 }
-void RemoteClient::FreeSSL(void)
+void RemoteClient::FreeSSL()
 {
     if (ssl)
         SSL_free (ssl);

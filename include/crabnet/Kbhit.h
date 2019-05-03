@@ -20,13 +20,13 @@ You can do whatever you want with it.
 static struct termios g_old_kbd_mode;
 /*****************************************************************************
 *****************************************************************************/
-static void cooked(void)
+static void cooked()
 {
     tcsetattr(0, TCSANOW, &g_old_kbd_mode);
 }
 /*****************************************************************************
 *****************************************************************************/
-static void raw(void)
+static void raw()
 {
     static char init;
 /**/
@@ -48,7 +48,7 @@ static void raw(void)
 }
 /*****************************************************************************
 *****************************************************************************/
-static int kbhit(void)
+static int kbhit()
 {
     struct timeval timeout;
     fd_set read_handles;
@@ -69,7 +69,7 @@ static int kbhit(void)
 }
 /*****************************************************************************
 *****************************************************************************/
-static int getch(void)
+static int getch()
 {
     unsigned char temp;
 

@@ -21,7 +21,7 @@ int Base64Encoding(const unsigned char *inputData, int dataLength, char *outputD
 }
 
 extern "C" {
-const char *Base64Map(void);
+const char *Base64Map();
 }
 
 #endif

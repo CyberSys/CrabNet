@@ -31,7 +31,7 @@ int CrabNet::CloudKeyComp(const CloudKey &key, const CloudKey &data)
     return 0;
 }
 
-CloudQueryRow* CloudAllocator::AllocateCloudQueryRow(void)
+CloudQueryRow* CloudAllocator::AllocateCloudQueryRow()
 {
     return new CloudQueryRow;
 }

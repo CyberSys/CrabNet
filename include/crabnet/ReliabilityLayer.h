@@ -93,8 +93,8 @@ struct BPSTracker
     inline uint64_t GetBPS1Threadsafe(CCTimeType time) {(void) time; return lastSec1;}
 //    uint64_t GetBPS2(RakNetTimeUS time);
 //    void GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2);
-    uint64_t GetTotal1(void) const;
-//    uint64_t GetTotal2(void) const;
+    uint64_t GetTotal1() const;
+//    uint64_t GetTotal2() const;
 
     struct TimeAndValue2
     {
@@ -136,7 +136,7 @@ public:
 
     /// Returns the value passed to SetTimeoutTime. or the default if it was never called
     /// \param[out] the value passed to SetTimeoutTime
-    CrabNet::TimeMS GetTimeoutTime(void);
+    CrabNet::TimeMS GetTimeoutTime();
 
     /// Packets are read directly from the socket layer and skip the reliability layer because unconnected players do not use the reliability layer
     /// This function takes packet data after a player has been confirmed as connected.
@@ -186,15 +186,15 @@ public:
     bool IsDeadConnection( void ) const;
 
     /// Causes IsDeadConnection to return true
-    void KillConnection(void);
+    void KillConnection();
 
     /// Get Statistics
     /// \return A pointer to a static struct, filled out with current statistical information.
     RakNetStatistics * GetStatistics( RakNetStatistics *rns );
 
     ///Are we waiting for any data to be sent out or be processed by the player?
-    bool IsOutgoingDataWaiting(void);
-    bool AreAcksWaiting(void);
+    bool IsOutgoingDataWaiting();
+    bool AreAcksWaiting();
 
     // Set outgoing lag and packet loss properties
     void ApplyNetworkSimulator( double _maxSendBPS, CrabNet::TimeMS _minExtraPing, CrabNet::TimeMS _extraPingVariance );
@@ -207,12 +207,12 @@ public:
     void SetUnreliableTimeout(CrabNet::TimeMS timeoutMS);
     /// Has a lot of time passed since the last ack
     bool AckTimeout(CrabNet::Time curTime);
-    CCTimeType GetNextSendTime(void) const;
-    CCTimeType GetTimeBetweenPackets(void) const;
+    CCTimeType GetNextSendTime() const;
+    CCTimeType GetTimeBetweenPackets() const;
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
-    CCTimeType GetAckPing(void) const;
+    CCTimeType GetAckPing() const;
 #endif
-    CrabNet::TimeMS GetTimeLastDatagramArrived(void) const {return timeLastDatagramArrived;}
+    CrabNet::TimeMS GetTimeLastDatagramArrived() const {return timeLastDatagramArrived;}
 
     // If true, will update time between packets quickly based on ping calculations
     //void SetDoFastThroughputReactions(bool fast);
@@ -309,7 +309,7 @@ private:
     bool IsExpiredTime(unsigned int input, CCTimeType currentTime) const;
 
     // Make it so we don't do resends within a minimum threshold of time
-    void UpdateNextActionTime(void);
+    void UpdateNextActionTime();
 
 
     /// Does this packet number represent a packet that was skipped (out of order?)
@@ -319,12 +319,12 @@ private:
     //unsigned int MakeReceivedPacketHole(unsigned int input) const;
 
     /// How many elements are waiting to be resent?
-    unsigned int GetResendListDataSize(void) const;
+    unsigned int GetResendListDataSize() const;
 
     /// Update all memory which is not threadsafe
-    void UpdateThreadedMemory(void);
+    void UpdateThreadedMemory();
 
-    void CalculateHistogramAckSize(void);
+    void CalculateHistogramAckSize();
 
     // Used ONLY for RELIABLE_ORDERED
     // RELIABLE_SEQUENCED just returns the newest one
@@ -402,7 +402,7 @@ private:
     //DataStructures::Queue<InternalPacket*> sendPacketSet[ NUMBER_OF_PRIORITIES ];
     DataStructures::Heap<reliabilityHeapWeightType, InternalPacket*, false> outgoingPacketBuffer;
     reliabilityHeapWeightType outgoingPacketBufferNextWeights[NUMBER_OF_PRIORITIES];
-    void InitHeapWeights(void);
+    void InitHeapWeights();
     reliabilityHeapWeightType GetNextWeight(int priorityLevel);
 //    unsigned int messageInSendBuffer[NUMBER_OF_PRIORITIES];
 //    double bytesInSendBuffer[NUMBER_OF_PRIORITIES];
@@ -529,18 +529,18 @@ private:
 
     uint32_t unacknowledgedBytes;
 
-    bool ResendBufferOverflow(void) const;
-    void ValidateResendList(void) const;
-    void ResetPacketsAndDatagrams(void);
+    bool ResendBufferOverflow() const;
+    void ValidateResendList() const;
+    void ResetPacketsAndDatagrams();
     void PushPacket(CCTimeType time, InternalPacket *internalPacket, bool isReliable);
-    void PushDatagram(void);
-    bool TagMostRecentPushAsSecondOfPacketPair(void);
-    void ClearPacketsAndDatagrams(void);
+    void PushDatagram();
+    bool TagMostRecentPushAsSecondOfPacketPair();
+    void ClearPacketsAndDatagrams();
     void MoveToListHead(InternalPacket *internalPacket);
     void RemoveFromList(InternalPacket *internalPacket, bool modifyUnacknowledgedBytes);
     void AddToListTail(InternalPacket *internalPacket, bool modifyUnacknowledgedBytes);
     void PopListHead(bool modifyUnacknowledgedBytes);
-    bool IsResendQueueEmpty(void) const;
+    bool IsResendQueueEmpty() const;
     void SortSplitPacketList(DataStructures::List<InternalPacket*> &data, unsigned int leftEdge, unsigned int rightEdge) const;
     void SendACKs(RakNetSocket2 *s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, BitStream &updateBitStream);
 
@@ -561,15 +561,15 @@ private:
 
     // Every 16 datagrams, we make sure the 17th datagram goes out the same update tick, and is the same size as the 16th
     int countdownToNextPacketPair;
-    InternalPacket* AllocateFromInternalPacketPool(void);
+    InternalPacket* AllocateFromInternalPacketPool();
     void ReleaseToInternalPacketPool(InternalPacket *ip);
 
     DataStructures::RangeList<DatagramSequenceNumberType> acknowlegements;
     DataStructures::RangeList<DatagramSequenceNumberType> NAKs;
     bool remoteSystemNeedsBAndAS;
 
-    unsigned int GetMaxDatagramSizeExcludingMessageHeaderBytes(void);
-    BitSize_t GetMaxDatagramSizeExcludingMessageHeaderBits(void);
+    unsigned int GetMaxDatagramSizeExcludingMessageHeaderBytes();
+    BitSize_t GetMaxDatagramSizeExcludingMessageHeaderBits();
 
     // ourOffset refers to a section within externallyAllocatedPtr. Do not deallocate externallyAllocatedPtr until all references are lost
     void AllocInternalPacketData(InternalPacket *internalPacket, InternalPacketRefCountedData **refCounter, unsigned char *externallyAllocatedPtr, unsigned char *ourOffset);
@@ -585,7 +585,7 @@ private:
 
 #ifdef LIBCAT_SECURITY
 public:
-    cat::AuthenticatedEncryption* GetAuthenticatedEncryption(void) { return &auth_enc; }
+    cat::AuthenticatedEncryption* GetAuthenticatedEncryption() { return &auth_enc; }
 
 protected:
     cat::AuthenticatedEncryption auth_enc;

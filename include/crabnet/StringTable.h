@@ -57,7 +57,7 @@ namespace CrabNet
         /// static function because only static functions can access static members
         /// The RakPeer constructor adds a reference to this class, so don't call this until an instance of RakPeer exists, or unless you call AddReference yourself.
         /// \return the unique instance of the StringTable
-        static StringTable &Instance(void);
+        static StringTable &Instance();
 
         /// Add a string to the string table.
         /// \param[in] str The string to add to the string table

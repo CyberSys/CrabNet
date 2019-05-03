@@ -170,7 +170,7 @@ public:
     void AddFilesFromDirectory(const char *applicationDirectory, const char *subDirectory, bool writeHash, bool writeData, bool recursive, FileListNodeContext context);
 
     /// Deallocate all memory
-    void Clear(void);
+    void Clear();
 
     /// Write all encoded data into a bitstream
     void Serialize(CrabNet::BitStream *outBitStream);
@@ -205,7 +205,7 @@ public:
 
     /// By default, GetDeltaToCurrent tags files as non-references, meaning they are assumed to be populated later
     /// This tags all files as references, required for IncrementalReadInterface to process them incrementally
-    void FlagFilesAsReferences(void);
+    void FlagFilesAsReferences();
 
     /// \brief Write all files to disk, prefixing the paths with applicationDirectory
     /// \param[in] applicationDirectory path prefix
@@ -241,7 +241,7 @@ public:
     void RemoveCallback(FileListProgress *cb);
 
     /// \brief Removes all callbacks
-    void ClearCallbacks(void);
+    void ClearCallbacks();
 
     /// Returns all callbacks added with AddCallback()
     /// \param[out] callbacks The list is set to the list of callbacks

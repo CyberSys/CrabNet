@@ -33,7 +33,7 @@ public:
     ~ReferenceCounter() {}
     void AddRef() {refCount++;}
     int Release() {return --refCount;}
-    int GetRefCount(void) const {return refCount;}
+    int GetRefCount() const {return refCount;}
 };
 
 template < typename T > class RAK_DLL_EXPORT RakNetSmartPtr
@@ -75,12 +75,12 @@ public:
         }
     }
 
-    bool IsNull(void) const
+    bool IsNull() const
     {
         return ptr==0;
     }
 
-    void SetNull(void)
+    void SetNull()
     {
         if(reference && reference->Release() == 0)
         {
@@ -94,7 +94,7 @@ public:
         reference=0;
     }
 
-    bool IsUnique(void) const
+    bool IsUnique() const
     {
         return reference->GetRefCount()==1;
     }
@@ -115,7 +115,7 @@ public:
         }
     }
 
-    int GetRefCount(void) const
+    int GetRefCount() const
     {
         return reference->GetRefCount();
     }

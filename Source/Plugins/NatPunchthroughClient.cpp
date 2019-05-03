@@ -118,7 +118,7 @@ void NatPunchthroughClient::SetDebugInterface(NatPunchthroughDebugInterface *i)
 {
     natPunchthroughDebugInterface=i;
 }
-void NatPunchthroughClient::Update(void)
+void NatPunchthroughClient::Update()
 {
     CrabNet::Time time = CrabNet::GetTime();
 
@@ -334,7 +334,7 @@ void NatPunchthroughClient::Update(void)
     }
     */
 }
-void NatPunchthroughClient::PushFailure(void)
+void NatPunchthroughClient::PushFailure()
 {
     Packet *p = AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned char));
     p->data[0]=ID_NAT_PUNCHTHROUGH_FAILED;
@@ -348,7 +348,7 @@ void NatPunchthroughClient::PushFailure(void)
     p->wasGeneratedLocally=true;
     rakPeerInterface->PushBackPacket(p, true);
 }
-void NatPunchthroughClient::OnPunchthroughFailure(void)
+void NatPunchthroughClient::OnPunchthroughFailure()
 {
     if (pc.retryOnFailure==false)
     {
@@ -723,7 +723,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
     return RR_CONTINUE_PROCESSING;
 }
 /*
-void NatPunchthroughClient::ProcessNextPunchthroughQueue(void)
+void NatPunchthroughClient::ProcessNextPunchthroughQueue()
 {
     // Go to the next attempt
     if (pendingOpenNAT.Size())
@@ -1020,7 +1020,7 @@ void NatPunchthroughClient::QueueOpenNAT(RakNetGUID destination, const SystemAdd
     daf.facilitator=facilitator;
     queuedOpenNat.Push(daf);
 }
-void NatPunchthroughClient::SendQueuedOpenNAT(void)
+void NatPunchthroughClient::SendQueuedOpenNAT()
 {
     while (queuedOpenNat.IsEmpty()==false)
     {
@@ -1044,19 +1044,19 @@ void NatPunchthroughClient::SendPunchthrough(RakNetGUID destination, const Syste
         natPunchthroughDebugInterface->OnClientMessage(CrabNet::RakString("Starting ID_NAT_PUNCHTHROUGH_REQUEST to guid %s.", guidString));
     }
 }
-void NatPunchthroughClient::OnAttach(void)
+void NatPunchthroughClient::OnAttach()
 {
     Clear();
 }
-void NatPunchthroughClient::OnDetach(void)
+void NatPunchthroughClient::OnDetach()
 {
     Clear();
 }
-void NatPunchthroughClient::OnRakPeerShutdown(void)
+void NatPunchthroughClient::OnRakPeerShutdown()
 {
     Clear();
 }
-void NatPunchthroughClient::Clear(void)
+void NatPunchthroughClient::Clear()
 {
     OnReadyForNextPunchthrough();
 
@@ -1073,11 +1073,11 @@ void NatPunchthroughClient::Clear(void)
     groupPunchRequests.Clear(true);
     */
 }
-PunchthroughConfiguration* NatPunchthroughClient::GetPunchthroughConfiguration(void)
+PunchthroughConfiguration* NatPunchthroughClient::GetPunchthroughConfiguration()
 {
     return &pc;
 }
-void NatPunchthroughClient::OnReadyForNextPunchthrough(void)
+void NatPunchthroughClient::OnReadyForNextPunchthrough()
 {
     if (rakPeerInterface==0)
         return;
@@ -1089,7 +1089,7 @@ void NatPunchthroughClient::OnReadyForNextPunchthrough(void)
     rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,sp.facilitator,false);
 }
 
-void NatPunchthroughClient::PushSuccess(void)
+void NatPunchthroughClient::PushSuccess()
 {
     Packet *p = AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned char));
     p->data[0]=ID_NAT_PUNCHTHROUGH_SUCCEEDED;
@@ -1103,7 +1103,7 @@ void NatPunchthroughClient::PushSuccess(void)
     p->wasGeneratedLocally=true;
     rakPeerInterface->PushBackPacket(p, true);
 }
-bool NatPunchthroughClient::RemoveFromFailureQueue(void)
+bool NatPunchthroughClient::RemoveFromFailureQueue()
 {
     unsigned int i;
     for (i=0; i < failedAttemptList.Size(); i++)

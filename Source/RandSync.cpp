@@ -42,12 +42,12 @@ namespace CrabNet
         Skip(skipValues);
     }
 
-    float RakNetRandomSync::FrandomMT(void)
+    float RakNetRandomSync::FrandomMT()
     {
         return (float) ((double) RandomMT() / (double) UINT_MAX);
     }
 
-    unsigned int RakNetRandomSync::RandomMT(void)
+    unsigned int RakNetRandomSync::RandomMT()
     {
         if (usedValueBufferCount > 0)
         {
@@ -75,12 +75,12 @@ namespace CrabNet
         }
     }
 
-    uint32_t RakNetRandomSync::GetSeed(void) const
+    uint32_t RakNetRandomSync::GetSeed() const
     {
         return seed;
     }
 
-    uint32_t RakNetRandomSync::GetCallCount(void) const
+    uint32_t RakNetRandomSync::GetCallCount() const
     {
         return callCount;
     }

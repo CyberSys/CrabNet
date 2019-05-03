@@ -106,8 +106,8 @@ class CCRakNetUDT
 
     /// Every data packet sent must contain a sequence number
     /// Call this function to get it. The sequence number is passed into OnGotPacketPair()
-    DatagramSequenceNumberType GetAndIncrementNextDatagramSequenceNumber(void);
-    DatagramSequenceNumberType GetNextDatagramSequenceNumber(void);
+    DatagramSequenceNumberType GetAndIncrementNextDatagramSequenceNumber();
+    DatagramSequenceNumberType GetNextDatagramSequenceNumber();
 
     /// Call this when you send packets
     /// Every 15th and 16th packets should be sent as a packet pair if possible
@@ -163,21 +163,21 @@ class CCRakNetUDT
     void SetMTU(uint32_t bytes);
 
     /// Return what was set by SetMTU()
-    uint32_t GetMTU(void) const;
+    uint32_t GetMTU() const;
 
     /// Query for statistics
-    BytesPerMicrosecond GetLocalSendRate(void) const {return 1.0 / SND;}
+    BytesPerMicrosecond GetLocalSendRate() const {return 1.0 / SND;}
     BytesPerMicrosecond GetLocalReceiveRate(CCTimeType currentTime) const;
-    BytesPerMicrosecond GetRemoveReceiveRate(void) const {return AS;}
-    //BytesPerMicrosecond GetEstimatedBandwidth(void) const {return B;}
-    BytesPerMicrosecond GetEstimatedBandwidth(void) const {return GetLinkCapacityBytesPerSecond()*1000000.0;}
-    double GetLinkCapacityBytesPerSecond(void) const {return estimatedLinkCapacityBytesPerSecond;};
+    BytesPerMicrosecond GetRemoveReceiveRate() const {return AS;}
+    //BytesPerMicrosecond GetEstimatedBandwidth() const {return B;}
+    BytesPerMicrosecond GetEstimatedBandwidth() const {return GetLinkCapacityBytesPerSecond()*1000000.0;}
+    double GetLinkCapacityBytesPerSecond() const {return estimatedLinkCapacityBytesPerSecond;};
 
     /// Query for statistics
-    double GetRTT(void) const;
+    double GetRTT() const;
 
-    bool GetIsInSlowStart(void) const {return isInSlowStart;}
-    uint32_t GetCWNDLimit(void) const {return (uint32_t) (CWND*MAXIMUM_MTU_INCLUDING_UDP_HEADER);}
+    bool GetIsInSlowStart() const {return isInSlowStart;}
+    uint32_t GetCWNDLimit() const {return (uint32_t) (CWND*MAXIMUM_MTU_INCLUDING_UDP_HEADER);}
 
 
     /// Is a > b, accounting for variable overflow?
@@ -185,7 +185,7 @@ class CCRakNetUDT
     /// Is a < b, accounting for variable overflow?
     static bool LessThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b);
 //    void SetTimeBetweenSendsLimit(unsigned int bitsPerSecond);
-    uint64_t GetBytesPerSecondLimitByCongestionControl(void) const;
+    uint64_t GetBytesPerSecondLimitByCongestionControl() const;
 
     protected:
     // --------------------------- PROTECTED VARIABLES ---------------------------
@@ -345,7 +345,7 @@ class CCRakNetUDT
     /// Returns the rate of data arrival, based on packets arriving on the sender.
     BytesPerMicrosecond ReceiverCalculateDataArrivalRate(CCTimeType curTime) const;
     /// Returns the median of the data arrival rate
-    BytesPerMicrosecond ReceiverCalculateDataArrivalRateMedian(void) const;
+    BytesPerMicrosecond ReceiverCalculateDataArrivalRateMedian() const;
 
     /// Calculates the median an array of BytesPerMicrosecond
     static BytesPerMicrosecond CalculateListMedianRecursive(const BytesPerMicrosecond inputList[CC_CRABNET_UDT_PACKET_HISTORY_LENGTH], int inputListLength, int lessThanSum, int greaterThanSum);
@@ -353,10 +353,10 @@ class CCRakNetUDT
 
     /// Same as GetRTOForRetransmission, but does not factor in ExpCount
     /// This is because the receiver does not know ExpCount for the sender, and even if it did, acks shouldn't be delayed for this reason
-    CCTimeType GetSenderRTOForACK(void) const;
+    CCTimeType GetSenderRTOForACK() const;
 
     /// Stop slow start, and enter normal transfer rate
-    void EndSlowStart(void);
+    void EndSlowStart();
 
     /// Does the named conversion
     inline double BytesPerMicrosecondToPacketsPerMillisecond(BytesPerMicrosecond in);
@@ -375,16 +375,16 @@ class CCRakNetUDT
     void ResetOnDataArrivalHalveSNDOnNoDataTime(CCTimeType curTime);
 
     // Init array
-    void InitPacketArrivalHistory(void);
+    void InitPacketArrivalHistory();
 
     // Printf
-    void PrintLowBandwidthWarning(void);
+    void PrintLowBandwidthWarning();
 
     // Bug: SND can sometimes get super high - have seen 11693
     void CapMinSnd(const char *file, int line);
 
-    void DecreaseTimeBetweenSends(void);
-    void IncreaseTimeBetweenSends(void);
+    void DecreaseTimeBetweenSends();
+    void IncreaseTimeBetweenSends();
 
     int bytesCanSendThisTick;
 

@@ -33,7 +33,7 @@ PacketizedTCP::~PacketizedTCP()
     ClearAllConnections();
 }
 
-void PacketizedTCP::Stop(void)
+void PacketizedTCP::Stop()
 {
     unsigned int i;
     TCPInterface::Stop();
@@ -99,7 +99,7 @@ bool PacketizedTCP::SendList( const char **data, const unsigned int *lengths, co
     }
     return TCPInterface::SendList(dataArray,lengthsArray,numParameters+1,systemAddress,broadcast);
 }
-void PacketizedTCP::PushNotificationsToQueues(void)
+void PacketizedTCP::PushNotificationsToQueues()
 {
     SystemAddress sa;
     sa = TCPInterface::HasNewIncomingConnection();
@@ -262,7 +262,7 @@ Packet* PacketizedTCP::Receive( void )
 
     return ReturnOutgoingPacket();
 }
-Packet *PacketizedTCP::ReturnOutgoingPacket(void)
+Packet *PacketizedTCP::ReturnOutgoingPacket()
 {
     Packet *outgoingPacket=0;
     unsigned int i;
@@ -314,14 +314,14 @@ void PacketizedTCP::AddToConnectionList(const SystemAddress &sa)
         return;
     connections.SetNew(sa,new DataStructures::ByteQueue);
 }
-void PacketizedTCP::ClearAllConnections(void)
+void PacketizedTCP::ClearAllConnections()
 {
     unsigned int i;
     for (i=0; i < connections.Size(); i++)
         delete connections[i];
     connections.Clear();
 }
-SystemAddress PacketizedTCP::HasCompletedConnectionAttempt(void)
+SystemAddress PacketizedTCP::HasCompletedConnectionAttempt()
 {
     PushNotificationsToQueues();
 
@@ -329,7 +329,7 @@ SystemAddress PacketizedTCP::HasCompletedConnectionAttempt(void)
         return _completedConnectionAttempts.Pop();
     return UNASSIGNED_SYSTEM_ADDRESS;
 }
-SystemAddress PacketizedTCP::HasFailedConnectionAttempt(void)
+SystemAddress PacketizedTCP::HasFailedConnectionAttempt()
 {
     PushNotificationsToQueues();
 
@@ -337,7 +337,7 @@ SystemAddress PacketizedTCP::HasFailedConnectionAttempt(void)
         return _failedConnectionAttempts.Pop();
     return UNASSIGNED_SYSTEM_ADDRESS;
 }
-SystemAddress PacketizedTCP::HasNewIncomingConnection(void)
+SystemAddress PacketizedTCP::HasNewIncomingConnection()
 {
     PushNotificationsToQueues();
 
@@ -345,7 +345,7 @@ SystemAddress PacketizedTCP::HasNewIncomingConnection(void)
         return _newIncomingConnections.Pop();
     return UNASSIGNED_SYSTEM_ADDRESS;
 }
-SystemAddress PacketizedTCP::HasLostConnection(void)
+SystemAddress PacketizedTCP::HasLostConnection()
 {
     PushNotificationsToQueues();
 

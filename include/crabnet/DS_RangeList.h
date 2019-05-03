@@ -52,9 +52,9 @@ namespace DataStructures
         RangeList();
         ~RangeList();
         void Insert(range_type index);
-        void Clear(void);
-        unsigned Size(void) const;
-        unsigned RangeSum(void) const;
+        void Clear();
+        unsigned Size() const;
+        unsigned RangeSum() const;
         CrabNet::BitSize_t Serialize(CrabNet::BitStream *in, CrabNet::BitSize_t maxBits, bool clearSerialized);
         bool Deserialize(CrabNet::BitStream *out);
 
@@ -218,19 +218,19 @@ namespace DataStructures
     }
 
     template <class range_type>
-    void RangeList<range_type>::Clear(void)
+    void RangeList<range_type>::Clear()
     {
         ranges.Clear(true);
     }
 
     template <class range_type>
-    unsigned RangeList<range_type>::Size(void) const
+    unsigned RangeList<range_type>::Size() const
     {
         return ranges.Size();
     }
 
     template <class range_type>
-    unsigned RangeList<range_type>::RangeSum(void) const
+    unsigned RangeList<range_type>::RangeSum() const
     {
         unsigned sum=0,i;
         for (i=0; i < ranges.Size(); i++)

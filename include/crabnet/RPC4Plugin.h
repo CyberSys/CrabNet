@@ -175,7 +175,7 @@ class NetworkIDManager;
         void Signal(const char *sharedIdentifier, CrabNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, bool invokeLocal);
 
         /// If called while processing a slot, no further slots for the currently executing signal will be executed
-        void InterruptSignal(void);
+        void InterruptSignal();
 
         /// \internal
         struct LocalCallback
@@ -214,7 +214,7 @@ class NetworkIDManager;
         // --------------------------------------------------------------------------------------------
         // Packet handling functions
         // --------------------------------------------------------------------------------------------
-        virtual void OnAttach(void);
+        virtual void OnAttach();
         virtual PluginReceiveResult OnReceive(Packet *packet);
 
         DataStructures::Hash<CrabNet::RakString, void ( * ) ( CrabNet::BitStream *, Packet * ),64, CrabNet::RakString::ToInteger> registeredNonblockingFunctions;

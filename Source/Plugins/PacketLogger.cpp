@@ -127,7 +127,7 @@ void PacketLogger::OnDirectSocketSend(const char *data, const BitSize_t bitsUsed
     AddToLog(str);
 }
 
-void PacketLogger::LogHeader(void)
+void PacketLogger::LogHeader()
 {
     // Last 5 are splitpacket id, split packet index, split packet count, ordering index, suffix
     AddToLog("Clock,S|R,Typ,Reliable#,Frm #,PktID,BitLn,Time     ,Local IP:Port   ,RemoteIP:Port,SPID,SPIN,SPCO,OI,Suffix,Miscellaneous\n");

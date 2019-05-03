@@ -86,13 +86,13 @@ namespace CrabNet
 /*
 #include <alloca.h> // Console 2
 #include <stdlib.h>
-extern bool _extern_Console2LoadModules(void);
-extern int _extern_Console2GetConnectionStatus(void);
-extern int _extern_Console2GetLobbyStatus(void);
+extern bool _extern_Console2LoadModules();
+extern int _extern_Console2GetConnectionStatus();
+extern int _extern_Console2GetLobbyStatus();
 //extern bool Console2StartupFluff(unsigned int *);
-extern void Console2ShutdownFluff(void);
+extern void Console2ShutdownFluff();
 //extern unsigned int Console2ActivateConnection(unsigned int, void *);
-//extern bool Console2BlockOnEstablished(void);
+//extern bool Console2BlockOnEstablished();
 extern void Console2GetIPAndPort(unsigned int, char *, unsigned short *, unsigned int );
 //extern void Console2DeactivateConnection(unsigned int, unsigned int);
 */
@@ -732,7 +732,7 @@ bool RakPeer::InitializeSecurity(const char *public_key, const char *private_key
 // Must be called while offline
 // Disables security for incoming connections.
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::DisableSecurity(void)
+void RakPeer::DisableSecurity()
 {
 #ifdef LIBCAT_SECURITY
     CAT_AUDIT_PRINTF("AUDIT: DisableSecurity() called, so deleting _server_handshake %x and cookie_jar %x\n",
@@ -822,7 +822,7 @@ void RakPeer::SetMaximumIncomingConnections(unsigned short numberAllowed)
 // Description:
 // Returns the maximum number of incoming connections, which is always <= maxConnections
 // ---------------------------------------------------------------------------------------------------------------------
-unsigned int RakPeer::GetMaximumIncomingConnections(void) const
+unsigned int RakPeer::GetMaximumIncomingConnections() const
 {
     return maximumIncomingConnections;
 }
@@ -831,7 +831,7 @@ unsigned int RakPeer::GetMaximumIncomingConnections(void) const
 // Returns how many open connections there are at this time
 // \return the number of open connections
 // ---------------------------------------------------------------------------------------------------------------------
-unsigned short RakPeer::NumberOfConnections(void) const
+unsigned short RakPeer::NumberOfConnections() const
 {
     DataStructures::List<SystemAddress> addresses;
     DataStructures::List<RakNetGUID> guids;
@@ -1149,7 +1149,7 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
 // Description:
 // Returns true if the network threads are running
 // ---------------------------------------------------------------------------------------------------------------------
-inline bool RakPeer::IsActive(void) const
+inline bool RakPeer::IsActive() const
 {
     return endThreads == false;
 }
@@ -1192,7 +1192,7 @@ bool RakPeer::GetConnectionList(SystemAddress *remoteSystems, unsigned short *nu
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-uint32_t RakPeer::GetNextSendReceipt(void)
+uint32_t RakPeer::GetNextSendReceipt()
 {
     sendReceiptSerialMutex.Lock();
     uint32_t retVal = sendReceiptSerial;
@@ -1201,7 +1201,7 @@ uint32_t RakPeer::GetNextSendReceipt(void)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-uint32_t RakPeer::IncrementNextSendReceipt(void)
+uint32_t RakPeer::IncrementNextSendReceipt()
 {
     sendReceiptSerialMutex.Lock();
     uint32_t returned = sendReceiptSerial;
@@ -1409,7 +1409,7 @@ uint32_t RakPeer::SendList(const char **data, const int *lengths, const int numP
 #pragma warning( disable : 4701 ) // warning C4701: local variable <variable name> may be used without having been initialized
 #endif
 
-Packet *RakPeer::Receive(void)
+Packet *RakPeer::Receive()
 {
     if (!(IsActive()))
         return 0;
@@ -1566,7 +1566,7 @@ void RakPeer::DeallocatePacket(Packet *packet)
 // Description:
 // Return the total number of connections we are allowed
 // ---------------------------------------------------------------------------------------------------------------------
-unsigned int RakPeer::GetMaximumNumberOfPeers(void) const
+unsigned int RakPeer::GetMaximumNumberOfPeers() const
 {
     return maximumNumberOfPeers;
 }
@@ -1890,7 +1890,7 @@ void RakPeer::RemoveFromBanList(const char *IP)
 // Description:
 // Allows all previously banned IPs to connect.
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ClearBanList(void)
+void RakPeer::ClearBanList()
 {
     unsigned index;
     index = 0;
@@ -2324,7 +2324,7 @@ SystemAddress RakPeer::GetExternalID(const SystemAddress target) const
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-const RakNetGUID RakPeer::GetMyGUID(void) const
+const RakNetGUID RakPeer::GetMyGUID() const
 {
     return myGuid;
 }
@@ -2537,7 +2537,7 @@ int RakPeer::GetMTUSize(const SystemAddress target) const
 // Description:
 // Returns the number of IP addresses we have
 // ---------------------------------------------------------------------------------------------------------------------
-unsigned int RakPeer::GetNumberOfAddresses(void)
+unsigned int RakPeer::GetNumberOfAddresses()
 {
 
     if (IsActive() == false)
@@ -2649,7 +2649,7 @@ void RakPeer::SetSplitMessageProgressInterval(int interval)
 // ---------------------------------------------------------------------------------------------------------------------
 // Returns what was passed to SetSplitMessageProgressInterval()
 // ---------------------------------------------------------------------------------------------------------------------
-int RakPeer::GetSplitMessageProgressInterval(void) const
+int RakPeer::GetSplitMessageProgressInterval() const
 {
     return splitMessageProgressInterval;
 }
@@ -2919,7 +2919,7 @@ void RakPeer::SetPerConnectionOutgoingBandwidthLimit(unsigned maxBitsPerSecond)
 // ---------------------------------------------------------------------------------------------------------------------
 // Returns if you previously called ApplyNetworkSimulator
 // ---------------------------------------------------------------------------------------------------------------------
-bool RakPeer::IsNetworkSimulatorActive(void)
+bool RakPeer::IsNetworkSimulatorActive()
 {
 #ifdef _DEBUG
     return _packetloss > 0 || _minExtraPing > 0 || _extraPingVariance > 0;
@@ -3085,7 +3085,7 @@ bool RakPeer::GetStatistics(const unsigned int index, RakNetStatistics *rns)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-unsigned int RakPeer::GetReceiveBufferSize(void)
+unsigned int RakPeer::GetReceiveBufferSize()
 {
     unsigned int size;
     packetReturnMutex.Lock();
@@ -3335,7 +3335,7 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
     return CONNECTION_ATTEMPT_STARTED;
 }
 
-void RakPeer::ValidateRemoteSystemLookup(void) const
+void RakPeer::ValidateRemoteSystemLookup() const
 {
 }
 
@@ -3535,7 +3535,7 @@ void RakPeer::NotifyAndFlagForShutdown(const SystemAddress systemAddress, bool p
     }
 }
 
-unsigned int RakPeer::GetNumberOfRemoteInitiatedConnections(void) const
+unsigned int RakPeer::GetNumberOfRemoteInitiatedConnections() const
 {
     if (remoteSystemList == 0 || endThreads == true)
         return 0;
@@ -3762,7 +3762,7 @@ RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystem(const SystemAddress &sa) c
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ClearRemoteSystemLookup(void)
+void RakPeer::ClearRemoteSystemLookup()
 {
     remoteSystemIndexPool.Clear();
     delete[] remoteSystemLookup;
@@ -3860,13 +3860,13 @@ bool RakPeer::IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matc
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-SystemAddress RakPeer::GetLoopbackAddress(void) const
+SystemAddress RakPeer::GetLoopbackAddress() const
 {
     return ipList[0];
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-bool RakPeer::AllowIncomingConnections(void) const
+bool RakPeer::AllowIncomingConnections() const
 {
     return GetNumberOfRemoteInitiatedConnections() < GetMaximumIncomingConnections();
 }
@@ -3897,7 +3897,7 @@ RNS2RecvStruct *RakPeer::AllocRNS2RecvStruct()
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ClearBufferedPackets(void)
+void RakPeer::ClearBufferedPackets()
 {
     bufferedPacketsFreePoolMutex.Lock();
     while (bufferedPacketsFreePool.Size() > 0)
@@ -3911,7 +3911,7 @@ void RakPeer::ClearBufferedPackets(void)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::SetupBufferedPackets(void)
+void RakPeer::SetupBufferedPackets()
 {
 }
 
@@ -3924,7 +3924,7 @@ void RakPeer::PushBufferedPacket(RNS2RecvStruct *p)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-RNS2RecvStruct *RakPeer::PopBufferedPacket(void)
+RNS2RecvStruct *RakPeer::PopBufferedPacket()
 {
     bufferedPacketsQueueMutex.Lock();
     if (bufferedPacketsQueue.Size() > 0)
@@ -4214,7 +4214,7 @@ bool RakPeer::SendImmediate(char *data, BitSize_t numberOfBitsToSend, PacketPrio
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ResetSendReceipt(void)
+void RakPeer::ResetSendReceipt()
 {
     sendReceiptSerialMutex.Lock();
     sendReceiptSerial = 1;
@@ -4248,7 +4248,7 @@ void RakPeer::OnConnectedPong(CrabNet::Time sendPingTime, CrabNet::Time sendPong
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ClearBufferedCommands(void)
+void RakPeer::ClearBufferedCommands()
 {
     BufferedCommandStruct *bcs;
     while ((bcs = bufferedCommands.Pop()) != 0)
@@ -4262,13 +4262,13 @@ void RakPeer::ClearBufferedCommands(void)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ClearSocketQueryOutput(void)
+void RakPeer::ClearSocketQueryOutput()
 {
     socketQueryOutput.Clear();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::ClearRequestedConnectionList(void)
+void RakPeer::ClearRequestedConnectionList()
 {
     DataStructures::Queue<RequestedConnectionStruct *> freeQueue;
     requestedConnectionQueueMutex.Lock();
@@ -4295,7 +4295,7 @@ inline void RakPeer::AddPacketToProducer(CrabNet::Packet *p)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::GenerateGUID(void)
+void RakPeer::GenerateGUID()
 {
     myGuid.g = Get64BitUniqueRandomNumber();
 }
@@ -5205,7 +5205,7 @@ namespace CrabNet
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-unsigned int RakPeer::GenerateSeedFromGuid(void)
+unsigned int RakPeer::GenerateSeedFromGuid()
 {
     /*
     // Construct a random seed based on the initial guid value, and the last digits of the difference to each subsequent number
@@ -5227,7 +5227,7 @@ unsigned int RakPeer::GenerateSeedFromGuid(void)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void RakPeer::DerefAllSockets(void)
+void RakPeer::DerefAllSockets()
 {
     unsigned int i;
     for (i = 0; i < socketList.Size(); i++)
@@ -6167,7 +6167,7 @@ void RakPeer::CallPluginCallbacks(DataStructures::List<PluginInterface2 *> &plug
     }
 }
 
-void RakPeer::FillIPList(void)
+void RakPeer::FillIPList()
 {
     if (ipList[0] != UNASSIGNED_SYSTEM_ADDRESS)
         return;

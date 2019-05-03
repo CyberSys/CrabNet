@@ -55,9 +55,9 @@ void RakNetSocket2Allocator::DeallocRNS2(RakNetSocket2 *s) {delete s;}
 RakNetSocket2::RakNetSocket2() : eventHandler(nullptr), socketType(RNS2Type::RNS2T_LINUX), userConnectionSocketIndex(0) {}
 RakNetSocket2::~RakNetSocket2() {}
 void RakNetSocket2::SetRecvEventHandler(RNS2EventHandler *_eventHandler) { eventHandler = _eventHandler; }
-RNS2Type RakNetSocket2::GetSocketType(void) const { return socketType; }
+RNS2Type RakNetSocket2::GetSocketType() const { return socketType; }
 void RakNetSocket2::SetSocketType(RNS2Type t) { socketType = t; }
-bool RakNetSocket2::IsBerkleySocket(void) const
+bool RakNetSocket2::IsBerkleySocket() const
 {
     return socketType != RNS2T_CHROME && socketType != RNS2T_WINDOWS_STORE_8;
 }
@@ -89,9 +89,9 @@ void RakNetSocket2::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_
 #endif
 }
 
-unsigned int RakNetSocket2::GetUserConnectionSocketIndex(void) const {return userConnectionSocketIndex;}
+unsigned int RakNetSocket2::GetUserConnectionSocketIndex() const {return userConnectionSocketIndex;}
 void RakNetSocket2::SetUserConnectionSocketIndex(unsigned int i) {userConnectionSocketIndex=i;}
-RNS2EventHandler * RakNetSocket2::GetEventHandler(void) const {return eventHandler;}
+RNS2EventHandler * RakNetSocket2::GetEventHandler() const {return eventHandler;}
 
 void RakNetSocket2::DomainNameToIP( const char *domainName, char ip[65] ) {
 #if defined(__native_client__)
@@ -130,7 +130,7 @@ void RNS2_NativeClient::onSocketBound(void* pData, int32_t dataSize)
     csc->ProcessBufferedSend();
     csc->IssueReceiveCall();
 }
-void RNS2_NativeClient::ProcessBufferedSend(void)
+void RNS2_NativeClient::ProcessBufferedSend()
 {
     // Don't send until bound
     if (bindState!=BS_BOUND)
@@ -218,8 +218,8 @@ void RNS2_NativeClient::BufferSend( RNS2_SendParameters *sendParameters )
     // Do not check to send immediately, because this was probably invoked from a thread and native client is not threadsafe
 }
 void RNS2_NativeClient::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] ) {addresses[0]=UNASSIGNED_SYSTEM_ADDRESS; RakAssert("GetMyIP Unsupported?" && 0);}
-const NativeClientBindParameters *RNS2_NativeClient::GetBindings(void) const {return &binding;}
-void RNS2_NativeClient::Update(void)
+const NativeClientBindParameters *RNS2_NativeClient::GetBindings() const {return &binding;}
+void RNS2_NativeClient::Update()
 {
     // Don't send until bound
     if (bindState==BS_BOUND)
@@ -298,7 +298,7 @@ RAK_THREAD_DECLARATION(RNS2_Berkley::RecvFromLoop)
     b->RecvFromLoopInt();
     return 0;
 }
-unsigned RNS2_Berkley::RecvFromLoopInt(void)
+unsigned RNS2_Berkley::RecvFromLoopInt()
 {
     isRecvFromLoopThreadActive++;
 
@@ -366,11 +366,11 @@ int RNS2_Berkley::CreateRecvPollingThread(int threadPriority)
 
     return errorCode;
 }
-void RNS2_Berkley::SignalStopRecvPollingThread(void)
+void RNS2_Berkley::SignalStopRecvPollingThread()
 {
     endThreads=true;
 }
-void RNS2_Berkley::BlockOnStopRecvPollingThread(void)
+void RNS2_Berkley::BlockOnStopRecvPollingThread()
 {
     endThreads=true;
 
@@ -391,8 +391,8 @@ void RNS2_Berkley::BlockOnStopRecvPollingThread(void)
         RakSleep(30);
     }
 }
-const RNS2_BerkleyBindParameters *RNS2_Berkley::GetBindings(void) const {return &binding;}
-RNS2Socket RNS2_Berkley::GetSocket(void) const {return rns2Socket;}
+const RNS2_BerkleyBindParameters *RNS2_Berkley::GetBindings() const {return &binding;}
+RNS2Socket RNS2_Berkley::GetSocket() const {return rns2Socket;}
 // See RakNetSocket2_Berkley.cpp for WriteSharedIPV4, BindSharedIPV4And6 and other implementations
 #if   defined(_WIN32)
 RNS2_Windows::RNS2_Windows() {slo=0;}
@@ -419,7 +419,7 @@ RNS2SendResult RNS2_Windows::Send( RNS2_SendParameters *sendParameters ) {
 }
 void RNS2_Windows::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] ) {return GetMyIP_Windows_Linux(addresses);}
 void RNS2_Windows::SetSocketLayerOverride(SocketLayerOverride *_slo) {slo = _slo;}
-SocketLayerOverride* RNS2_Windows::GetSocketLayerOverride(void) {return slo;}
+SocketLayerOverride* RNS2_Windows::GetSocketLayerOverride() {return slo;}
 #else
 RNS2BindResult RNS2_Linux::Bind( RNS2_BerkleyBindParameters *bindParameters ) {return BindShared(bindParameters);}
 RNS2SendResult RNS2_Linux::Send( RNS2_SendParameters *sendParameters ) {return Send_Windows_Linux_360NoVDP(rns2Socket,sendParameters);}

@@ -89,11 +89,11 @@ void BPSTracker::Reset()
 //void BPSTracker::Push2(RakNetTimeUS time, uint64_t value1, uint64_t value2) {dataQueue.Push(TimeAndValue2(time,value1,value2),); total1+=value1; lastSec1+=value1;  total2+=value2; lastSec2+=value2;}
 //uint64_t BPSTracker::GetBPS2(RakNetTimeUS time) {ClearExpired2(time); return lastSec2;}
 //void BPSTracker::GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2) {ClearExpired2(time); out1=lastSec1; out2=lastSec2;}
-uint64_t BPSTracker::GetTotal1(void) const
+uint64_t BPSTracker::GetTotal1() const
 {
     return total1;
 }
-//uint64_t BPSTracker::GetTotal2(void) const {return total2;}
+//uint64_t BPSTracker::GetTotal2() const {return total2;}
 
 // void BPSTracker::ClearExpired2(CrabNet::TimeUS time) {
 //     CrabNet::TimeUS threshold=time;
@@ -385,7 +385,7 @@ void ReliabilityLayer::SetTimeoutTime(CrabNet::TimeMS time)
 //-------------------------------------------------------------------------------------------------------
 // Returns the value passed to SetTimeoutTime. or the default if it was never called
 //-------------------------------------------------------------------------------------------------------
-CrabNet::TimeMS ReliabilityLayer::GetTimeoutTime(void)
+CrabNet::TimeMS ReliabilityLayer::GetTimeoutTime()
 {
     return timeoutTime;
 }
@@ -393,7 +393,7 @@ CrabNet::TimeMS ReliabilityLayer::GetTimeoutTime(void)
 //-------------------------------------------------------------------------------------------------------
 // Initialize the variables
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::InitializeVariables(void)
+void ReliabilityLayer::InitializeVariables()
 {
     memset(orderedWriteIndex, 0, NUMBER_OF_ORDERED_STREAMS * sizeof(OrderingIndexType));
     memset(sequencedWriteIndex, 0, NUMBER_OF_ORDERED_STREAMS * sizeof(OrderingIndexType));
@@ -475,7 +475,7 @@ void ReliabilityLayer::FreeMemory(bool freeAllImmediately)
     FreeThreadSafeMemory();
 }
 
-void ReliabilityLayer::FreeThreadSafeMemory(void)
+void ReliabilityLayer::FreeThreadSafeMemory()
 {
 
     ClearPacketsAndDatagrams();
@@ -2337,7 +2337,7 @@ void ReliabilityLayer::SendBitStream(RakNetSocket2 *s, SystemAddress &systemAddr
 //-------------------------------------------------------------------------------------------------------
 // Are we waiting for any data to be sent out or be processed by the player?
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::IsOutgoingDataWaiting(void)
+bool ReliabilityLayer::IsOutgoingDataWaiting()
 {
     if (outgoingPacketBuffer.Size() > 0)
         return true;
@@ -2355,7 +2355,7 @@ bool ReliabilityLayer::IsOutgoingDataWaiting(void)
             statistics.messagesInResendBuffer != 0;
 }
 
-bool ReliabilityLayer::AreAcksWaiting(void)
+bool ReliabilityLayer::AreAcksWaiting()
 {
     return acknowlegements.Size() > 0;
 }
@@ -2517,7 +2517,7 @@ void ReliabilityLayer::SendAcknowledgementPacket(const DatagramSequenceNumberTyp
 // Parse an internalPacket and figure out how many header bits would be
 // written.  Returns that number
 //-------------------------------------------------------------------------------------------------------
-BitSize_t ReliabilityLayer::GetMaxMessageHeaderLengthBits(void)
+BitSize_t ReliabilityLayer::GetMaxMessageHeaderLengthBits()
 {
     InternalPacket ip;
     ip.reliability = RELIABLE_SEQUENCED;
@@ -3315,7 +3315,7 @@ void ReliabilityLayer::InsertPacketIntoResendList(InternalPacket *internalPacket
 //-------------------------------------------------------------------------------------------------------
 //  Were you ever unable to deliver a packet despite retries?
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::IsDeadConnection(void) const
+bool ReliabilityLayer::IsDeadConnection() const
 {
     return deadConnection;
 }
@@ -3323,7 +3323,7 @@ bool ReliabilityLayer::IsDeadConnection(void) const
 //-------------------------------------------------------------------------------------------------------
 //  Causes IsDeadConnection to return true
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::KillConnection(void)
+void ReliabilityLayer::KillConnection()
 {
     deadConnection = true;
 }
@@ -3374,7 +3374,7 @@ RakNetStatistics *ReliabilityLayer::GetStatistics(RakNetStatistics *rns)
 //-------------------------------------------------------------------------------------------------------
 // Returns the number of packets in the resend queue, not counting holes
 //-------------------------------------------------------------------------------------------------------
-unsigned int ReliabilityLayer::GetResendListDataSize(void) const
+unsigned int ReliabilityLayer::GetResendListDataSize() const
 {
     // Not accurate but thread-safe.  The commented version might crash if the queue is cleared while we loop through it
     // return resendTree.Size();
@@ -3390,26 +3390,26 @@ bool ReliabilityLayer::AckTimeout(CrabNet::Time curTime)
 }
 
 //-------------------------------------------------------------------------------------------------------
-CCTimeType ReliabilityLayer::GetNextSendTime(void) const
+CCTimeType ReliabilityLayer::GetNextSendTime() const
 {
     return nextSendTime;
 }
 
 //-------------------------------------------------------------------------------------------------------
-CCTimeType ReliabilityLayer::GetTimeBetweenPackets(void) const
+CCTimeType ReliabilityLayer::GetTimeBetweenPackets() const
 {
     return timeBetweenPackets;
 }
 //-------------------------------------------------------------------------------------------------------
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
-CCTimeType ReliabilityLayer::GetAckPing(void) const
+CCTimeType ReliabilityLayer::GetAckPing() const
 {
     return ackPing;
 }
 #endif
 
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::ResetPacketsAndDatagrams(void)
+void ReliabilityLayer::ResetPacketsAndDatagrams()
 {
     packetsToSendThisUpdate.Clear(true);
     packetsToDeallocThisUpdate.Clear(true);
@@ -3446,7 +3446,7 @@ void ReliabilityLayer::PushPacket(CCTimeType time, InternalPacket *internalPacke
 }
 
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::PushDatagram(void)
+void ReliabilityLayer::PushDatagram()
 {
     if (datagramSizeSoFar > 0)
     {
@@ -3470,7 +3470,7 @@ void ReliabilityLayer::PushDatagram(void)
 }
 
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::TagMostRecentPushAsSecondOfPacketPair(void)
+bool ReliabilityLayer::TagMostRecentPushAsSecondOfPacketPair()
 {
     if (datagramsToSendThisUpdateIsPair.Size() >= 2)
     {
@@ -3482,7 +3482,7 @@ bool ReliabilityLayer::TagMostRecentPushAsSecondOfPacketPair(void)
 }
 
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::ClearPacketsAndDatagrams(void)
+void ReliabilityLayer::ClearPacketsAndDatagrams()
 {
     for (unsigned int i = 0; i < packetsToDeallocThisUpdate.Size(); i++)
     {
@@ -3572,7 +3572,7 @@ void ReliabilityLayer::PopListHead(bool modifyUnacknowledgedBytes)
 }
 
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::IsResendQueueEmpty(void) const
+bool ReliabilityLayer::IsResendQueueEmpty() const
 {
     return resendLinkedListHead == 0;
 }
@@ -3622,7 +3622,7 @@ void ReliabilityLayer::SendACKs(RakNetSocket2 *s, SystemAddress &systemAddress, 
 }
 /*
 //-------------------------------------------------------------------------------------------------------
-ReliabilityLayer::DatagramMessageIDList* ReliabilityLayer::AllocateFromDatagramMessageIDPool(void)
+ReliabilityLayer::DatagramMessageIDList* ReliabilityLayer::AllocateFromDatagramMessageIDPool()
 {
 DatagramMessageIDList*s;
 s=datagramMessageIDPool.Allocate(  );
@@ -3638,7 +3638,7 @@ datagramMessageIDPool.Release(d);
 }
 */
 //-------------------------------------------------------------------------------------------------------
-InternalPacket *ReliabilityLayer::AllocateFromInternalPacketPool(void)
+InternalPacket *ReliabilityLayer::AllocateFromInternalPacketPool()
 {
     InternalPacket *ip = internalPacketPool.Allocate();
     ip->reliableMessageNumber = (MessageNumberType) (const uint32_t) -1;
@@ -3706,7 +3706,7 @@ void ReliabilityLayer::AddToUnreliableLinkedList(InternalPacket *internalPacket)
 }
 
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::ValidateResendList(void) const
+void ReliabilityLayer::ValidateResendList() const
 {
 //     unsigned int count1=0, count2=0;
 //     for (unsigned int i=0; i < RESEND_BUFFER_ARRAY_LENGTH; i++)
@@ -3727,7 +3727,7 @@ void ReliabilityLayer::ValidateResendList(void) const
 }
 
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::ResendBufferOverflow(void) const
+bool ReliabilityLayer::ResendBufferOverflow() const
 {
     int index1 = sendReliableMessageNumberIndex & (uint32_t) RESEND_BUFFER_ARRAY_MASK;
     //    int index2 = (sendReliableMessageNumberIndex+(uint32_t)1) & (uint32_t) RESEND_BUFFER_ARRAY_MASK;
@@ -3891,7 +3891,7 @@ void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket)
 }
 
 //-------------------------------------------------------------------------------------------------------
-unsigned int ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBytes(void)
+unsigned int ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBytes()
 {
     unsigned int val = congestionManager.GetMTU() - DatagramHeaderFormat::GetDataHeaderByteLength();
 
@@ -3904,13 +3904,13 @@ unsigned int ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBytes(voi
 }
 
 //-------------------------------------------------------------------------------------------------------
-BitSize_t ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBits(void)
+BitSize_t ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBits()
 {
     return BYTES_TO_BITS(GetMaxDatagramSizeExcludingMessageHeaderBytes());
 }
 
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::InitHeapWeights(void)
+void ReliabilityLayer::InitHeapWeights()
 {
     for (int priorityLevel = 0; priorityLevel < NUMBER_OF_PRIORITIES; priorityLevel++)
         outgoingPacketBufferNextWeights[priorityLevel] = (1 << priorityLevel) * priorityLevel + priorityLevel;

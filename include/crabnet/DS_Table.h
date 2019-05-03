@@ -66,7 +66,7 @@ namespace DataStructures
             ~Cell();
             Cell(double numericValue, char *charValue, void *ptr, ColumnType type);
             void SetByType(double numericValue, char *charValue, void *ptr, ColumnType type);
-            void Clear(void);
+            void Clear();
 
             /// Numeric
             void Set(int input);
@@ -98,7 +98,7 @@ namespace DataStructures
             Cell& operator = ( const Cell& input );
             Cell( const Cell & input);
 
-            ColumnType EstimateColumnType(void) const;
+            ColumnType EstimateColumnType() const;
 
             bool isEmpty;
             double i;
@@ -217,11 +217,11 @@ namespace DataStructures
 
         /// Returns the number of columns
         /// \return The number of columns in the table
-        unsigned GetColumnCount(void) const;
+        unsigned GetColumnCount() const;
 
         /// Returns the number of rows
         /// \return The number of rows in the table
-        unsigned GetRowCount(void) const;
+        unsigned GetRowCount() const;
 
         /// \brief Adds a row to the table
         /// \details New rows are added with empty values for all cells.  However, if you specify initialCelLValues you can specify initial values
@@ -297,7 +297,7 @@ namespace DataStructures
         void SortTable(Table::SortQuery *sortQueries, unsigned numSortQueries, Table::Row** out);
 
         /// \brief Frees all memory in the table.
-        void Clear(void);
+        void Clear();
 
         /// \brief Prints out the names of all the columns.
         /// \param[out] out A pointer to an array of bytes which will hold the output.
@@ -314,17 +314,17 @@ namespace DataStructures
         void PrintRow(char *out, int outLength, char columnDelineator, bool printDelineatorForBinary, Table::Row* inputRow) const;
 
         /// \brief Direct access to make things easier.
-        const DataStructures::List<ColumnDescriptor>& GetColumns(void) const;
+        const DataStructures::List<ColumnDescriptor>& GetColumns() const;
 
         /// \brief Direct access to make things easier.
-        const DataStructures::BPlusTree<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER>& GetRows(void) const;
+        const DataStructures::BPlusTree<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER>& GetRows() const;
 
         /// \brief Get the head of a linked list containing all the row data.
-        DataStructures::Page<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER> * GetListHead(void);
+        DataStructures::Page<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER> * GetListHead();
 
         /// \brief Get the first free row id.
         /// This could be made more efficient.
-        unsigned GetAvailableRowId(void) const;
+        unsigned GetAvailableRowId() const;
 
         Table& operator = ( const Table& input );
 

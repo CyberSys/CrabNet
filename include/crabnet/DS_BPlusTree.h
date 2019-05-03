@@ -92,20 +92,20 @@ namespace DataStructures
         bool Delete(const KeyType key);
         bool Delete(const KeyType key, DataType &out);
         bool Insert(const KeyType key, const DataType &data);
-        void Clear(void);
-        unsigned Size(void) const;
-        bool IsEmpty(void) const;
-        Page<KeyType, DataType, order> *GetListHead(void) const;
-        DataType GetDataHead(void) const;
-        void PrintLeaves(void);
+        void Clear();
+        unsigned Size() const;
+        bool IsEmpty() const;
+        Page<KeyType, DataType, order> *GetListHead() const;
+        DataType GetDataHead() const;
+        void PrintLeaves();
         void ForEachLeaf(void (*func)(Page<KeyType, DataType, order> * leaf, int index));
         void ForEachData(void (*func)(DataType input, int index));
-        void PrintGraph(void);
+        void PrintGraph();
     protected:
         void ValidateTreeRecursive(Page<KeyType, DataType, order> *cur);
         void DeleteFromPageAtIndex(const int index, Page<KeyType, DataType, order> *cur);
         static void PrintLeaf(Page<KeyType, DataType, order> * leaf, int index);
-        void FreePages(void);
+        void FreePages();
         bool GetIndexOf(const KeyType key, Page<KeyType, DataType, order> *page, int *out) const;
         void ShiftKeysLeft(Page<KeyType, DataType, order> *cur);
         bool CanRotateLeft(Page<KeyType, DataType, order> *cur, int childIndex);
@@ -882,7 +882,7 @@ namespace DataStructures
             cur->keys[i]=cur->keys[i+1];
     }
     template<class KeyType, class DataType, int order>
-        void BPlusTree<KeyType, DataType, order>::Clear(void)
+        void BPlusTree<KeyType, DataType, order>::Clear()
     {
         if (root)
         {
@@ -893,7 +893,7 @@ namespace DataStructures
         pagePool.Clear();
     }
     template<class KeyType, class DataType, int order>
-        unsigned BPlusTree<KeyType, DataType, order>::Size(void) const
+        unsigned BPlusTree<KeyType, DataType, order>::Size() const
     {
         unsigned int count=0;
         DataStructures::Page<KeyType, DataType, order> *cur = GetListHead();
@@ -905,7 +905,7 @@ namespace DataStructures
         return count;
     }
     template<class KeyType, class DataType, int order>
-        bool BPlusTree<KeyType, DataType, order>::IsEmpty(void) const
+        bool BPlusTree<KeyType, DataType, order>::IsEmpty() const
     {
         return root==0;
     }
@@ -943,7 +943,7 @@ namespace DataStructures
         }
     }
     template<class KeyType, class DataType, int order>
-        void BPlusTree<KeyType, DataType, order>::FreePages(void)
+        void BPlusTree<KeyType, DataType, order>::FreePages()
     {
         DataStructures::Queue<DataStructures::Page<KeyType, DataType, order> *> queue;
         DataStructures::Page<KeyType, DataType, order> *ptr;
@@ -962,12 +962,12 @@ namespace DataStructures
         };
     }
     template<class KeyType, class DataType, int order>
-        Page<KeyType, DataType, order> *BPlusTree<KeyType, DataType, order>::GetListHead(void) const
+        Page<KeyType, DataType, order> *BPlusTree<KeyType, DataType, order>::GetListHead() const
     {
         return leftmostLeaf;
     }
     template<class KeyType, class DataType, int order>
-    DataType BPlusTree<KeyType, DataType, order>::GetDataHead(void) const
+    DataType BPlusTree<KeyType, DataType, order>::GetDataHead() const
     {
         return leftmostLeaf->data[0];
     }
@@ -1003,7 +1003,7 @@ namespace DataStructures
             CRABNET_DEBUG_PRINTF(" %i. %i\n", i+1, leaf->data[i]);
     }
     template<class KeyType, class DataType, int order>
-        void BPlusTree<KeyType, DataType, order>::PrintLeaves(void)
+        void BPlusTree<KeyType, DataType, order>::PrintLeaves()
     {
         ForEachLeaf(PrintLeaf);
     }
@@ -1029,7 +1029,7 @@ namespace DataStructures
     }
 
     template<class KeyType, class DataType, int order>
-    void BPlusTree<KeyType, DataType, order>::PrintGraph(void)
+    void BPlusTree<KeyType, DataType, order>::PrintGraph()
     {
         DataStructures::Queue<DataStructures::Page<KeyType, DataType, order> *> queue;
         queue.Push(root);
@@ -1086,7 +1086,7 @@ namespace DataStructures
 
 #include "Rand.h"
 
-void main(void)
+void main()
 {
     DataStructures::BPlusTree<int, int, 16> btree;
     DataStructures::List<int> haveList, removedList;

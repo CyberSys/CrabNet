@@ -162,7 +162,7 @@ public:
     static void GetSystemAddress ( __UDPSOCKET__ s, SystemAddress *systemAddressOut );
 
 //    static void SetSocketLayerOverride(SocketLayerOverride *_slo);
-//    static SocketLayerOverride* GetSocketLayerOverride(void) {return slo;}
+//    static SocketLayerOverride* GetSocketLayerOverride() {return slo;}
 //     static int SendTo_PC( RakNetSocket *s, const char *data, int length, const SystemAddress &systemAddress, const char *file, const long line );
 // 
 //     static void SetDoNotFragment( RakNetSocket* listenSocket, int opt );

@@ -49,7 +49,7 @@ public:
     /// You are responsible for overriding this function and returning a static string, which will identifier your parser.
     /// This should return a static string
     /// \return The name that you return.
-    const char *GetName(void) const;
+    const char *GetName() const;
 
     /// A callback for when you are expected to send a brief description of your parser to \a systemAddress
     /// \param[in] transport The transport interface we can use to write to

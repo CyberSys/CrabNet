@@ -93,16 +93,16 @@ public:
     void SetDebugInterface(Router2DebugInterface *_debugInterface);
 
     /// Get the pointer passed to SetDebugInterface()
-    Router2DebugInterface *GetDebugInterface(void) const;
+    Router2DebugInterface *GetDebugInterface() const;
 
     // --------------------------------------------------------------------------------------------
     // Packet handling functions
     // --------------------------------------------------------------------------------------------
     virtual PluginReceiveResult OnReceive(Packet *packet);
-    virtual void Update(void);
+    virtual void Update();
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
     virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
-    virtual void OnRakPeerShutdown(void);
+    virtual void OnRakPeerShutdown();
 
 
     enum Router2RequestStates
@@ -170,7 +170,7 @@ protected:
     void OnMiniPunchReply(Packet *packet);
     void OnMiniPunchReplyBounce(Packet *packet);
     bool OnForwardingSuccess(Packet *packet);
-    int GetLargestPingAmongConnectedSystems(void) const;
+    int GetLargestPingAmongConnectedSystems() const;
     void ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, const SystemAddress &systemAddress, bool wasGeneratedLocally);
     bool ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLostOnFailure);
 
@@ -182,10 +182,10 @@ protected:
     // Forwarding we have initiated
     DataStructures::List<ForwardedConnection> forwardedConnectionList;
 
-    void ClearConnectionRequests(void);
-    void ClearMinipunches(void);
-    void ClearForwardedConnections(void);
-    void ClearAll(void);
+    void ClearConnectionRequests();
+    void ClearMinipunches();
+    void ClearForwardedConnections();
+    void ClearAll();
     int ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid);
     void SendFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid);
     void SendForwardingSuccess(MessageID messageId, RakNetGUID sourceGuid, RakNetGUID endpointGuid, unsigned short sourceToDstPort);

@@ -183,7 +183,7 @@ unsigned MessageFilter::GetSystemCount(int filterSetID) const
         return count;
     }
 }
-unsigned MessageFilter::GetFilterSetCount(void) const
+unsigned MessageFilter::GetFilterSetCount() const
 {
     return filterList.Size();
 }
@@ -227,7 +227,7 @@ void MessageFilter::DeleteFilterSet(int filterSetID)
         */
     }
 }
-void MessageFilter::Clear(void)
+void MessageFilter::Clear()
 {
     unsigned i;
     systemList.Clear();
@@ -285,7 +285,7 @@ void MessageFilter::OnInvalidMessage(FilterSet *filterSet, AddressOrGUID systemA
 #endif
     }
 }
-void MessageFilter::Update(void)
+void MessageFilter::Update()
 {
     // Update all timers for all systems.  If those systems' filter sets are expired, take the appropriate action.
     CrabNet::Time curTime = CrabNet::GetTime();

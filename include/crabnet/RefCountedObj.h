@@ -25,8 +25,8 @@ class RefCountedObj
     public:
         RefCountedObj() {refCount=1;}
         virtual ~RefCountedObj() {}
-        void AddRef(void) {refCount++;}
-        void Deref(void) {if (--refCount==0) delete this;}
+        void AddRef() {refCount++;}
+        void Deref() {if (--refCount==0) delete this;}
         int refCount;
 };
 

@@ -93,7 +93,7 @@ public:
     void SetDebugInterface(NatPunchthroughServerDebugInterface *i);
 
     /// \internal For plugin handling
-    virtual void Update(void);
+    virtual void Update();
 
     /// \internal For plugin handling
     virtual PluginReceiveResult OnReceive(Packet *packet);
@@ -145,8 +145,8 @@ protected:
     void OnGetMostRecentPort(Packet *packet);
     void OnClientReady(Packet *packet);
 
-    void SendTimestamps(void);
-    void StartPendingPunchthrough(void);
+    void SendTimestamps();
+    void StartPendingPunchthrough();
     void StartPunchthroughForUser(User*user);
     uint16_t sessionId;
     NatPunchthroughServerDebugInterface *natPunchthroughServerDebugInterface;

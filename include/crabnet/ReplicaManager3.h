@@ -113,10 +113,10 @@ public:
     void SetAutoManageConnections(bool autoCreate, bool autoDestroy);
 
     /// \return What was passed to the autoCreate parameter of SetAutoManageConnections()
-    bool GetAutoCreateConnections(void) const;
+    bool GetAutoCreateConnections() const;
 
     /// \return What was passed to the autoDestroy parameter of SetAutoManageConnections()
-    bool GetAutoDestroyConnections(void) const;
+    bool GetAutoDestroyConnections() const;
 
     /// \brief Call AllocConnection() and PushConnection() for each connection in \a participantList
     /// \param[in] participantListIn The list of connections to allocate
@@ -266,7 +266,7 @@ public:
 
     /// \brief Returns the number of world id specifiers in memory, added with AddWorld() and removed with RemoveWorld()
     /// \return The number of worlds added
-    unsigned int GetWorldCount(void) const;
+    unsigned int GetWorldCount() const;
 
     /// \details Sets the networkIDManager instance that this plugin relys upon.<BR>
     /// Uses whatever instance is attached to RakPeerInterface if unset.<BR>
@@ -299,10 +299,10 @@ public:
     void Clear(bool deleteWorlds=false);
 
     /// \internal
-    PRO GetDefaultSendParameters(void) const;
+    PRO GetDefaultSendParameters() const;
 
     /// Call interfaces, send data
-    virtual void Update(void);
+    virtual void Update();
 
     /// \internal
     struct RM3World
@@ -319,8 +319,8 @@ protected:
     virtual PluginReceiveResult OnReceive(Packet *packet);
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
     virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
-    virtual void OnRakPeerShutdown(void);
-    virtual void OnDetach(void);
+    virtual void OnRakPeerShutdown();
+    virtual void OnDetach();
 
     PluginReceiveResult OnConstruction(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset, WorldId worldId);
     PluginReceiveResult OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, CrabNet::Time timestamp, unsigned char packetDataOffset, WorldId worldId);
@@ -373,7 +373,7 @@ struct LastSerializationResult
 //    bool isConstructed;
     CrabNet::Time whenLastSerialized;
 
-    void AllocBS(void);
+    void AllocBS();
     LastSerializationResultBS* lastSerializationResultBS;
 };
 
@@ -482,13 +482,13 @@ public:
     virtual void DeserializeOnDownloadComplete(CrabNet::BitStream *bitStream) {(void) bitStream;}
 
     /// \return The system address passed to the constructor of this object
-    SystemAddress GetSystemAddress(void) const {return systemAddress;}
+    SystemAddress GetSystemAddress() const {return systemAddress;}
 
     /// \return Returns the RakNetGUID passed to the constructor of this object
-    RakNetGUID GetRakNetGUID(void) const {return guid;}
+    RakNetGUID GetRakNetGUID() const {return guid;}
 
     /// \return True if ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrived for this connection
-    bool GetDownloadWasCompleted(void) const {return gotDownloadComplete;}
+    bool GetDownloadWasCompleted() const {return gotDownloadComplete;}
 
     /// List of enumerations for how to get the list of valid objects for other systems
     enum ConstructionMode
@@ -518,14 +518,14 @@ public:
     /// If you return true from QueryGroupDownloadMessages(), then these messages will be returned all in one tick, returned only when the download is complete
     /// \note ID_REPLICA_MANAGER_DOWNLOAD_STARTED calls the callback DeserializeOnDownloadStarted()
     /// \note ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE calls the callback DeserializeOnDownloadComplete()
-    virtual bool QueryGroupDownloadMessages(void) const {return false;}
+    virtual bool QueryGroupDownloadMessages() const {return false;}
 
     /// \brief Queries how to get the list of objects that exist on remote systems
     /// \details The default of calling QueryConstruction for every known object is easy to use, but not efficient, especially for large worlds where many objects are outside of the player's circle of influence.<BR>
     /// QueryDestruction is also not necessarily useful or efficient, as object destruction tends to happen in known cases, and can be accomplished by calling Replica3::BroadcastDestruction()
     /// QueryConstructionMode() allows you to specify more efficient algorithms than the default when overriden.
     /// \return How to get the list of objects that exist on the remote system. You should always return the same value for a given connection
-    virtual ConstructionMode QueryConstructionMode(void) const {return QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION;}
+    virtual ConstructionMode QueryConstructionMode() const {return QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION;}
 
     /// \brief Callback used when QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST
     /// \details This advantage of this callback is if that there are many objects that a particular connection does not have, then we do not have to iterate through those
@@ -960,7 +960,7 @@ public:
 
     /// \brief Called for each replica owned by the user, once per Serialization tick, before Serialize() is called.
     /// If you want to do some kind of operation on the Replica objects that you own, just before Serialization(), then overload this function
-    virtual void OnUserReplicaPreSerializeTick(void) {}
+    virtual void OnUserReplicaPreSerializeTick() {}
 
     /// \brief Serialize our class to a bitstream
     /// \details User should implement this function to write the contents of this class to SerializationParamters::serializationBitstream.<BR>
@@ -1068,14 +1068,14 @@ public:
 
     /// Call to send a network message to delete this object on other systems.<BR>
     /// Call it before deleting the object
-    virtual void BroadcastDestruction(void);
+    virtual void BroadcastDestruction();
 
     /// creatingSystemGUID is set the first time Reference() is called, or if we get the object from another system
     /// \return System that originally created this object
-    RakNetGUID GetCreatingSystemGUID(void) const;
+    RakNetGUID GetCreatingSystemGUID() const;
 
     /// \return If ReplicaManager3::Reference() was called on this object.
-    bool WasReferenced(void) const {return replicaManager!=0;}
+    bool WasReferenced() const {return replicaManager!=0;}
 
     /// GUID of the system that first called Reference() on this object.
     /// Transmitted automatically when the object is constructed
@@ -1104,7 +1104,7 @@ protected:
     parent_type *r3CompositeOwner;
 public:
     void SetCompositeOwner(parent_type *p) {r3CompositeOwner=p;}
-    parent_type* GetCompositeOwner(void) const {return r3CompositeOwner;};
+    parent_type* GetCompositeOwner() const {return r3CompositeOwner;};
     virtual void WriteAllocationID(CrabNet::Connection_RM3 *destinationConnection, CrabNet::BitStream *allocationIdBitstream) const {r3CompositeOwner->WriteAllocationID(destinationConnection, allocationIdBitstream);}
     virtual CrabNet::RM3ConstructionState QueryConstruction(CrabNet::Connection_RM3 *destinationConnection, CrabNet::ReplicaManager3 *replicaManager3) {return r3CompositeOwner->QueryConstruction(destinationConnection, replicaManager3);}
     virtual CrabNet::RM3DestructionState QueryDestruction(CrabNet::Connection_RM3 *destinationConnection, CrabNet::ReplicaManager3 *replicaManager3) {return r3CompositeOwner->QueryDestruction(destinationConnection, replicaManager3);}
@@ -1120,7 +1120,7 @@ public:
     virtual void OnPoppedConnection(CrabNet::Connection_RM3 *droppedConnection) {r3CompositeOwner->OnPoppedConnection(droppedConnection);}
     virtual void DeallocReplica(CrabNet::Connection_RM3 *sourceConnection) {r3CompositeOwner->DeallocReplica(sourceConnection);}
     virtual CrabNet::RM3QuerySerializationResult QuerySerialization(CrabNet::Connection_RM3 *destinationConnection) {return r3CompositeOwner->QuerySerialization(destinationConnection);}
-    virtual void OnUserReplicaPreSerializeTick(void) {r3CompositeOwner->OnUserReplicaPreSerializeTick();}
+    virtual void OnUserReplicaPreSerializeTick() {r3CompositeOwner->OnUserReplicaPreSerializeTick();}
     virtual CrabNet::RM3SerializationResult Serialize(CrabNet::SerializeParameters *serializeParameters) {return r3CompositeOwner->Serialize(serializeParameters);}
     virtual void OnSerializeTransmission(CrabNet::BitStream *bitStream, CrabNet::Connection_RM3 *destinationConnection, CrabNet::BitSize_t bitsPerChannel[CrabNet::RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], CrabNet::Time curTime) {r3CompositeOwner->OnSerializeTransmission(bitStream, destinationConnection, bitsPerChannel, curTime);}
     virtual void Deserialize(CrabNet::DeserializeParameters *deserializeParameters) {r3CompositeOwner->Deserialize(deserializeParameters);}

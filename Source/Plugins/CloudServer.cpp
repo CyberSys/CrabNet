@@ -113,7 +113,7 @@ void CloudServer::CloudQueryWithAddresses::Serialize(bool writeToBitstream, BitS
         }
     }
 }
-bool CloudServer::GetRequest::AllRemoteServersHaveResponded(void) const
+bool CloudServer::GetRequest::AllRemoteServersHaveResponded() const
 {
     unsigned int i;
     for (i=0; i < remoteServerResponses.Size(); i++)
@@ -160,7 +160,7 @@ void CloudServer::SetMaxBytesPerDownload(uint64_t bytes)
 {
     maxBytesPerDowload=bytes;
 }
-void CloudServer::Update(void)
+void CloudServer::Update()
 {
     // Timeout getRequests
     CrabNet::Time time = CrabNet::Time();
@@ -1001,11 +1001,11 @@ void CloudServer::OnClosedConnection(const SystemAddress &systemAddress, RakNetG
         remoteSystems.RemoveAtIndex(remoteSystemIndex);
     }
 }
-void CloudServer::OnRakPeerShutdown(void)
+void CloudServer::OnRakPeerShutdown()
 {
     Clear();
 }
-void CloudServer::Clear(void)
+void CloudServer::Clear()
 {
     unsigned int i,j;
     for (i=0; i < dataRepository.Size(); i++)
@@ -1683,7 +1683,7 @@ void CloudServer::RemoveQueryFilter(CloudServerQueryFilter* filter)
     if (index != (unsigned int) -1)
         queryFilters.RemoveAtIndex(index);
 }
-void CloudServer::RemoveAllQueryFilters(void)
+void CloudServer::RemoveAllQueryFilters()
 {
     queryFilters.Clear(true);
 }

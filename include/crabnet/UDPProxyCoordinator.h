@@ -50,7 +50,7 @@ namespace CrabNet
         void SetRemoteLoginPassword(CrabNet::RakString password);
 
         /// \internal
-        virtual void Update(void);
+        virtual void Update();
         virtual PluginReceiveResult OnReceive(Packet *packet);
         virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
@@ -81,7 +81,7 @@ namespace CrabNet
             DataStructures::List<ServerWithPing> sourceServerPings, targetServerPings;
             CrabNet::TimeMS timeRequestedPings;
             // Order based on sourceServerPings and targetServerPings
-            void OrderRemainingServersToTry(void);
+            void OrderRemainingServersToTry();
 
         };
     protected:
@@ -95,7 +95,7 @@ namespace CrabNet
         void OnPingServersReplyFromClientToCoordinator(Packet *packet);
         void TryNextServer(SenderAndTargetAddress sata, ForwardingRequest *fw);
         void SendAllBusy(SystemAddress senderClientAddress, SystemAddress targetClientAddress, RakNetGUID targetClientGuid, SystemAddress requestingAddress);
-        void Clear(void);
+        void Clear();
 
         void SendForwardingRequest(SystemAddress sourceAddress, SystemAddress targetAddress, SystemAddress serverAddress, CrabNet::TimeMS timeoutOnNoDataMS);
 

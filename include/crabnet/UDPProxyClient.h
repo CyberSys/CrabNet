@@ -141,9 +141,9 @@ public:
     bool RequestForwarding(SystemAddress proxyCoordinator, SystemAddress sourceAddress, RakNetGUID targetGuid, CrabNet::TimeMS timeoutOnNoDataMS, CrabNet::BitStream *serverSelectionBitstream=0);
 
     /// \internal
-    virtual void Update(void);
+    virtual void Update();
     virtual PluginReceiveResult OnReceive(Packet *packet);
-    virtual void OnRakPeerShutdown(void);
+    virtual void OnRakPeerShutdown();
 
     struct ServerWithPing
     {
@@ -162,7 +162,7 @@ public:
         SystemAddress coordinatorAddressForPings;
         //DataStructures::Multilist<ML_UNORDERED_LIST, ServerWithPing> serversToPing;
         DataStructures::List<ServerWithPing> serversToPing;
-        bool AreAllServersPinged(void) const;
+        bool AreAllServersPinged() const;
         void SendPingedServersToCoordinator(RakPeerInterface *rakPeerInterface);
     };
     //DataStructures::Multilist<ML_UNORDERED_LIST, PingServerGroup*> pingServerGroups;
@@ -170,7 +170,7 @@ public:
 protected:
 
     void OnPingServers(Packet *packet);
-    void Clear(void);
+    void Clear();
     UDPProxyClientResultHandler *resultHandler;
 
 };

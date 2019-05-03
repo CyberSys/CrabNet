@@ -53,7 +53,7 @@ struct RAK_DLL_EXPORT ThreadPool
     void SetThreadDataInterface(ThreadDataInterface *tdi, void *context);
 
     /// Stops all threads
-    void StopThreads(void);
+    void StopThreads();
 
     /// Adds a function to a queue with data to pass to that function.  This function will be called from the thread
     /// Memory management is your responsibility!  This class does not allocate or deallocate memory.
@@ -72,37 +72,37 @@ struct RAK_DLL_EXPORT ThreadPool
 
     /// Returns true if output from GetOutput is waiting.
     /// \return true if output is waiting, false otherwise
-    bool HasOutput(void);
+    bool HasOutput();
 
     /// Inaccurate but fast version of HasOutput.  If this returns true, you should still check HasOutput for the real value.
     /// \return true if output is probably waiting, false otherwise
-    bool HasOutputFast(void);
+    bool HasOutputFast();
 
     /// Returns true if input from GetInput is waiting.
     /// \return true if input is waiting, false otherwise
-    bool HasInput(void);
+    bool HasInput();
 
     /// Inaccurate but fast version of HasInput.  If this returns true, you should still check HasInput for the real value.
     /// \return true if input is probably waiting, false otherwise
-    bool HasInputFast(void);
+    bool HasInputFast();
 
     /// Gets the output of a call to \a userCallback
     /// HasOutput must return true before you call this function.  Otherwise it will assert.
     /// \return The output of \a userCallback.  If you have different output signatures, it is up to you to encode the data to indicate this
-    OutputType GetOutput(void);
+    OutputType GetOutput();
 
     /// Clears internal buffers
-    void Clear(void);
+    void Clear();
 
     /// Lock the input buffer before calling the functions InputSize, InputAtIndex, and RemoveInputAtIndex
     /// It is only necessary to lock the input or output while the threads are running
-    void LockInput(void);
+    void LockInput();
 
     /// Unlock the input buffer after you are done with the functions InputSize, GetInputAtIndex, and RemoveInputAtIndex
-    void UnlockInput(void);
+    void UnlockInput();
 
     /// Length of the input queue
-    unsigned InputSize(void);
+    unsigned InputSize();
 
     /// Get the input at a specified index
     InputType GetInputAtIndex(unsigned index);
@@ -112,13 +112,13 @@ struct RAK_DLL_EXPORT ThreadPool
 
     /// Lock the output buffer before calling the functions OutputSize, OutputAtIndex, and RemoveOutputAtIndex
     /// It is only necessary to lock the input or output while the threads are running
-    void LockOutput(void);
+    void LockOutput();
 
     /// Unlock the output buffer after you are done with the functions OutputSize, GetOutputAtIndex, and RemoveOutputAtIndex
-    void UnlockOutput(void);
+    void UnlockOutput();
 
     /// Length of the output queue
-    unsigned OutputSize(void);
+    unsigned OutputSize();
 
     /// Get the output at a specified index
     OutputType GetOutputAtIndex(unsigned index);
@@ -127,25 +127,25 @@ struct RAK_DLL_EXPORT ThreadPool
     void RemoveOutputAtIndex(unsigned index);
 
     /// Removes all items from the input queue
-    void ClearInput(void);
+    void ClearInput();
 
     /// Removes all items from the output queue
-    void ClearOutput(void);
+    void ClearOutput();
 
     /// Are any of the threads working, or is input or output available?
-    bool IsWorking(void);
+    bool IsWorking();
 
     /// The number of currently active threads.
-    int NumThreadsWorking(void);
+    int NumThreadsWorking();
 
     /// Did we call Start?
-    bool WasStarted(void);
+    bool WasStarted();
 
     // Block until all threads are stopped.
-    bool Pause(void);
+    bool Pause();
 
     // Continue running
-    void Resume(void);
+    void Resume();
 
 protected:
     // It is valid to cancel input before it is processed.  To do so, lock the inputQueue with inputQueueMutex,
@@ -384,7 +384,7 @@ void ThreadPool<InputType, OutputType>::SetThreadDataInterface(ThreadDataInterfa
     tdiContext=context;
 }
 template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::StopThreads(void)
+void ThreadPool<InputType, OutputType>::StopThreads()
 {
     runThreadsMutex.Lock();
     if (runThreads==false)
@@ -435,12 +435,12 @@ void ThreadPool<InputType, OutputType>::AddOutput(OutputType outputData)
     outputQueueMutex.Unlock();
 }
 template <class InputType, class OutputType>
-bool ThreadPool<InputType, OutputType>::HasOutputFast(void)
+bool ThreadPool<InputType, OutputType>::HasOutputFast()
 {
     return outputQueue.IsEmpty()==false;
 }
 template <class InputType, class OutputType>
-bool ThreadPool<InputType, OutputType>::HasOutput(void)
+bool ThreadPool<InputType, OutputType>::HasOutput()
 {
     bool res;
     outputQueueMutex.Lock();
@@ -449,12 +449,12 @@ bool ThreadPool<InputType, OutputType>::HasOutput(void)
     return res;
 }
 template <class InputType, class OutputType>
-bool ThreadPool<InputType, OutputType>::HasInputFast(void)
+bool ThreadPool<InputType, OutputType>::HasInputFast()
 {
     return inputQueue.IsEmpty()==false;
 }
 template <class InputType, class OutputType>
-bool ThreadPool<InputType, OutputType>::HasInput(void)
+bool ThreadPool<InputType, OutputType>::HasInput()
 {
     bool res;
     inputQueueMutex.Lock();
@@ -463,7 +463,7 @@ bool ThreadPool<InputType, OutputType>::HasInput(void)
     return res;
 }
 template <class InputType, class OutputType>
-OutputType ThreadPool<InputType, OutputType>::GetOutput(void)
+OutputType ThreadPool<InputType, OutputType>::GetOutput()
 {
     // Real output check
     OutputType output;
@@ -473,7 +473,7 @@ OutputType ThreadPool<InputType, OutputType>::GetOutput(void)
     return output;
 }
 template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::Clear(void)
+void ThreadPool<InputType, OutputType>::Clear()
 {
     runThreadsMutex.Lock();
     if (runThreads)
@@ -496,17 +496,17 @@ void ThreadPool<InputType, OutputType>::Clear(void)
     }
 }
 template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::LockInput(void)
+void ThreadPool<InputType, OutputType>::LockInput()
 {
     inputQueueMutex.Lock();
 }
 template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::UnlockInput(void)
+void ThreadPool<InputType, OutputType>::UnlockInput()
 {
     inputQueueMutex.Unlock();
 }
 template <class InputType, class OutputType>
-unsigned ThreadPool<InputType, OutputType>::InputSize(void)
+unsigned ThreadPool<InputType, OutputType>::InputSize()
 {
     return inputQueue.Size();
 }
@@ -522,17 +522,17 @@ void ThreadPool<InputType, OutputType>::RemoveInputAtIndex(unsigned index)
     inputFunctionQueue.RemoveAtIndex(index);
 }
 template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::LockOutput(void)
+void ThreadPool<InputType, OutputType>::LockOutput()
 {
     outputQueueMutex.Lock();
 }
 template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::UnlockOutput(void)
+void ThreadPool<InputType, OutputType>::UnlockOutput()
 {
     outputQueueMutex.Unlock();
 }
 template <class InputType, class OutputType>
-unsigned ThreadPool<InputType, OutputType>::OutputSize(void)
+unsigned ThreadPool<InputType, OutputType>::OutputSize()
 {
     return outputQueue.Size();
 }
@@ -547,19 +547,19 @@ void ThreadPool<InputType, OutputType>::RemoveOutputAtIndex(unsigned index)
     outputQueue.RemoveAtIndex(index);
 }
 template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::ClearInput(void)
+void ThreadPool<InputType, OutputType>::ClearInput()
 {
     inputQueue.Clear();
     inputFunctionQueue.Clear();
 }
 
 template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::ClearOutput(void)
+void ThreadPool<InputType, OutputType>::ClearOutput()
 {
     outputQueue.Clear();
 }
 template <class InputType, class OutputType>
-bool ThreadPool<InputType, OutputType>::IsWorking(void)
+bool ThreadPool<InputType, OutputType>::IsWorking()
 {
     bool isWorking;
 //    workingThreadCountMutex.Lock();
@@ -587,13 +587,13 @@ bool ThreadPool<InputType, OutputType>::IsWorking(void)
 }
 
 template <class InputType, class OutputType>
-int ThreadPool<InputType, OutputType>::NumThreadsWorking(void)
+int ThreadPool<InputType, OutputType>::NumThreadsWorking()
 {
     return numThreadsWorking;
 }
 
 template <class InputType, class OutputType>
-bool ThreadPool<InputType, OutputType>::WasStarted(void)
+bool ThreadPool<InputType, OutputType>::WasStarted()
 {
     bool b;
     runThreadsMutex.Lock();
@@ -602,7 +602,7 @@ bool ThreadPool<InputType, OutputType>::WasStarted(void)
     return b;
 }
 template <class InputType, class OutputType>
-bool ThreadPool<InputType, OutputType>::Pause(void)
+bool ThreadPool<InputType, OutputType>::Pause()
 {
     if (WasStarted()==false)
         return false;
@@ -615,7 +615,7 @@ bool ThreadPool<InputType, OutputType>::Pause(void)
     return true;
 }
 template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::Resume(void)
+void ThreadPool<InputType, OutputType>::Resume()
 {
     workingThreadCountMutex.Unlock();
 }

@@ -106,12 +106,12 @@ public:
     StatisticsHistory();
     virtual ~StatisticsHistory();
     void SetDefaultTimeToTrack(Time defaultTimeToTrack);
-    Time GetDefaultTimeToTrack(void) const;
+    Time GetDefaultTimeToTrack() const;
     bool AddObject(TrackedObjectData tod);
     bool RemoveObject(uint64_t objectId, void **userData);
     void RemoveObjectAtIndex(unsigned int index);
-    void Clear(void);
-    unsigned int GetObjectCount(void) const;
+    void Clear();
+    unsigned int GetObjectCount() const;
     StatisticsHistory::TrackedObjectData * GetObjectAtIndex(unsigned int index) const;
     unsigned int GetObjectIndex(uint64_t objectId) const;
     bool AddValueByObjectID(uint64_t objectId, RakString key, SHValueType val, Time curTime, bool combineEqualTimes);
@@ -145,19 +145,19 @@ public:
         SHValueType longTermHighest;
 
         void SetTimeToTrackValues(Time t);
-        Time GetTimeToTrackValues(void) const;
-        SHValueType GetRecentSum(void) const;
-        SHValueType GetRecentSumOfSquares(void) const;
-        SHValueType GetLongTermSum(void) const;
-        SHValueType GetRecentAverage(void) const;
-        SHValueType GetRecentLowest(void) const;
-        SHValueType GetRecentHighest(void) const;
-        SHValueType GetRecentStandardDeviation(void) const;
-        SHValueType GetLongTermAverage(void) const;
-        SHValueType GetLongTermLowest(void) const;
-        SHValueType GetLongTermHighest(void) const;
+        Time GetTimeToTrackValues() const;
+        SHValueType GetRecentSum() const;
+        SHValueType GetRecentSumOfSquares() const;
+        SHValueType GetLongTermSum() const;
+        SHValueType GetRecentAverage() const;
+        SHValueType GetRecentLowest() const;
+        SHValueType GetRecentHighest() const;
+        SHValueType GetRecentStandardDeviation() const;
+        SHValueType GetLongTermAverage() const;
+        SHValueType GetLongTermLowest() const;
+        SHValueType GetLongTermHighest() const;
         SHValueType GetSumSinceTime(Time t) const;
-        Time GetTimeRange(void) const;
+        Time GetTimeRange() const;
 
         // Merge two sets to output
         static void MergeSets( const TimeAndValueQueue *lhs, SHDataCategory lhsDataCategory, const TimeAndValueQueue *rhs, SHDataCategory rhsDataCategory, TimeAndValueQueue *output );
@@ -167,7 +167,7 @@ public:
         void ResizeSampleSet( int approximateSamples, DataStructures::Queue<StatisticsHistory::TimeAndValue> &blendedSamples, SHDataCategory dataCategory, Time timeClipStart=0, Time timeClipEnd=0 );
 
         // Clear out all values
-        void Clear(void);
+        void Clear();
 
         TimeAndValueQueue& operator = ( const TimeAndValueQueue& input );
 
@@ -213,12 +213,12 @@ public:
     void SetTrackConnections(bool _addNewConnections, int newConnectionsObjectType, bool _removeLostConnections);
 
 protected:
-    virtual void Update(void);
+    virtual void Update();
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
     virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 
     // Too slow
-//     virtual bool UsesReliabilityLayer(void) const {return true;}
+//     virtual bool UsesReliabilityLayer() const {return true;}
 //     virtual void OnDirectSocketSend(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress);
 //     virtual void OnDirectSocketReceive(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress);
 

@@ -36,10 +36,10 @@ class RAK_DLL_EXPORT ThreadsafeAllocatingQueue
 public:
     // Queue operations
     void Push(structureType *s);
-    structureType *PopInaccurate(void);
-    structureType *Pop(void);
+    structureType *PopInaccurate();
+    structureType *Pop();
     void SetPageSize(int size);
-    bool IsEmpty(void);
+    bool IsEmpty();
     structureType * operator[] ( unsigned int position );
     void RemoveAtIndex( unsigned int position );
     unsigned int Size( void );
@@ -65,7 +65,7 @@ void ThreadsafeAllocatingQueue<structureType>::Push(structureType *s)
 }
 
 template <class structureType>
-structureType *ThreadsafeAllocatingQueue<structureType>::PopInaccurate(void)
+structureType *ThreadsafeAllocatingQueue<structureType>::PopInaccurate()
 {
     structureType *s;
     if (queue.IsEmpty())
@@ -80,7 +80,7 @@ structureType *ThreadsafeAllocatingQueue<structureType>::PopInaccurate(void)
 }
 
 template <class structureType>
-structureType *ThreadsafeAllocatingQueue<structureType>::Pop(void)
+structureType *ThreadsafeAllocatingQueue<structureType>::Pop()
 {
     structureType *s;
     queueMutex.Lock();
@@ -138,7 +138,7 @@ void ThreadsafeAllocatingQueue<structureType>::SetPageSize(int size)
 }
 
 template <class structureType>
-bool ThreadsafeAllocatingQueue<structureType>::IsEmpty(void)
+bool ThreadsafeAllocatingQueue<structureType>::IsEmpty()
 {
     bool isEmpty;
     queueMutex.Lock();

@@ -67,7 +67,7 @@ public:
     bool Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections=0, int _threadPriority=-99999, unsigned short socketFamily=AF_INET, const char *bindAddress=0);
 
     /// Stops the TCP server
-    void Stop(void);
+    void Stop();
 
     /// Connect to the specified host on the specified port
     SystemAddress Connect(const char* host, unsigned short remotePort, bool block=true, unsigned short socketFamily=AF_INET, const char *bindAddress=0);
@@ -108,21 +108,21 @@ public:
     void GetConnectionList( SystemAddress *remoteSystems, unsigned short *numberOfSystems ) const;
 
     /// Returns just the number of connections we have
-    unsigned short GetConnectionCount(void) const;
+    unsigned short GetConnectionCount() const;
 
     /// Has a previous call to connect succeeded?
     /// \return UNASSIGNED_SYSTEM_ADDRESS = no. Anything else means yes.
-    SystemAddress HasCompletedConnectionAttempt(void);
+    SystemAddress HasCompletedConnectionAttempt();
 
     /// Has a previous call to connect failed?
     /// \return UNASSIGNED_SYSTEM_ADDRESS = no. Anything else means yes.
-    SystemAddress HasFailedConnectionAttempt(void);
+    SystemAddress HasFailedConnectionAttempt();
 
     /// Queued events of new incoming connections
-    SystemAddress HasNewIncomingConnection(void);
+    SystemAddress HasNewIncomingConnection();
 
     /// Queued events of lost connections
-    SystemAddress HasLostConnection(void);
+    SystemAddress HasLostConnection();
 
     /// Return an allocated but empty packet, for custom use
     Packet* AllocatePacket(unsigned dataSize);
@@ -131,7 +131,7 @@ public:
     virtual void PushBackPacket( Packet *packet, bool pushAtHead );
 
     /// Returns if Start() was called successfully
-    bool WasStarted(void) const;
+    bool WasStarted() const;
 
     void AttachPlugin( PluginInterface2 *plugin );
     void DetachPlugin( PluginInterface2 *plugin );
@@ -231,15 +231,15 @@ struct RemoteClient
 #if OPEN_SSL_CLIENT_SUPPORT==1
     SSL*     ssl;
     bool InitSSL(SSL_CTX* ctx, SSL_METHOD *meth);
-    void DisconnectSSL(void);
-    void FreeSSL(void);
+    void DisconnectSSL();
+    void FreeSSL();
     int Send(const char *data, unsigned int length);
     int Recv(char *data, const int dataSize);
 #else
     int Send(const char *data, unsigned int length);
     int Recv(char *data, const int dataSize);
 #endif
-    void Reset(void)
+    void Reset()
     {
         outgoingDataMutex.Lock();
         outgoingData.Clear();

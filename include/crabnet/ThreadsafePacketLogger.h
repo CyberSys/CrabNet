@@ -34,7 +34,7 @@ public:
     ThreadsafePacketLogger();
     virtual ~ThreadsafePacketLogger();
 
-    virtual void Update(void);
+    virtual void Update();
 
 protected:
     virtual void AddToLog(const char *str);

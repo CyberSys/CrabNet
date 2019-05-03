@@ -33,7 +33,7 @@ namespace DataStructures
     class RAK_DLL_EXPORT OrderedChannelHeap
     {
     public:
-        static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultMapKeyComparison<channel_key_type>(channel_key_type(),channel_key_type());}
+        static void IMPLEMENT_DEFAULT_COMPARISON() {DataStructures::defaultMapKeyComparison<channel_key_type>(channel_key_type(),channel_key_type());}
 
         OrderedChannelHeap();
         ~OrderedChannelHeap();
@@ -43,10 +43,10 @@ namespace DataStructures
         heap_data_type Peek(const unsigned startingIndex) const;
         void AddChannel(const channel_key_type &channelID, const double weight);
         void RemoveChannel(channel_key_type channelID);
-        void Clear(void);
+        void Clear();
         heap_data_type& operator[] ( const unsigned int position ) const;
         unsigned ChannelSize(const channel_key_type &channelID);
-        unsigned Size(void) const;
+        unsigned Size() const;
 
         struct QueueAndWeight
         {
@@ -66,7 +66,7 @@ namespace DataStructures
     protected:
         DataStructures::Map<channel_key_type, QueueAndWeight*, channel_key_comparison_func> map;
         DataStructures::Heap<double, HeapChannelAndData, true> heap;
-        void GreatestRandResult(void);
+        void GreatestRandResult();
     };
 
     template <class channel_key_type, class heap_data_type, int (*channel_key_comparison_func)(const channel_key_type&, const channel_key_type&)>
@@ -87,7 +87,7 @@ namespace DataStructures
     }
 
     template <class channel_key_type, class heap_data_type, int (*channel_key_comparison_func)(const channel_key_type&, const channel_key_type&)>
-    void OrderedChannelHeap<channel_key_type, heap_data_type, channel_key_comparison_func>::GreatestRandResult(void)
+    void OrderedChannelHeap<channel_key_type, heap_data_type, channel_key_comparison_func>::GreatestRandResult()
     {
         double greatest;
         unsigned i;
@@ -219,7 +219,7 @@ namespace DataStructures
     }
 
     template <class channel_key_type, class heap_data_type, int (*channel_key_comparison_func)(const channel_key_type&, const channel_key_type&)>
-        unsigned OrderedChannelHeap<channel_key_type, heap_data_type, channel_key_comparison_func>::Size(void) const
+        unsigned OrderedChannelHeap<channel_key_type, heap_data_type, channel_key_comparison_func>::Size() const
     {
         return heap.Size();
     }
@@ -239,7 +239,7 @@ namespace DataStructures
     }
 
     template <class channel_key_type, class heap_data_type, int (*channel_key_comparison_func)(const channel_key_type&, const channel_key_type&)>
-        void OrderedChannelHeap<channel_key_type, heap_data_type, channel_key_comparison_func>::Clear(void)
+        void OrderedChannelHeap<channel_key_type, heap_data_type, channel_key_comparison_func>::Clear()
     {
         unsigned i;
         for (i=0; i < map.Size(); i++)

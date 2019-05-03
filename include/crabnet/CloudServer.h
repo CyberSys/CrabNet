@@ -104,7 +104,7 @@ public:
     void GetRemoteServers(DataStructures::List<RakNetGUID> &remoteServersOut);
 
     /// \brief Frees all memory. Does not remove query filters
-    void Clear(void);
+    void Clear();
 
     /// \brief Report the specified SystemAddress to client queries, rather than what RakPeer reads.
     /// This is useful if you already know your public IP
@@ -124,13 +124,13 @@ public:
 
     /// \brief Removes all instances of CloudServerQueryFilter added with AddQueryFilter().
     /// The instances are not deleted, only unreferenced. It is up to the user to delete the instances, if necessary
-    void RemoveAllQueryFilters(void);
+    void RemoveAllQueryFilters();
 
 protected:
-    virtual void Update(void);
+    virtual void Update();
     virtual PluginReceiveResult OnReceive(Packet *packet);
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-    virtual void OnRakPeerShutdown(void);
+    virtual void OnRakPeerShutdown();
 
 
     virtual void OnPostRequest(Packet *packet);
@@ -149,8 +149,8 @@ protected:
     {
         CloudData(): stackData{0}, allocatedData(nullptr), dataPtr(nullptr), dataLengthBytes(0), isUploaded(false) {}
         ~CloudData() {if (allocatedData) free(allocatedData);}
-        bool IsUnused(void) const {return isUploaded==false && specificSubscribers.Size()==0;}
-        void Clear(void) {if (dataPtr==allocatedData) free(allocatedData); allocatedData=0; dataPtr=0; dataLengthBytes=0; isUploaded=false;}
+        bool IsUnused() const {return isUploaded==false && specificSubscribers.Size()==0;}
+        void Clear() {if (dataPtr==allocatedData) free(allocatedData); allocatedData=0; dataPtr=0; dataLengthBytes=0; isUploaded=false;}
 
         unsigned char stackData[CLOUD_SERVER_DATA_STACK_SIZE];
         unsigned char *allocatedData; // Uses allocatedData instead of stackData if length of data exceeds CLOUD_SERVER_DATA_STACK_SIZE
@@ -180,8 +180,8 @@ protected:
     static int KeyDataPtrComp( const RakNetGUID &key, CloudData* const &data );
     struct CloudDataList
     {
-        bool IsUnused(void) const {return keyData.Size()==0 && nonSpecificSubscribers.Size()==0;}
-        bool IsNotUploaded(void) const {return uploaderCount==0;}
+        bool IsUnused() const {return keyData.Size()==0 && nonSpecificSubscribers.Size()==0;}
+        bool IsNotUploaded() const {return uploaderCount==0;}
         bool RemoveSubscriber(RakNetGUID g) {
             bool objectExists;
             unsigned int index;
@@ -219,7 +219,7 @@ protected:
     // Remote systems
     struct RemoteCloudClient
     {
-        bool IsUnused(void) const {return uploadedKeys.Size()==0 && subscribedKeys.Size()==0;}
+        bool IsUnused() const {return uploadedKeys.Size()==0 && subscribedKeys.Size()==0;}
 
         DataStructures::OrderedList<CloudKey,CloudKey,CloudKeyComp> uploadedKeys;
         DataStructures::OrderedList<CloudKey,KeySubscriberID*,CloudServer::KeySubscriberIDComp> subscribedKeys;
@@ -277,7 +277,7 @@ protected:
     struct GetRequest
     {
         void Clear(CloudAllocator *allocator);
-        bool AllRemoteServersHaveResponded(void) const;
+        bool AllRemoteServersHaveResponded() const;
         CloudQueryWithAddresses cloudQueryWithAddresses;
 
         // When request started. If takes too long for a response from another system, can abort remaining systems

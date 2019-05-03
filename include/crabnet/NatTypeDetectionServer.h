@@ -80,10 +80,10 @@ public:
         );
 
     // Releases the sockets created in Startup();
-    void Shutdown(void);
+    void Shutdown();
 
     /// \internal For plugin handling
-    virtual void Update(void);
+    virtual void Update();
 
     /// \internal For plugin handling
     virtual PluginReceiveResult OnReceive(Packet *packet);

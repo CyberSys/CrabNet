@@ -35,7 +35,7 @@ namespace DataStructures
     class RAK_DLL_EXPORT OrderedList
     {
     public:
-        static void IMPLEMENT_DEFAULT_COMPARISON(void) {DataStructures::defaultOrderedListComparison<key_type, data_type>(key_type(),data_type());}
+        static void IMPLEMENT_DEFAULT_COMPARISON() {DataStructures::defaultOrderedListComparison<key_type, data_type>(key_type(),data_type());}
 
         OrderedList();
         ~OrderedList();
@@ -58,7 +58,7 @@ namespace DataStructures
         void InsertAtEnd(const data_type &data);
         void RemoveFromEnd(const unsigned num=1);
         void Clear(bool doNotDeallocate);
-        unsigned Size(void) const;
+        unsigned Size() const;
 
     protected:
         DataStructures::List<data_type> orderedList;
@@ -269,7 +269,7 @@ namespace DataStructures
     }
 
     template <class key_type, class data_type, int (*default_comparison_function)(const key_type&, const data_type&)>
-    unsigned OrderedList<key_type, data_type, default_comparison_function>::Size(void) const
+    unsigned OrderedList<key_type, data_type, default_comparison_function>::Size() const
     {
         return orderedList.Size();
     }

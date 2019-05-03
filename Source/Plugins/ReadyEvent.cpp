@@ -147,7 +147,7 @@ bool ReadyEvent::HasEvent(int eventId)
     return readyEventNodeList.HasData(eventId);
 }
 
-unsigned ReadyEvent::GetEventListSize(void) const
+unsigned ReadyEvent::GetEventListSize() const
 {
     return readyEventNodeList.Size();
 }
@@ -395,7 +395,7 @@ void ReadyEvent::OnClosedConnection(const SystemAddress &systemAddress, RakNetGU
 
     RemoveFromAllLists(rakNetGUID);
 }
-void ReadyEvent::OnRakPeerShutdown(void)
+void ReadyEvent::OnRakPeerShutdown()
 {
     Clear();
 }
@@ -440,7 +440,7 @@ bool ReadyEvent::IsEventCompletedByIndex(unsigned eventIndex) const
     return true;
 }
 
-void ReadyEvent::Clear(void)
+void ReadyEvent::Clear()
 {
     unsigned i;
     for (i=0; i < readyEventNodeList.Size(); i++)

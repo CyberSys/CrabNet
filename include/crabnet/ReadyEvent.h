@@ -126,7 +126,7 @@ public:
 
     /// Returns the total number of events stored in the system.
     /// \return The total number of events stored in the system.
-    unsigned GetEventListSize(void) const;
+    unsigned GetEventListSize() const;
 
     /// Returns the event ID stored at a particular index.  EventIDs are stored sorted from least to greatest.
     /// \param[in] index Index into the array, from 0 to GetEventListSize()
@@ -202,9 +202,9 @@ protected:
     // --------------------------------------------------------------------------------------------
     virtual PluginReceiveResult OnReceive(Packet *packet);
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-    virtual void OnRakPeerShutdown(void);
+    virtual void OnRakPeerShutdown();
 
-    void Clear(void);
+    void Clear();
     /*
     bool AnyWaitersCompleted(unsigned eventIndex) const;
     bool AllWaitersCompleted(unsigned eventIndex) const;

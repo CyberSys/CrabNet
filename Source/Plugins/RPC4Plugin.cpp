@@ -495,11 +495,11 @@ void RPC4::InvokeSignal(DataStructures::HashIndex functionIndex, CrabNet::BitStr
     //printf("b2: %I64d\n", t3-t2);
     //printf("b3: %I64d\n", t4-t3);
 }
-void RPC4::InterruptSignal(void)
+void RPC4::InterruptSignal()
 {
     interruptSignal=true;
 }
-void RPC4::OnAttach(void)
+void RPC4::OnAttach()
 {
     unsigned int i;
     for (i=0; i < globalRegistrationIndex; i++)

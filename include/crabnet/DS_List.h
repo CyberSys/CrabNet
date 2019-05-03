@@ -66,7 +66,7 @@ namespace DataStructures
         /// \brief Pop an element from the end of the stack.
         /// \pre Size()>0
         /// \return The element at the end.
-        list_type& Pop(void);
+        list_type& Pop();
 
         /// \brief Insert an element at position \a position in the list.
         /// \param[in] input The new element.
@@ -230,7 +230,7 @@ namespace DataStructures
         }
 
         template <class list_type>
-        inline list_type& List<list_type>::Pop(void)
+        inline list_type& List<list_type>::Pop()
         {
 #ifdef _DEBUG
             RakAssert(list_size>0);

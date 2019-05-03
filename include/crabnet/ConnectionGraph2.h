@@ -63,7 +63,7 @@ public:
 
     /// Returns the system with the lowest average ping among all its connections.
     /// If you need one system in the peer to peer group to relay data, have the FullyConnectedMesh2 host call this function after host migration, and use that system
-    RakNetGUID GetLowestAveragePingSystem(void) const;
+    RakNetGUID GetLowestAveragePingSystem() const;
 
     /// \brief If called with false, then new connections are only added to the connection graph when you call ProcessNewConnection();
     /// \details This is useful if you want to perform validation before connecting a system to a mesh, or if you want a submesh (for example a server cloud)
@@ -72,7 +72,7 @@ public:
 
     /// \brief Returns value passed to SetAutoProcessNewConnections()
     /// \return Value passed to SetAutoProcessNewConnections(), or the default of true if it was never called
-    bool GetAutoProcessNewConnections(void) const;
+    bool GetAutoProcessNewConnections() const;
 
     /// \brief If you call SetAutoProcessNewConnections(false);, then you will need to manually call ProcessNewConnection() on new connections
     /// \details On ID_NEW_INCOMING_CONNECTION or ID_CONNECTION_REQUEST_ACCEPTED, adds that system to the graph

@@ -42,7 +42,7 @@ StringTable::~StringTable()
     }
 }
 
-StringTable &StringTable::Instance(void)
+StringTable &StringTable::Instance()
 {
     static StringTable instance;
     return instance;

@@ -6,7 +6,7 @@ using namespace CrabNet;
 #include "GetTime.h"
 #include "RakSleep.h"
 
-uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
+uint64_t RakPeerInterface::Get64BitUniqueRandomNumber()
 {
     uint64_t g=CrabNet::GetTimeUS();
 
@@ -30,7 +30,7 @@ uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 #else
 #include "gettimeofday.h"
 
-uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
+uint64_t RakPeerInterface::Get64BitUniqueRandomNumber()
 {
     // Mac address is a poor solution because you can't have multiple connections from the same system
 

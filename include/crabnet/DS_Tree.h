@@ -36,7 +36,7 @@ namespace DataStructures
         ~Tree();
         void LevelOrderTraversal(DataStructures::List<Tree*> &output);
         void AddChild(TreeType &newData);
-        void DeleteDecendants(void);
+        void DeleteDecendants();
 
         TreeType data;
         DataStructures::List<Tree *> children;
@@ -86,7 +86,7 @@ namespace DataStructures
     }
 
     template <class TreeType>
-    void Tree<TreeType>::DeleteDecendants(void)
+    void Tree<TreeType>::DeleteDecendants()
     {
         /*
         DataStructures::List<Tree*> output;

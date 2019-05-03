@@ -94,13 +94,13 @@ public:
     virtual ~PluginInterface2();
 
     /// Called when the interface is attached
-    virtual void OnAttach(void) {}
+    virtual void OnAttach() {}
 
     /// Called when the interface is detached
-    virtual void OnDetach(void) {}
+    virtual void OnDetach() {}
 
     /// Update is called every time a packet is checked for .
-    virtual void Update(void) {}
+    virtual void Update() {}
 
     /// OnReceive is called for every packet.
     /// \param[in] packet the packet that is being returned to the user
@@ -108,10 +108,10 @@ public:
     virtual PluginReceiveResult OnReceive(Packet *packet) {(void) packet; return RR_CONTINUE_PROCESSING;}
 
     /// Called when RakPeer is initialized
-    virtual void OnRakPeerStartup(void) {}
+    virtual void OnRakPeerStartup() {}
 
     /// Called when RakPeer is shutdown
-    virtual void OnRakPeerShutdown(void) {}
+    virtual void OnRakPeerShutdown() {}
 
     /// Called when a connection is dropped because the user called RakPeer::CloseConnection() for a particular system
     /// \param[in] systemAddress The system whose connection was closed
@@ -133,7 +133,7 @@ public:
     /// Queried when attached to RakPeer
     /// Return true to call OnDirectSocketSend(), OnDirectSocketReceive(), OnReliabilityLayerNotification(), OnInternalPacket(), and OnAck()
     /// If true, then you cannot call RakPeer::AttachPlugin() or RakPeer::DetachPlugin() for this plugin, while RakPeer is active
-    virtual bool UsesReliabilityLayer(void) const {return false;}
+    virtual bool UsesReliabilityLayer() const {return false;}
 
     /// Called on a send to the socket, per datagram, that does not go through the reliability layer
     /// \pre To be called, UsesReliabilityLayer() must return true
@@ -177,9 +177,9 @@ public:
     /// \param[in] remoteSystemAddress The player we sent or got this packet from
     virtual void OnPushBackPacket(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress) {(void) data; (void) bitsUsed; (void) remoteSystemAddress;}
 
-    RakPeerInterface *GetRakPeerInterface(void) const {return rakPeerInterface;}
+    RakPeerInterface *GetRakPeerInterface() const {return rakPeerInterface;}
 
-    RakNetGUID GetMyGUIDUnified(void) const;
+    RakNetGUID GetMyGUIDUnified() const;
 
     /// \internal
     void SetRakPeerInterface( RakPeerInterface *ptr );

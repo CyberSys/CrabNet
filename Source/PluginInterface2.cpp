@@ -214,7 +214,7 @@ void PluginInterface2::SetTCPInterface( TCPInterface *ptr )
     tcpInterface=ptr;
 }
 #endif
-RakNetGUID PluginInterface2::GetMyGUIDUnified(void) const
+RakNetGUID PluginInterface2::GetMyGUIDUnified() const
 {
     if (rakPeerInterface)
         return rakPeerInterface->GetMyGUID();

@@ -30,8 +30,8 @@ namespace DataStructures
     {
         unsigned int primaryIndex;
         unsigned int secondaryIndex;
-        bool IsInvalid(void) const {return primaryIndex==(unsigned int) -1;}
-        void SetInvalid(void) {primaryIndex=(unsigned int) -1; secondaryIndex=(unsigned int) -1;}
+        bool IsInvalid() const {return primaryIndex==(unsigned int) -1;}
+        void SetInvalid() {primaryIndex=(unsigned int) -1; secondaryIndex=(unsigned int) -1;}
     };
 
     /// \brief Using a string as a identifier for a node, store an allocated pointer to that node
@@ -55,7 +55,7 @@ namespace DataStructures
         data_type& ItemAtIndex(const HashIndex &index);
         key_type  KeyAtIndex(const HashIndex &index);
         void GetAsList(DataStructures::List<data_type> &itemList,DataStructures::List<key_type > &keyList) const;
-        unsigned int Size(void) const;
+        unsigned int Size() const;
 
         /// \brief Clear the list
         void Clear();
@@ -349,7 +349,7 @@ namespace DataStructures
         }
     }
     template <class key_type, class data_type, unsigned int HASH_SIZE, unsigned long (*hashFunction)(const key_type &) >
-    unsigned int Hash<key_type, data_type, HASH_SIZE, hashFunction>::Size(void) const
+    unsigned int Hash<key_type, data_type, HASH_SIZE, hashFunction>::Size() const
     {
         return size;
     }

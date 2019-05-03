@@ -101,13 +101,13 @@ Router2::~Router2()
         delete udpForwarder;
     }
 }
-void Router2::ClearMinipunches(void)
+void Router2::ClearMinipunches()
 {
     miniPunchesInProgressMutex.Lock();
     miniPunchesInProgress.Clear(false);
     miniPunchesInProgressMutex.Unlock();
 }
-void Router2::ClearConnectionRequests(void)
+void Router2::ClearConnectionRequests()
 {
     connectionRequestsMutex.Lock();
     for (unsigned int i=0; i < connectionRequests.Size(); i++)
@@ -390,7 +390,7 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 
     return RR_CONTINUE_PROCESSING;
 }
-void Router2::Update(void)
+void Router2::Update()
 {
     CrabNet::TimeMS curTime = CrabNet::GetTimeMS();
     unsigned int connectionRequestIndex = 0;
@@ -604,7 +604,7 @@ void Router2::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAtte
     }
     forwardedConnectionListMutex.Unlock();
 }
-void Router2::OnRakPeerShutdown(void)
+void Router2::OnRakPeerShutdown()
 {
     ClearAll();
 }
@@ -1270,7 +1270,7 @@ bool Router2::OnForwardingSuccess(Packet *packet)
     }
     return true; // Return packet to user
 }
-int Router2::GetLargestPingAmongConnectedSystems(void) const
+int Router2::GetLargestPingAmongConnectedSystems() const
 {
     int avePing;
     int largestPing=-1;
@@ -1321,13 +1321,13 @@ void Router2::ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, const S
     p->wasGeneratedLocally=wasGeneratedLocally;
     rakPeerInterface->PushBackPacket(p, true);
 }
-void Router2::ClearForwardedConnections(void)
+void Router2::ClearForwardedConnections()
 {
     forwardedConnectionListMutex.Lock();
     forwardedConnectionList.Clear(false);
     forwardedConnectionListMutex.Unlock();
 }
-void Router2::ClearAll(void)
+void Router2::ClearAll()
 {
     ClearConnectionRequests();
     ClearMinipunches();
@@ -1337,7 +1337,7 @@ void Router2::SetDebugInterface(Router2DebugInterface *_debugInterface)
 {
     debugInterface=_debugInterface;
 }
-Router2DebugInterface *Router2::GetDebugInterface(void) const
+Router2DebugInterface *Router2::GetDebugInterface() const
 {
     return debugInterface;
 }

@@ -448,7 +448,7 @@ int porges_strlen2(char *s)
     return count;
 }
 
-size_t RakString::GetLengthUTF8(void) const
+size_t RakString::GetLengthUTF8() const
 {
     return porges_strlen2(sharedString->c_str);
 }
@@ -481,7 +481,7 @@ void RakString::SetChar(unsigned index, CrabNet::RakString s)
 }
 
 #ifdef _WIN32
-WCHAR * RakString::ToWideChar(void)
+WCHAR * RakString::ToWideChar()
 {
     //
     // Special case of NULL or empty input string
@@ -763,7 +763,7 @@ int RakString::StrICmp(const RakString &rhs) const
     return _stricmp(sharedString->c_str, rhs.C_String());
 }
 
-void RakString::Printf(void)
+void RakString::Printf()
 {
     CRABNET_DEBUG_PRINTF("%s", sharedString->c_str);
 }
@@ -812,7 +812,7 @@ bool RakString::IPAddressMatch(const char *IP)
     return false;
 }
 
-bool RakString::ContainsNonprintableExceptSpaces(void) const
+bool RakString::ContainsNonprintableExceptSpaces() const
 {
     for (size_t i = 0; i < strlen(sharedString->c_str); i++)
     {
@@ -822,7 +822,7 @@ bool RakString::ContainsNonprintableExceptSpaces(void) const
     return false;
 }
 
-bool RakString::IsEmailAddress(void) const
+bool RakString::IsEmailAddress() const
 {
     if (IsEmpty())
         return false;
@@ -854,7 +854,7 @@ bool RakString::IsEmailAddress(void) const
     return dotCount != 0;
 }
 
-CrabNet::RakString &RakString::URLEncode(void)
+CrabNet::RakString &RakString::URLEncode()
 {
     RakString result;
     size_t strLen = strlen(sharedString->c_str);
@@ -887,7 +887,7 @@ CrabNet::RakString &RakString::URLEncode(void)
     return *this;
 }
 
-CrabNet::RakString &RakString::URLDecode(void)
+CrabNet::RakString &RakString::URLDecode()
 {
     RakString result;
     size_t strLen = strlen(sharedString->c_str);
@@ -1546,7 +1546,7 @@ void RakString::UnlockMutex()
 
 using namespace CrabNet;
 
-int main(void)
+int main()
 {
     RakString s3("Hello world");
     RakString s5=s3;

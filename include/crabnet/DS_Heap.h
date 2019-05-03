@@ -47,7 +47,7 @@ namespace DataStructures
         ~Heap();
         void Push(const weight_type &weight, const data_type &data);
         /// Call before calling PushSeries, for a new series of items
-        void StartSeries(void) {optimizeNextSeriesPush=false;}
+        void StartSeries() {optimizeNextSeriesPush=false;}
         /// If you are going to push a list of items, where the weights of the items on the list are in order and follow the heap order, PushSeries is faster than Push()
         void PushSeries(const weight_type &weight, const data_type &data);
         data_type Pop(const unsigned startingIndex);
@@ -55,7 +55,7 @@ namespace DataStructures
         weight_type PeekWeight(const unsigned startingIndex=0) const;
         void Clear(bool doNotDeallocateSmallBlocks);
         data_type& operator[] ( const unsigned int position ) const;
-        unsigned Size(void) const;
+        unsigned Size() const;
 
     protected:
         unsigned LeftChild(const unsigned i) const;
@@ -262,7 +262,7 @@ namespace DataStructures
         return heap[position].data;
     }
     template <class weight_type, class data_type, bool isMaxHeap>
-        unsigned Heap<weight_type, data_type, isMaxHeap>::Size(void) const
+        unsigned Heap<weight_type, data_type, isMaxHeap>::Size() const
     {
         return heap.Size();
     }

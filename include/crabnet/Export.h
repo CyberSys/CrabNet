@@ -17,8 +17,8 @@
 #define RAK_DLL_EXPORT  
 #endif
 
-#define STATIC_FACTORY_DECLARATIONS(x) static x* GetInstance(void); \
+#define STATIC_FACTORY_DECLARATIONS(x) static x* GetInstance(); \
 static void DestroyInstance( x *i);
 
-#define STATIC_FACTORY_DEFINITIONS(x,y) x* x::GetInstance(void) {return new y;} \
+#define STATIC_FACTORY_DEFINITIONS(x,y) x* x::GetInstance() {return new y;} \
 void x::DestroyInstance( x *i) {delete ( y* ) i;}

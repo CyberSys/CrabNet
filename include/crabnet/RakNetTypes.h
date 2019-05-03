@@ -196,28 +196,28 @@ struct RAK_DLL_EXPORT SystemAddress
     unsigned short debugPort;
 
     /// \internal Return the size to write to a bitStream
-    static int size(void);
+    static int size();
 
     /// Hash the system address
     static unsigned long ToInteger( const SystemAddress &sa );
 
     /// Return the IP version, either IPV4 or IPV6
     /// \return Either 4 or 6
-    unsigned char GetIPVersion(void) const;
+    unsigned char GetIPVersion() const;
 
     /// \internal Returns either IPPROTO_IP or IPPROTO_IPV6
     /// \sa GetIPVersion
-    unsigned int GetIPPROTO(void) const;
+    unsigned int GetIPPROTO() const;
 
     /// Call SetToLoopback(), with whatever IP version is currently held. Defaults to IPV4
-    void SetToLoopback(void);
+    void SetToLoopback();
 
     /// Call SetToLoopback() with a specific IP version
     /// \param[in] ipVersion Either 4 for IPV4 or 6 for IPV6
     void SetToLoopback(unsigned char ipVersion);
 
     /// \return If was set to 127.0.0.1 or ::1
-    bool IsLoopback(void) const;
+    bool IsLoopback() const;
 
     // Return the systemAddress as a string in the format <IP>|<Port>
     // Returns a static string
@@ -250,10 +250,10 @@ struct RAK_DLL_EXPORT SystemAddress
     bool EqualsExcludingPort( const SystemAddress& right ) const;
 
     /// Returns the port in host order (this is what you normally use)
-    unsigned short GetPort(void) const;
+    unsigned short GetPort() const;
 
     /// \internal Returns the port in network order
-    unsigned short GetPortNetworkOrder(void) const;
+    unsigned short GetPortNetworkOrder() const;
 
     /// Sets the port. The port value should be in host order (this is what you normally use)
     /// Renamed from SetPort because of winspool.h http://edn.embarcadero.com/article/21494
@@ -270,7 +270,7 @@ struct RAK_DLL_EXPORT SystemAddress
     /// \internal sockaddr_in6 requires extra data beyond just the IP and port. Copy that extra data from an existing SystemAddress that already has it
     void FixForIPVersion(const SystemAddress &boundAddressToSocket);
 
-    bool IsLANAddress(void);
+    bool IsLANAddress();
 
     SystemAddress& operator = ( const SystemAddress& input );
     bool operator==( const SystemAddress& right ) const;
@@ -300,7 +300,7 @@ struct RAK_DLL_EXPORT RakNetGUID
     // Return the GUID as a string
     // Returns a static string
     // NOT THREADSAFE
-    const char *ToString(void) const;
+    const char *ToString() const;
 
     // Return the GUID as a string
     // dest must be large enough to hold the output
@@ -348,9 +348,9 @@ struct RAK_DLL_EXPORT AddressOrGUID
     RakNetGUID rakNetGuid;
     SystemAddress systemAddress;
 
-    SystemIndex GetSystemIndex(void) const {if (rakNetGuid!=UNASSIGNED_CRABNET_GUID) return rakNetGuid.systemIndex; else return systemAddress.systemIndex;}
-    bool IsUndefined(void) const {return rakNetGuid==UNASSIGNED_CRABNET_GUID && systemAddress==UNASSIGNED_SYSTEM_ADDRESS;}
-    void SetUndefined(void) {rakNetGuid=UNASSIGNED_CRABNET_GUID; systemAddress=UNASSIGNED_SYSTEM_ADDRESS;}
+    SystemIndex GetSystemIndex() const {if (rakNetGuid!=UNASSIGNED_CRABNET_GUID) return rakNetGuid.systemIndex; else return systemAddress.systemIndex;}
+    bool IsUndefined() const {return rakNetGuid==UNASSIGNED_CRABNET_GUID && systemAddress==UNASSIGNED_SYSTEM_ADDRESS;}
+    void SetUndefined() {rakNetGuid=UNASSIGNED_CRABNET_GUID; systemAddress=UNASSIGNED_SYSTEM_ADDRESS;}
     static unsigned long ToInteger( const AddressOrGUID &aog );
     const char *ToString(bool writePort=true) const;
     void ToString(bool writePort, char *dest) const;

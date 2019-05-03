@@ -159,7 +159,7 @@ public:
 
     /// Returns the total number of filter sets.
     /// \return The total number of filter sets.
-    unsigned GetFilterSetCount(void) const;
+    unsigned GetFilterSetCount() const;
 
     /// Returns the ID of a filter set, by index
     /// \param[in] An index between 0 and GetFilterSetCount()-1 inclusive
@@ -172,14 +172,14 @@ public:
     // --------------------------------------------------------------------------------------------
     // Packet handling functions
     // --------------------------------------------------------------------------------------------
-    virtual void Update(void);
+    virtual void Update();
     virtual PluginReceiveResult OnReceive(Packet *packet);
     virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
 protected:
 
-    void Clear(void);
+    void Clear();
     void DeallocateFilterSet(FilterSet *filterSet);
     FilterSet* GetFilterSetByID(int filterSetID);
     void OnInvalidMessage(FilterSet *filterSet, AddressOrGUID systemAddress, unsigned char messageID);

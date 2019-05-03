@@ -88,7 +88,7 @@ struct RNS2RecvStruct
 class RakNetSocket2Allocator
 {
 public:
-    static RakNetSocket2* AllocRNS2(void);
+    static RakNetSocket2* AllocRNS2();
     static void DeallocRNS2(RakNetSocket2 *s);
 };
 
@@ -117,13 +117,13 @@ public:
     // In order for the handler to trigger, some platforms must call PollRecvFrom, some platforms this create an internal thread.
     void SetRecvEventHandler(RNS2EventHandler *_eventHandler);
     virtual RNS2SendResult Send( RNS2_SendParameters *sendParameters )=0;
-    RNS2Type GetSocketType(void) const;
+    RNS2Type GetSocketType() const;
     void SetSocketType(RNS2Type t);
-    bool IsBerkleySocket(void) const;
-    SystemAddress GetBoundAddress(void) const;
-    unsigned int GetUserConnectionSocketIndex(void) const;
+    bool IsBerkleySocket() const;
+    SystemAddress GetBoundAddress() const;
+    unsigned int GetUserConnectionSocketIndex() const;
     void SetUserConnectionSocketIndex(unsigned int i);
-    RNS2EventHandler * GetEventHandler(void) const;
+    RNS2EventHandler * GetEventHandler() const;
 
     // ----------- STATICS ------------
     static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
@@ -157,7 +157,7 @@ public:
     virtual ~RNS2_NativeClient();
     RNS2BindResult Bind( NativeClientBindParameters *bindParameters );
     RNS2SendResult Send( RNS2_SendParameters *sendParameters );
-    const NativeClientBindParameters *GetBindings(void) const;
+    const NativeClientBindParameters *GetBindings() const;
 
     // ----------- STATICS ------------
     static bool IsPortInUse(unsigned short port, const char *hostAddress, unsigned short addressFamily, int type );
@@ -176,14 +176,14 @@ public:
     //   ((RNS2_NativeClient*)sockets[i])->Update();
     // }
 
-    void Update(void);
+    void Update();
 protected:
-    void ProcessBufferedSend(void);
+    void ProcessBufferedSend();
     static void SendImmediate(RNS2_SendParameters_NativeClient *sp);
     static void DeallocSP(RNS2_SendParameters_NativeClient *sp);
     static RNS2_SendParameters_NativeClient* CloneSP(RNS2_SendParameters *sp, RNS2_NativeClient *socket2);
     static void onRecvFrom(void* pData, int32_t dataSize);
-    void IssueReceiveCall(void);
+    void IssueReceiveCall();
     static void onSocketBound(void* pData, int32_t dataSize);
     static void onSendTo(void* pData, int32_t dataSize);
     void BufferSend( RNS2_SendParameters *sendParameters );
@@ -240,10 +240,10 @@ public:
     RNS2_Berkley();
     virtual ~RNS2_Berkley();
     int CreateRecvPollingThread(int threadPriority);
-    void SignalStopRecvPollingThread(void);
-    void BlockOnStopRecvPollingThread(void);
-    const RNS2_BerkleyBindParameters *GetBindings(void) const;
-    RNS2Socket GetSocket(void) const;
+    void SignalStopRecvPollingThread();
+    void BlockOnStopRecvPollingThread();
+    const RNS2_BerkleyBindParameters *GetBindings() const;
+    RNS2Socket GetSocket() const;
     void SetDoNotFragment( int opt );
 
 protected:
@@ -257,7 +257,7 @@ protected:
 
     // Internal
     void SetNonBlockingSocket(unsigned long nonblocking);
-    void SetSocketOptions(void);
+    void SetSocketOptions();
     void SetBroadcastSocket(int broadcast);
     void SetIPHdrIncl(int ipHdrIncl);
     void RecvFromBlocking(RNS2RecvStruct *recvFromStruct);
@@ -267,7 +267,7 @@ protected:
     RNS2Socket rns2Socket;
     RNS2_BerkleyBindParameters binding;
 
-    unsigned RecvFromLoopInt(void);
+    unsigned RecvFromLoopInt();
     std::atomic<uint32_t> isRecvFromLoopThreadActive;
     std::atomic<bool> endThreads;
     // Constructor not called!
@@ -314,7 +314,7 @@ public:
     RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters );
     RNS2SendResult Send( RNS2_SendParameters *sendParameters );
     void SetSocketLayerOverride(SocketLayerOverride *_slo);
-    SocketLayerOverride* GetSocketLayerOverride(void);
+    SocketLayerOverride* GetSocketLayerOverride();
     // ----------- STATICS ------------
     static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 protected:

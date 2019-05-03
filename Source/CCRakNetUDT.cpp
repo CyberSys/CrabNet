@@ -120,7 +120,7 @@ void CCRakNetUDT::SetMTU(uint32_t bytes)
     MAXIMUM_MTU_INCLUDING_UDP_HEADER = bytes;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-uint32_t CCRakNetUDT::GetMTU(void) const
+uint32_t CCRakNetUDT::GetMTU() const
 {
     return MAXIMUM_MTU_INCLUDING_UDP_HEADER;
 }
@@ -230,12 +230,12 @@ bool CCRakNetUDT::ShouldSendACKs(CCTimeType curTime, CCTimeType estimatedTimeToN
     return curTime >= oldestUnsentAck + SYN || estimatedTimeToNextTick+curTime < oldestUnsentAck+rto-RTT;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-DatagramSequenceNumberType CCRakNetUDT::GetNextDatagramSequenceNumber(void)
+DatagramSequenceNumberType CCRakNetUDT::GetNextDatagramSequenceNumber()
 {
     return nextDatagramSequenceNumber;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-DatagramSequenceNumberType CCRakNetUDT::GetAndIncrementNextDatagramSequenceNumber(void)
+DatagramSequenceNumberType CCRakNetUDT::GetAndIncrementNextDatagramSequenceNumber()
 {
     DatagramSequenceNumberType dsnt = nextDatagramSequenceNumber;
     nextDatagramSequenceNumber++;
@@ -303,7 +303,7 @@ BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateDataArrivalRate(CCTimeType cur
     return sum / medianListLength;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateDataArrivalRateMedian(void) const
+BytesPerMicrosecond CCRakNetUDT::ReceiverCalculateDataArrivalRateMedian() const
 {
     return CalculateListMedianRecursive(packetArrivalHistory, CC_CRABNET_UDT_PACKET_HISTORY_LENGTH, 0, 0);
 }
@@ -435,7 +435,7 @@ void CCRakNetUDT::OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequen
     }
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-void CCRakNetUDT::EndSlowStart(void)
+void CCRakNetUDT::EndSlowStart()
 {
     RakAssert(isInSlowStart);
     RakAssert(AS != UNDEFINED_TRANSFER_RATE);
@@ -749,7 +749,7 @@ void CCRakNetUDT::CapMinSnd(const char *file, int line)
         CC_DEBUG_PRINTF_3("%s:%i LIKELY BUG: SND has gotten above 500 microseconds between messages (28.8 modem)\nReport to rakkar@jenkinssoftware.com with file and line number\n", file, line);
     }
 }
-void CCRakNetUDT::IncreaseTimeBetweenSends(void)
+void CCRakNetUDT::IncreaseTimeBetweenSends()
 {
     // In order to converge, bigger numbers have to increase slower and decrease faster
     // SND==500 then increment is .02
@@ -768,7 +768,7 @@ void CCRakNetUDT::IncreaseTimeBetweenSends(void)
     // SND=500 then slow increase, fast decrease
     CapMinSnd();
 }
-void CCRakNetUDT::DecreaseTimeBetweenSends(void)
+void CCRakNetUDT::DecreaseTimeBetweenSends()
 {
     double increment;
     increment = .01 * ((SND + 1.0) * (SND + 1.0)) / (501.0 * 501.0);

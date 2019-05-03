@@ -98,13 +98,13 @@ bool CCRakNetSlidingWindow::ShouldSendACKs(CCTimeType curTime, CCTimeType estima
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
-DatagramSequenceNumberType CCRakNetSlidingWindow::GetNextDatagramSequenceNumber(void)
+DatagramSequenceNumberType CCRakNetSlidingWindow::GetNextDatagramSequenceNumber()
 {
     return nextDatagramSequenceNumber;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
-DatagramSequenceNumberType CCRakNetSlidingWindow::GetAndIncrementNextDatagramSequenceNumber(void)
+DatagramSequenceNumberType CCRakNetSlidingWindow::GetAndIncrementNextDatagramSequenceNumber()
 {
     DatagramSequenceNumberType dsnt = nextDatagramSequenceNumber;
     nextDatagramSequenceNumber++;
@@ -334,7 +334,7 @@ void CCRakNetSlidingWindow::SetMTU(uint32_t bytes)
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
-uint32_t CCRakNetSlidingWindow::GetMTU(void) const
+uint32_t CCRakNetSlidingWindow::GetMTU() const
 {
     return MAXIMUM_MTU_INCLUDING_UDP_HEADER;
 }

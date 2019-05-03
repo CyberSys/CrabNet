@@ -65,7 +65,7 @@ public:
     virtual void OnPushBackPacket(const char *data, const BitSize_t bitsUsed, SystemAddress remoteSystemAddress);
 
     /// Logs out a header for all the data
-    virtual void LogHeader(void);
+    virtual void LogHeader();
 
     /// Override this to log strings to wherever.  Log should be threadsafe
     virtual void WriteLog(const char *str);
@@ -90,7 +90,7 @@ public:
     void SetLogDirectMessages(bool send);
 protected:
 
-    virtual bool UsesReliabilityLayer(void) const {return true;}
+    virtual bool UsesReliabilityLayer() const {return true;}
     const char* IDTOString(unsigned char Id);
     virtual void AddToLog(const char *str);
     // Users should override this

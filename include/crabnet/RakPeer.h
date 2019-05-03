@@ -123,7 +123,7 @@ public:
 
     /// \brief Returns how many open connections exist at this time.
     /// \return Number of open connections.
-    unsigned short NumberOfConnections(void) const;
+    unsigned short NumberOfConnections() const;
 
     /// \brief Sets the password for the incoming connections.
     /// \details  The password must match in the call to Connect (defaults to none).
@@ -200,12 +200,12 @@ public:
     /// Returns the next uint32_t that Send() will return
     /// \note If using RakPeer from multiple threads, this may not be accurate for your thread. Use IncrementNextSendReceipt() in that case.
     /// \return The next uint32_t that Send() or SendList will return
-    virtual uint32_t GetNextSendReceipt(void);
+    virtual uint32_t GetNextSendReceipt();
 
     /// Returns the next uint32_t that Send() will return, and increments the value by one
     /// \note If using RakPeer from multiple threads, pass this to forceReceipt in the send function
     /// \return The next uint32_t that Send() or SendList will return
-    virtual uint32_t IncrementNextSendReceipt(void);
+    virtual uint32_t IncrementNextSendReceipt();
 
     /// \brief Sends a block of data to the specified system that you are connected to.
     /// \note This function only works while connected.
@@ -423,7 +423,7 @@ public:
     SystemAddress GetExternalID( const SystemAddress target ) const;
 
     /// Return my own GUID
-    const RakNetGUID GetMyGUID(void) const;
+    const RakNetGUID GetMyGUID() const;
 
     /// Return the address bound to a socket at the specified index
     SystemAddress GetMyBoundAddress(const int socketIndex=0);
@@ -508,7 +508,7 @@ public:
 
     /// \brief Returns what was passed to SetSplitMessageProgressInterval().
     /// \return Number of messages to be recieved before a download progress notification is returned. Default to 0.
-    int GetSplitMessageProgressInterval(void) const;
+    int GetSplitMessageProgressInterval() const;
 
     /// \brief Set how long to wait before giving up on sending an unreliable message.
     /// Useful if the network is clogged up.
@@ -624,7 +624,7 @@ public:
     virtual void GetStatisticsList(DataStructures::List<SystemAddress> &addresses, DataStructures::List<RakNetGUID> &guids, DataStructures::List<RakNetStatistics> &statistics);
 
     /// \Returns how many messages are waiting when you call Receive()
-    virtual unsigned int GetReceiveBufferSize(void);
+    virtual unsigned int GetReceiveBufferSize();
 
     // --------------------------------------------------------------------------------------------EVERYTHING AFTER THIS COMMENT IS FOR INTERNAL USE ONLY--------------------------------------------------------------------------------------------
 
@@ -718,7 +718,7 @@ protected:
     /// \return 0 if none
     RemoteSystemStruct *GetRemoteSystemFromSystemAddress( const SystemAddress systemAddress, bool calledFromNetworkThread, bool onlyActive ) const;
     RakPeer::RemoteSystemStruct *GetRemoteSystem( const AddressOrGUID systemIdentifier, bool calledFromNetworkThread, bool onlyActive ) const;
-    void ValidateRemoteSystemLookup(void) const;
+    void ValidateRemoteSystemLookup() const;
     RemoteSystemStruct *GetRemoteSystemFromGUID( const RakNetGUID guid, bool onlyActive ) const;
     ///Parse out a connection request packet
     void ParseConnectionRequestPacket( RakPeer::RemoteSystemStruct *remoteSystem, const SystemAddress &systemAddress, const char *data, int byteSize);
@@ -746,7 +746,7 @@ protected:
     CrabNet::Time GetBestClockDifferential( const SystemAddress systemAddress ) const;
 
     bool IsLoopbackAddress(const AddressOrGUID &systemIdentifier, bool matchPort) const;
-    SystemAddress GetLoopbackAddress(void) const;
+    SystemAddress GetLoopbackAddress() const;
 
     ///Set this to true to terminate the Peer thread execution
     std::atomic<bool> endThreads;
@@ -788,7 +788,7 @@ protected:
     void DereferenceRemoteSystem(const SystemAddress &sa);
     RemoteSystemStruct* GetRemoteSystem(const SystemAddress &sa) const;
     unsigned int GetRemoteSystemIndex(const SystemAddress &sa) const;
-    void ClearRemoteSystemLookup(void);
+    void ClearRemoteSystemLookup();
     DataStructures::MemoryPool<RemoteSystemIndex> remoteSystemIndexPool;
 
     void AddToActiveSystemList(unsigned int remoteSystemListIndex);
@@ -865,7 +865,7 @@ protected:
     DataStructures::Queue<RequestedConnectionStruct*> requestedConnectionQueue;
     SimpleMutex requestedConnectionQueueMutex;
 
-    // void RunMutexedUpdateCycle(void);
+    // void RunMutexedUpdateCycle();
 
     struct BufferedCommandStruct
     {
@@ -904,9 +904,9 @@ protected:
 
     virtual void DeallocRNS2RecvStruct(RNS2RecvStruct *s);
     virtual RNS2RecvStruct *AllocRNS2RecvStruct();
-    void SetupBufferedPackets(void);
+    void SetupBufferedPackets();
     void PushBufferedPacket(RNS2RecvStruct * p);
-    RNS2RecvStruct *PopBufferedPacket(void);
+    RNS2RecvStruct *PopBufferedPacket();
 
     struct SocketQueryOutput
     {
@@ -918,7 +918,7 @@ protected:
     DataStructures::ThreadsafeAllocatingQueue<SocketQueryOutput> socketQueryOutput;
 
 
-    bool AllowIncomingConnections(void) const;
+    bool AllowIncomingConnections() const;
 
     void PingInternal( const SystemAddress target, bool performImmediate, PacketReliability reliability );
     // This stores the user send calls to be handled by the update thread.  This way we don't have thread contention over systemAddresss
@@ -927,12 +927,12 @@ protected:
     void SendBufferedList( const char **data, const int *lengths, const int numParameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, RemoteSystemStruct::ConnectMode connectionMode, uint32_t receipt );
     bool SendImmediate( char *data, BitSize_t numberOfBitsToSend, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, bool useCallerDataAllocation, CrabNet::TimeUS currentTime, uint32_t receipt );
     //bool HandleBufferedRPC(BufferedCommandStruct *bcs, CrabNet::TimeMS time);
-    void ClearBufferedCommands(void);
-    void ClearBufferedPackets(void);
-    void ClearSocketQueryOutput(void);
-    void ClearRequestedConnectionList(void);
+    void ClearBufferedCommands();
+    void ClearBufferedPackets();
+    void ClearSocketQueryOutput();
+    void ClearRequestedConnectionList();
     void AddPacketToProducer(CrabNet::Packet *p);
-    unsigned int GenerateSeedFromGuid(void);
+    unsigned int GenerateSeedFromGuid();
     CrabNet::Time GetClockDifferentialInt(RemoteSystemStruct *remoteSystem) const;
     SimpleMutex securityExceptionMutex;
 
@@ -942,13 +942,13 @@ protected:
 
     // Smart pointer so I can return the object to the user
     DataStructures::List<RakNetSocket2* > socketList;
-    void DerefAllSockets(void);
+    void DerefAllSockets();
     unsigned int GetRakNetSocketFromUserConnectionSocketIndex(unsigned int userIndex) const;
 
     CrabNet::TimeMS defaultTimeoutTime;
 
     // Generate and store a unique GUID
-    void GenerateGUID(void);
+    void GenerateGUID();
     unsigned int GetSystemIndexFromGuid( const RakNetGUID input ) const;
     RakNetGUID myGuid;
 
@@ -998,7 +998,7 @@ protected:
     /// with the reliability types that contain RECEIPT in the name
     SimpleMutex sendReceiptSerialMutex;
     uint32_t sendReceiptSerial;
-    void ResetSendReceipt(void);
+    void ResetSendReceipt();
     void OnConnectedPong(CrabNet::Time sendPingTime, CrabNet::Time sendPongTime, RemoteSystemStruct *remoteSystem);
     void CallPluginCallbacks(DataStructures::List<PluginInterface2*> &pluginList, Packet *packet);
 
@@ -1011,7 +1011,7 @@ protected:
     bool InitializeClientSecurity(RequestedConnectionStruct *rcs, const char *public_key);
 #endif
     virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct);
-    void FillIPList(void);
+    void FillIPList();
 } 
 // #if defined(SN_TARGET_PSP2)
 // __attribute__((aligned(8)))

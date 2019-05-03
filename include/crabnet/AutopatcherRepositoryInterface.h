@@ -66,10 +66,10 @@ public:
         double *mostRecentRowPatchTime)=0;
 
     /// \return Whatever this function returns is sent from the AutopatcherServer to the AutopatcherClient when one of the above functions returns false.
-    virtual const char *GetLastError(void) const=0;
+    virtual const char *GetLastError() const=0;
 
     /// \return Passed to FileListTransfer::Send() as the _chunkSize parameter.
-    virtual const int GetIncrementalReadChunkSize(void) const=0;
+    virtual const int GetIncrementalReadChunkSize() const=0;
 };
 
 } // namespace CrabNet

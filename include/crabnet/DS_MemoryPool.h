@@ -58,12 +58,12 @@ namespace DataStructures
         void Release(MemoryBlockType *m);
         void Clear();
 
-        int GetAvailablePagesSize(void) const {return availablePagesSize;}
-        int GetUnavailablePagesSize(void) const {return unavailablePagesSize;}
-        int GetMemoryPoolPageSize(void) const {return memoryPoolPageSize;}
+        int GetAvailablePagesSize() const {return availablePagesSize;}
+        int GetUnavailablePagesSize() const {return unavailablePagesSize;}
+        int GetMemoryPoolPageSize() const {return memoryPoolPageSize;}
     protected:
-        int BlocksPerPage(void) const;
-        void AllocateFirst(void);
+        int BlocksPerPage() const;
+        void AllocateFirst();
         bool InitPage(Page *page, Page *prev);
 
         // availablePages contains pages which have room to give the user new blocks.  We return these blocks from the head of the list
@@ -266,7 +266,7 @@ namespace DataStructures
 #endif
     }
     template<class MemoryBlockType>
-    int MemoryPool<MemoryBlockType>::BlocksPerPage(void) const
+    int MemoryPool<MemoryBlockType>::BlocksPerPage() const
     {
         return memoryPoolPageSize / sizeof(MemoryWithPage);
     }
@@ -310,7 +310,7 @@ struct TestMemoryPool
     int allocationId;
 };
 
-int main(void)
+int main()
 {
     DataStructures::MemoryPool<TestMemoryPool> memoryPool;
     DataStructures::List<TestMemoryPool*> returnList;

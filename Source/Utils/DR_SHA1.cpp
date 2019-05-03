@@ -291,7 +291,7 @@ bool CSHA1::GetHash(UINT_8 *pbDest20) const
 
 // Get the raw message digest
 // Added by Kevin to be quicker
-unsigned char *CSHA1::GetHash(void) const
+unsigned char *CSHA1::GetHash() const
 {
     return (unsigned char *) m_digest;
 }

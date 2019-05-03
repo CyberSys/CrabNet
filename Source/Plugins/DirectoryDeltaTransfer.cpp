@@ -191,7 +191,7 @@ void DirectoryDeltaTransfer::GenerateHashes(FileList &localFiles, const char *ou
 {
     localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0,0,0));
 }
-void DirectoryDeltaTransfer::ClearUploads(void)
+void DirectoryDeltaTransfer::ClearUploads()
 {
     availableUploads->Clear();
 }
@@ -236,7 +236,7 @@ PluginReceiveResult DirectoryDeltaTransfer::OnReceive(Packet *packet)
     return RR_CONTINUE_PROCESSING;
 }
 
-unsigned DirectoryDeltaTransfer::GetNumberOfFilesForUpload(void) const
+unsigned DirectoryDeltaTransfer::GetNumberOfFilesForUpload() const
 {
     return availableUploads->fileList.Size();
 }

@@ -153,7 +153,7 @@ protected:
     /// \internal
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
     /// \internal
-    void OnAttach(void);
+    void OnAttach();
 
     void OnStatusUpdateToNewHost(Packet *packet);
     void OnCancelTeamRequest(Packet *packet);
@@ -173,21 +173,21 @@ protected:
     unsigned int GetMemberIndex(NetworkID memberId, RakNetGUID guid) const;
     unsigned int AddTeamMember(const TeamMember &tm); // Returns index of new member
     void RemoveTeamMember(unsigned int index);
-    void EvenTeams(void);
+    void EvenTeams();
     unsigned int GetMemberIndexToSwitchTeams(const DataStructures::List<TeamId> &sourceTeamNumbers, TeamId targetTeamNumber);
     void GetOverpopulatedTeams(DataStructures::List<TeamId> &overpopulatedTeams, int maxTeamSize);
     void SwitchMemberTeam(unsigned int teamMemberIndex, TeamId destinationTeam);
     void NotifyTeamAssigment(unsigned int teamMemberIndex);
-    bool WeAreHost(void) const;
+    bool WeAreHost() const;
     PluginReceiveResult OnTeamAssigned(Packet *packet);
     PluginReceiveResult OnRequestedTeamChangePending(Packet *packet);
     PluginReceiveResult OnTeamsLocked(Packet *packet);
     void GetMinMaxTeamMembers(int &minMembersOnASingleTeam, int &maxMembersOnASingleTeam);
-    TeamId GetNextDefaultTeam(void); // Accounting for team balancing and team limits, get the team a player should be placed on
+    TeamId GetNextDefaultTeam(); // Accounting for team balancing and team limits, get the team a player should be placed on
     bool TeamWouldBeOverpopulatedOnAddition(TeamId teamId, unsigned int teamMemberSize); // Accounting for team balancing and team limits, would this team be overpopulated if a member was added to it?
     bool TeamWouldBeUnderpopulatedOnLeave(TeamId teamId, unsigned int teamMemberSize);
-    TeamId GetSmallestNonFullTeam(void) const;
-    TeamId GetFirstNonFullTeam(void) const;
+    TeamId GetSmallestNonFullTeam() const;
+    TeamId GetFirstNonFullTeam() const;
     void MoveMemberThatWantsToJoinTeam(TeamId teamId);
     TeamId MoveMemberThatWantsToJoinTeamInternal(TeamId teamId);
     void NotifyTeamsLocked(RakNetGUID target, TeamId requestedTeam);

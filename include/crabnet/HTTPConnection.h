@@ -66,17 +66,17 @@ public:
     void Get(const char *path);
     
     /// Is there a Read result ready?
-    bool HasRead(void) const;
+    bool HasRead() const;
 
     /// Get one result from the server
     /// \pre HasResult must return true
-    CrabNet::RakString Read(void);
+    CrabNet::RakString Read();
 
     /// Call periodically to do time-based updates
-    void Update(void);
+    void Update();
 
     /// Returns the address of the server we are connected to
-    SystemAddress GetServerAddress(void) const;
+    SystemAddress GetServerAddress() const;
 
     /// Process an HTTP data packet returned from TCPInterface
     /// Returns true when we have gotten all the data from the HTTP server.
@@ -113,10 +113,10 @@ public:
     bool HasBadResponse(int *code, CrabNet::RakString *data);
 
     /// Returns false if the connection is not doing anything else
-    bool IsBusy(void) const;
+    bool IsBusy() const;
 
     /// \internal
-    int GetState(void) const;
+    int GetState() const;
 
     struct OutgoingCommand
     {

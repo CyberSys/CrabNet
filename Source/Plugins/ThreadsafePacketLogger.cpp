@@ -30,7 +30,7 @@ ThreadsafePacketLogger::~ThreadsafePacketLogger()
         free(*msg);
     }
 }
-void ThreadsafePacketLogger::Update(void)
+void ThreadsafePacketLogger::Update()
 {
     char **msg;
     while ((msg = logMessages.ReadLock()) != 0)

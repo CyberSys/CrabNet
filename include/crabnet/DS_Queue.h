@@ -46,7 +46,7 @@ namespace DataStructures
         // Debug: Set pointer to 0, for memory leak detection
         inline queue_type PopDeref( void );
         inline unsigned int Size( void ) const;
-        inline bool IsEmpty(void) const;
+        inline bool IsEmpty() const;
         inline unsigned int AllocationSize( void ) const;
         inline void Clear();
         void Compress();
@@ -71,7 +71,7 @@ namespace DataStructures
     }
 
     template <class queue_type>
-    inline bool Queue<queue_type>::IsEmpty(void) const
+    inline bool Queue<queue_type>::IsEmpty() const
     {
         return head==tail;
     }

@@ -79,7 +79,7 @@ void HTTPConnection::CloseConnection()
 {
     connectionState=CS_DISCONNECTING;
 }
-void HTTPConnection::Update(void)
+void HTTPConnection::Update()
 {
     SystemAddress sa;
     sa = tcp->HasCompletedConnectionAttempt();
@@ -196,11 +196,11 @@ void HTTPConnection::Update(void)
 //    if (connectionState==CS_PROCESSING && currentProcessingCommand.data.IsEmpty()==false)
 //        outgoingCommand.PushAtHead(currentProcessingCommand);
 }
-bool HTTPConnection::HasRead(void) const
+bool HTTPConnection::HasRead() const
 {
     return results.IsEmpty()==false;
 }
-RakString HTTPConnection::Read(void)
+RakString HTTPConnection::Read()
 {
     if (results.IsEmpty())
         return RakString();
@@ -214,7 +214,7 @@ RakString HTTPConnection::Read(void)
     else
         return resultStr;
 }
-SystemAddress HTTPConnection::GetServerAddress(void) const
+SystemAddress HTTPConnection::GetServerAddress() const
 {
     return server;
 }
@@ -293,18 +293,18 @@ void HTTPConnection::ProcessTCPPacket(Packet *packet)
     }
 }
 
-bool HTTPConnection::IsBusy(void) const
+bool HTTPConnection::IsBusy() const
 {
     return connectionState != CS_NONE;
 }
 
-int HTTPConnection::GetState(void) const
+int HTTPConnection::GetState() const
 {
     return connectionState;
 }
 
 
-HTTPConnection::~HTTPConnection(void)
+HTTPConnection::~HTTPConnection()
 {
     if (tcp)
         tcp->CloseConnection(server);

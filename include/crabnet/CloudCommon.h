@@ -33,7 +33,7 @@ public:
     virtual ~CloudAllocator() {}
 
     /// \brief Allocate a row
-    virtual CloudQueryRow* AllocateCloudQueryRow(void);
+    virtual CloudQueryRow* AllocateCloudQueryRow();
     /// \brief Free a row
     virtual void DeallocateCloudQueryRow(CloudQueryRow *row);
     /// \brief Allocate CloudQueryRow::data

@@ -69,18 +69,18 @@ public:
     // Pass 0 for newIPAddress to autodetect whatever you are uploading from
     // usernameAndPassword should be in the format username:password
     void UpdateHostIPAsynch(const char *dnsHost, const char *newIPAddress, const char *usernameAndPassword );
-    void Update(void);
+    void Update();
 
     // Output
-    bool IsRunning(void) const {return connectPhase!=CP_IDLE;}
-    bool IsCompleted(void) const {return connectPhase==CP_IDLE;}
-    CrabNet::DynDnsResultCode GetCompletedResultCode(void) {return result;}
-    const char *GetCompletedDescription(void) const {return resultDescription;}
-    bool WasResultSuccessful(void) const {return result==RC_SUCCESS || result==RC_DNS_ALREADY_SET || result==RC_NO_CHANGE;}
-    char *GetMyPublicIP(void) const {return (char*) myIPStr;} // We get our public IP as part of the process. This is valid once completed
+    bool IsRunning() const {return connectPhase!=CP_IDLE;}
+    bool IsCompleted() const {return connectPhase==CP_IDLE;}
+    CrabNet::DynDnsResultCode GetCompletedResultCode() {return result;}
+    const char *GetCompletedDescription() const {return resultDescription;}
+    bool WasResultSuccessful() const {return result==RC_SUCCESS || result==RC_DNS_ALREADY_SET || result==RC_NO_CHANGE;}
+    char *GetMyPublicIP() const {return (char*) myIPStr;} // We get our public IP as part of the process. This is valid once completed
 
 protected:
-    void Stop(void);
+    void Stop();
     void SetCompleted(CrabNet::DynDnsResultCode _result, const char *_resultDescription) {Stop(); result=_result; resultDescription=_resultDescription;}
 
     enum ConnectPhase

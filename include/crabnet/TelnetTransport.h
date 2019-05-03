@@ -43,14 +43,14 @@ public:
     TelnetTransport();
     virtual ~TelnetTransport();
     bool Start(unsigned short port, bool serverMode);
-    void Stop(void);
+    void Stop();
     void Send( SystemAddress systemAddress, const char *data, ... );
     void CloseConnection( SystemAddress systemAddress );
     Packet* Receive( void );
     void DeallocatePacket( Packet *packet );
-    SystemAddress HasNewIncomingConnection(void);
-    SystemAddress HasLostConnection(void);
-    CommandParserInterface* GetCommandParser(void);
+    SystemAddress HasNewIncomingConnection();
+    SystemAddress HasLostConnection();
+    CommandParserInterface* GetCommandParser();
     void SetSendSuffix(const char *suffix);
     void SetSendPrefix(const char *prefix);
 protected:
@@ -64,7 +64,7 @@ protected:
     };
 
     TCPInterface *tcpInterface;
-    void AutoAllocate(void);
+    void AutoAllocate();
     bool ReassembleLine(TelnetTransport::TelnetClient* telnetClient, unsigned char c);
 
     // Crap this sucks but because windows telnet won't send line at a time, I have to reconstruct the lines at the server per player

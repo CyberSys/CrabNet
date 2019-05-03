@@ -184,13 +184,13 @@ namespace CrabNet
         /// \brief Get a list of running servers
         /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
         /// \sa RackspaceEventCallback::OnListServersResult()
-        void ListServers(void);
+        void ListServers();
 
         /// \brief Get a list of running servers, with extended details on each server
         /// \sa GetServerDetails()
         /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
         /// \sa RackspaceEventCallback::OnListServersWithDetailsResult()
-        void ListServersWithDetails(void);
+        void ListServersWithDetails();
 
         /// \brief Create a server
         /// \details Create a server with a given image (harddrive contents) and flavor (hardware configuration)
@@ -285,7 +285,7 @@ namespace CrabNet
         /// \brief List all flavors (hardware configs, primarily memory)
         /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
         /// \sa RackspaceEventCallback::OnListFlavorsResult()
-        void ListFlavors(void);
+        void ListFlavors();
 
         /// \brief Get extended details about a specific flavor
         /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
@@ -298,7 +298,7 @@ namespace CrabNet
         /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
         /// \sa RackspaceEventCallback::OnListImagesResult()
         /// \sa CreateImage()
-        void ListImages(void);
+        void ListImages();
 
         /// \brief Images a running server. This essentially copies the harddrive, and lets you start a server with the same harddrive contents later
         /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
@@ -325,12 +325,12 @@ namespace CrabNet
         /// \brief List IP groups
         /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
         /// \sa RackspaceEventCallback::OnListSharedIPGroupsResult()
-        void ListSharedIPGroups(void);
+        void ListSharedIPGroups();
 
         /// \brief List IP groups with extended details
         /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
         /// \sa RackspaceEventCallback::OnListSharedIPGroupsWithDetailsResult()
-        void ListSharedIPGroupsWithDetails(void);
+        void ListSharedIPGroupsWithDetails();
 
         // I don't know what this does
         void CreateSharedIPGroup(CrabNet::RakString name, CrabNet::RakString optionalServerId);
@@ -346,7 +346,7 @@ namespace CrabNet
         /// The callbacks are called in the order they are added
         void RemoveEventCallback(Rackspace2EventCallback *callback);
         /// \brief Removes all callbacks
-        void ClearEventCallbacks(void);
+        void ClearEventCallbacks();
 
         /// Call this anytime TCPInterface returns a packet
         void OnReceive(Packet *packet);

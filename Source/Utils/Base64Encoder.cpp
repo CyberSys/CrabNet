@@ -14,7 +14,7 @@
 
 const char *base64Map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-const char *Base64Map(void)
+const char *Base64Map()
 {
     return base64Map;
 }

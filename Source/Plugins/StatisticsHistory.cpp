@@ -69,7 +69,7 @@ StatisticsHistory::~StatisticsHistory()
     Clear();
 }
 void StatisticsHistory::SetDefaultTimeToTrack(Time defaultTimeToTrack) {timeToTrack = defaultTimeToTrack;}
-Time StatisticsHistory::GetDefaultTimeToTrack(void) const {return timeToTrack;}
+Time StatisticsHistory::GetDefaultTimeToTrack() const {return timeToTrack;}
 bool StatisticsHistory::AddObject(TrackedObjectData tod)
 {
     bool objectExists;
@@ -97,7 +97,7 @@ void StatisticsHistory::RemoveObjectAtIndex(unsigned int index)
     objects.RemoveAtIndex(index);
     delete to;
 }
-void StatisticsHistory::Clear(void)
+void StatisticsHistory::Clear()
 {
     for (unsigned int idx=0; idx < objects.Size(); idx++)
     {
@@ -105,7 +105,7 @@ void StatisticsHistory::Clear(void)
     }
     objects.Clear(false);
 }
-unsigned int StatisticsHistory::GetObjectCount(void) const {return objects.Size();}
+unsigned int StatisticsHistory::GetObjectCount() const {return objects.Size();}
 StatisticsHistory::TrackedObjectData * StatisticsHistory::GetObjectAtIndex(unsigned int index) const {return &objects[index]->trackedObjectData;}
 bool StatisticsHistory::AddValueByObjectID(uint64_t objectId, RakString key, SHValueType val, Time curTime, bool combineEqualTimes)
 {
@@ -286,18 +286,18 @@ void StatisticsHistory::TimeAndValueQueue::SetTimeToTrackValues(Time t)
 {
     timeToTrackValues = t;
 }
-Time StatisticsHistory::TimeAndValueQueue::GetTimeToTrackValues(void) const {return timeToTrackValues;}
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentSum(void) const {return recentSum;}
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentSumOfSquares(void) const {return recentSumOfSquares;}
-SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermSum(void) const {return longTermSum;}
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentAverage(void) const
+Time StatisticsHistory::TimeAndValueQueue::GetTimeToTrackValues() const {return timeToTrackValues;}
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentSum() const {return recentSum;}
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentSumOfSquares() const {return recentSumOfSquares;}
+SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermSum() const {return longTermSum;}
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentAverage() const
 {
     if (values.Size() > 0)
         return recentSum / (SHValueType) values.Size();
     else
         return 0;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentLowest(void) const
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentLowest() const
 {
     SHValueType out = SH_TYPE_MAX;
     for (unsigned int idx=0; idx < values.Size(); idx++)
@@ -307,7 +307,7 @@ SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentLowest(void) const
     }
     return out;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentHighest(void) const
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentHighest() const
 {
     SHValueType out = -SH_TYPE_MAX;
     for (unsigned int idx=0; idx < values.Size(); idx++)
@@ -317,7 +317,7 @@ SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentHighest(void) const
     }
     return out;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentStandardDeviation(void) const
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentStandardDeviation() const
 {
     if (values.Size()==0)
         return 0;
@@ -327,15 +327,15 @@ SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentStandardDeviation(voi
     SHValueType meanOfSquares = GetRecentSumOfSquares() / (SHValueType) values.Size();
     return meanOfSquares - squareOfMean;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermAverage(void) const
+SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermAverage() const
 {
     if (longTermCount == 0)
         return 0;
     return longTermSum / longTermCount;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermLowest(void) const {return longTermLowest;}
-SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermHighest(void) const {return longTermHighest;}
-Time StatisticsHistory::TimeAndValueQueue::GetTimeRange(void) const
+SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermLowest() const {return longTermLowest;}
+SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermHighest() const {return longTermHighest;}
+Time StatisticsHistory::TimeAndValueQueue::GetTimeRange() const
 {
     if (values.Size()<2)
         return 0;
@@ -716,7 +716,7 @@ void StatisticsHistoryPlugin::SetTrackConnections(bool _addNewConnections, int _
     removeLostConnections = _removeLostConnections;
     newConnectionsObjectType = _newConnectionsObjectType;
 }
-void StatisticsHistoryPlugin::Update(void)
+void StatisticsHistoryPlugin::Update()
 {
     DataStructures::List<SystemAddress> addresses;
     DataStructures::List<RakNetGUID> guids;

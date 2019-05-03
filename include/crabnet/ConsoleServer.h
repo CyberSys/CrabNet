@@ -60,7 +60,7 @@ public:
 
     /// \brief Call update to read packet sent from your TransportInterface.
     /// You should do this fairly frequently.
-    void Update(void);
+    void Update();
 
     /// \brief Sets a prompt to show when waiting for user input.
     /// \details Pass an empty string to clear the prompt

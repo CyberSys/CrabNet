@@ -229,7 +229,7 @@ void Table::Cell::SetByType(double numericValue, char *charValue, void *ptr, Col
     }
 }
 
-Table::ColumnType Table::Cell::EstimateColumnType(void) const
+Table::ColumnType Table::Cell::EstimateColumnType() const
 {
     if (c != nullptr)
     {

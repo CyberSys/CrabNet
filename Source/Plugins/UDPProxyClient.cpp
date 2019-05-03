@@ -104,7 +104,7 @@ bool UDPProxyClient::RequestForwarding(SystemAddress proxyCoordinator, SystemAdd
 
     return true;
 }
-void UDPProxyClient::Update(void)
+void UDPProxyClient::Update()
 {
     unsigned int idx1=0;
     while (idx1 < pingServerGroups.Size())
@@ -242,7 +242,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
     }
     return RR_CONTINUE_PROCESSING;
 }
-void UDPProxyClient::OnRakPeerShutdown(void)
+void UDPProxyClient::OnRakPeerShutdown()
 {
     Clear();
 }
@@ -274,7 +274,7 @@ void UDPProxyClient::OnPingServers(Packet *packet)
     pingServerGroups.Push(psg);
 }
 
-bool UDPProxyClient::PingServerGroup::AreAllServersPinged(void) const
+bool UDPProxyClient::PingServerGroup::AreAllServersPinged() const
 {
     unsigned int serversToPingIndex;
     for (serversToPingIndex=0; serversToPingIndex < serversToPing.Size(); serversToPingIndex++)
@@ -302,7 +302,7 @@ void UDPProxyClient::PingServerGroup::SendPingedServersToCoordinator(RakPeerInte
     }
     rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, coordinatorAddressForPings, false);
 }
-void UDPProxyClient::Clear(void)
+void UDPProxyClient::Clear()
 {
     for (unsigned int i=0; i < pingServerGroups.Size(); i++)
         delete pingServerGroups[i];

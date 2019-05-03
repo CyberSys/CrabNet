@@ -108,7 +108,7 @@ public:
     void RemoveCallback(FileListProgress *cb);
 
     /// \brief Removes all callbacks
-    void ClearCallbacks(void);
+    void ClearCallbacks();
 
     /// Returns all callbacks added with AddCallback()
     /// \param[out] callbacks The list is set to the list of callbacks
@@ -117,17 +117,17 @@ public:
     /// \internal For plugin handling
     virtual PluginReceiveResult OnReceive(Packet *packet);
     /// \internal For plugin handling
-    virtual void OnRakPeerShutdown(void);
+    virtual void OnRakPeerShutdown();
     /// \internal For plugin handling
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
     /// \internal For plugin handling
-    virtual void Update(void);
+    virtual void Update();
 
 protected:
     bool DecodeSetHeader(Packet *packet);
     bool DecodeFile(Packet *packet, bool fullFile);
 
-    void Clear(void);
+    void Clear();
 
     void OnReferencePush(Packet *packet, bool fullFile);
     void OnReferencePushAck(Packet *packet);
@@ -152,9 +152,9 @@ protected:
     {
         unsigned int refCount;
         SimpleMutex refCountMutex;
-        void DeleteThis(void);
-        void AddRef(void);
-        void Deref(void);
+        void DeleteThis();
+        void AddRef();
+        void Deref();
 
         SystemAddress systemAddress;
         unsigned short setId;

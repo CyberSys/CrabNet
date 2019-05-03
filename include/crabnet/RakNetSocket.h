@@ -141,13 +141,13 @@ public:
     inline void SetChromeInstance(_PP_Instance_ i) {chromeInstance=i;}
     inline void SetBoundAddressToLoopback(unsigned char ipVersion) {boundAddress.SetToLoopback(ipVersion);}
 
-    inline SystemAddress GetBoundAddress(void) const {return boundAddress;}
-    inline unsigned short GetRemotePortRakNetWasStartedOn(void) const {return remotePortRakNetWasStartedOn_PS3_PSP2;}
-    inline bool GetBlockingSocket(void) {return blockingSocket;}
-    inline unsigned int GetExtraSocketOptions(void) const {return extraSocketOptions;}
-    inline unsigned short GetSocketFamily(void) const {return socketFamily;}
-    inline _PP_Instance_ GetChromeInstance(void) const {return chromeInstance;}
-    inline unsigned int GetUserConnectionSocketIndex(void) const {
+    inline SystemAddress GetBoundAddress() const {return boundAddress;}
+    inline unsigned short GetRemotePortRakNetWasStartedOn() const {return remotePortRakNetWasStartedOn_PS3_PSP2;}
+    inline bool GetBlockingSocket() {return blockingSocket;}
+    inline unsigned int GetExtraSocketOptions() const {return extraSocketOptions;}
+    inline unsigned short GetSocketFamily() const {return socketFamily;}
+    inline _PP_Instance_ GetChromeInstance() const {return chromeInstance;}
+    inline unsigned int GetUserConnectionSocketIndex() const {
         RakAssert(userConnectionSocketIndex!=(unsigned int)-1);
         return userConnectionSocketIndex;}
 

@@ -68,7 +68,7 @@ namespace DataStructures
     {
     public:
         MLKeyRef(const templateType& input) : val(input) {}
-        const templateType &Get(void) const {return val;}
+        const templateType &Get() const {return val;}
         bool operator<( const templateType &right ) {return val < right;}
         bool operator>( const templateType &right ) {return val > right;}
         bool operator==( const templateType &right ) {return val == right;}
@@ -111,7 +111,7 @@ namespace DataStructures
         /// \brief Gets or removes and gets an element from the list, according to the same rules as Push().
         /// Ordered list is LIFO for the purposes of Pop and Peek.
         _DataType &Pop(const char *file=__FILE__, unsigned int line=__LINE__);
-        _DataType &Peek(void) const;
+        _DataType &Peek() const;
 
         /// \brief Same as Push(), except FIFO and LIFO are reversed.
         /// Ordered list still inserts in order.
@@ -120,7 +120,7 @@ namespace DataStructures
 
         /// \brief Same as Pop() and Peek(), except FIFO and LIFO are reversed.
         _DataType &PopOpposite(const char *file=__FILE__, unsigned int line=__LINE__);
-        _DataType &PeekOpposite(void) const;
+        _DataType &PeekOpposite() const;
 
         /// \brief Stack,Queue: Inserts at index indicated, elements are shifted.
         /// Ordered list: Inserts, position is ignored
@@ -150,10 +150,10 @@ namespace DataStructures
         void ForEach(void (*func)(_DataType &item));
 
         /// \brief Returns if the list is empty.
-        bool IsEmpty(void) const;
+        bool IsEmpty() const;
 
         /// \brief Returns the number of elements used in the list.
-        _IndexType GetSize(void) const;
+        _IndexType GetSize() const;
 
         /// \brief Empties the list. The list is not deallocated if it is small,
         /// unless \a deallocateSmallBlocks is true
@@ -168,7 +168,7 @@ namespace DataStructures
 
         /// \brief Reverses the elements in the list, and flips the sort order
         /// returned by GetSortOrder() if IsSorted() returns true at the time the function is called
-        void ReverseList(void);
+        void ReverseList();
 
         /// \brief Reallocates the list to a larger size.
         /// If \a size is smaller than the value returned by GetSize(), the call does nothing.
@@ -181,22 +181,22 @@ namespace DataStructures
 
         /// \brief Sets the list to be remembered as sorted.
         /// \details Optimization if the source is sorted already
-        void TagSorted(void);
+        void TagSorted();
 
         /// \brief Defaults to ascending.
         /// \details Used by Sort(), and by ML_ORDERED_LIST
         void SetSortOrder(bool ascending);
 
         /// \brief Returns true if ascending.
-        bool GetSortOrder(void) const;
+        bool GetSortOrder() const;
 
         /// \brief Returns true if the list is currently believed to be in a sorted state.
         /// \details Doesn't actually check for sortedness, just if Sort()
         /// was recently called, or MultilistType is ML_ORDERED_LIST
-        bool IsSorted(void) const;
+        bool IsSorted() const;
 
         /// Returns what type of list this is
-        MultilistType GetMultilistType(void) const;
+        MultilistType GetMultilistType() const;
 
         /// \brief Changes what type of list this is.
         /// \pre Template must be defined with ML_VARIABLE_DURING_RUNTIME for this to do anything
@@ -216,7 +216,7 @@ namespace DataStructures
         void ReallocateIfNeeded();
         void DeallocateIfNeeded();
         void ReallocToSize(_IndexType newAllocationSize);
-        void ReverseListInternal(void);
+        void ReverseListInternal();
         void InsertInOrderedList(const _DataType &d, const _KeyType &key);
         _IndexType GetIndexFromKeyInSortedList(const _KeyType &key, bool *objectExists) const;
         void InsertShiftArrayRight(const _DataType &d, _IndexType index);
@@ -417,7 +417,7 @@ namespace DataStructures
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    _DataType &Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::Peek(void) const
+    _DataType &Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::Peek() const
     {
         RakAssert(IsEmpty()==false);
         if (GetMultilistType()==ML_UNORDERED_LIST || GetMultilistType()==ML_STACK || GetMultilistType()==ML_ORDERED_LIST)
@@ -516,7 +516,7 @@ namespace DataStructures
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    _DataType &Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::PeekOpposite(void) const
+    _DataType &Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::PeekOpposite() const
     {
         RakAssert(IsEmpty()==false);
         if (GetMultilistType()==ML_UNORDERED_LIST || GetMultilistType()==ML_STACK || GetMultilistType()==ML_ORDERED_LIST)
@@ -764,13 +764,13 @@ namespace DataStructures
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::IsEmpty(void) const
+    bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::IsEmpty() const
     {
         return dataSize==0;
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    _IndexType Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetSize(void) const
+    _IndexType Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetSize() const
     {
         return dataSize;
     }
@@ -819,7 +819,7 @@ namespace DataStructures
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::ReverseList(void)
+    void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::ReverseList()
     {
         if (IsSorted())
             ascendingSort=!ascendingSort;
@@ -857,7 +857,7 @@ namespace DataStructures
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::TagSorted(void)
+    void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::TagSorted()
     {
         if (ascendingSort)
             sortState=ML_SORTED_ASCENDING;
@@ -975,19 +975,19 @@ namespace DataStructures
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetSortOrder(void) const
+    bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetSortOrder() const
     {
         return ascendingSort;
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::IsSorted(void) const
+    bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::IsSorted() const
     {
         return GetMultilistType()==ML_ORDERED_LIST || sortState!=ML_UNSORTED;
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    MultilistType Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetMultilistType(void) const
+    MultilistType Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetMultilistType() const
     {
         if (_MultilistType==ML_VARIABLE_DURING_RUNTIME)
             return variableMultilistType;
@@ -1196,7 +1196,7 @@ namespace DataStructures
     }
 
     template <const MultilistType _MultilistType, class _DataType, class _KeyType, class _IndexType>
-    void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::ReverseListInternal(void)
+    void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::ReverseListInternal()
     {
         _DataType temp;
         _IndexType i;
@@ -1326,7 +1326,7 @@ struct KeyAndValue
 
 DEFINE_MULTILIST_PTR_TO_MEMBER_COMPARISONS(KeyAndValue,int,key)
 
-void MultilistUnitTest(void)
+void MultilistUnitTest()
 {
     DataStructures::DefaultIndexType oldSize;
     DataStructures::Multilist<ML_UNORDERED_LIST, int> ml1;

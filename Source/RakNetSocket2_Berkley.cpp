@@ -20,7 +20,7 @@
 #include "Itoa.h"
 #include "Utils/LinuxStrings.h"
 
-void RNS2_Berkley::SetSocketOptions(void)
+void RNS2_Berkley::SetSocketOptions()
 {
     int r;
     // This doubles the max throughput rate

@@ -39,11 +39,11 @@ public:
         unsigned short dataWriteOffset;
     };
 
-    static SendToThreadBlock* AllocateBlock(void);
+    static SendToThreadBlock* AllocateBlock();
     static void ProcessBlock(SendToThreadBlock* threadedSend);
 
-    static void AddRef(void);
-    static void Deref(void);
+    static void AddRef();
+    static void Deref();
     static DataStructures::ThreadsafeAllocatingQueue<SendToThreadBlock> objectQueue;
 protected:
     static int refCount;

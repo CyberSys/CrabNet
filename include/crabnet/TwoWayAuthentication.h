@@ -85,14 +85,14 @@ public:
     bool Challenge(CrabNet::RakString identifier, AddressOrGUID remoteSystem);
 
     /// \brief Free all memory
-    void Clear(void);
+    void Clear();
 
     /// \internal
-    virtual void Update(void);
+    virtual void Update();
     /// \internal
     virtual PluginReceiveResult OnReceive(Packet *packet);
     /// \internal
-    virtual void OnRakPeerShutdown(void);
+    virtual void OnRakPeerShutdown();
     /// \internal
     virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
@@ -123,7 +123,7 @@ public:
         void GetNonce(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], unsigned short *requestId, CrabNet::AddressOrGUID remoteSystem);
         void GenerateNonce(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH]);
         bool GetNonceById(char nonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH], unsigned short requestId, CrabNet::AddressOrGUID remoteSystem, bool popIfFound);
-        void Clear(void);
+        void Clear();
         void ClearByAddress(CrabNet::AddressOrGUID remoteSystem);
         void Update(CrabNet::Time curTime);
 
