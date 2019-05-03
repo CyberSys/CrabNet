@@ -59,9 +59,9 @@ protected:
 template <class structureType>
 void ThreadsafeAllocatingQueue<structureType>::Push(structureType *s)
 {
-    queueMutex.Lock();
+    queueMutex.lock();
     queue.Push(s);
-    queueMutex.Unlock();
+    queueMutex.unlock();
 }
 
 template <class structureType>
@@ -70,12 +70,12 @@ structureType *ThreadsafeAllocatingQueue<structureType>::PopInaccurate()
     structureType *s;
     if (queue.IsEmpty())
         return 0;
-    queueMutex.Lock();
+    queueMutex.lock();
     if (queue.IsEmpty()==false)
         s=queue.Pop();
     else
         s=0;
-    queueMutex.Unlock();
+    queueMutex.unlock();
     return s;
 }
 
@@ -83,14 +83,14 @@ template <class structureType>
 structureType *ThreadsafeAllocatingQueue<structureType>::Pop()
 {
     structureType *s;
-    queueMutex.Lock();
+    queueMutex.lock();
     if (queue.IsEmpty())
     {
-        queueMutex.Unlock();
+        queueMutex.unlock();
         return 0;
     }
     s=queue.Pop();
-    queueMutex.Unlock();
+    queueMutex.unlock();
     return s;
 }
 
@@ -98,9 +98,9 @@ template <class structureType>
 structureType *ThreadsafeAllocatingQueue<structureType>::Allocate()
 {
     structureType *s;
-    memoryPoolMutex.Lock();
+    memoryPoolMutex.lock();
     s=memoryPool.Allocate();
-    memoryPoolMutex.Unlock();
+    memoryPoolMutex.unlock();
     // Call new operator, memoryPool doesn't do this
     s = new ((void*)s) structureType;
     return s;
@@ -110,25 +110,25 @@ void ThreadsafeAllocatingQueue<structureType>::Deallocate(structureType *s)
 {
     // Call delete operator, memory pool doesn't do this
     s->~structureType();
-    memoryPoolMutex.Lock();
+    memoryPoolMutex.lock();
     memoryPool.Release(s);
-    memoryPoolMutex.Unlock();
+    memoryPoolMutex.unlock();
 }
 
 template <class structureType>
 void ThreadsafeAllocatingQueue<structureType>::Clear()
 {
-    memoryPoolMutex.Lock();
+    memoryPoolMutex.lock();
     for (unsigned int i=0; i < queue.Size(); i++)
     {
         queue[i]->~structureType();
         memoryPool.Release(queue[i]);
     }
     queue.Clear();
-    memoryPoolMutex.Unlock();
-    memoryPoolMutex.Lock();
+    memoryPoolMutex.unlock();
+    memoryPoolMutex.lock();
     memoryPool.Clear();
-    memoryPoolMutex.Unlock();
+    memoryPoolMutex.unlock();
 }
 
 template <class structureType>
@@ -141,9 +141,9 @@ template <class structureType>
 bool ThreadsafeAllocatingQueue<structureType>::IsEmpty()
 {
     bool isEmpty;
-    queueMutex.Lock();
+    queueMutex.lock();
     isEmpty=queue.IsEmpty();
-    queueMutex.Unlock();
+    queueMutex.unlock();
     return isEmpty;
 }
 
@@ -151,27 +151,27 @@ template <class structureType>
 structureType * ThreadsafeAllocatingQueue<structureType>::operator[] ( unsigned int position )
 {
     structureType *s;
-    queueMutex.Lock();
+    queueMutex.lock();
     s=queue[position];
-    queueMutex.Unlock();
+    queueMutex.unlock();
     return s;
 }
 
 template <class structureType>
 void ThreadsafeAllocatingQueue<structureType>::RemoveAtIndex( unsigned int position )
 {
-    queueMutex.Lock();
+    queueMutex.lock();
     queue.RemoveAtIndex(position);
-    queueMutex.Unlock();
+    queueMutex.unlock();
 }
 
 template <class structureType>
 unsigned int ThreadsafeAllocatingQueue<structureType>::Size( void )
 {
     unsigned int s;
-    queueMutex.Lock();
+    queueMutex.lock();
     s=queue.Size();
-    queueMutex.Unlock();
+    queueMutex.unlock();
     return s;
 }
 

@@ -236,10 +236,10 @@ void TCPInterface::Stop()
     }
 
     // Abort waiting connect calls
-    blockingSocketListMutex.Lock();
+    blockingSocketListMutex.lock();
     for (unsigned int i = 0; i < blockingSocketList.Size(); i++)
         closesocket__(blockingSocketList[i]);
-    blockingSocketListMutex.Unlock();
+    blockingSocketListMutex.unlock();
 
     // Wait for the thread to stop
     while (threadRunning > 0)
@@ -296,14 +296,14 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
     for (newRemoteClientIndex = 0; newRemoteClientIndex < remoteClientsLength; newRemoteClientIndex++)
     {
         auto &newRemoteClient = remoteClients[newRemoteClientIndex];
-        newRemoteClient.isActiveMutex.Lock();
+        newRemoteClient.isActiveMutex.lock();
         if (!remoteClients[newRemoteClientIndex].isActive)
         {
             newRemoteClient.SetActive(true);
-            newRemoteClient.isActiveMutex.Unlock();
+            newRemoteClient.isActiveMutex.unlock();
             break;
         }
-        newRemoteClient.isActiveMutex.Unlock();
+        newRemoteClient.isActiveMutex.unlock();
     }
 
     /*if (newRemoteClientIndex == -1)
@@ -322,13 +322,13 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
         __TCPSOCKET__ sockfd = SocketConnect(buffout, remotePort, socketFamily, bindAddress);
         if (sockfd == 0)
         {
-            newRemoteClient.isActiveMutex.Lock();
+            newRemoteClient.isActiveMutex.lock();
             newRemoteClient.SetActive(false);
-            newRemoteClient.isActiveMutex.Unlock();
+            newRemoteClient.isActiveMutex.unlock();
 
-            failedConnectionAttemptMutex.Lock();
+            failedConnectionAttemptMutex.lock();
             failedConnectionAttempts.Push(systemAddress);
-            failedConnectionAttemptMutex.Unlock();
+            failedConnectionAttemptMutex.unlock();
 
             return UNASSIGNED_SYSTEM_ADDRESS;
         }
@@ -336,9 +336,9 @@ TCPInterface::Connect(const char *host, unsigned short remotePort, bool block, u
         newRemoteClient.socket = sockfd;
         newRemoteClient.systemAddress = systemAddress;
 
-        completedConnectionAttemptMutex.Lock();
+        completedConnectionAttemptMutex.lock();
         completedConnectionAttempts.Push(newRemoteClient.systemAddress);
-        completedConnectionAttemptMutex.Unlock();
+        completedConnectionAttemptMutex.unlock();
 
         return newRemoteClient.systemAddress;
     }
@@ -531,22 +531,22 @@ void TCPInterface::CloseConnection(SystemAddress systemAddress)
     if (systemAddress.systemIndex < remoteClientsLength &&
         remoteClients[systemAddress.systemIndex].systemAddress == systemAddress)
     {
-        remoteClients[systemAddress.systemIndex].isActiveMutex.Lock();
+        remoteClients[systemAddress.systemIndex].isActiveMutex.lock();
         remoteClients[systemAddress.systemIndex].SetActive(false);
-        remoteClients[systemAddress.systemIndex].isActiveMutex.Unlock();
+        remoteClients[systemAddress.systemIndex].isActiveMutex.unlock();
     }
     else
     {
         for (int i = 0; i < remoteClientsLength; i++)
         {
-            remoteClients[i].isActiveMutex.Lock();
+            remoteClients[i].isActiveMutex.lock();
             if (remoteClients[i].isActive && remoteClients[i].systemAddress == systemAddress)
             {
                 remoteClients[systemAddress.systemIndex].SetActive(false);
-                remoteClients[i].isActiveMutex.Unlock();
+                remoteClients[i].isActiveMutex.unlock();
                 break;
             }
-            remoteClients[i].isActiveMutex.Unlock();
+            remoteClients[i].isActiveMutex.unlock();
         }
     }
 
@@ -604,10 +604,10 @@ bool TCPInterface::WasStarted() const
 SystemAddress TCPInterface::HasCompletedConnectionAttempt()
 {
     SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
-    completedConnectionAttemptMutex.Lock();
+    completedConnectionAttemptMutex.lock();
     if (!completedConnectionAttempts.IsEmpty())
         sysAddr = completedConnectionAttempts.Pop();
-    completedConnectionAttemptMutex.Unlock();
+    completedConnectionAttemptMutex.unlock();
 
     if (sysAddr != UNASSIGNED_SYSTEM_ADDRESS)
     {
@@ -622,10 +622,10 @@ SystemAddress TCPInterface::HasCompletedConnectionAttempt()
 SystemAddress TCPInterface::HasFailedConnectionAttempt()
 {
     SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
-    failedConnectionAttemptMutex.Lock();
+    failedConnectionAttemptMutex.lock();
     if (!failedConnectionAttempts.IsEmpty())
         sysAddr = failedConnectionAttempts.Pop();
-    failedConnectionAttemptMutex.Unlock();
+    failedConnectionAttemptMutex.unlock();
 
     if (sysAddr != UNASSIGNED_SYSTEM_ADDRESS)
     {
@@ -711,9 +711,9 @@ unsigned int TCPInterface::GetOutgoingDataBufferSize(SystemAddress systemAddress
         remoteClients[systemAddress.systemIndex].isActive &&
         remoteClients[systemAddress.systemIndex].systemAddress == systemAddress)
     {
-        remoteClients[systemAddress.systemIndex].outgoingDataMutex.Lock();
+        remoteClients[systemAddress.systemIndex].outgoingDataMutex.lock();
         bytesWritten = remoteClients[systemAddress.systemIndex].outgoingData.GetBytesWritten();
-        remoteClients[systemAddress.systemIndex].outgoingDataMutex.Unlock();
+        remoteClients[systemAddress.systemIndex].outgoingDataMutex.unlock();
         return bytesWritten;
     }
 
@@ -721,9 +721,9 @@ unsigned int TCPInterface::GetOutgoingDataBufferSize(SystemAddress systemAddress
     {
         if (remoteClients[i].isActive && remoteClients[i].systemAddress == systemAddress)
         {
-            remoteClients[i].outgoingDataMutex.Lock();
+            remoteClients[i].outgoingDataMutex.lock();
             bytesWritten += remoteClients[i].outgoingData.GetBytesWritten();
-            remoteClients[i].outgoingDataMutex.Unlock();
+            remoteClients[i].outgoingDataMutex.unlock();
         }
     }
     return bytesWritten;
@@ -764,9 +764,9 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char *host, unsigned short remot
 
 
     memcpy((char *) &serverAddress.sin_addr.s_addr, (char *) server->h_addr, server->h_length);
-    blockingSocketListMutex.Lock();
+    blockingSocketListMutex.lock();
     blockingSocketList.Insert(sockfd);
-    blockingSocketListMutex.Unlock();
+    blockingSocketListMutex.unlock();
 
     // This is blocking
     int connectResult = connect__(sockfd, (struct sockaddr *) &serverAddress, sizeof(struct sockaddr));
@@ -790,11 +790,11 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char *host, unsigned short remot
 
     if (connectResult == -1)
     {
-        blockingSocketListMutex.Lock();
+        blockingSocketListMutex.lock();
         unsigned sockfdIndex = blockingSocketList.GetIndexOf(sockfd);
         if (sockfdIndex != (unsigned) -1)
             blockingSocketList.RemoveAtIndexFast(sockfdIndex);
-        blockingSocketListMutex.Unlock();
+        blockingSocketListMutex.unlock();
 
         closesocket__(sockfd);
         return 0;
@@ -820,13 +820,13 @@ RAK_THREAD_DECLARATION(CrabNet::ConnectionAttemptLoop)
     delete s;
     if (sockfd == 0)
     {
-        tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
+        tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.lock();
         tcpInterface->remoteClients[newRemoteClientIndex].SetActive(false);
-        tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
+        tcpInterface->remoteClients[newRemoteClientIndex].isActiveMutex.unlock();
 
-        tcpInterface->failedConnectionAttemptMutex.Lock();
+        tcpInterface->failedConnectionAttemptMutex.lock();
         tcpInterface->failedConnectionAttempts.Push(systemAddress);
-        tcpInterface->failedConnectionAttemptMutex.Unlock();
+        tcpInterface->failedConnectionAttemptMutex.unlock();
         return 0;
     }
 
@@ -836,9 +836,9 @@ RAK_THREAD_DECLARATION(CrabNet::ConnectionAttemptLoop)
     // Notify user that the connection attempt has completed.
     if (tcpInterface->threadRunning > 0)
     {
-        tcpInterface->completedConnectionAttemptMutex.Lock();
+        tcpInterface->completedConnectionAttemptMutex.lock();
         tcpInterface->completedConnectionAttempts.Push(systemAddress);
-        tcpInterface->completedConnectionAttemptMutex.Unlock();
+        tcpInterface->completedConnectionAttemptMutex.unlock();
     }
     return 0;
 
@@ -920,7 +920,7 @@ RAK_THREAD_DECLARATION(CrabNet::UpdateTCPInterfaceLoop)
 
             for (unsigned int i = 0; i < (unsigned int) sts->remoteClientsLength; i++)
             {
-                sts->remoteClients[i].isActiveMutex.Lock();
+                sts->remoteClients[i].isActiveMutex.lock();
                 if (sts->remoteClients[i].isActive)
                 {
                     // calling FD_ISSET with -1 as socket (that�s what 0 is set to) produces a bus error under Linux 64-Bit
@@ -935,7 +935,7 @@ RAK_THREAD_DECLARATION(CrabNet::UpdateTCPInterfaceLoop)
                             largestDescriptor = socketCopy;
                     }
                 }
-                sts->remoteClients[i].isActiveMutex.Unlock();
+                sts->remoteClients[i].isActiveMutex.unlock();
             }
 
 #ifdef _MSC_VER
@@ -955,7 +955,7 @@ RAK_THREAD_DECLARATION(CrabNet::UpdateTCPInterfaceLoop)
                     for (newRemoteClientIndex = 0; newRemoteClientIndex < sts->remoteClientsLength; newRemoteClientIndex++)
                     {
                         auto &newRemoteClient = sts->remoteClients[newRemoteClientIndex];
-                        newRemoteClient.isActiveMutex.Lock();
+                        newRemoteClient.isActiveMutex.lock();
                         if (!newRemoteClient.isActive)
                         {
                             newRemoteClient.socket = newSock;
@@ -978,7 +978,7 @@ RAK_THREAD_DECLARATION(CrabNet::UpdateTCPInterfaceLoop)
 
 #endif // #if CRABNET_SUPPORT_IPV6!=1
                             newRemoteClient.SetActive(true);
-                            newRemoteClient.isActiveMutex.Unlock();
+                            newRemoteClient.isActiveMutex.unlock();
 
                             SystemAddress *newConnectionSystemAddress = sts->newIncomingConnections.Allocate();
                             *newConnectionSystemAddress = newRemoteClient.systemAddress;
@@ -986,7 +986,7 @@ RAK_THREAD_DECLARATION(CrabNet::UpdateTCPInterfaceLoop)
 
                             break;
                         }
-                        newRemoteClient.isActiveMutex.Unlock();
+                        newRemoteClient.isActiveMutex.unlock();
                     }
                     /*if (newRemoteClientIndex == -1)
                         closesocket__(sts->listenSocket);*/
@@ -1027,9 +1027,9 @@ RAK_THREAD_DECLARATION(CrabNet::UpdateTCPInterfaceLoop)
                     SystemAddress *lostConnectionSystemAddress = sts->lostConnections.Allocate();
                     *lostConnectionSystemAddress = sts->remoteClients[i].systemAddress;
                     sts->lostConnections.Push(lostConnectionSystemAddress);
-                    sts->remoteClients[i].isActiveMutex.Lock();
+                    sts->remoteClients[i].isActiveMutex.lock();
                     sts->remoteClients[i].SetActive(false);
-                    sts->remoteClients[i].isActiveMutex.Unlock();
+                    sts->remoteClients[i].isActiveMutex.unlock();
                 }
                 else
                 {
@@ -1058,16 +1058,16 @@ RAK_THREAD_DECLARATION(CrabNet::UpdateTCPInterfaceLoop)
                             SystemAddress *lostConnectionSystemAddress = sts->lostConnections.Allocate();
                             *lostConnectionSystemAddress = sts->remoteClients[i].systemAddress;
                             sts->lostConnections.Push(lostConnectionSystemAddress);
-                            sts->remoteClients[i].isActiveMutex.Lock();
+                            sts->remoteClients[i].isActiveMutex.lock();
                             sts->remoteClients[i].SetActive(false);
-                            sts->remoteClients[i].isActiveMutex.Unlock();
+                            sts->remoteClients[i].isActiveMutex.unlock();
                             continue;
                         }
                     }
                     if (FD_ISSET(socketCopy, &writeFD))
                     {
                         RemoteClient *rc = &sts->remoteClients[i];
-                        rc->outgoingDataMutex.Lock();
+                        rc->outgoingDataMutex.lock();
                         unsigned int bytesInBuffer = rc->outgoingData.GetBytesWritten();
                         if (bytesInBuffer > 0)
                         {
@@ -1086,7 +1086,7 @@ RAK_THREAD_DECLARATION(CrabNet::UpdateTCPInterfaceLoop)
                             if (bytesSent > 0)
                                 rc->outgoingData.IncrementReadOffset(bytesSent);
                         }
-                        rc->outgoingDataMutex.Unlock();
+                        rc->outgoingDataMutex.unlock();
                     }
 
                     i++; // Nothing deleted so increment the index
@@ -1129,23 +1129,23 @@ void RemoteClient::SendOrBuffer(const char **data, const unsigned int *lengths, 
         return;
     for (int parameterIndex = 0; parameterIndex < numParameters; parameterIndex++)
     {
-        outgoingDataMutex.Lock();
+        outgoingDataMutex.lock();
         if (ALLOW_SEND_FROM_USER_THREAD && outgoingData.GetBytesWritten() == 0)
         {
-            outgoingDataMutex.Unlock();
+            outgoingDataMutex.unlock();
             int bytesSent = Send(data[parameterIndex], lengths[parameterIndex]);
             if (bytesSent < (int) lengths[parameterIndex])
             {
                 // Push remainder
-                outgoingDataMutex.Lock();
+                outgoingDataMutex.lock();
                 outgoingData.WriteBytes(data[parameterIndex] + bytesSent, lengths[parameterIndex] - bytesSent);
-                outgoingDataMutex.Unlock();
+                outgoingDataMutex.unlock();
             }
         }
         else
         {
             outgoingData.WriteBytes(data[parameterIndex], lengths[parameterIndex]);
-            outgoingDataMutex.Unlock();
+            outgoingDataMutex.unlock();
         }
     }
 }

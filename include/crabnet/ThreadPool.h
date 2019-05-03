@@ -237,9 +237,9 @@ void* WorkerThread( void* arguments )
         perThreadData=0;
 
     // Increase numThreadsRunning
-    threadPool->numThreadsRunningMutex.Lock();
+    threadPool->numThreadsRunningMutex.lock();
     ++threadPool->numThreadsRunning;
-    threadPool->numThreadsRunningMutex.Unlock();
+    threadPool->numThreadsRunningMutex.unlock();
 
     while (1)
     {
@@ -253,48 +253,48 @@ void* WorkerThread( void* arguments )
 //             RakSleep(30);
 // #endif
 
-        threadPool->runThreadsMutex.Lock();
+        threadPool->runThreadsMutex.lock();
         if (threadPool->runThreads==false)
         {
-            threadPool->runThreadsMutex.Unlock();
+            threadPool->runThreadsMutex.unlock();
             break;
         }
-        threadPool->runThreadsMutex.Unlock();
+        threadPool->runThreadsMutex.unlock();
 
-        threadPool->workingThreadCountMutex.Lock();
+        threadPool->workingThreadCountMutex.lock();
         ++threadPool->numThreadsWorking;
-        threadPool->workingThreadCountMutex.Unlock();
+        threadPool->workingThreadCountMutex.unlock();
 
         // Read input data
         userCallback=0;
-        threadPool->inputQueueMutex.Lock();
+        threadPool->inputQueueMutex.lock();
         if (threadPool->inputFunctionQueue.Size())
         {
             userCallback=threadPool->inputFunctionQueue.Pop();
             inputData=threadPool->inputQueue.Pop();
         }
-        threadPool->inputQueueMutex.Unlock();
+        threadPool->inputQueueMutex.unlock();
 
         if (userCallback)
         {
             callbackOutput=userCallback(inputData, &returnOutput,perThreadData);
             if (returnOutput)
             {
-                threadPool->outputQueueMutex.Lock();
+                threadPool->outputQueueMutex.lock();
                 threadPool->outputQueue.Push(callbackOutput);
-                threadPool->outputQueueMutex.Unlock();
+                threadPool->outputQueueMutex.unlock();
             }
         }
 
-        threadPool->workingThreadCountMutex.Lock();
+        threadPool->workingThreadCountMutex.lock();
         --threadPool->numThreadsWorking;
-        threadPool->workingThreadCountMutex.Unlock();
+        threadPool->workingThreadCountMutex.unlock();
     }
 
     // Decrease numThreadsRunning
-    threadPool->numThreadsRunningMutex.Lock();
+    threadPool->numThreadsRunningMutex.lock();
     --threadPool->numThreadsRunning;
-    threadPool->numThreadsRunningMutex.Unlock();
+    threadPool->numThreadsRunningMutex.unlock();
 
     if (threadPool->perThreadDataDestructor)
         threadPool->perThreadDataDestructor(perThreadData);
@@ -329,21 +329,21 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
 //     runtime = CrabNet::RakThread::AllocRuntime(numThreads);
 // #endif
 
-    runThreadsMutex.Lock();
+    runThreadsMutex.lock();
     if (runThreads==true)
     {
         // Already running
-        runThreadsMutex.Unlock();
+        runThreadsMutex.unlock();
         return false;
     }
-    runThreadsMutex.Unlock();
+    runThreadsMutex.unlock();
 
     perThreadDataFactory=_perThreadDataFactory;
     perThreadDataDestructor=_perThreadDataDestructor;
 
-    runThreadsMutex.Lock();
+    runThreadsMutex.lock();
     runThreads=true;
-    runThreadsMutex.Unlock();
+    runThreadsMutex.unlock();
 
     numThreadsWorking=0;
     unsigned threadId = 0;
@@ -369,10 +369,10 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
     while (done==false)
     {
         RakSleep(50);
-        numThreadsRunningMutex.Lock();
+        numThreadsRunningMutex.lock();
         if (numThreadsRunning==numThreads)
             done=true;
-        numThreadsRunningMutex.Unlock();
+        numThreadsRunningMutex.unlock();
     }
 
     return true;
@@ -386,15 +386,15 @@ void ThreadPool<InputType, OutputType>::SetThreadDataInterface(ThreadDataInterfa
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::StopThreads()
 {
-    runThreadsMutex.Lock();
+    runThreadsMutex.lock();
     if (runThreads==false)
     {
-        runThreadsMutex.Unlock();
+        runThreadsMutex.unlock();
         return;
     }
 
     runThreads=false;
-    runThreadsMutex.Unlock();
+    runThreadsMutex.unlock();
 
     // Wait for number of threads running to decrease to 0
     bool done=false;
@@ -403,10 +403,10 @@ void ThreadPool<InputType, OutputType>::StopThreads()
         quitAndIncomingDataEvents.SetEvent();
 
         RakSleep(50);
-        numThreadsRunningMutex.Lock();
+        numThreadsRunningMutex.lock();
         if (numThreadsRunning==0)
             done=true;
-        numThreadsRunningMutex.Unlock();
+        numThreadsRunningMutex.unlock();
     }
 
     quitAndIncomingDataEvents.CloseEvent();
@@ -420,19 +420,19 @@ void ThreadPool<InputType, OutputType>::StopThreads()
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddInput(OutputType (*workerThreadCallback)(InputType, bool *returnOutput, void* perThreadData), InputType inputData)
 {
-    inputQueueMutex.Lock();
+    inputQueueMutex.lock();
     inputQueue.Push(inputData);
     inputFunctionQueue.Push(workerThreadCallback);
-    inputQueueMutex.Unlock();
+    inputQueueMutex.unlock();
 
     quitAndIncomingDataEvents.SetEvent();
 }
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddOutput(OutputType outputData)
 {
-    outputQueueMutex.Lock();
+    outputQueueMutex.lock();
     outputQueue.Push(outputData);
-    outputQueueMutex.Unlock();
+    outputQueueMutex.unlock();
 }
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasOutputFast()
@@ -443,9 +443,9 @@ template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasOutput()
 {
     bool res;
-    outputQueueMutex.Lock();
+    outputQueueMutex.lock();
     res=outputQueue.IsEmpty()==false;
-    outputQueueMutex.Unlock();
+    outputQueueMutex.unlock();
     return res;
 }
 template <class InputType, class OutputType>
@@ -457,9 +457,9 @@ template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasInput()
 {
     bool res;
-    inputQueueMutex.Lock();
+    inputQueueMutex.lock();
     res=inputQueue.IsEmpty()==false;
-    inputQueueMutex.Unlock();
+    inputQueueMutex.unlock();
     return res;
 }
 template <class InputType, class OutputType>
@@ -467,26 +467,26 @@ OutputType ThreadPool<InputType, OutputType>::GetOutput()
 {
     // Real output check
     OutputType output;
-    outputQueueMutex.Lock();
+    outputQueueMutex.lock();
     output=outputQueue.Pop();
-    outputQueueMutex.Unlock();
+    outputQueueMutex.unlock();
     return output;
 }
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::Clear()
 {
-    runThreadsMutex.Lock();
+    runThreadsMutex.lock();
     if (runThreads)
     {
-        runThreadsMutex.Unlock();
-        inputQueueMutex.Lock();
+        runThreadsMutex.unlock();
+        inputQueueMutex.lock();
         inputFunctionQueue.Clear();
         inputQueue.Clear();
-        inputQueueMutex.Unlock();
+        inputQueueMutex.unlock();
 
-        outputQueueMutex.Lock();
+        outputQueueMutex.lock();
         outputQueue.Clear();
-        outputQueueMutex.Unlock();
+        outputQueueMutex.unlock();
     }
     else
     {
@@ -498,12 +498,12 @@ void ThreadPool<InputType, OutputType>::Clear()
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::LockInput()
 {
-    inputQueueMutex.Lock();
+    inputQueueMutex.lock();
 }
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::UnlockInput()
 {
-    inputQueueMutex.Unlock();
+    inputQueueMutex.unlock();
 }
 template <class InputType, class OutputType>
 unsigned ThreadPool<InputType, OutputType>::InputSize()
@@ -524,12 +524,12 @@ void ThreadPool<InputType, OutputType>::RemoveInputAtIndex(unsigned index)
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::LockOutput()
 {
-    outputQueueMutex.Lock();
+    outputQueueMutex.lock();
 }
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::UnlockOutput()
 {
-    outputQueueMutex.Unlock();
+    outputQueueMutex.unlock();
 }
 template <class InputType, class OutputType>
 unsigned ThreadPool<InputType, OutputType>::OutputSize()
@@ -562,9 +562,9 @@ template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::IsWorking()
 {
     bool isWorking;
-//    workingThreadCountMutex.Lock();
+//    workingThreadCountMutex.lock();
 //    isWorking=numThreadsWorking!=0;
-//    workingThreadCountMutex.Unlock();
+//    workingThreadCountMutex.unlock();
 
 //    if (isWorking)
 //        return true;
@@ -579,9 +579,9 @@ bool ThreadPool<InputType, OutputType>::IsWorking()
         return true;
 
     // Need to check is working again, in case the thread was between the first and second checks
-    workingThreadCountMutex.Lock();
+    workingThreadCountMutex.lock();
     isWorking=numThreadsWorking!=0;
-    workingThreadCountMutex.Unlock();
+    workingThreadCountMutex.unlock();
 
     return isWorking;
 }
@@ -596,9 +596,9 @@ template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::WasStarted()
 {
     bool b;
-    runThreadsMutex.Lock();
+    runThreadsMutex.lock();
     b = runThreads;
-    runThreadsMutex.Unlock();
+    runThreadsMutex.unlock();
     return b;
 }
 template <class InputType, class OutputType>
@@ -607,7 +607,7 @@ bool ThreadPool<InputType, OutputType>::Pause()
     if (WasStarted()==false)
         return false;
 
-    workingThreadCountMutex.Lock();
+    workingThreadCountMutex.lock();
     while (numThreadsWorking>0)
     {
         RakSleep(30);
@@ -617,7 +617,7 @@ bool ThreadPool<InputType, OutputType>::Pause()
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::Resume()
 {
-    workingThreadCountMutex.Unlock();
+    workingThreadCountMutex.unlock();
 }
 
 #ifdef _MSC_VER

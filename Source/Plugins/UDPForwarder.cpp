@@ -156,7 +156,7 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source,
     while (true)
     {
         RakSleep(0);
-        startForwardingOutputMutex.Lock();
+        startForwardingOutputMutex.lock();
         for (unsigned int i = 0; i < startForwardingOutput.Size(); i++)
         {
             if (startForwardingOutput[i].inputId == inputId)
@@ -170,11 +170,11 @@ UDPForwarderResult UDPForwarder::StartForwarding(SystemAddress source,
                 }
                 UDPForwarderResult res = startForwardingOutput[i].result;
                 startForwardingOutput.RemoveAtIndex(i);
-                startForwardingOutputMutex.Unlock();
+                startForwardingOutputMutex.unlock();
                 return res;
             }
         }
-        startForwardingOutputMutex.Unlock();
+        startForwardingOutputMutex.unlock();
     }
 }
 void UDPForwarder::StopForwarding(SystemAddress source, SystemAddress destination)
@@ -474,9 +474,9 @@ void UDPForwarder::UpdateUDPForwarder()
 
         // Push result
         sfos.inputId = sfis->inputId;
-        startForwardingOutputMutex.Lock();
+        startForwardingOutputMutex.lock();
         startForwardingOutput.Push(sfos);
-        startForwardingOutputMutex.Unlock();
+        startForwardingOutputMutex.unlock();
 
         startForwardingInput.Deallocate(sfis);
     }

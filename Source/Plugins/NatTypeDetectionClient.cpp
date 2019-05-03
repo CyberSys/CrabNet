@@ -106,12 +106,12 @@ void NatTypeDetectionClient::Update()
     if (IsInProgress())
     {
         RNS2RecvStruct *recvStruct;
-        bufferedPacketsMutex.Lock();
+        bufferedPacketsMutex.lock();
         if (bufferedPackets.Size()>0)
             recvStruct=bufferedPackets.Pop();
         else
             recvStruct=0;
-        bufferedPacketsMutex.Unlock();
+        bufferedPacketsMutex.unlock();
         while (recvStruct)
         {
             if (recvStruct->bytesRead==1 && recvStruct->data[0]==NAT_TYPE_NONE)
@@ -121,12 +121,12 @@ void NatTypeDetectionClient::Update()
             }
             DeallocRNS2RecvStruct(recvStruct);
 
-            bufferedPacketsMutex.Lock();
+            bufferedPacketsMutex.lock();
             if (bufferedPackets.Size()>0)
                 recvStruct=bufferedPackets.Pop();
             else
                 recvStruct=0;
-            bufferedPacketsMutex.Unlock();
+            bufferedPacketsMutex.unlock();
         }
     }
 }
@@ -219,10 +219,10 @@ void NatTypeDetectionClient::Shutdown()
         c2=0;
     }
 
-    bufferedPacketsMutex.Lock();
+    bufferedPacketsMutex.lock();
     while (bufferedPackets.Size())
         delete bufferedPackets.Pop();
-    bufferedPacketsMutex.Unlock();
+    bufferedPacketsMutex.unlock();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -237,9 +237,9 @@ RNS2RecvStruct *NatTypeDetectionClient::AllocRNS2RecvStruct()
 }
 void NatTypeDetectionClient::OnRNS2Recv(RNS2RecvStruct *recvStruct)
 {
-    bufferedPacketsMutex.Lock();
+    bufferedPacketsMutex.lock();
     bufferedPackets.Push(recvStruct);
-    bufferedPacketsMutex.Unlock();
+    bufferedPacketsMutex.unlock();
 }
 
 #endif // _CRABNET_SUPPORT_*

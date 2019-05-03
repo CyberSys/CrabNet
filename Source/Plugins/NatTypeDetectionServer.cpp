@@ -114,10 +114,10 @@ void NatTypeDetectionServer::Shutdown()
         delete s4p5;
         s4p5=0;
     }
-    bufferedPacketsMutex.Lock();
+    bufferedPacketsMutex.lock();
     while (bufferedPackets.Size())
         delete bufferedPackets.Pop();
-    bufferedPacketsMutex.Unlock();
+    bufferedPacketsMutex.unlock();
 }
 void NatTypeDetectionServer::Update()
 {
@@ -127,12 +127,12 @@ void NatTypeDetectionServer::Update()
     SystemAddress boundAddress;
 
     RNS2RecvStruct *recvStruct;
-    bufferedPacketsMutex.Lock();
+    bufferedPacketsMutex.lock();
     if (bufferedPackets.Size()>0)
         recvStruct=bufferedPackets.Pop();
     else
         recvStruct=0;
-    bufferedPacketsMutex.Unlock();
+    bufferedPacketsMutex.unlock();
     while (recvStruct)
     {
         SystemAddress senderAddr = recvStruct->systemAddress;
@@ -187,12 +187,12 @@ void NatTypeDetectionServer::Update()
         }
 
         DeallocRNS2RecvStruct(recvStruct);
-        bufferedPacketsMutex.Lock();
+        bufferedPacketsMutex.lock();
         if (bufferedPackets.Size()>0)
             recvStruct=bufferedPackets.Pop();
         else
             recvStruct=0;
-        bufferedPacketsMutex.Unlock();
+        bufferedPacketsMutex.unlock();
     }
 
     /*
@@ -432,9 +432,9 @@ RNS2RecvStruct *NatTypeDetectionServer::AllocRNS2RecvStruct()
 
 void NatTypeDetectionServer::OnRNS2Recv(RNS2RecvStruct *recvStruct)
 {
-    bufferedPacketsMutex.Lock();
+    bufferedPacketsMutex.lock();
     bufferedPackets.Push(recvStruct);
-    bufferedPacketsMutex.Unlock();
+    bufferedPacketsMutex.unlock();
 }
 
 #endif // _CRABNET_SUPPORT_*

@@ -59,30 +59,30 @@ bool HTTPConnection2::TransmitRequest(const char* stringToTransmit, const char* 
 
     if (IsConnected(request->hostEstimatedAddress))
     {
-        sentRequestsMutex.Lock();
+        sentRequestsMutex.lock();
         if (sentRequests.Size()==0)
         {
             request->hostCompletedAddress=request->hostEstimatedAddress;
             sentRequests.Push(request);
-            sentRequestsMutex.Unlock();
+            sentRequestsMutex.unlock();
 
             SendRequest(request);
         }
         else
         {
             // Request pending, push it
-            pendingRequestsMutex.Lock();
+            pendingRequestsMutex.lock();
             pendingRequests.Push(request);
-            pendingRequestsMutex.Unlock();
+            pendingRequestsMutex.unlock();
 
-            sentRequestsMutex.Unlock();
+            sentRequestsMutex.unlock();
         }
     }
     else
     {
-        pendingRequestsMutex.Lock();
+        pendingRequestsMutex.lock();
         pendingRequests.Push(request);
-        pendingRequestsMutex.Unlock();
+        pendingRequestsMutex.unlock();
 
         if (ipVersion!=6)
         {
@@ -107,12 +107,12 @@ bool HTTPConnection2::GetResponse( RakString &stringTransmitted, RakString &host
 }
 bool HTTPConnection2::GetResponse( RakString &stringTransmitted, RakString &hostTransmitted, RakString &responseReceived, SystemAddress &hostReceived, int &contentOffset, void **userData )
 {
-    completedRequestsMutex.Lock();
+    completedRequestsMutex.lock();
     if (completedRequests.Size()>0)
     {
         Request *completedRequest = completedRequests[0];
         completedRequests.RemoveAtIndexFast(0);
-        completedRequestsMutex.Unlock();
+        completedRequestsMutex.unlock();
 
         responseReceived = completedRequest->stringReceived;
         hostReceived = completedRequest->hostCompletedAddress;
@@ -126,7 +126,7 @@ bool HTTPConnection2::GetResponse( RakString &stringTransmitted, RakString &host
     }
     else
     {
-        completedRequestsMutex.Unlock();
+        completedRequestsMutex.unlock();
     }
     return false;
 }
@@ -185,7 +185,7 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
     unsigned int i;
 
     bool locked=true;
-    sentRequestsMutex.Lock();
+    sentRequestsMutex.lock();
     for (i=0; i < sentRequests.Size(); i++)
     {
         Request *sentRequest = sentRequests[i];
@@ -193,7 +193,7 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
         {
             sentRequests.RemoveAtIndexFast(i);
             locked=false;
-            sentRequestsMutex.Unlock();
+            sentRequestsMutex.unlock();
 
             /*
             static FILE * pFile = 0;
@@ -231,7 +231,7 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
                 //printf((char*) packet->data);
 
                 locked=false;
-                sentRequestsMutex.Unlock();
+                sentRequestsMutex.unlock();
 
                 sentRequest->chunked = true;
                 char *chunkStrStart = strstr((char*) packet->data, "\r\n\r\n");
@@ -246,9 +246,9 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
                 if (sentRequest->thisChunkSize == 0)
                 {
                     // Done
-                    completedRequestsMutex.Lock();
+                    completedRequestsMutex.lock();
                     completedRequests.Push(sentRequest);
-                    completedRequestsMutex.Unlock();
+                    completedRequestsMutex.unlock();
 
                     // If there is another command waiting for this server, send it
                     SendPendingRequestToConnectedSystem(packet->systemAddress);
@@ -264,9 +264,9 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
                     if (sentRequest->thisChunkSize==0)
                     {
                         // Done
-                        completedRequestsMutex.Lock();
+                        completedRequestsMutex.lock();
                         completedRequests.Push(sentRequest);
-                        completedRequestsMutex.Unlock();
+                        completedRequestsMutex.unlock();
 
                         // If there is another command waiting for this server, send it
                         SendPendingRequestToConnectedSystem(packet->systemAddress);
@@ -274,9 +274,9 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
                     else
                     {
                         // Not done
-                        sentRequestsMutex.Lock();
+                        sentRequestsMutex.lock();
                         sentRequests.Push(sentRequest);
-                        sentRequestsMutex.Unlock();
+                        sentRequestsMutex.unlock();
                     }
                 }
             }
@@ -287,9 +287,9 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
                 if (sentRequest->thisChunkSize==0)
                 {
                     // Done
-                    completedRequestsMutex.Lock();
+                    completedRequestsMutex.lock();
                     completedRequests.Push(sentRequest);
-                    completedRequestsMutex.Unlock();
+                    completedRequestsMutex.unlock();
 
                     // If there is another command waiting for this server, send it
                     SendPendingRequestToConnectedSystem(packet->systemAddress);
@@ -297,9 +297,9 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
                 else
                 {
                     // Not done
-                    sentRequestsMutex.Lock();
+                    sentRequestsMutex.lock();
                     sentRequests.Push(sentRequest);
-                    sentRequestsMutex.Unlock();
+                    sentRequestsMutex.unlock();
                 }
 
             }
@@ -338,34 +338,34 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
                             if (slen >= (size_t) sentRequest->contentLength)
                             {
                                 sentRequest->contentOffset = body_header - sentRequest->stringReceived.C_String();
-                                completedRequestsMutex.Lock();
+                                completedRequestsMutex.lock();
                                 completedRequests.Push(sentRequest);
-                                completedRequestsMutex.Unlock();
+                                completedRequestsMutex.unlock();
 
                                 // If there is another command waiting for this server, send it
                                 SendPendingRequestToConnectedSystem(packet->systemAddress);
                             }
                             else
                             {
-                                sentRequestsMutex.Lock();
+                                sentRequestsMutex.lock();
                                 sentRequests.Push(sentRequest);
-                                sentRequestsMutex.Unlock();
+                                sentRequestsMutex.unlock();
                             }
                         }
 
                         else
                         {
-                            sentRequestsMutex.Lock();
+                            sentRequestsMutex.lock();
                             sentRequests.Push(sentRequest);
-                            sentRequestsMutex.Unlock();
+                            sentRequestsMutex.unlock();
                         }
                     }
                     else
                     {
                         sentRequest->contentOffset=-1;
-                        completedRequestsMutex.Lock();
+                        completedRequestsMutex.lock();
                         completedRequests.Push(sentRequest);
-                        completedRequestsMutex.Unlock();
+                        completedRequestsMutex.unlock();
 
                         // If there is another command waiting for this server, send it
                         SendPendingRequestToConnectedSystem(packet->systemAddress);
@@ -381,18 +381,18 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
                             sentRequest->contentOffset=-1;
                         else
                             sentRequest->contentOffset=offset+4;
-                        completedRequestsMutex.Lock();
+                        completedRequestsMutex.lock();
                         completedRequests.Push(sentRequest);
-                        completedRequestsMutex.Unlock();
+                        completedRequestsMutex.unlock();
 
                         // If there is another command waiting for this server, send it
                         SendPendingRequestToConnectedSystem(packet->systemAddress);
                     }
                     else
                     {
-                        sentRequestsMutex.Lock();
+                        sentRequestsMutex.lock();
                         sentRequests.Push(sentRequest);
-                        sentRequestsMutex.Unlock();
+                        sentRequestsMutex.unlock();
                     }
                 }
             }
@@ -403,7 +403,7 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet *packet)
     }
 
     if (locked==true)
-        sentRequestsMutex.Unlock();
+        sentRequestsMutex.unlock();
 
     return RR_CONTINUE_PROCESSING;
 }
@@ -425,7 +425,7 @@ void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa)
     // Search through requests to find a match for this instance of TCPInterface and SystemAddress
     unsigned int i;
     i=0;
-    pendingRequestsMutex.Lock();
+    pendingRequestsMutex.lock();
     while (i < pendingRequests.Size())
     {
         Request *request = pendingRequests[i];
@@ -435,11 +435,11 @@ void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa)
             // Send this request
             request->hostCompletedAddress=sa;
 
-            sentRequestsMutex.Lock();
+            sentRequestsMutex.lock();
             sentRequests.Push(request);
-            sentRequestsMutex.Unlock();
+            sentRequestsMutex.unlock();
 
-            pendingRequestsMutex.Unlock();
+            pendingRequestsMutex.unlock();
 
 #if OPEN_SSL_CLIENT_SUPPORT==1
             if (request->useSSL)
@@ -448,7 +448,7 @@ void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa)
 
             SendRequest(request);
             requestsSent++;
-            pendingRequestsMutex.Lock();
+            pendingRequestsMutex.lock();
             break;
         }
         else
@@ -456,11 +456,11 @@ void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa)
             i++;
         }
     }
-    pendingRequestsMutex.Unlock();
+    pendingRequestsMutex.unlock();
 
     if (requestsSent==0)
     {
-        pendingRequestsMutex.Lock();
+        pendingRequestsMutex.lock();
         if (pendingRequests.Size() > 0)
         {
             // Just assign
@@ -469,10 +469,10 @@ void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa)
 
             request->hostCompletedAddress=sa;
 
-            sentRequestsMutex.Lock();
+            sentRequestsMutex.lock();
             sentRequests.Push(request);
-            sentRequestsMutex.Unlock();
-            pendingRequestsMutex.Unlock();
+            sentRequestsMutex.unlock();
+            pendingRequestsMutex.unlock();
 
             // Send
 #if OPEN_SSL_CLIENT_SUPPORT==1
@@ -485,7 +485,7 @@ void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa)
         }
         else
         {
-            pendingRequestsMutex.Unlock();
+            pendingRequestsMutex.unlock();
         }
     }
 }
@@ -493,7 +493,7 @@ void HTTPConnection2::RemovePendingRequest(SystemAddress sa)
 {
     unsigned int i;
     i=0;
-    pendingRequestsMutex.Lock();
+    pendingRequestsMutex.lock();
     for (i=0; i < pendingRequests.Size(); i++)
     {
         Request *request = pendingRequests[i];
@@ -506,16 +506,16 @@ void HTTPConnection2::RemovePendingRequest(SystemAddress sa)
             i++;
     }
 
-    pendingRequestsMutex.Unlock();
+    pendingRequestsMutex.unlock();
 }
 void HTTPConnection2::SendNextPendingRequest()
 {
     // Send a pending request
-    pendingRequestsMutex.Lock();
+    pendingRequestsMutex.lock();
     if (pendingRequests.Size()>0)
     {
         Request *pendingRequest = pendingRequests.Peek();
-        pendingRequestsMutex.Unlock();
+        pendingRequestsMutex.unlock();
 
         if (pendingRequest->ipVersion!=6)
         {
@@ -532,7 +532,7 @@ void HTTPConnection2::SendNextPendingRequest()
     }
     else
     {
-        pendingRequestsMutex.Unlock();
+        pendingRequestsMutex.unlock();
     }
 }
 
@@ -557,7 +557,7 @@ void HTTPConnection2::OnClosedConnection(const SystemAddress &systemAddress, Rak
     // Update sent requests to completed requests
     unsigned int i;
     i=0;
-    sentRequestsMutex.Lock();
+    sentRequestsMutex.lock();
     while (i < sentRequests.Size())
     {
         if (sentRequests[i]->hostCompletedAddress==systemAddress)
@@ -585,10 +585,9 @@ void HTTPConnection2::OnClosedConnection(const SystemAddress &systemAddress, Rak
                 }
             }
 
-
-            completedRequestsMutex.Lock();
+            completedRequestsMutex.lock();
             completedRequests.Push(sentRequests[i]);
-            completedRequestsMutex.Unlock();
+            completedRequestsMutex.unlock();
 
             sentRequests.RemoveAtIndexFast(i);
         }
@@ -597,7 +596,7 @@ void HTTPConnection2::OnClosedConnection(const SystemAddress &systemAddress, Rak
             i++;
         }
     }
-    sentRequestsMutex.Unlock();
+    sentRequestsMutex.unlock();
 
     SendNextPendingRequest();
 }

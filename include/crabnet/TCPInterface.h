@@ -241,9 +241,9 @@ struct RemoteClient
 #endif
     void Reset()
     {
-        outgoingDataMutex.Lock();
+        outgoingDataMutex.lock();
         outgoingData.Clear();
-        outgoingDataMutex.Unlock();
+        outgoingDataMutex.unlock();
     }
     void SetActive(bool a);
     void SendOrBuffer(const char **data, const unsigned int *lengths, const int numParameters);

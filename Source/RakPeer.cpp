@@ -156,9 +156,9 @@ Packet *RakPeer::AllocPacket(unsigned dataSize)
 //     return p;
 
     CrabNet::Packet *p;
-    packetAllocationPoolMutex.Lock();
+    packetAllocationPoolMutex.lock();
     p = packetAllocationPool.Allocate();
-    packetAllocationPoolMutex.Unlock();
+    packetAllocationPoolMutex.unlock();
     p = new((void *) p) Packet;
     p->data = (unsigned char *) malloc(dataSize);
     p->length = dataSize;
@@ -173,9 +173,9 @@ Packet *RakPeer::AllocPacket(unsigned dataSize, unsigned char *data)
 {
     // Packet *p = (Packet *)malloc(sizeof(Packet));
     CrabNet::Packet *p;
-    packetAllocationPoolMutex.Lock();
+    packetAllocationPoolMutex.lock();
     p = packetAllocationPool.Allocate();
-    packetAllocationPoolMutex.Unlock();
+    packetAllocationPoolMutex.unlock();
     p = new((void *) p) Packet;
     RakAssert(p);
     p->data = data;
@@ -258,9 +258,9 @@ RakPeer::RakPeer()
     bufferedCommands.SetPageSize(sizeof(BufferedCommandStruct) * 16);
     socketQueryOutput.SetPageSize(sizeof(SocketQueryOutput) * 8);
 
-    packetAllocationPoolMutex.Lock();
+    packetAllocationPoolMutex.lock();
     packetAllocationPool.SetPageSize(sizeof(DataStructures::MemoryPool<Packet>::MemoryWithPage) * 32);
-    packetAllocationPoolMutex.Unlock();
+    packetAllocationPoolMutex.unlock();
 
     remoteSystemIndexPool.SetPageSize(sizeof(DataStructures::MemoryPool<RemoteSystemIndex>::MemoryWithPage) * 32);
 
@@ -749,9 +749,9 @@ void RakPeer::DisableSecurity()
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::AddToSecurityExceptionList(const char *ip)
 {
-    securityExceptionMutex.Lock();
+    securityExceptionMutex.lock();
     securityExceptionList.Insert(RakString(ip));
-    securityExceptionMutex.Unlock();
+    securityExceptionMutex.unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -762,14 +762,14 @@ void RakPeer::RemoveFromSecurityExceptionList(const char *ip)
 
     if (ip == 0)
     {
-        securityExceptionMutex.Lock();
+        securityExceptionMutex.lock();
         securityExceptionList.Clear(false);
-        securityExceptionMutex.Unlock();
+        securityExceptionMutex.unlock();
     }
     else
     {
         unsigned i = 0;
-        securityExceptionMutex.Lock();
+        securityExceptionMutex.lock();
         while (i < securityExceptionList.Size())
         {
             if (securityExceptionList[i].IPAddressMatch(ip))
@@ -780,7 +780,7 @@ void RakPeer::RemoveFromSecurityExceptionList(const char *ip)
             else
                 i++;
         }
-        securityExceptionMutex.Unlock();
+        securityExceptionMutex.unlock();
     }
 }
 
@@ -791,16 +791,16 @@ bool RakPeer::IsInSecurityExceptionList(const char *ip)
         return false;
 
     unsigned i = 0;
-    securityExceptionMutex.Lock();
+    securityExceptionMutex.lock();
     for (; i < securityExceptionList.Size(); i++)
     {
         if (securityExceptionList[i].IPAddressMatch(ip))
         {
-            securityExceptionMutex.Unlock();
+            securityExceptionMutex.unlock();
             return true;
         }
     }
-    securityExceptionMutex.Unlock();
+    securityExceptionMutex.unlock();
     return false;
 }
 
@@ -1099,14 +1099,14 @@ void RakPeer::Shutdown(unsigned int blockDuration, unsigned char orderingChannel
     //remoteSystemListSize = 0;
 
     // Free any packets the user didn't deallocate
-    packetReturnMutex.Lock();
+    packetReturnMutex.lock();
     for (i = 0; i < packetReturnQueue.Size(); i++)
         DeallocatePacket(packetReturnQueue[i]);
     packetReturnQueue.Clear();
-    packetReturnMutex.Unlock();
-    packetAllocationPoolMutex.Lock();
+    packetReturnMutex.unlock();
+    packetAllocationPoolMutex.lock();
     packetAllocationPool.Clear();
-    packetAllocationPoolMutex.Unlock();
+    packetAllocationPoolMutex.unlock();
 
     /*
     if (isRecvFromLoopThreadActive.GetValue()>0)
@@ -1194,20 +1194,20 @@ bool RakPeer::GetConnectionList(SystemAddress *remoteSystems, unsigned short *nu
 // ---------------------------------------------------------------------------------------------------------------------
 uint32_t RakPeer::GetNextSendReceipt()
 {
-    sendReceiptSerialMutex.Lock();
+    sendReceiptSerialMutex.lock();
     uint32_t retVal = sendReceiptSerial;
-    sendReceiptSerialMutex.Unlock();
+    sendReceiptSerialMutex.unlock();
     return retVal;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 uint32_t RakPeer::IncrementNextSendReceipt()
 {
-    sendReceiptSerialMutex.Lock();
+    sendReceiptSerialMutex.lock();
     uint32_t returned = sendReceiptSerial;
     if (++sendReceiptSerial == 0)
         sendReceiptSerial = 1;
-    sendReceiptSerialMutex.Unlock();
+    sendReceiptSerialMutex.unlock();
     return returned;
 }
 
@@ -1264,9 +1264,9 @@ uint32_t RakPeer::Send(const char *data, const int length, PacketPriority priori
         {
             char buff[5];
             buff[0] = ID_SND_RECEIPT_ACKED;
-            sendReceiptSerialMutex.Lock();
+            sendReceiptSerialMutex.lock();
             memcpy(buff + 1, &sendReceiptSerial, 4);
-            sendReceiptSerialMutex.Unlock();
+            sendReceiptSerialMutex.unlock();
             SendLoopback(buff, 5);
         }
 
@@ -1325,9 +1325,9 @@ uint32_t RakPeer::Send(const CrabNet::BitStream *bitStream, PacketPriority prior
         {
             char buff[5];
             buff[0] = ID_SND_RECEIPT_ACKED;
-            sendReceiptSerialMutex.Lock();
+            sendReceiptSerialMutex.lock();
             memcpy(buff + 1, &sendReceiptSerial, 4);
-            sendReceiptSerialMutex.Unlock();
+            sendReceiptSerialMutex.unlock();
             SendLoopback(buff, 5);
         }
         return usedSendReceipt;
@@ -1469,12 +1469,12 @@ Packet *RakPeer::Receive()
 
     do
     {
-        packetReturnMutex.Lock();
+        packetReturnMutex.lock();
         if (packetReturnQueue.IsEmpty())
             packet = 0;
         else
             packet = packetReturnQueue.Pop();
-        packetReturnMutex.Unlock();
+        packetReturnMutex.unlock();
         if (packet == 0)
             return 0;
 
@@ -1552,9 +1552,9 @@ void RakPeer::DeallocatePacket(Packet *packet)
     {
         free(packet->data);
         packet->~Packet();
-        packetAllocationPoolMutex.Lock();
+        packetAllocationPoolMutex.lock();
         packetAllocationPool.Release(packet);
-        packetAllocationPoolMutex.Unlock();
+        packetAllocationPoolMutex.unlock();
     }
     else
     {
@@ -1628,7 +1628,7 @@ void RakPeer::CancelConnectionAttempt(const SystemAddress target)
 
     // Cancel pending connection attempt, if there is one
     i = 0;
-    requestedConnectionQueueMutex.Lock();
+    requestedConnectionQueueMutex.lock();
     while (i < requestedConnectionQueue.Size())
     {
         if (requestedConnectionQueue[i]->systemAddress == target)
@@ -1645,7 +1645,7 @@ void RakPeer::CancelConnectionAttempt(const SystemAddress target)
         else
             i++;
     }
-    requestedConnectionQueueMutex.Unlock();
+    requestedConnectionQueueMutex.unlock();
 
 }
 
@@ -1660,16 +1660,16 @@ ConnectionState RakPeer::GetConnectionState(const AddressOrGUID systemIdentifier
     if (systemIdentifier.systemAddress != UNASSIGNED_SYSTEM_ADDRESS)
     {
         unsigned int i = 0;
-        requestedConnectionQueueMutex.Lock();
+        requestedConnectionQueueMutex.lock();
         for (; i < requestedConnectionQueue.Size(); i++)
         {
             if (requestedConnectionQueue[i]->systemAddress == systemIdentifier.systemAddress)
             {
-                requestedConnectionQueueMutex.Unlock();
+                requestedConnectionQueueMutex.unlock();
                 return IS_PENDING;
             }
         }
-        requestedConnectionQueueMutex.Unlock();
+        requestedConnectionQueueMutex.unlock();
     }
 
     int index;
@@ -1813,7 +1813,7 @@ void RakPeer::AddToBanList(const char *IP, CrabNet::TimeMS milliseconds)
     // If this guy is already in the ban list, do nothing
     index = 0;
 
-    banListMutex.Lock();
+    banListMutex.lock();
 
     for (; index < banList.Size(); index++)
     {
@@ -1824,12 +1824,12 @@ void RakPeer::AddToBanList(const char *IP, CrabNet::TimeMS milliseconds)
                 banList[index]->timeout = 0; // Infinite
             else
                 banList[index]->timeout = time + milliseconds;
-            banListMutex.Unlock();
+            banListMutex.unlock();
             return;
         }
     }
 
-    banListMutex.Unlock();
+    banListMutex.unlock();
 
     BanStruct *banStruct = new BanStruct;
     banStruct->IP = (char *) malloc(16);
@@ -1839,9 +1839,9 @@ void RakPeer::AddToBanList(const char *IP, CrabNet::TimeMS milliseconds)
     else
         banStruct->timeout = time + milliseconds;
     strcpy(banStruct->IP, IP);
-    banListMutex.Lock();
+    banListMutex.lock();
     banList.Insert(banStruct);
-    banListMutex.Unlock();
+    banListMutex.unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1863,7 +1863,7 @@ void RakPeer::RemoveFromBanList(const char *IP)
     index = 0;
     temp = 0;
 
-    banListMutex.Lock();
+    banListMutex.lock();
 
     for (; index < banList.Size(); index++)
     {
@@ -1876,7 +1876,7 @@ void RakPeer::RemoveFromBanList(const char *IP)
         }
     }
 
-    banListMutex.Unlock();
+    banListMutex.unlock();
 
     if (temp)
     {
@@ -1894,7 +1894,7 @@ void RakPeer::ClearBanList()
 {
     unsigned index;
     index = 0;
-    banListMutex.Lock();
+    banListMutex.lock();
 
     for (; index < banList.Size(); index++)
     {
@@ -1904,7 +1904,7 @@ void RakPeer::ClearBanList()
 
     banList.Clear(false);
 
-    banListMutex.Unlock();
+    banListMutex.unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1940,7 +1940,7 @@ bool RakPeer::IsBanned(const char *IP)
 
     time = CrabNet::GetTimeMS();
 
-    banListMutex.Lock();
+    banListMutex.lock();
 
     while (banListIndex < banList.Size())
     {
@@ -1968,7 +1968,7 @@ bool RakPeer::IsBanned(const char *IP)
 
                     if (IP[characterIndex] == 0)
                     {
-                        banListMutex.Unlock();
+                        banListMutex.unlock();
                         // End of the string and the strings match
 
                         return true;
@@ -1988,7 +1988,7 @@ bool RakPeer::IsBanned(const char *IP)
                     // Characters do not match
                     if (banList[banListIndex]->IP[characterIndex] == '*')
                     {
-                        banListMutex.Unlock();
+                        banListMutex.unlock();
 
                         // Domain is banned.
                         return true;
@@ -2003,7 +2003,7 @@ bool RakPeer::IsBanned(const char *IP)
         }
     }
 
-    banListMutex.Unlock();
+    banListMutex.unlock();
 
     // No match found.
     return false;
@@ -2219,13 +2219,13 @@ void RakPeer::SetOfflinePingResponse(const char *data, const unsigned int length
 {
     RakAssert(length < 400);
 
-    rakPeerMutexes[offlinePingResponse_Mutex].Lock();
+    rakPeerMutexes[offlinePingResponse_Mutex].lock();
     offlinePingResponse.Reset();
 
     if (data && length > 0)
         offlinePingResponse.Write(data, length);
 
-    rakPeerMutexes[offlinePingResponse_Mutex].Unlock();
+    rakPeerMutexes[offlinePingResponse_Mutex].unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -2236,10 +2236,10 @@ void RakPeer::SetOfflinePingResponse(const char *data, const unsigned int length
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::GetOfflinePingResponse(char **data, unsigned int *length)
 {
-    rakPeerMutexes[offlinePingResponse_Mutex].Lock();
+    rakPeerMutexes[offlinePingResponse_Mutex].lock();
     *data = (char *) offlinePingResponse.GetData();
     *length = (int) offlinePingResponse.GetNumberOfBytesUsed();
-    rakPeerMutexes[offlinePingResponse_Mutex].Unlock();
+    rakPeerMutexes[offlinePingResponse_Mutex].unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -2778,12 +2778,12 @@ void RakPeer::PushBackPacket(Packet *packet, bool pushAtHead)
     for (i = 0; i < pluginListNTS.Size(); i++)
         pluginListNTS[i]->OnPushBackPacket((const char *) packet->data, packet->bitSize, packet->systemAddress);
 
-    packetReturnMutex.Lock();
+    packetReturnMutex.lock();
     if (pushAtHead)
         packetReturnQueue.PushAtHead(packet, 0);
     else
         packetReturnQueue.Push(packet);
-    packetReturnMutex.Unlock();
+    packetReturnMutex.unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -3087,9 +3087,9 @@ bool RakPeer::GetStatistics(const unsigned int index, RakNetStatistics *rns)
 unsigned int RakPeer::GetReceiveBufferSize()
 {
     unsigned int size;
-    packetReturnMutex.Lock();
+    packetReturnMutex.lock();
     size = packetReturnQueue.Size();
-    packetReturnMutex.Unlock();
+    packetReturnMutex.unlock();
     return size;
 }
 
@@ -3258,12 +3258,12 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
 #endif
 
     // Return false if already pending, else push on queue
-    requestedConnectionQueueMutex.Lock();
+    requestedConnectionQueueMutex.lock();
     for (unsigned i = 0; i < requestedConnectionQueue.Size(); i++)
     {
         if (requestedConnectionQueue[i]->systemAddress == systemAddress)
         {
-            requestedConnectionQueueMutex.Unlock();
+            requestedConnectionQueueMutex.unlock();
             // Not necessary
             //delete rcs->client_handshake;
             delete rcs;
@@ -3271,7 +3271,7 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
         }
     }
     requestedConnectionQueue.Push(rcs);
-    requestedConnectionQueueMutex.Unlock();
+    requestedConnectionQueueMutex.unlock();
 
     return CONNECTION_ATTEMPT_STARTED;
 }
@@ -3316,12 +3316,12 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
 #endif
 
     // Return false if already pending, else push on queue
-    requestedConnectionQueueMutex.Lock();
+    requestedConnectionQueueMutex.lock();
     for (unsigned i = 0; i < requestedConnectionQueue.Size(); i++)
     {
         if (requestedConnectionQueue[i]->systemAddress == systemAddress)
         {
-            requestedConnectionQueueMutex.Unlock();
+            requestedConnectionQueueMutex.unlock();
             // Not necessary
             //delete rcs->client_handshake;
             delete rcs;
@@ -3329,7 +3329,7 @@ RakPeer::SendConnectionRequest(const char *host, unsigned short remotePort, cons
         }
     }
     requestedConnectionQueue.Push(rcs);
-    requestedConnectionQueueMutex.Unlock();
+    requestedConnectionQueueMutex.unlock();
 
     return CONNECTION_ATTEMPT_STARTED;
 }
@@ -3873,24 +3873,24 @@ bool RakPeer::AllowIncomingConnections() const
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::DeallocRNS2RecvStruct(RNS2RecvStruct *s)
 {
-    bufferedPacketsFreePoolMutex.Lock();
+    bufferedPacketsFreePoolMutex.lock();
     bufferedPacketsFreePool.Push(s);
-    bufferedPacketsFreePoolMutex.Unlock();
+    bufferedPacketsFreePoolMutex.unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 RNS2RecvStruct *RakPeer::AllocRNS2RecvStruct()
 {
-    bufferedPacketsFreePoolMutex.Lock();
+    bufferedPacketsFreePoolMutex.lock();
     if (bufferedPacketsFreePool.Size() > 0)
     {
         RNS2RecvStruct *s = bufferedPacketsFreePool.Pop();
-        bufferedPacketsFreePoolMutex.Unlock();
+        bufferedPacketsFreePoolMutex.unlock();
         return s;
     }
     else
     {
-        bufferedPacketsFreePoolMutex.Unlock();
+        bufferedPacketsFreePoolMutex.unlock();
         return new RNS2RecvStruct;
     }
 }
@@ -3898,15 +3898,15 @@ RNS2RecvStruct *RakPeer::AllocRNS2RecvStruct()
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::ClearBufferedPackets()
 {
-    bufferedPacketsFreePoolMutex.Lock();
+    bufferedPacketsFreePoolMutex.lock();
     while (bufferedPacketsFreePool.Size() > 0)
         delete bufferedPacketsFreePool.Pop();
-    bufferedPacketsFreePoolMutex.Unlock();
+    bufferedPacketsFreePoolMutex.unlock();
 
-    bufferedPacketsQueueMutex.Lock();
+    bufferedPacketsQueueMutex.lock();
     while (bufferedPacketsQueue.Size() > 0)
         delete bufferedPacketsQueue.Pop();
-    bufferedPacketsQueueMutex.Unlock();
+    bufferedPacketsQueueMutex.unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -3917,22 +3917,22 @@ void RakPeer::SetupBufferedPackets()
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::PushBufferedPacket(RNS2RecvStruct *p)
 {
-    bufferedPacketsQueueMutex.Lock();
+    bufferedPacketsQueueMutex.lock();
     bufferedPacketsQueue.Push(p);
-    bufferedPacketsQueueMutex.Unlock();
+    bufferedPacketsQueueMutex.unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 RNS2RecvStruct *RakPeer::PopBufferedPacket()
 {
-    bufferedPacketsQueueMutex.Lock();
+    bufferedPacketsQueueMutex.lock();
     if (bufferedPacketsQueue.Size() > 0)
     {
         RNS2RecvStruct *s = bufferedPacketsQueue.Pop();
-        bufferedPacketsQueueMutex.Unlock();
+        bufferedPacketsQueueMutex.unlock();
         return s;
     }
-    bufferedPacketsQueueMutex.Unlock();
+    bufferedPacketsQueueMutex.unlock();
     return 0;
 }
 
@@ -4215,9 +4215,9 @@ bool RakPeer::SendImmediate(char *data, BitSize_t numberOfBitsToSend, PacketPrio
 // ---------------------------------------------------------------------------------------------------------------------
 void RakPeer::ResetSendReceipt()
 {
-    sendReceiptSerialMutex.Lock();
+    sendReceiptSerialMutex.lock();
     sendReceiptSerial = 1;
-    sendReceiptSerialMutex.Unlock();
+    sendReceiptSerialMutex.unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -4270,10 +4270,10 @@ void RakPeer::ClearSocketQueryOutput()
 void RakPeer::ClearRequestedConnectionList()
 {
     DataStructures::Queue<RequestedConnectionStruct *> freeQueue;
-    requestedConnectionQueueMutex.Lock();
+    requestedConnectionQueueMutex.lock();
     while (requestedConnectionQueue.Size())
         freeQueue.Push(requestedConnectionQueue.Pop());
-    requestedConnectionQueueMutex.Unlock();
+    requestedConnectionQueueMutex.unlock();
 
     for (unsigned i = 0; i < freeQueue.Size(); i++)
     {
@@ -4288,9 +4288,9 @@ void RakPeer::ClearRequestedConnectionList()
 
 inline void RakPeer::AddPacketToProducer(CrabNet::Packet *p)
 {
-    packetReturnMutex.Lock();
+    packetReturnMutex.lock();
     packetReturnQueue.Push(p);
-    packetReturnMutex.Unlock();
+    packetReturnMutex.unlock();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -4421,11 +4421,11 @@ namespace CrabNet
                     outBitStream.Write(rakPeer->myGuid);
                     outBitStream.WriteAlignedBytes((const unsigned char *) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 
-                    rakPeer->rakPeerMutexes[RakPeer::offlinePingResponse_Mutex].Lock();
+                    rakPeer->rakPeerMutexes[RakPeer::offlinePingResponse_Mutex].lock();
                     // They are connected, so append offline ping data
                     outBitStream.Write((char *) rakPeer->offlinePingResponse.GetData(),
                                        rakPeer->offlinePingResponse.GetNumberOfBytesUsed());
-                    rakPeer->rakPeerMutexes[RakPeer::offlinePingResponse_Mutex].Unlock();
+                    rakPeer->rakPeerMutexes[RakPeer::offlinePingResponse_Mutex].unlock();
 
                     for (unsigned i = 0; i < rakPeer->pluginListNTS.Size(); i++)
                         rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char *) outBitStream.GetData(),
@@ -4536,7 +4536,7 @@ namespace CrabNet
                 if (serverHasSecurity)
                     bsOut.Write(cookie);
 
-                rakPeer->requestedConnectionQueueMutex.Lock();
+                rakPeer->requestedConnectionQueueMutex.lock();
                 for (unsigned i = 0; i < rakPeer->requestedConnectionQueue.Size(); i++)
                 {
                     RakPeer::RequestedConnectionStruct *rcs = rakPeer->requestedConnectionQueue[i];
@@ -4617,7 +4617,7 @@ namespace CrabNet
 
                         // Binding address
                         bsOut.Write(rcs->systemAddress);
-                        rakPeer->requestedConnectionQueueMutex.Unlock();
+                        rakPeer->requestedConnectionQueueMutex.unlock();
                         // MTU
                         bsOut.Write(mtu);
                         // Our guid
@@ -4638,7 +4638,7 @@ namespace CrabNet
                         return true;
                     }
                 }
-                rakPeer->requestedConnectionQueueMutex.Unlock();
+                rakPeer->requestedConnectionQueueMutex.unlock();
             }
             else if ((unsigned char) (data)[0] == (MessageID) ID_OPEN_CONNECTION_REPLY_2)
             {
@@ -4672,7 +4672,7 @@ namespace CrabNet
 #endif // LIBCAT_SECURITY
 
                 bool unlock = true;
-                rakPeer->requestedConnectionQueueMutex.Lock();
+                rakPeer->requestedConnectionQueueMutex.lock();
                 for (unsigned i = 0; i < rakPeer->requestedConnectionQueue.Size(); i++)
                 {
                     RakPeer::RequestedConnectionStruct *rcs = rakPeer->requestedConnectionQueue[i];
@@ -4704,7 +4704,7 @@ namespace CrabNet
 
 #endif // LIBCAT_SECURITY
 
-                        rakPeer->requestedConnectionQueueMutex.Unlock();
+                        rakPeer->requestedConnectionQueueMutex.unlock();
                         unlock = false;
 
                         // You might get this when already connected because of cross-connections
@@ -4803,7 +4803,7 @@ namespace CrabNet
                             }
                         }
 
-                        rakPeer->requestedConnectionQueueMutex.Lock();
+                        rakPeer->requestedConnectionQueueMutex.lock();
                         for (unsigned k = 0; k < rakPeer->requestedConnectionQueue.Size(); k++)
                         {
                             if (rakPeer->requestedConnectionQueue[k]->systemAddress == systemAddress)
@@ -4812,7 +4812,7 @@ namespace CrabNet
                                 break;
                             }
                         }
-                        rakPeer->requestedConnectionQueueMutex.Unlock();
+                        rakPeer->requestedConnectionQueueMutex.unlock();
 
 #ifdef LIBCAT_SECURITY
                         CAT_AUDIT_PRINTF("AUDIT: Deleting client_handshake object %x and rcs->client_handshake object %x\n",
@@ -4827,7 +4827,7 @@ namespace CrabNet
                 }
 
                 if (unlock)
-                    rakPeer->requestedConnectionQueueMutex.Unlock();
+                    rakPeer->requestedConnectionQueueMutex.unlock();
 
                 return true;
             }
@@ -4850,7 +4850,7 @@ namespace CrabNet
                 bs.Read(guid);
 
                 bool connectionAttemptCancelled = false;
-                rakPeer->requestedConnectionQueueMutex.Lock();
+                rakPeer->requestedConnectionQueueMutex.lock();
                 for (unsigned i = 0; i < rakPeer->requestedConnectionQueue.Size(); i++)
                 {
                     RakPeer::RequestedConnectionStruct *rcs = rakPeer->requestedConnectionQueue[i];
@@ -4867,7 +4867,7 @@ namespace CrabNet
                         break;
                     }
                 }
-                rakPeer->requestedConnectionQueueMutex.Unlock();
+                rakPeer->requestedConnectionQueueMutex.unlock();
 
                 if (connectionAttemptCancelled)
                 {
@@ -5418,11 +5418,11 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
         }
 
         unsigned requestedConnectionQueueIndex = 0;
-        requestedConnectionQueueMutex.Lock();
+        requestedConnectionQueueMutex.lock();
         while (requestedConnectionQueueIndex < requestedConnectionQueue.Size())
         {
             RequestedConnectionStruct *rcs = requestedConnectionQueue[requestedConnectionQueueIndex];
-            requestedConnectionQueueMutex.Unlock();
+            requestedConnectionQueueMutex.unlock();
             if (rcs->nextRequestTime < timeMS)
             {
                 bool condition1 = rcs->requestsMade == rcs->sendConnectionAttemptCount + 1;
@@ -5452,7 +5452,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
 #endif
                     delete rcs;
 
-                    requestedConnectionQueueMutex.Lock();
+                    requestedConnectionQueueMutex.lock();
                     for (unsigned int k = 0; k < requestedConnectionQueue.Size(); k++)
                     {
                         if (requestedConnectionQueue[k] == rcs)
@@ -5461,7 +5461,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
                             break;
                         }
                     }
-                    requestedConnectionQueueMutex.Unlock();
+                    requestedConnectionQueueMutex.unlock();
                 }
                 else
                 {
@@ -5541,9 +5541,9 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream)
             else
                 requestedConnectionQueueIndex++;
 
-            requestedConnectionQueueMutex.Lock();
+            requestedConnectionQueueMutex.lock();
         }
-        requestedConnectionQueueMutex.Unlock();
+        requestedConnectionQueueMutex.unlock();
     }
 
     // remoteSystemList in network thread
