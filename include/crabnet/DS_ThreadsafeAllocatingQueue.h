@@ -20,6 +20,7 @@
 #include "SimpleMutex.h"
 #include "DS_MemoryPool.h"
 #include <new>
+#include <mutex>
 
 // #if defined(new)
 // #pragma push_macro("new")
@@ -30,150 +31,132 @@
 namespace DataStructures
 {
 
-template <class structureType>
-class RAK_DLL_EXPORT ThreadsafeAllocatingQueue
-{
-public:
-    // Queue operations
-    void Push(structureType *s);
-    structureType *PopInaccurate();
-    structureType *Pop();
-    void SetPageSize(int size);
-    bool IsEmpty();
-    structureType * operator[] ( unsigned int position );
-    void RemoveAtIndex( unsigned int position );
-    unsigned int Size( void );
-
-    // Memory pool operations
-    structureType *Allocate();
-    void Deallocate(structureType *s);
-    void Clear();
-protected:
-
-    mutable MemoryPool<structureType> memoryPool;
-    CrabNet::SimpleMutex memoryPoolMutex;
-    Queue<structureType*> queue;
-    CrabNet::SimpleMutex queueMutex;
-};
-
-template <class structureType>
-void ThreadsafeAllocatingQueue<structureType>::Push(structureType *s)
-{
-    queueMutex.lock();
-    queue.Push(s);
-    queueMutex.unlock();
-}
-
-template <class structureType>
-structureType *ThreadsafeAllocatingQueue<structureType>::PopInaccurate()
-{
-    structureType *s;
-    if (queue.IsEmpty())
-        return 0;
-    queueMutex.lock();
-    if (queue.IsEmpty()==false)
-        s=queue.Pop();
-    else
-        s=0;
-    queueMutex.unlock();
-    return s;
-}
-
-template <class structureType>
-structureType *ThreadsafeAllocatingQueue<structureType>::Pop()
-{
-    structureType *s;
-    queueMutex.lock();
-    if (queue.IsEmpty())
+    template<class structureType>
+    class RAK_DLL_EXPORT ThreadsafeAllocatingQueue
     {
-        queueMutex.unlock();
-        return 0;
-    }
-    s=queue.Pop();
-    queueMutex.unlock();
-    return s;
-}
+    public:
+        // Queue operations
+        void Push(structureType *s);
+        structureType *PopInaccurate();
+        structureType *Pop();
+        void SetPageSize(int size);
+        bool IsEmpty();
+        structureType *operator[](unsigned int position);
+        void RemoveAtIndex(unsigned int position);
+        unsigned int Size();
 
-template <class structureType>
-structureType *ThreadsafeAllocatingQueue<structureType>::Allocate()
-{
-    structureType *s;
-    memoryPoolMutex.lock();
-    s=memoryPool.Allocate();
-    memoryPoolMutex.unlock();
-    // Call new operator, memoryPool doesn't do this
-    s = new ((void*)s) structureType;
-    return s;
-}
-template <class structureType>
-void ThreadsafeAllocatingQueue<structureType>::Deallocate(structureType *s)
-{
-    // Call delete operator, memory pool doesn't do this
-    s->~structureType();
-    memoryPoolMutex.lock();
-    memoryPool.Release(s);
-    memoryPoolMutex.unlock();
-}
+        // Memory pool operations
+        structureType *Allocate();
+        void Deallocate(structureType *s);
+        void Clear();
+    protected:
 
-template <class structureType>
-void ThreadsafeAllocatingQueue<structureType>::Clear()
-{
-    memoryPoolMutex.lock();
-    for (unsigned int i=0; i < queue.Size(); i++)
+        mutable MemoryPool<structureType> memoryPool;
+        CrabNet::SimpleMutex memoryPoolMutex;
+        Queue<structureType *> queue;
+        CrabNet::SimpleMutex queueMutex;
+    };
+
+    template<class structureType>
+    void ThreadsafeAllocatingQueue<structureType>::Push(structureType *s)
     {
-        queue[i]->~structureType();
-        memoryPool.Release(queue[i]);
+        std::lock_guard<CrabNet::SimpleMutex> guard(queueMutex);
+        queue.Push(s);
     }
-    queue.Clear();
-    memoryPoolMutex.unlock();
-    memoryPoolMutex.lock();
-    memoryPool.Clear();
-    memoryPoolMutex.unlock();
-}
 
-template <class structureType>
-void ThreadsafeAllocatingQueue<structureType>::SetPageSize(int size)
-{
-    memoryPool.SetPageSize(size);
-}
+    template<class structureType>
+    structureType *ThreadsafeAllocatingQueue<structureType>::PopInaccurate()
+    {
+        structureType *s = nullptr;
+        if (queue.IsEmpty())
+            return s;
+        std::lock_guard<CrabNet::SimpleMutex> guard(queueMutex);
+        if (!queue.IsEmpty())
+            s = queue.Pop();
+        return s;
+    }
 
-template <class structureType>
-bool ThreadsafeAllocatingQueue<structureType>::IsEmpty()
-{
-    bool isEmpty;
-    queueMutex.lock();
-    isEmpty=queue.IsEmpty();
-    queueMutex.unlock();
-    return isEmpty;
-}
+    template<class structureType>
+    structureType *ThreadsafeAllocatingQueue<structureType>::Pop()
+    {
+        structureType *s = nullptr;
+        std::lock_guard<CrabNet::SimpleMutex> guard(queueMutex);
+        if (!queue.IsEmpty())
+            s = queue.Pop();
+        return s;
+    }
 
-template <class structureType>
-structureType * ThreadsafeAllocatingQueue<structureType>::operator[] ( unsigned int position )
-{
-    structureType *s;
-    queueMutex.lock();
-    s=queue[position];
-    queueMutex.unlock();
-    return s;
-}
+    template<class structureType>
+    structureType *ThreadsafeAllocatingQueue<structureType>::Allocate()
+    {
+        structureType *s;
+        std::lock_guard<CrabNet::SimpleMutex> guard(memoryPoolMutex);
+        s = memoryPool.Allocate();
+        // Call new operator, memoryPool doesn't do this
+        s = new((void *) s) structureType;
+        return s;
+    }
+    template<class structureType>
+    void ThreadsafeAllocatingQueue<structureType>::Deallocate(structureType *s)
+    {
+        // Call delete operator, memory pool doesn't do this
+        s->~structureType();
+        std::lock_guard<CrabNet::SimpleMutex> guard(memoryPoolMutex);
+        memoryPool.Release(s);
+    }
 
-template <class structureType>
-void ThreadsafeAllocatingQueue<structureType>::RemoveAtIndex( unsigned int position )
-{
-    queueMutex.lock();
-    queue.RemoveAtIndex(position);
-    queueMutex.unlock();
-}
+    template<class structureType>
+    void ThreadsafeAllocatingQueue<structureType>::Clear()
+    {
+        std::lock_guard<CrabNet::SimpleMutex> guard(memoryPoolMutex);
+        for (unsigned int i = 0; i < queue.Size(); i++)
+        {
+            queue[i]->~structureType();
+            memoryPool.Release(queue[i]);
+        }
+        queue.Clear();
+        memoryPool.Clear();
+    }
 
-template <class structureType>
-unsigned int ThreadsafeAllocatingQueue<structureType>::Size( void )
-{
-    unsigned int s;
-    queueMutex.lock();
-    s=queue.Size();
-    queueMutex.unlock();
-    return s;
-}
+    template<class structureType>
+    void ThreadsafeAllocatingQueue<structureType>::SetPageSize(int size)
+    {
+        memoryPool.SetPageSize(size);
+    }
+
+    template<class structureType>
+    bool ThreadsafeAllocatingQueue<structureType>::IsEmpty()
+    {
+        bool isEmpty;
+        std::lock_guard<CrabNet::SimpleMutex> guard(queueMutex);
+        isEmpty = queue.IsEmpty();
+        return isEmpty;
+    }
+
+    template<class structureType>
+    structureType *ThreadsafeAllocatingQueue<structureType>::operator[](unsigned int position)
+    {
+        structureType *s;
+        std::lock_guard<CrabNet::SimpleMutex> guard(queueMutex);
+        s = queue[position];
+        return s;
+    }
+
+    template<class structureType>
+    void ThreadsafeAllocatingQueue<structureType>::RemoveAtIndex(unsigned int position)
+    {
+        std::lock_guard<CrabNet::SimpleMutex> guard(queueMutex);
+        queue.RemoveAtIndex(position);
+    }
+
+    template<class structureType>
+    unsigned int ThreadsafeAllocatingQueue<structureType>::Size()
+    {
+        unsigned int s;
+        std::lock_guard<CrabNet::SimpleMutex> guard(queueMutex);
+        s = queue.Size();
+        return s;
+    }
 
 }
 

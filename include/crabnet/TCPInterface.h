@@ -241,12 +241,11 @@ struct RemoteClient
 #endif
     void Reset()
     {
-        outgoingDataMutex.lock();
+        std::lock_guard<CrabNet::SimpleMutex> guard(outgoingDataMutex);
         outgoingData.Clear();
-        outgoingDataMutex.unlock();
     }
     void SetActive(bool a);
-    void SendOrBuffer(const char **data, const unsigned int *lengths, const int numParameters);
+    void SendOrBuffer(const char **data, const unsigned int *lengths, int numParameters);
 };
 
 } // namespace CrabNet
