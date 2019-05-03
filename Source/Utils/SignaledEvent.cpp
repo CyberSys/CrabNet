@@ -13,7 +13,7 @@
 #include "RakAssert.h"
 #include "RakSleep.h"
 
-#if defined(__GNUC__) 
+#if defined(__GNUC__)
 #include <sys/time.h>
 #include <unistd.h>
 #endif
@@ -71,9 +71,7 @@ void SignaledEvent::SetEvent()
 #else
     // Different from SetEvent which stays signaled.
     // We have to record manually that the event was signaled
-    isSignaledMutex.lock();
     isSignaled = true;
-    isSignaledMutex.unlock();
 
     // Unblock waiting threads
     pthread_cond_broadcast(&eventList);
@@ -83,28 +81,25 @@ void SignaledEvent::SetEvent()
 void SignaledEvent::WaitOnEvent(int timeoutMs)
 {
 #ifdef _WIN32
-//    WaitForMultipleObjects(
-//        2,
-//        eventList,
-//        false,
-//        timeoutMs);
-    WaitForSingleObjectEx(eventList, timeoutMs, FALSE);
+    //    WaitForMultipleObjects(
+    //        2,
+    //        eventList,
+    //        false,
+    //        timeoutMs);
+        WaitForSingleObjectEx(eventList, timeoutMs, FALSE);
 #else
 
     // If was previously set signaled, just unset and return
-    isSignaledMutex.lock();
     if (isSignaled)
     {
         isSignaled = false;
-        isSignaledMutex.unlock();
         return;
     }
-    isSignaledMutex.unlock();
 
-    struct timespec   ts{};
-    struct timeval    tp{};
+    struct timespec ts{};
+    struct timeval tp{};
     gettimeofday(&tp, nullptr);
-    ts.tv_sec  = tp.tv_sec;
+    ts.tv_sec = tp.tv_sec;
     ts.tv_nsec = tp.tv_usec * 1000;
 
     while (timeoutMs > 30)
@@ -112,11 +107,11 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
         // Wait 30 milliseconds for the signal, then check again.
         // This is in case we  missed the signal between the top of this function and pthread_cond_timedwait,
         // or after the end of the loop and pthread_cond_timedwait
-        ts.tv_nsec += 30*1000000;
+        ts.tv_nsec += 30 * 1000000;
         if (ts.tv_nsec >= 1000000000)
         {
-                ts.tv_nsec -= 1000000000;
-                ts.tv_sec++;
+            ts.tv_nsec -= 1000000000;
+            ts.tv_sec++;
         }
 
         // [SBC] added mutex lock/unlock around cond_timedwait.
@@ -128,34 +123,28 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
         pthread_cond_timedwait(&eventList, &hMutex, &ts);
         pthread_mutex_unlock(&hMutex);
 
-        timeoutMs-=30;
+        timeoutMs -= 30;
 
-        isSignaledMutex.lock();
         if (isSignaled)
         {
-            isSignaled=false;
-            isSignaledMutex.unlock();
+            isSignaled = false;
             return;
         }
-
-        isSignaledMutex.unlock();
     }
 
     // Wait the remaining time, and turn off the signal in case it was set
-    ts.tv_nsec += timeoutMs*1000000;
+    ts.tv_nsec += timeoutMs * 1000000;
     if (ts.tv_nsec >= 1000000000)
     {
-            ts.tv_nsec -= 1000000000;
-            ts.tv_sec++;
+        ts.tv_nsec -= 1000000000;
+        ts.tv_sec++;
     }
 
     pthread_mutex_lock(&hMutex);
     pthread_cond_timedwait(&eventList, &hMutex, &ts);
     pthread_mutex_unlock(&hMutex);
 
-    isSignaledMutex.lock();
-    isSignaled=false;
-    isSignaledMutex.unlock();
+    isSignaled = false;
 
 #endif
 }

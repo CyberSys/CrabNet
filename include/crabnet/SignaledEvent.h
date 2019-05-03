@@ -19,6 +19,7 @@
 #else
     #include <pthread.h>
     #include <sys/types.h>
+#include <atomic>
     #include "SimpleMutex.h"
 #endif
 
@@ -41,8 +42,7 @@ namespace CrabNet
 #ifdef _WIN32
         HANDLE eventList;
 #else
-        SimpleMutex isSignaledMutex;
-        bool isSignaled;
+        std::atomic_bool isSignaled;
 #if !defined(ANDROID)
         pthread_condattr_t condAttr;
 #endif
