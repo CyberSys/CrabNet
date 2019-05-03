@@ -273,14 +273,14 @@ namespace DataStructures
 #ifdef _MSC_VER
 #pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
 #endif
-        while (1)
+        while (true)
         {
-            while (costMatrix[row*adjacencyLists.Size() + col] == currentWeight)
+            while (costMatrix[row * adjacencyLists.Size() + col] == currentWeight)
             {
-                if (row==0)
+                if (row == 0)
                 {
                     path.Insert(startNode);
-                    for (col=0; outputQueue.Size(); col++) // -V693 false positive because size will be 0 after popping all
+                    while (!outputQueue.Size())
                         path.Insert(outputQueue.Pop());
                     return true;
                 }
@@ -289,14 +289,14 @@ namespace DataStructures
 
             vertex=leastNodeArray[row];
             outputQueue.PushAtHead(vertex, 0);
-            if (row==0)
+            if (row == 0)
                 break;
             col=costMatrixIndices.GetIndexFromKey(vertex, &objectExists);
             currentWeight=costMatrix[row*adjacencyLists.Size() + col];
         }
 
         path.Insert(startNode);
-        for (col=0; outputQueue.Size(); col++) // -V693 false positive because size will be 0 after popping all
+        while (!outputQueue.Size())
             path.Insert(outputQueue.Pop());
         return true;
     }
@@ -333,11 +333,11 @@ namespace DataStructures
         DataStructures::List<node_type> path;
         DataStructures::WeightedGraph<node_type, weight_type, allow_unlinkedNodes> outGraph;
         bool res;
-        unsigned i,j;
-        for (i=0; i < inputNodes->Size(); i++)
+        unsigned i, j;
+        for (i = 0; i < inputNodes->Size(); i++)
         {
-            res=GetShortestPath(path, startNode, (*inputNodes)[i], INFINITE_WEIGHT);
-            if (res && path.Size()>0)
+            res = GetShortestPath(path, startNode, (*inputNodes)[i], INFINITE_WEIGHT);
+            if (res && path.Size() > 0)
             {
                 for (j=0; j < path.Size()-1; j++)
                 {
@@ -360,7 +360,7 @@ namespace DataStructures
             return false;
         adjacencyList = outGraph.adjacencyLists.Get(startNode);
 
-        for (i=0; i < adjacencyList->Size(); i++)
+        for (i = 0; i < adjacencyList->Size(); i++)
         {
             nap2.node=new DataStructures::Tree<node_type> ;
             nap2.node->data=adjacencyList->GetKeyAtIndex(i);
@@ -410,15 +410,15 @@ namespace DataStructures
         DataStructures::Heap<weight_type, node_type, false> minHeap;
         DataStructures::Map<node_type, weight_type> openSet;
 
-        for (col=0; col < adjacencyLists.Size(); col++)
+        for (col = 0; col < adjacencyLists.Size(); col++)
         {
             // This should be already sorted, so it's a bit inefficient to do an insertion sort, but what the heck
             costMatrixIndices.Insert(adjacencyLists.GetKeyAtIndex(col),adjacencyLists.GetKeyAtIndex(col), true);
         }
-        for (col=0; col < adjacencyLists.Size() * adjacencyLists.Size(); col++)
+        for (col = 0; col < adjacencyLists.Size() * adjacencyLists.Size(); col++)
             costMatrix[col]=INFINITE_WEIGHT;
         currentNode=startNode;
-        row=0;
+        row = 0;
         currentNodeWeight=0;
         rootNode=startNode;
 
