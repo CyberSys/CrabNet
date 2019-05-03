@@ -17,6 +17,7 @@
 #include "Export.h"
 #include "RakThread.h"
 #include "SignaledEvent.h"
+#include <mutex>
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -25,17 +26,17 @@
 class ThreadDataInterface
 {
 public:
-    ThreadDataInterface() {}
-    virtual ~ThreadDataInterface() {}
+    ThreadDataInterface() = default;
+    virtual ~ThreadDataInterface() = default;
 
-    virtual void* PerThreadFactory(void *context)=0;
-    virtual void PerThreadDestructor(void* factoryResult, void *context)=0;
+    virtual void *PerThreadFactory(void *context) = 0;
+    virtual void PerThreadDestructor(void *factoryResult, void *context) = 0;
 };
 /// A simple class to create worker threads that processes a queue of functions with data.
 /// This class does not allocate or deallocate memory.  It is up to the user to handle memory management.
 /// InputType and OutputType are stored directly in a queue.  For large structures, if you plan to delete from the middle of the queue,
 /// you might wish to store pointers rather than the structures themselves so the array can shift efficiently.
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 struct RAK_DLL_EXPORT ThreadPool
 {
     ThreadPool();
@@ -47,7 +48,10 @@ struct RAK_DLL_EXPORT ThreadPool
     /// \param[in] _perThreadInit User callback to return data stored per thread.  Pass 0 if not needed.
     /// \param[in] _perThreadDeinit User callback to destroy data stored per thread, created by _perThreadInit.  Pass 0 if not needed.
     /// \return True on success, false on failure.
-    bool StartThreads(int numThreads, int stackSize, void* (*_perThreadInit)()=0, void (*_perThreadDeinit)(void*)=0);
+    bool StartThreads(int numThreads,
+                      int stackSize,
+                      void *(*_perThreadInit)() = nullptr,
+                      void (*_perThreadDeInit)(void *) = nullptr);
 
     // Alternate form of _perThreadDataFactory, _perThreadDataDestructor
     void SetThreadDataInterface(ThreadDataInterface *tdi, void *context);
@@ -63,7 +67,8 @@ struct RAK_DLL_EXPORT ThreadPool
     /// not all output was returned, you can iterate through outputQueue and deallocate it there.
     /// \param[in] workerThreadCallback The function to call from the thread
     /// \param[in] inputData The parameter to pass to \a userCallback
-    void AddInput(OutputType (*workerThreadCallback)(InputType, bool *returnOutput, void* perThreadData), InputType inputData);
+    void AddInput(OutputType (*workerThreadCallback)(InputType, bool *returnOutput, void *perThreadData),
+                  InputType inputData);
 
     /// Adds to the output queue
     /// Use it if you want to inject output into the same queue that the system uses. Normally you would not use this. Consider it a convenience function.
@@ -152,20 +157,19 @@ protected:
     // Scan the list, and remove the item you don't want.
     CrabNet::SimpleMutex inputQueueMutex, outputQueueMutex, workingThreadCountMutex, runThreadsMutex;
 
-    void* (*perThreadDataFactory)();
-    void (*perThreadDataDestructor)(void*);
+    void *(*perThreadDataFactory)();
+    void (*perThreadDataDestructor)(void *);
 
     // inputFunctionQueue & inputQueue are paired arrays so if you delete from one at a particular index you must delete from the other
     // at the same index
-    DataStructures::Queue<OutputType (*)(InputType, bool *, void*)> inputFunctionQueue;
+    DataStructures::Queue<OutputType (*)(InputType, bool *, void *)> inputFunctionQueue;
     DataStructures::Queue<InputType> inputQueue;
     DataStructures::Queue<OutputType> outputQueue;
 
     ThreadDataInterface *threadDataInterface;
     void *tdiContext;
 
-
-    template <class ThreadInputType, class ThreadOutputType>
+    template<class ThreadInputType, class ThreadOutputType>
     friend RAK_THREAD_DECLARATION(WorkerThread);
 
     /*
@@ -205,7 +209,7 @@ protected:
 #pragma warning( disable : 4701 )  // potentially uninitialized local variable 'inputData' used
 #endif
 
-template <class ThreadInputType, class ThreadOutputType>
+template<class ThreadInputType, class ThreadOutputType>
 RAK_THREAD_DECLARATION(WorkerThread)
 /*
 #ifdef _WIN32
@@ -216,25 +220,23 @@ void* WorkerThread( void* arguments )
 */
 {
 
-
-
-    ThreadPool<ThreadInputType, ThreadOutputType> *threadPool = (ThreadPool<ThreadInputType, ThreadOutputType>*) arguments;
-
+    ThreadPool<ThreadInputType, ThreadOutputType>
+        *threadPool = (ThreadPool<ThreadInputType, ThreadOutputType> *) arguments;
 
     bool returnOutput;
-    ThreadOutputType (*userCallback)(ThreadInputType, bool *, void*);
+    ThreadOutputType (*userCallback)(ThreadInputType, bool *, void *);
     ThreadInputType inputData;
     ThreadOutputType callbackOutput;
 
-    userCallback=0;
+    userCallback = 0;
 
     void *perThreadData;
     if (threadPool->perThreadDataFactory)
-        perThreadData=threadPool->perThreadDataFactory();
+        perThreadData = threadPool->perThreadDataFactory();
     else if (threadPool->threadDataInterface)
-        perThreadData=threadPool->threadDataInterface->PerThreadFactory(threadPool->tdiContext);
+        perThreadData = threadPool->threadDataInterface->PerThreadFactory(threadPool->tdiContext);
     else
-        perThreadData=0;
+        perThreadData = 0;
 
     // Increase numThreadsRunning
     threadPool->numThreadsRunningMutex.lock();
@@ -244,7 +246,7 @@ void* WorkerThread( void* arguments )
     while (1)
     {
 //#ifdef _WIN32
-        if (userCallback==0)
+        if (userCallback == 0)
         {
             threadPool->quitAndIncomingDataEvents.WaitOnEvent(1000);
         }
@@ -253,36 +255,33 @@ void* WorkerThread( void* arguments )
 //             RakSleep(30);
 // #endif
 
-        threadPool->runThreadsMutex.lock();
-        if (threadPool->runThreads==false)
         {
-            threadPool->runThreadsMutex.unlock();
-            break;
+            std::lock_guard<CrabNet::SimpleMutex> guard(threadPool->runThreadsMutex);
+            if (!threadPool->runThreads) break;
         }
-        threadPool->runThreadsMutex.unlock();
 
         threadPool->workingThreadCountMutex.lock();
         ++threadPool->numThreadsWorking;
         threadPool->workingThreadCountMutex.unlock();
 
         // Read input data
-        userCallback=0;
-        threadPool->inputQueueMutex.lock();
-        if (threadPool->inputFunctionQueue.Size())
+        userCallback = 0;
         {
-            userCallback=threadPool->inputFunctionQueue.Pop();
-            inputData=threadPool->inputQueue.Pop();
+            std::lock_guard<CrabNet::SimpleMutex> guard(threadPool->inputQueueMutex);
+            if (threadPool->inputFunctionQueue.Size())
+            {
+                userCallback = threadPool->inputFunctionQueue.Pop();
+                inputData = threadPool->inputQueue.Pop();
+            }
         }
-        threadPool->inputQueueMutex.unlock();
 
         if (userCallback)
         {
-            callbackOutput=userCallback(inputData, &returnOutput,perThreadData);
+            callbackOutput = userCallback(inputData, &returnOutput, perThreadData);
             if (returnOutput)
             {
-                threadPool->outputQueueMutex.lock();
+                std::lock_guard<CrabNet::SimpleMutex> guard(threadPool->outputQueueMutex);
                 threadPool->outputQueue.Push(callbackOutput);
-                threadPool->outputQueueMutex.unlock();
             }
         }
 
@@ -304,24 +303,27 @@ void* WorkerThread( void* arguments )
     return 0;
 }
 
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 ThreadPool<InputType, OutputType>::ThreadPool()
 {
-    runThreads=false;
-    numThreadsRunning=0;
-    threadDataInterface=0;
-    tdiContext=0;
-    numThreadsWorking=0;
+    runThreads = false;
+    numThreadsRunning = 0;
+    threadDataInterface = 0;
+    tdiContext = 0;
+    numThreadsWorking = 0;
 
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 ThreadPool<InputType, OutputType>::~ThreadPool()
 {
     StopThreads();
     Clear();
 }
-template <class InputType, class OutputType>
-bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSize, void* (*_perThreadDataFactory)(), void (*_perThreadDataDestructor)(void *))
+template<class InputType, class OutputType>
+bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads,
+                                                     int stackSize,
+                                                     void *(*_perThreadDataFactory)(),
+                                                     void (*_perThreadDataDestructor)(void *))
 {
     (void) stackSize;
 
@@ -329,83 +331,68 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
 //     runtime = CrabNet::RakThread::AllocRuntime(numThreads);
 // #endif
 
-    runThreadsMutex.lock();
-    if (runThreads==true)
     {
-        // Already running
-        runThreadsMutex.unlock();
-        return false;
+        std::lock_guard<CrabNet::SimpleMutex> guard(runThreadsMutex);
+        if (runThreads) // Already running
+            return false;
     }
-    runThreadsMutex.unlock();
 
-    perThreadDataFactory=_perThreadDataFactory;
-    perThreadDataDestructor=_perThreadDataDestructor;
+    perThreadDataFactory = _perThreadDataFactory;
+    perThreadDataDestructor = _perThreadDataDestructor;
 
-    runThreadsMutex.lock();
-    runThreads=true;
-    runThreadsMutex.unlock();
-
-    numThreadsWorking=0;
-    unsigned threadId = 0;
-    (void) threadId;
-    int i;
-    for (i=0; i < numThreads; i++)
     {
-        int errorCode;
+        std::lock_guard<CrabNet::SimpleMutex> guard(runThreadsMutex);
+        runThreads = true;
+    }
 
+    numThreadsWorking = 0;
+    for (int i = 0; i < numThreads; i++)
+    {
+        int errorCode = CrabNet::RakThread::Create(WorkerThread<InputType, OutputType>, this);
 
-
-
-        errorCode = CrabNet::RakThread::Create(WorkerThread<InputType, OutputType>, this);
-
-        if (errorCode!=0)
+        if (errorCode != 0)
         {
             StopThreads();
             return false;
         }
     }
     // Wait for number of threads running to increase to numThreads
-    bool done=false;
-    while (done==false)
+    bool done = false;
+    while (!done)
     {
         RakSleep(50);
         numThreadsRunningMutex.lock();
-        if (numThreadsRunning==numThreads)
-            done=true;
+        if (numThreadsRunning == numThreads)
+            done = true;
         numThreadsRunningMutex.unlock();
     }
 
     return true;
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::SetThreadDataInterface(ThreadDataInterface *tdi, void *context)
 {
-    threadDataInterface=tdi;
-    tdiContext=context;
+    threadDataInterface = tdi;
+    tdiContext = context;
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::StopThreads()
 {
-    runThreadsMutex.lock();
-    if (runThreads==false)
     {
-        runThreadsMutex.unlock();
-        return;
+        std::lock_guard<CrabNet::SimpleMutex> guard(runThreadsMutex);
+        runThreads = false;
     }
 
-    runThreads=false;
-    runThreadsMutex.unlock();
-
     // Wait for number of threads running to decrease to 0
-    bool done=false;
-    while (done==false)
+    bool done = false;
+    while (!done)
     {
         quitAndIncomingDataEvents.SetEvent();
 
         RakSleep(50);
         numThreadsRunningMutex.lock();
-        if (numThreadsRunning==0)
-            done=true;
+        if (numThreadsRunning == 0)
+            done = true;
         numThreadsRunningMutex.unlock();
     }
 
@@ -417,76 +404,74 @@ void ThreadPool<InputType, OutputType>::StopThreads()
 // #endif
 
 }
-template <class InputType, class OutputType>
-void ThreadPool<InputType, OutputType>::AddInput(OutputType (*workerThreadCallback)(InputType, bool *returnOutput, void* perThreadData), InputType inputData)
+template<class InputType, class OutputType>
+void ThreadPool<InputType, OutputType>::AddInput(OutputType (*workerThreadCallback)(InputType, bool *, void *),
+                                                 InputType inputData)
 {
-    inputQueueMutex.lock();
-    inputQueue.Push(inputData);
-    inputFunctionQueue.Push(workerThreadCallback);
-    inputQueueMutex.unlock();
+    {
+        std::lock_guard<CrabNet::SimpleMutex> guard(inputQueueMutex);
+        inputQueue.Push(inputData);
+        inputFunctionQueue.Push(workerThreadCallback);
+    }
 
     quitAndIncomingDataEvents.SetEvent();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddOutput(OutputType outputData)
 {
-    outputQueueMutex.lock();
+    std::lock_guard<CrabNet::SimpleMutex> guard(outputQueueMutex);
     outputQueue.Push(outputData);
-    outputQueueMutex.unlock();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasOutputFast()
 {
-    return outputQueue.IsEmpty()==false;
+    return !outputQueue.IsEmpty();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasOutput()
 {
     bool res;
-    outputQueueMutex.lock();
-    res=outputQueue.IsEmpty()==false;
-    outputQueueMutex.unlock();
+    std::lock_guard<CrabNet::SimpleMutex> guard(outputQueueMutex);
+    res = !outputQueue.IsEmpty();
     return res;
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasInputFast()
 {
-    return inputQueue.IsEmpty()==false;
+    return !inputQueue.IsEmpty();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasInput()
 {
     bool res;
-    inputQueueMutex.lock();
-    res=inputQueue.IsEmpty()==false;
-    inputQueueMutex.unlock();
+    std::lock_guard<CrabNet::SimpleMutex> guard(inputQueueMutex);
+    res = !inputQueue.IsEmpty();
     return res;
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 OutputType ThreadPool<InputType, OutputType>::GetOutput()
 {
     // Real output check
     OutputType output;
-    outputQueueMutex.lock();
-    output=outputQueue.Pop();
-    outputQueueMutex.unlock();
+    std::lock_guard<CrabNet::SimpleMutex> guard(outputQueueMutex);
+    output = outputQueue.Pop();
     return output;
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::Clear()
 {
-    runThreadsMutex.lock();
+    runThreadsMutex.lock(); //todo: discover this mutex. Probably should be unlocked in else branch
     if (runThreads)
     {
         runThreadsMutex.unlock();
-        inputQueueMutex.lock();
-        inputFunctionQueue.Clear();
-        inputQueue.Clear();
-        inputQueueMutex.unlock();
+        {
+            std::lock_guard<CrabNet::SimpleMutex> guard(inputQueueMutex);
+            inputFunctionQueue.Clear();
+            inputQueue.Clear();
+        }
 
-        outputQueueMutex.lock();
+        std::lock_guard<CrabNet::SimpleMutex> guard(outputQueueMutex);
         outputQueue.Clear();
-        outputQueueMutex.unlock();
     }
     else
     {
@@ -495,70 +480,70 @@ void ThreadPool<InputType, OutputType>::Clear()
         outputQueue.Clear();
     }
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::LockInput()
 {
     inputQueueMutex.lock();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::UnlockInput()
 {
     inputQueueMutex.unlock();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 unsigned ThreadPool<InputType, OutputType>::InputSize()
 {
     return inputQueue.Size();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 InputType ThreadPool<InputType, OutputType>::GetInputAtIndex(unsigned index)
 {
     return inputQueue[index];
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::RemoveInputAtIndex(unsigned index)
 {
     inputQueue.RemoveAtIndex(index);
     inputFunctionQueue.RemoveAtIndex(index);
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::LockOutput()
 {
     outputQueueMutex.lock();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::UnlockOutput()
 {
     outputQueueMutex.unlock();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 unsigned ThreadPool<InputType, OutputType>::OutputSize()
 {
     return outputQueue.Size();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 OutputType ThreadPool<InputType, OutputType>::GetOutputAtIndex(unsigned index)
 {
     return outputQueue[index];
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::RemoveOutputAtIndex(unsigned index)
 {
     outputQueue.RemoveAtIndex(index);
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::ClearInput()
 {
     inputQueue.Clear();
     inputFunctionQueue.Clear();
 }
 
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::ClearOutput()
 {
     outputQueue.Clear();
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::IsWorking()
 {
     bool isWorking;
@@ -580,41 +565,40 @@ bool ThreadPool<InputType, OutputType>::IsWorking()
 
     // Need to check is working again, in case the thread was between the first and second checks
     workingThreadCountMutex.lock();
-    isWorking=numThreadsWorking!=0;
+    isWorking = numThreadsWorking != 0;
     workingThreadCountMutex.unlock();
 
     return isWorking;
 }
 
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 int ThreadPool<InputType, OutputType>::NumThreadsWorking()
 {
     return numThreadsWorking;
 }
 
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::WasStarted()
 {
     bool b;
-    runThreadsMutex.lock();
+    std::lock_guard<CrabNet::SimpleMutex> guard(runThreadsMutex);
     b = runThreads;
-    runThreadsMutex.unlock();
     return b;
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::Pause()
 {
-    if (WasStarted()==false)
+    if (!WasStarted())
         return false;
 
     workingThreadCountMutex.lock();
-    while (numThreadsWorking>0)
+    while (numThreadsWorking > 0)
     {
         RakSleep(30);
     }
     return true;
 }
-template <class InputType, class OutputType>
+template<class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::Resume()
 {
     workingThreadCountMutex.unlock();
