@@ -16,6 +16,7 @@
 #include "DS_List.h"
 #include "RakNetTypes.h" // int64_t
 #include <stdio.h>
+#include <atomic>
 #include "stdarg.h"
 
 #ifdef _WIN32
@@ -300,8 +301,7 @@ public:
     /// \internal
     struct SharedString
     {
-        SimpleMutex *refCountMutex;
-        unsigned int refCount;
+        std::atomic_uint refCount;
         size_t bytesUsed;
         char *bigString;
         char *c_str;

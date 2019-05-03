@@ -23,7 +23,7 @@
 using namespace CrabNet;
 
 //DataStructures::MemoryPool<RakString::SharedString> RakString::pool;
-RakString::SharedString RakString::emptyString = {0, 0, 0, (char *) "", (char *) "", ""};
+RakString::SharedString RakString::emptyString = {ATOMIC_VAR_INIT(0), 0, (char *) "", (char *) "", ""};
 //RakString::SharedString *RakString::sharedStringFreeList=0;
 //unsigned int RakString::sharedStringFreeListAllocationCount=0;
 DataStructures::List<RakString::SharedString *> RakString::freeList;
@@ -100,7 +100,6 @@ RakString::RakString(const RakString &rhs)
         return;
     }
 
-    rhs.sharedString->refCountMutex->lock();
     if (rhs.sharedString->refCount == 0)
         sharedString = &emptyString;
     else
@@ -108,7 +107,6 @@ RakString::RakString(const RakString &rhs)
         rhs.sharedString->refCount++;
         sharedString = rhs.sharedString;
     }
-    rhs.sharedString->refCountMutex->unlock();
 }
 
 RakString::~RakString()
@@ -122,7 +120,6 @@ RakString &RakString::operator=(const RakString &rhs)
     if (rhs.sharedString == &emptyString)
         return *this;
 
-    rhs.sharedString->refCountMutex->lock();
     if (rhs.sharedString->refCount == 0)
         sharedString = &emptyString;
     else
@@ -130,7 +127,6 @@ RakString &RakString::operator=(const RakString &rhs)
         sharedString = rhs.sharedString;
         sharedString->refCount++;
     }
-    rhs.sharedString->refCountMutex->unlock();
     return *this;
 }
 
@@ -309,28 +305,21 @@ const CrabNet::RakString operator+(const CrabNet::RakString &lhs, const CrabNet:
         return RakString(&RakString::emptyString);
     if (lhs.IsEmpty())
     {
-        rhs.sharedString->refCountMutex->lock();
         if (rhs.sharedString->refCount == 0)
         {
-            rhs.sharedString->refCountMutex->unlock();
-            lhs.sharedString->refCountMutex->lock();
             lhs.sharedString->refCount++;
-            lhs.sharedString->refCountMutex->unlock();
             return RakString(lhs.sharedString);
         }
         else
         {
             rhs.sharedString->refCount++;
-            rhs.sharedString->refCountMutex->unlock();
             return RakString(rhs.sharedString);
         }
         // rhs.sharedString->refCountMutex->unlock();
     }
     if (rhs.IsEmpty())
     {
-        lhs.sharedString->refCountMutex->lock();
         lhs.sharedString->refCount++;
-        lhs.sharedString->refCountMutex->unlock();
         return RakString(lhs.sharedString);
     }
 
@@ -347,7 +336,6 @@ const CrabNet::RakString operator+(const CrabNet::RakString &lhs, const CrabNet:
             RakString::SharedString *ss;
             ss = (RakString::SharedString *) malloc(sizeof(RakString::SharedString));
             RakAssert(ss);
-            ss->refCountMutex = new SimpleMutex;
             RakString::freeList.Insert(ss);
 
         }
@@ -1178,7 +1166,6 @@ void RakString::FreeMemoryNoMutex()
 {
     for (unsigned int i = 0; i < freeList.Size(); i++)
     {
-        delete freeList[i]->refCountMutex;
         free(freeList[i]);
     }
     freeList.Clear(false);
@@ -1311,7 +1298,6 @@ void RakString::Allocate(size_t len)
 
             auto ss = (RakString::SharedString *) malloc(sizeof(RakString::SharedString));
             RakAssert(ss);
-            ss->refCountMutex = new SimpleMutex;
             RakString::freeList.Insert(ss);
         }
         //RakString::sharedStringFreeListAllocationCount+=1024;
@@ -1474,15 +1460,12 @@ void RakString::Clone()
         return;
 
     // Empty or solo then no point to cloning
-    sharedString->refCountMutex->lock();
     if (sharedString->refCount == 1)
     {
-        sharedString->refCountMutex->unlock();
         return;
     }
 
     sharedString->refCount--;
-    sharedString->refCountMutex->unlock();
     Assign(sharedString->c_str);
 }
 
@@ -1490,11 +1473,9 @@ void RakString::Free()
 {
     if (sharedString == &emptyString)
         return;
-    sharedString->refCountMutex->lock();
     sharedString->refCount--;
     if (sharedString->refCount == 0)
     {
-        sharedString->refCountMutex->unlock();
         const size_t smallStringSize = 128 - sizeof(unsigned int) - sizeof(size_t) - sizeof(char *) * 2;
         if (sharedString->bytesUsed > smallStringSize)
             free(sharedString->bigString);
@@ -1510,8 +1491,6 @@ void RakString::Free()
 
         sharedString = &emptyString;
     }
-    else
-        sharedString->refCountMutex->unlock();
     sharedString = &emptyString;
 }
 
