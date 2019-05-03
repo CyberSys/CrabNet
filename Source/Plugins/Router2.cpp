@@ -103,19 +103,17 @@ Router2::~Router2()
 }
 void Router2::ClearMinipunches()
 {
-    miniPunchesInProgressMutex.lock();
+    std::lock_guard<SimpleMutex> guard(miniPunchesInProgressMutex);
     miniPunchesInProgress.Clear(false);
-    miniPunchesInProgressMutex.unlock();
 }
 void Router2::ClearConnectionRequests()
 {
-    connectionRequestsMutex.lock();
+    std::lock_guard<SimpleMutex> guard(connectionRequestsMutex);
     for (unsigned int i=0; i < connectionRequests.Size(); i++)
     {
         delete connectionRequests[i];
     }
     connectionRequests.Clear(false);
-    connectionRequestsMutex.unlock();
 }
 bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLostOnFailure)
 {
@@ -131,17 +129,22 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
     }
 
     // ALready in progress?
-    connectionRequestsMutex.lock();
-    if (GetConnectionRequestIndex(endpointGuid)!=(unsigned int)-1)
     {
-        connectionRequestsMutex.unlock();
-        char buff[512];
-        if (debugInterface)   
-            debugInterface->ShowFailure(FormatString(buff, 512, "Router2: ConnectInternal(%I64d) failed at %s:%i\n", endpointGuid.g, __FILE__, __LINE__));
+        std::lock_guard<SimpleMutex> guard(connectionRequestsMutex);
+        if (GetConnectionRequestIndex(endpointGuid) != (unsigned int) -1)
+        {
+            char buff[512];
+            if (debugInterface)
+                debugInterface->ShowFailure(FormatString(buff,
+                                                         512,
+                                                         "Router2: ConnectInternal(%I64d) failed at %s:%i\n",
+                                                         endpointGuid.g,
+                                                         __FILE__,
+                                                         __LINE__));
 
-        return false;
+            return false;
+        }
     }
-    connectionRequestsMutex.unlock();
 
     // StoreRequest(endpointGuid, Largest(ping*2), systemsSentTo). Set state REQUEST_STATE_QUERY_FORWARDING
     Router2::ConnnectRequest *cr = new Router2::ConnnectRequest;
@@ -166,9 +169,10 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
         {
             crs.guid=guids[i];
             crs.pingToEndpoint=-1;
-            cr->connectionRequestSystemsMutex.lock();
-            cr->connectionRequestSystems.Push(crs);
-            cr->connectionRequestSystemsMutex.unlock();
+            {
+                std::lock_guard<SimpleMutex> guard(cr->connectionRequestSystemsMutex);
+                cr->connectionRequestSystems.Push(crs);
+            }
 
             // Broadcast(ID_ROUTER_2_QUERY_FORWARDING, endpointGuid);
             CrabNet::BitStream bsOut;
@@ -194,9 +198,11 @@ bool Router2::ConnectInternal(RakNetGUID endpointGuid, bool returnConnectionLost
             }
         }
     }
-    connectionRequestsMutex.lock();
-    connectionRequests.Push(cr);
-    connectionRequestsMutex.unlock();
+
+    {
+        std::lock_guard<SimpleMutex> guard(connectionRequestsMutex);
+        connectionRequests.Push(cr);
+    }
 
     if (debugInterface)
     {
@@ -405,20 +411,19 @@ void Router2::Update()
         {
             bool anyRemoved=false;
             unsigned int connectionRequestGuidIndex=0;
-            connectionRequest->connectionRequestSystemsMutex.lock();
-            while (connectionRequestGuidIndex < connectionRequest->connectionRequestSystems.Size())
             {
-                if (connectionRequest->connectionRequestSystems[connectionRequestGuidIndex].pingToEndpoint<0)
+                std::lock_guard<SimpleMutex> guard(connectionRequest->connectionRequestSystemsMutex);
+                while (connectionRequestGuidIndex < connectionRequest->connectionRequestSystems.Size())
                 {
-                    anyRemoved=true;
-                    connectionRequest->connectionRequestSystems.RemoveAtIndexFast(connectionRequestGuidIndex);
-                }
-                else
-                {
-                    connectionRequestGuidIndex++;
+                    if (connectionRequest->connectionRequestSystems[connectionRequestGuidIndex].pingToEndpoint < 0)
+                    {
+                        anyRemoved = true;
+                        connectionRequest->connectionRequestSystems.RemoveAtIndexFast(connectionRequestGuidIndex);
+                    }
+                    else
+                        connectionRequestGuidIndex++;
                 }
             }
-            connectionRequest->connectionRequestSystemsMutex.unlock();
 
             if (anyRemoved)
             {
@@ -442,7 +447,7 @@ void Router2::Update()
     connectionRequestsMutex.unlock();
 
     unsigned int i=0;
-    miniPunchesInProgressMutex.lock();
+    std::lock_guard<SimpleMutex> guard(miniPunchesInProgressMutex);
     while (i < miniPunchesInProgress.Size())
     {
         if (miniPunchesInProgress[i].timeout<curTime)
@@ -458,7 +463,6 @@ void Router2::Update()
         else
             i++;
     }
-    miniPunchesInProgressMutex.unlock();
 
 }
 void Router2::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
@@ -485,11 +489,12 @@ void Router2::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID 
         else if (forwardedConnectionList[forwardedConnectionIndex].intermediaryGuid==rakNetGUID && forwardedConnectionList[forwardedConnectionIndex].weInitiatedForwarding)
         {
             // Lost connection to intermediary. Restart process to connect to endpoint. If failed, push ID_CONNECTION_LOST. Also remove connection request if it already is in the list, to restart it
-            connectionRequestsMutex.lock();
-            unsigned int pos = GetConnectionRequestIndex(forwardedConnectionList[forwardedConnectionIndex].endpointGuid);
-            if((unsigned int)-1 != pos) {delete connectionRequests[pos];}
-            connectionRequestsMutex.unlock();
-            
+
+            {
+                std::lock_guard<SimpleMutex> guard(connectionRequestsMutex);
+                unsigned int pos = GetConnectionRequestIndex(forwardedConnectionList[forwardedConnectionIndex].endpointGuid);
+                if ((unsigned int) -1 != pos) { delete connectionRequests[pos]; }
+            }
             ConnectInternal(forwardedConnectionList[forwardedConnectionIndex].endpointGuid, true);
 
             forwardedConnectionIndex++;
@@ -509,7 +514,7 @@ void Router2::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID 
     forwardedConnectionListMutex.unlock();
 
     unsigned int connectionRequestIndex=0;
-    connectionRequestsMutex.lock();
+    std::lock_guard<SimpleMutex> guard(connectionRequestsMutex);
     while (connectionRequestIndex < connectionRequests.Size())
     {
         ConnnectRequest *cr = connectionRequests[connectionRequestIndex];
@@ -558,11 +563,10 @@ void Router2::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID 
             connectionRequestIndex++;
         }
     }
-    connectionRequestsMutex.unlock();
 
 
     unsigned int i=0;
-    miniPunchesInProgressMutex.lock();
+    std::lock_guard<SimpleMutex> guard2(miniPunchesInProgressMutex);
     while (i < miniPunchesInProgress.Size())
     {
         if (miniPunchesInProgress[i].sourceGuid==rakNetGUID || miniPunchesInProgress[i].endpointGuid==rakNetGUID)
@@ -576,7 +580,6 @@ void Router2::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID 
         else
             i++;
     }
-    miniPunchesInProgressMutex.unlock();
 }
 void Router2::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
 {
@@ -584,7 +587,7 @@ void Router2::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAtte
     (void) packet;
 
     unsigned int forwardedConnectionIndex=0;
-    forwardedConnectionListMutex.lock();
+    std::lock_guard<SimpleMutex> guard(forwardedConnectionListMutex);
     while (forwardedConnectionIndex<forwardedConnectionList.Size())
     {
         if (forwardedConnectionList[forwardedConnectionIndex].intermediaryAddress==packet->systemAddress)
@@ -602,7 +605,6 @@ void Router2::OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAtte
         else
             forwardedConnectionIndex++;
     }
-    forwardedConnectionListMutex.unlock();
 }
 void Router2::OnRakPeerShutdown()
 {
@@ -611,14 +613,16 @@ void Router2::OnRakPeerShutdown()
 // connectionRequestsMutex should already be locked
 bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest)
 {
-    connectionRequest->connectionRequestSystemsMutex.lock();
+    int size;
+    {
+        std::lock_guard<SimpleMutex> guard(connectionRequest->connectionRequestSystemsMutex);
+        size = connectionRequest->connectionRequestSystems.Size();
+    }
 
  //   CRABNET_DEBUG_PRINTF(__FUNCTION__": connectionRequest->connectionRequestSystems.Size = %d", connectionRequest->connectionRequestSystems.Size());
 
     if (connectionRequest->connectionRequestSystems.Size()==0)
     {
-        connectionRequest->connectionRequestSystemsMutex.unlock();
-
     //    printf("Router2 failed at %s:%i\n", __FILE__, __LINE__);
         if (connectionRequest->returnConnectionLostOnFailure) {
             ReturnToUser(ID_CONNECTION_LOST, connectionRequest->endpointGuid, UNASSIGNED_SYSTEM_ADDRESS, true); // This is a connection which was previously established. Rerouting is not possible.
@@ -635,8 +639,7 @@ bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest)
             debugInterface->ShowDiagnostic(FormatString(buff, 512, "Forwarding failed, no remaining systems at %s:%i\n"));
         }
 
-        forwardedConnectionListMutex.lock();
-
+        std::lock_guard<SimpleMutex> guard(forwardedConnectionListMutex);
         for (unsigned int forwardedConnectionIndex=0; forwardedConnectionIndex < forwardedConnectionList.Size(); forwardedConnectionIndex++)
         {
             if (forwardedConnectionList[forwardedConnectionIndex].endpointGuid==connectionRequest->endpointGuid && forwardedConnectionList[forwardedConnectionIndex].weInitiatedForwarding)
@@ -645,25 +648,21 @@ bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest)
                 break;
             }
         }
-        forwardedConnectionListMutex.unlock();
 
         return false;
     }
-    connectionRequest->connectionRequestSystemsMutex.unlock();
 
     if (connectionRequest->requestState==R2RS_REQUEST_STATE_QUERY_FORWARDING)
     {
-        connectionRequest->connectionRequestSystemsMutex.lock();
-
-        for (unsigned int i=0; i < connectionRequest->connectionRequestSystems.Size(); i++)
         {
-            if (connectionRequest->connectionRequestSystems[i].pingToEndpoint<0)
+            std::lock_guard<SimpleMutex> guard(connectionRequest->connectionRequestSystemsMutex);
+
+            for (unsigned int i = 0; i < connectionRequest->connectionRequestSystems.Size(); i++)
             {
-                connectionRequest->connectionRequestSystemsMutex.unlock();
-                return true; // Forward query still in progress, just return
+                if (connectionRequest->connectionRequestSystems[i].pingToEndpoint < 0)
+                    return true; // Forward query still in progress, just return
             }
         }
-        connectionRequest->connectionRequestSystemsMutex.unlock();
 
         RequestForwarding(connectionRequest);
     }
@@ -708,14 +707,17 @@ void Router2::RequestForwarding(ConnnectRequest* connectionRequest)
     // Prioritize systems to request forwarding
     DataStructures::OrderedList<ConnectionRequestSystem, ConnectionRequestSystem, ConnectionRequestSystemComp> commandList;
     unsigned int connectionRequestGuidIndex;
-    connectionRequest->connectionRequestSystemsMutex.lock();
-    for (connectionRequestGuidIndex=0; connectionRequestGuidIndex < connectionRequest->connectionRequestSystems.Size(); connectionRequestGuidIndex++)
     {
-        RakAssert(connectionRequest->connectionRequestSystems[connectionRequestGuidIndex].pingToEndpoint>=0);
-        commandList.Insert(connectionRequest->connectionRequestSystems[connectionRequestGuidIndex],
-            connectionRequest->connectionRequestSystems[connectionRequestGuidIndex], true);
+        std::lock_guard<SimpleMutex> guard(connectionRequest->connectionRequestSystemsMutex);
+        for (connectionRequestGuidIndex = 0;
+             connectionRequestGuidIndex < connectionRequest->connectionRequestSystems.Size();
+             connectionRequestGuidIndex++)
+        {
+            RakAssert(connectionRequest->connectionRequestSystems[connectionRequestGuidIndex].pingToEndpoint >= 0);
+            commandList.Insert(connectionRequest->connectionRequestSystems[connectionRequestGuidIndex],
+                               connectionRequest->connectionRequestSystems[connectionRequestGuidIndex], true);
+        }
     }
-    connectionRequest->connectionRequestSystemsMutex.unlock();
 
     connectionRequest->lastRequestedForwardingSystem=commandList[0].guid;
 
@@ -755,21 +757,24 @@ int Router2::ReturnFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endp
     }
 
     // We cannot forward connections which are themselves forwarded. Return fail in that case
-    forwardedConnectionListMutex.lock();
-    for (unsigned int i=0; i < forwardedConnectionList.Size(); i++)
     {
-        if ((forwardedConnectionList[i].endpointGuid==endpointGuid)
-            || (forwardedConnectionList[i].endpointGuid==sourceGuid)) // sourceGuid is here so you do not respond to routing requests from systems you are already routing through.
+        std::lock_guard<SimpleMutex> guard(forwardedConnectionListMutex);
+        for (unsigned int i = 0; i < forwardedConnectionList.Size(); i++)
         {
-            forwardedConnectionListMutex.unlock();
+            if ((forwardedConnectionList[i].endpointGuid == endpointGuid)
+                || (forwardedConnectionList[i].endpointGuid
+                    == sourceGuid)) // sourceGuid is here so you do not respond to routing requests from systems you are already routing through.
+            {
 
-            char buff[512];
-            if (debugInterface)    debugInterface->ShowFailure(FormatString(buff, 512, "Router2 failed at %s:%i\n", __FILE__, __LINE__));
-            SendFailureOnCannotForward(sourceGuid,endpointGuid);
-            return -1;
+                char buff[512];
+                if (debugInterface)
+                    debugInterface
+                        ->ShowFailure(FormatString(buff, 512, "Router2 failed at %s:%i\n", __FILE__, __LINE__));
+                SendFailureOnCannotForward(sourceGuid, endpointGuid);
+                return -1;
+            }
         }
     }
-    forwardedConnectionListMutex.unlock();
 
     int pingToEndpoint;
     pingToEndpoint = rakPeerInterface->GetAveragePing(endpointGuid);
@@ -826,22 +831,22 @@ void Router2::OnQueryForwardingReply(Packet *packet)
     bool canForward=false;
     bs.Read(canForward);
 
-    connectionRequestsMutex.lock();
+    std::lock_guard<SimpleMutex> guard(connectionRequestsMutex);
     unsigned int connectionRequestIndex = GetConnectionRequestIndex(endpointGuid);
     if (connectionRequestIndex==(unsigned int)-1)
     {
-        connectionRequestsMutex.unlock();
         char buff[512];
         if (debugInterface)    debugInterface->ShowFailure(FormatString(buff, 512, "Router2 failed (%I64d) at %s:%i\n", endpointGuid.g, __FILE__, __LINE__));
         return;
     }
 
-    connectionRequests[connectionRequestIndex]->connectionRequestSystemsMutex.lock();
-    unsigned int connectionRequestGuidIndex = connectionRequests[connectionRequestIndex]->GetGuidIndex(packet->guid);
+    unsigned int connectionRequestGuidIndex;
+    {
+        std::lock_guard<SimpleMutex> guard2(connectionRequests[connectionRequestIndex]->connectionRequestSystemsMutex);
+        connectionRequestGuidIndex = connectionRequests[connectionRequestIndex]->GetGuidIndex(packet->guid);
+    }
     if (connectionRequestGuidIndex==(unsigned int)-1)
     {
-        connectionRequests[connectionRequestIndex]->connectionRequestSystemsMutex.unlock();
-        connectionRequestsMutex.unlock();
         char buff[512];
         if (debugInterface)    debugInterface->ShowFailure(FormatString(buff, 512, "Router2 failed (%I64d) at %s:%i\n", endpointGuid.g, __FILE__, __LINE__));
         return;
@@ -871,11 +876,10 @@ void Router2::OnQueryForwardingReply(Packet *packet)
     }
     connectionRequests[connectionRequestIndex]->connectionRequestSystemsMutex.unlock();
 
-    if (UpdateForwarding(connectionRequests[connectionRequestIndex])==false)
+    if (!UpdateForwarding(connectionRequests[connectionRequestIndex]))
     {
         RemoveConnectionRequest(connectionRequestIndex);
     }
-    connectionRequestsMutex.unlock();
 }
 void Router2::SendForwardingSuccess(MessageID messageId, RakNetGUID sourceGuid, RakNetGUID endpointGuid, unsigned short sourceToDstPort)
 {
@@ -1065,9 +1069,8 @@ void Router2::OnRequestForwarding(Packet *packet)
             miniPunchRequest.timeout=CrabNet::GetTimeMS() + ping2*8+300;
         miniPunchRequest.nextAction=CrabNet::GetTimeMS()+100;
         SendOOBMessages(&miniPunchRequest);
-        miniPunchesInProgressMutex.lock();
+        std::lock_guard<SimpleMutex> guard(miniPunchesInProgressMutex);
         miniPunchesInProgress.Push(miniPunchRequest);
-        miniPunchesInProgressMutex.unlock();
     }
 }
 void Router2::OnMiniPunchReplyBounce(Packet *packet)
@@ -1082,7 +1085,7 @@ void Router2::OnMiniPunchReplyBounce(Packet *packet)
             packet->guid.g, miniPunchesInProgress.Size()));
     }
 
-    miniPunchesInProgressMutex.lock();
+    std::lock_guard<SimpleMutex> guard(miniPunchesInProgressMutex);
     while (i < miniPunchesInProgress.Size())
     {
         if (miniPunchesInProgress[i].sourceGuid==packet->guid || miniPunchesInProgress[i].endpointGuid==packet->guid)
@@ -1098,22 +1101,19 @@ void Router2::OnMiniPunchReplyBounce(Packet *packet)
                 debugInterface->ShowDiagnostic(FormatString(buff, 512, "Processing ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE, gotReplyFromSource=%i gotReplyFromEndpoint=%i at %s:%i\n", miniPunchesInProgress[i].gotReplyFromSource, miniPunchesInProgress[i].gotReplyFromEndpoint, __FILE__, __LINE__));
             }
 
-            if (miniPunchesInProgress[i].gotReplyFromEndpoint==true &&
-                miniPunchesInProgress[i].gotReplyFromSource==true)
+            if (miniPunchesInProgress[i].gotReplyFromEndpoint &&
+                miniPunchesInProgress[i].gotReplyFromSource)
             {
                 SendForwardingSuccess(ID_ROUTER_2_REROUTED,               miniPunchesInProgress[i].endpointGuid, miniPunchesInProgress[i].sourceGuid,   miniPunchesInProgress[i].forwardingPort);
                 SendForwardingSuccess(ID_ROUTER_2_FORWARDING_ESTABLISHED, miniPunchesInProgress[i].sourceGuid,   miniPunchesInProgress[i].endpointGuid, miniPunchesInProgress[i].forwardingPort);
                 miniPunchesInProgress.RemoveAtIndexFast(i);
             }
             else
-            {
                 i++;
-            }
         }
         else
             i++;
     }
-    miniPunchesInProgressMutex.unlock();
 }
 void Router2::OnMiniPunchReply(Packet *packet)
 {
@@ -1244,11 +1244,12 @@ bool Router2::OnForwardingSuccess(Packet *packet)
 
         // removeFrom connectionRequests;
         ForwardedConnection fc;
-        connectionRequestsMutex.lock();
-        unsigned int connectionRequestIndex = GetConnectionRequestIndex(endpointGuid);
-        fc.returnConnectionLostOnFailure=connectionRequests[connectionRequestIndex]->returnConnectionLostOnFailure;
-        connectionRequests.RemoveAtIndexFast(connectionRequestIndex);
-        connectionRequestsMutex.unlock();
+        {
+            std::lock_guard<SimpleMutex> guard(connectionRequestsMutex);
+            unsigned int connectionRequestIndex = GetConnectionRequestIndex(endpointGuid);
+            fc.returnConnectionLostOnFailure = connectionRequests[connectionRequestIndex]->returnConnectionLostOnFailure;
+            connectionRequests.RemoveAtIndexFast(connectionRequestIndex);
+        }
         fc.endpointGuid=endpointGuid;
         fc.intermediaryAddress=packet->systemAddress;
         fc.intermediaryAddress.SetPortHostOrder(sourceToDestPort);
@@ -1256,9 +1257,10 @@ bool Router2::OnForwardingSuccess(Packet *packet)
         fc.weInitiatedForwarding=true;
 
         // add to forwarding list
-        forwardedConnectionListMutex.lock();
-        forwardedConnectionList.Push (fc);
-        forwardedConnectionListMutex.unlock();
+        {
+            std::lock_guard<SimpleMutex> guard(forwardedConnectionListMutex);
+            forwardedConnectionList.Push(fc);
+        }
 
         if (debugInterface)
         {
@@ -1322,9 +1324,8 @@ void Router2::ReturnToUser(MessageID messageId, RakNetGUID endpointGuid, const S
 }
 void Router2::ClearForwardedConnections()
 {
-    forwardedConnectionListMutex.lock();
+    std::lock_guard<SimpleMutex> guard(forwardedConnectionListMutex);
     forwardedConnectionList.Clear(false);
-    forwardedConnectionListMutex.unlock();
 }
 void Router2::ClearAll()
 {
