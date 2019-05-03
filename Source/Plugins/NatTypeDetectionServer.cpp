@@ -114,10 +114,9 @@ void NatTypeDetectionServer::Shutdown()
         delete s4p5;
         s4p5=0;
     }
-    bufferedPacketsMutex.lock();
+    std::lock_guard<SimpleMutex> guard(bufferedPacketsMutex);
     while (bufferedPackets.Size())
         delete bufferedPackets.Pop();
-    bufferedPacketsMutex.unlock();
 }
 void NatTypeDetectionServer::Update()
 {
@@ -127,12 +126,17 @@ void NatTypeDetectionServer::Update()
     SystemAddress boundAddress;
 
     RNS2RecvStruct *recvStruct;
-    bufferedPacketsMutex.lock();
-    if (bufferedPackets.Size()>0)
-        recvStruct=bufferedPackets.Pop();
-    else
-        recvStruct=0;
-    bufferedPacketsMutex.unlock();
+
+    auto bufPop = [&, this]()
+    {
+        std::lock_guard<SimpleMutex> guard(bufferedPacketsMutex);
+        if (bufferedPackets.Size() > 0)
+            recvStruct = bufferedPackets.Pop();
+        else
+            recvStruct = nullptr;
+    };
+
+    bufPop();
     while (recvStruct)
     {
         SystemAddress senderAddr = recvStruct->systemAddress;
@@ -187,12 +191,7 @@ void NatTypeDetectionServer::Update()
         }
 
         DeallocRNS2RecvStruct(recvStruct);
-        bufferedPacketsMutex.lock();
-        if (bufferedPackets.Size()>0)
-            recvStruct=bufferedPackets.Pop();
-        else
-            recvStruct=0;
-        bufferedPacketsMutex.unlock();
+        bufPop();
     }
 
     /*
@@ -432,9 +431,8 @@ RNS2RecvStruct *NatTypeDetectionServer::AllocRNS2RecvStruct()
 
 void NatTypeDetectionServer::OnRNS2Recv(RNS2RecvStruct *recvStruct)
 {
-    bufferedPacketsMutex.lock();
+    std::lock_guard<SimpleMutex> guard(bufferedPacketsMutex);
     bufferedPackets.Push(recvStruct);
-    bufferedPacketsMutex.unlock();
 }
 
 #endif // _CRABNET_SUPPORT_*

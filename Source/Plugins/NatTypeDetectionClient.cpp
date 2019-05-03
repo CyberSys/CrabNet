@@ -106,27 +106,26 @@ void NatTypeDetectionClient::Update()
     if (IsInProgress())
     {
         RNS2RecvStruct *recvStruct;
-        bufferedPacketsMutex.lock();
-        if (bufferedPackets.Size()>0)
-            recvStruct=bufferedPackets.Pop();
-        else
-            recvStruct=0;
-        bufferedPacketsMutex.unlock();
-        while (recvStruct)
+        auto bufPop = [&, this]()
         {
-            if (recvStruct->bytesRead==1 && recvStruct->data[0]==NAT_TYPE_NONE)
+            std::lock_guard<SimpleMutex> guard(bufferedPacketsMutex);
+            if (bufferedPackets.Size() > 0)
+                recvStruct = bufferedPackets.Pop();
+            else
+                recvStruct = nullptr;
+        };
+
+        bufPop();
+        while (recvStruct != nullptr)
+        {
+            if (recvStruct->bytesRead == 1 && recvStruct->data[0] == NAT_TYPE_NONE)
             {
                 OnCompletion(NAT_TYPE_NONE);
-                RakAssert(IsInProgress()==false);
+                RakAssert(!IsInProgress());
             }
             DeallocRNS2RecvStruct(recvStruct);
 
-            bufferedPacketsMutex.lock();
-            if (bufferedPackets.Size()>0)
-                recvStruct=bufferedPackets.Pop();
-            else
-                recvStruct=0;
-            bufferedPacketsMutex.unlock();
+            bufPop();
         }
     }
 }
@@ -219,10 +218,9 @@ void NatTypeDetectionClient::Shutdown()
         c2=0;
     }
 
-    bufferedPacketsMutex.lock();
+    std::lock_guard<SimpleMutex> guard(bufferedPacketsMutex);
     while (bufferedPackets.Size())
         delete bufferedPackets.Pop();
-    bufferedPacketsMutex.unlock();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -237,9 +235,8 @@ RNS2RecvStruct *NatTypeDetectionClient::AllocRNS2RecvStruct()
 }
 void NatTypeDetectionClient::OnRNS2Recv(RNS2RecvStruct *recvStruct)
 {
-    bufferedPacketsMutex.lock();
+    std::lock_guard<SimpleMutex> guard(bufferedPacketsMutex);
     bufferedPackets.Push(recvStruct);
-    bufferedPacketsMutex.unlock();
 }
 
 #endif // _CRABNET_SUPPORT_*

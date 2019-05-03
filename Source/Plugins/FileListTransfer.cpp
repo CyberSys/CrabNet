@@ -239,19 +239,20 @@ void FileListTransfer::Send(FileList *fileList,
         {
             FileToPushRecipient *ftpr;
 
-            fileToPushRecipientListMutex.lock();
-            for (unsigned int i = 0; i < fileToPushRecipientList.Size(); i++)
             {
-                if (fileToPushRecipientList[i]->systemAddress == recipient
-                    && fileToPushRecipientList[i]->setId == setId)
+                std::lock_guard<SimpleMutex> guard(fileToPushRecipientListMutex);
+                for (unsigned int i = 0; i < fileToPushRecipientList.Size(); i++)
                 {
+                    if (fileToPushRecipientList[i]->systemAddress == recipient
+                        && fileToPushRecipientList[i]->setId == setId)
+                    {
 //                     ftpr=fileToPushRecipientList[i];
 //                     ftpr->AddRef();
 //                     break;
-                    RakAssert("setId already in use for this recipient" && 0);
+                        RakAssert("setId already in use for this recipient" && 0);
+                    }
                 }
             }
-            fileToPushRecipientListMutex.unlock();
 
             //if (ftpr==0)
             //{
@@ -556,7 +557,7 @@ void FileListTransfer::Clear()
     }
     fileListReceivers.Clear();
 
-    fileToPushRecipientListMutex.lock();
+    std::lock_guard<SimpleMutex> guard(fileToPushRecipientListMutex);
     for (unsigned int i = 0; i < fileToPushRecipientList.Size(); i++)
     {
         FileToPushRecipient *ftpr = fileToPushRecipientList[i];
@@ -564,7 +565,6 @@ void FileListTransfer::Clear()
         ftpr->Deref();
     }
     fileToPushRecipientList.Clear(false);
-    fileToPushRecipientListMutex.unlock();
 
     //filesToPush.Clear(false);
 }
@@ -624,7 +624,7 @@ void FileListTransfer::RemoveReceiver(SystemAddress systemAddress)
             i++;
     }
 
-    fileToPushRecipientListMutex.lock();
+    std::lock_guard<SimpleMutex> guard(fileToPushRecipientListMutex);
     i = 0;
     while (i < fileToPushRecipientList.Size())
     {
@@ -641,11 +641,8 @@ void FileListTransfer::RemoveReceiver(SystemAddress systemAddress)
             ftpr->Deref();
         }
         else
-        {
             i++;
-        }
     }
-    fileToPushRecipientListMutex.unlock();
 }
 bool FileListTransfer::IsHandlerActive(unsigned short setId)
 {
@@ -1178,7 +1175,7 @@ void FileListTransfer::OnReferencePushAck(Packet *packet)
 }
 void FileListTransfer::RemoveFromList(FileToPushRecipient *ftpr)
 {
-    fileToPushRecipientListMutex.lock();
+    std::lock_guard<SimpleMutex> guard(fileToPushRecipientListMutex);
     for (unsigned int i = 0; i < fileToPushRecipientList.Size(); i++)
     {
         if (fileToPushRecipientList[i] == ftpr)
@@ -1186,25 +1183,21 @@ void FileListTransfer::RemoveFromList(FileToPushRecipient *ftpr)
             fileToPushRecipientList.RemoveAtIndex(i);
             // List no longer references
             ftpr->Deref();
-            fileToPushRecipientListMutex.unlock();
             return;
         }
     }
-    fileToPushRecipientListMutex.unlock();
 }
 unsigned int FileListTransfer::GetPendingFilesToAddress(SystemAddress recipient)
 {
-    fileToPushRecipientListMutex.lock();
+    std::lock_guard<SimpleMutex> guard(fileToPushRecipientListMutex);
     for (unsigned int i = 0; i < fileToPushRecipientList.Size(); i++)
     {
         if (fileToPushRecipientList[i]->systemAddress == recipient)
         {
             unsigned int size = fileToPushRecipientList[i]->filesToPush.Size();
-            fileToPushRecipientListMutex.unlock();
             return size;
         }
     }
-    fileToPushRecipientListMutex.unlock();
 
     return 0;
 }
