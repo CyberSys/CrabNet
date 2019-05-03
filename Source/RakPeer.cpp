@@ -1807,7 +1807,7 @@ void RakPeer::AddToBanList(const char *IP, CrabNet::TimeMS milliseconds)
     unsigned index;
     CrabNet::TimeMS time = CrabNet::GetTimeMS();
 
-    if (IP == 0 || IP[0] == 0 || strlen(IP) > 15)
+    if (IP == nullptr || IP[0] == 0 || strlen(IP) > 15)
         return;
 
     // If this guy is already in the ban list, do nothing
@@ -2481,8 +2481,7 @@ void RakPeer::SetTimeoutTime(CrabNet::TimeMS timeMS, const SystemAddress target)
     {
         defaultTimeoutTime = timeMS;
 
-        unsigned i;
-        for (i = 0; i < maximumNumberOfPeers; i++)
+        for (unsigned i = 0; i < maximumNumberOfPeers; i++)
         {
             if (remoteSystemList[i].isActive)
             {
@@ -3351,7 +3350,7 @@ RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystemFromSystemAddress(const Sys
 {
 
     if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS)
-        return 0;
+        return nullptr;
 
     if (calledFromNetworkThread)
     {
@@ -3385,7 +3384,7 @@ RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystemFromSystemAddress(const Sys
             return remoteSystemList + deadConnectionIndex;
     }
 
-    return 0;
+    return nullptr;
 }
 
 RakPeer::RemoteSystemStruct *RakPeer::GetRemoteSystemFromGUID(const RakNetGUID guid, bool onlyActive) const
