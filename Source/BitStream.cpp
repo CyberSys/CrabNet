@@ -419,7 +419,7 @@ void BitStream::WriteBits(const unsigned char *inByteArray, BitSize_t numberOfBi
             *(data + (numberOfBitsUsed >> 3)) |= dataByte >> (numberOfBitsUsedMod8); // First half
 
             // If we didn't write it all out in the first half (8 - (numberOfBitsUsed%8) is the number we wrote in the first half)
-            if (8 - (numberOfBitsUsedMod8) < 8 && 8 - (numberOfBitsUsedMod8) < numberOfBitsToWrite)
+            if (8 - (numberOfBitsUsedMod8) < numberOfBitsToWrite)
             {
                 // Second half (overlaps byte boundary)
                 *(data + (numberOfBitsUsed >> 3) + 1) = dataByte << (8 - (numberOfBitsUsedMod8));
