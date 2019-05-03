@@ -51,7 +51,6 @@ BitStream::BitStream()
     numberOfBitsUsed = 0;
     //numberOfBitsAllocated = 32 * 8;
     numberOfBitsAllocated = BITSTREAM_STACK_ALLOCATION_SIZE * 8;
-    readOffset = 0;
     //data = ( unsigned char* ) malloc(( 32);
     data = (unsigned char *) stackData;
 
@@ -62,7 +61,6 @@ BitStream::BitStream()
 BitStream::BitStream(unsigned int initialBytesToAllocate)
 {
     numberOfBitsUsed = 0;
-    readOffset = 0;
     if (initialBytesToAllocate <= BITSTREAM_STACK_ALLOCATION_SIZE)
     {
         data = (unsigned char *) stackData;
@@ -82,7 +80,6 @@ BitStream::BitStream(unsigned int initialBytesToAllocate)
 BitStream::BitStream(unsigned char *_data, unsigned int lengthInBytes, bool _copyData)
 {
     numberOfBitsUsed = lengthInBytes << 3;
-    readOffset = 0;
     copyData = _copyData;
     numberOfBitsAllocated = lengthInBytes << 3;
 
