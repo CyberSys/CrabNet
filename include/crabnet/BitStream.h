@@ -858,7 +858,7 @@ namespace CrabNet
 
         BitSize_t numberOfBitsAllocated;
 
-        BitSize_t readOffset;
+        BitSize_t readOffset = 0;
 
         unsigned char *data;
 
@@ -867,7 +867,7 @@ namespace CrabNet
 
         /// BitStreams that use less than BITSTREAM_STACK_ALLOCATION_SIZE use the stack, rather than the heap to store data.
         /// It switches over if BITSTREAM_STACK_ALLOCATION_SIZE is exceeded
-        unsigned char stackData[BITSTREAM_STACK_ALLOCATION_SIZE];
+        unsigned char stackData[BITSTREAM_STACK_ALLOCATION_SIZE] {0};
     };
 
     template<class templateType>
