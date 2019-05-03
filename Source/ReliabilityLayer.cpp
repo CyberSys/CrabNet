@@ -1582,10 +1582,10 @@ ReliabilityLayer::Send(char *data, BitSize_t numberOfBitsToSend, PacketPriority 
     //    int a = BITS_TO_BYTES(numberOfBitsToSend);
 
     // Fix any bad parameters
-    if (reliability > RELIABLE_ORDERED_WITH_ACK_RECEIPT || reliability < 0)
+    if (reliability >= NUMBER_OF_RELIABILITIES || reliability < 0)
         reliability = RELIABLE;
 
-    if (priority > NUMBER_OF_PRIORITIES || priority < 0)
+    if (priority >= NUMBER_OF_PRIORITIES || priority < 0)
         priority = HIGH_PRIORITY;
 
     if (orderingChannel >= NUMBER_OF_ORDERED_STREAMS)
