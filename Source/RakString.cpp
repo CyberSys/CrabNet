@@ -675,8 +675,8 @@ void RakString::TerminateAtLastCharacter(char c)
 
 void RakString::StartAfterLastCharacter(char c)
 {
-    size_t len = (int) GetLength();
-    for (size_t i = len - 1; i >= 0; i--)
+    int len = (int) GetLength();
+    for (int i = len - 1; i >= 0; i--)
     {
         if (sharedString->c_str[i] == c)
         {
