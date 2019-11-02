@@ -47,7 +47,7 @@ if(MSVC)
 endif(MSVC)
 
 
-include_directories(SYSTEM include/raknet DependentExtensions)
+include_directories(SYSTEM include/raknet DependentExtensions Source)
 
 add_subdirectory(lib)
 
