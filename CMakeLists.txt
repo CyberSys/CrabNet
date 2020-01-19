@@ -4,27 +4,29 @@ project(CrabNet)
 
 set(CMAKE_CXX_STANDARD 11)
 
-if( NOT APPLE )
+if (NOT APPLE)
     # check 64 bit
-    if( CMAKE_SIZEOF_VOID_P MATCHES "4" )
-      set( HAVE_64_BIT 0 )
-    else(  CMAKE_SIZEOF_VOID_P MATCHES "4")
-      set( HAVE_64_BIT 1 )
-    endif( CMAKE_SIZEOF_VOID_P MATCHES "4")
-endif( NOT APPLE )
+    if (CMAKE_SIZEOF_VOID_P MATCHES "4")
+        set(HAVE_64_BIT 0)
+    else (CMAKE_SIZEOF_VOID_P MATCHES "4")
+        set(HAVE_64_BIT 1)
+    endif (CMAKE_SIZEOF_VOID_P MATCHES "4")
+endif (NOT APPLE)
 
 IF (WIN32 AND NOT UNIX)
-    set (PROGRAMFILESX86 $ENV{PROGRAMFILES})
+    set(PROGRAMFILESX86 $ENV{PROGRAMFILES})
     string(REPLACE "\\" "/" PROGRAMFILESX86 ${PROGRAMFILESX86})
-ENDIF(WIN32 AND NOT UNIX)
+ENDIF (WIN32 AND NOT UNIX)
+
+set(CMAKE_DEBUG_POSTFIX "d")
 
 IF (WIN32 AND NOT UNIX)
     set(CRABNET_LIBRARY_LIBS ws2_32.lib)
     set(CRABNET_LIBRARY_SO_NAME RakNetDLL)
-ELSE(WIN32 AND NOT UNIX)
+ELSE (WIN32 AND NOT UNIX)
     set(CRABNET_LIBRARY_LIBS pthread)
     set(CRABNET_LIBRARY_SO_NAME raknet)
-ENDIF(WIN32 AND NOT UNIX)
+ENDIF (WIN32 AND NOT UNIX)
 
 
 # Options
@@ -41,10 +43,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CmakeIncludes)
 include(CmakeMacros)
 include(PVS-Studio)
 
-if(MSVC)
+if (MSVC)
     FIXLINKOPTIONS()
     FIXCOMPILEOPTIONS()
-endif(MSVC)
+endif (MSVC)
 
 
 include_directories(SYSTEM include/raknet DependentExtensions Source)
@@ -53,8 +55,6 @@ add_subdirectory(lib)
 
 set(CRABNET_COMMON_LIBS RakNetLibStatic)
 
-if(CRABNET_ENABLE_SAMPLES)
+if (CRABNET_ENABLE_SAMPLES)
     add_subdirectory(Samples)
-endif()
-
-file(COPY include DESTINATION .)
+endif ()
